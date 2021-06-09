@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>MOROway App</title>
+		<style>	
+			* {
+				background: black;
+				color: white;
+				font-family: sans-serif;
+				padding: 0;
+				margin: 0;
+			}
+			
+			body {
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				align-content: center;
+				min-height: 100vh;
+				background: linear-gradient(0deg, black 0%, rgb(80,0,0) 40%, rgb(80,0,0) 60%, black 100%);
+			}
+			
+			main {
+				background : black;
+			}
+			
+			header, header > * {
+				text-align: center;
+				padding-top: 25px;
+				padding-bottom: 25px;
+			}	
+			
+			article {
+				text-align: center;
+				padding: 25px;
+			}
+			
+			#header {
+				border-top: 4px solid rgb(80,0,0);
+				padding-top: 30px;
+			}
+			
+			#header h1 {
+				font-size: 3.5em;
+				color: rgb(160,10,40);
+			}	
+			
+			#links, #links div {
+				margin: 0;
+			}
+			
+			#links {
+				margin: 0;
+				padding-left: 0;
+				padding-bottom: 30px;
+				border-bottom: 4px solid rgb(80,0,0);
+			}
+			
+			#links div {
+				display: inline-block;
+				vertical-align: top;
+			}
+			
+			#linksimg {
+				padding: 0;
+			}
+			
+			#linksdiv {
+				padding: 30px;
+				text-align: left;
+				border-left: 6px solid white;
+			}
+
+			#linksdiv p {
+				font-size: 2.1em;
+				padding: 9px;
+			}
+			
+			#linksdiv p:first-of-type {
+				transform: rotate(-3deg);
+				margin-top: 0;
+				padding-top: 0;
+			}	
+			
+			#linksdiv p:last-of-type {
+				transform: rotate(5deg);
+				margin-bottom: 0;
+				padding-bottom: 0;
+			}
+			
+			#links a {
+				font-family: monospace;
+				text-decoration: none;
+			}
+			
+			#links a:hover {
+				color: #ff22cc;
+			}
+			
+			#bday {
+				text-align: center;
+				padding: 0.9% 0;
+			}
+			#bday a {
+				font-size: 1.5em;
+				text-decoration: none;
+				color: pink;
+			}
+		</style>
+		<script>
+			function picStyle(){
+				document.querySelector("#linksimg img").style.width = "";
+				document.querySelector("#linksimg img").style.height = document.querySelector("#linksdiv").offsetHeight + "px";
+				document.querySelector("#linksdiv").style.marginTop = "";
+				document.querySelector("#linksdiv").style.borderLeft = "";
+				document.querySelector("#linksdiv").style.textAlign = "";
+				document.querySelector("#linksdiv p:first-of-type").style.transform = document.querySelector("#linksdiv p:last-of-type").style.transform = "";
+				if(document.querySelector("#linksimg img").offsetWidth + document.querySelector("#linksdiv").offsetWidth >= window.innerWidth) {
+					document.querySelector("#linksimg img").style.width = "50vw";
+					document.querySelector("#linksimg img").style.height = "";
+					document.querySelector("#linksdiv").style.marginTop = "20px";
+					document.querySelector("#linksdiv").style.borderLeft = "none";
+					document.querySelector("#linksdiv").style.textAlign = "center";
+					document.querySelector("#linksdiv p:first-of-type").style.transform = document.querySelector("#linksdiv p:last-of-type").style.transform = "matrix(1,0,0,1,0,0)";
+				}
+			}
+			window.addEventListener("load", picStyle);
+			window.addEventListener("resize", picStyle);
+		</script>
+	</head>
+<body>
+    <main>
+		<header id="header">
+			<h1>MOROway App</h1>
+		</header>
+		
+		<div id="bday"><a href="/10years">10th Birthday Special</a></div>
+		
+		<article id="links">
+			<div id="linksimg">
+				<img src="pic.jpg" alt="">
+			</div>
+			<div id="linksdiv">
+				<p><a href="https://github.com/MOROway/moroway-app-dev">View Code on GitHub</a></p>
+				<p><a href="https://app.moroway.de/">Start App</a></p>
+				<p><a href="https://moroway.de/">Visit Website</a></p>
+			</div>
+		</article>
+	</main>
+</body>
+</html>

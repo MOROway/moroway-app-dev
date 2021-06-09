@@ -1,0 +1,86 @@
+name: MOROway App Sync Repositories
+on:
+  push:
+    branches: [ main ]
+jobs:
+  sync-repos:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [web, oc]
+        include:
+          - platform: web
+            repo: testrepo
+            branch: main
+            subdir: .
+            tag: 1
+            onlyrelease: 1
+          - platform: oc
+            repo: testrepo2
+            branch: main
+            subdir: moroway-app-oc
+            tag: 0
+            onlyrelease: 0
+    steps:
+      # The following step contains code from https://github.com/cpina/github-action-push-to-another-repository/  (MIT License, by cpina)
+      - uses: actions/checkout@v2
+      - name: Build moroway-app and publish to platform repository
+        shell: bash
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          GIT_USER: jonathanherrmannengel
+          GIT_MAIL: 38504994+jonathanherrmannengel@users.noreply.github.com
+          PLATFORM: ${{ matrix.platform }}
+          REPO: ${{ matrix.repo }}
+          REPO_BRANCH: ${{ matrix.branch }}
+          REPO_DIR: ${{ matrix.subdir }}
+          USE_TAG: ${{ matrix.tag }}
+          ONLY_RELEASE: ${{ matrix.onlyrelease }}
+        run: |
+          # Build moroway-app
+          cd build
+          beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
+          [[ -z "$beta" ]] && exit 1
+          if [[ $ONLY_RELEASE == 1 ]] && [[ "$beta" != 0 ]]; then
+            echo "No release version"
+            exit
+          fi
+          version=$(cat conf | grep "version=" | sed 's/.*=//')
+          changelog="$version"$'\n'
+          [[ -f "changelogs/en/$version" ]] && changelog="$changelog"$(cat "changelogs/en/$version" | sed 's/{{[0-9]\+}} //g')$'\n'
+          [[ -f "changelogs/en/$version-$PLATFORM" ]] && changelog="$changelog"$(cat "changelogs/en/$version-$PLATFORM" | sed 's/{{[0-9]\+}} //g')$'\n'
+          bash build.sh -p $PLATFORM
+          # Publish to platform repository
+          cd ../out
+          git config --global user.email "$GIT_MAIL"
+          git config --global user.name "$GIT_USER"
+          git clone --single-branch --branch "$REPO_BRANCH" "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "publish-$PLATFORM"
+          [[ ! -z $(echo "$REPO_DIR" | grep "\.\." ) ]] && exit 2
+          rm -r publish-$PLATFORM/$REPO_DIR/*
+          cp -r $PLATFORM/latest/* publish-$PLATFORM/$REPO_DIR
+          cd publish-$PLATFORM/
+          if [[ $PLATFORM == "web" ]]; then
+            mkdir docs
+            echo '<!DOCTYPE html><title>Redirect to "MOROway App"-GitHub-Page</title><meta http-equiv="refresh" content="0; URL=../moroway-app-dev">' > docs/index.html
+          elif [[ $PLATFORM == "oc" ]]; then
+            version_long=$(echo "$version" | sed 's/\.\([0-9]\)/.0\1/g' | sed 's/\.0\([0-9]\{2\}\)/\1/g' | sed 's/\.//g')
+            for lang in ../../build/changelogs/* ; do
+              lang=$(basename "$lang")
+              changelog_local=""
+              [[ -f ../../build/"changelogs/$lang/$version" ]] && changelog_local="$changelog_local"$(cat ../../build/"changelogs/$lang/$version" | sed 's/{{[0-9]\+}} //g')$'\n'
+              [[ -f ../../build/"changelogs/$lang/$version-$PLATFORM" ]] && changelog_local="$changelog_local"$(cat ../../build/"changelogs/$lang/$version-$PLATFORM" | sed 's/{{[0-9]\+}} //g')$'\n'
+              [[ -d fastlane/metadata/android/"$lang"/changelogs/ ]] &&  printf '%s' "$changelog_local" > fastlane/metadata/android/"$lang"/changelogs/"$version_long".txt
+            done
+          fi
+          msg="Auto update MOROway App to new version v$version"
+          [[ "$beta" != 0 ]] && msg="$msg Beta $beta"
+          git add .
+          git diff-index --quiet HEAD || git commit --message "$msg"
+          if [[ "$USE_TAG" == 1 ]]; then
+            tag=v$version
+            [[ "$beta" != 0 ]] && tag="$tag-beta$beta"
+            [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]] && git tag --delete "$tag" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
+            git tag -a -m "$changelog" "$tag"
+            git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
+          fi
+          git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git"
