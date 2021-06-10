@@ -10,14 +10,14 @@ jobs:
         platform: [web, oc]
         include:
           - platform: web
-            repo: testrepo
-            branch: main
+            repo: moroway-app
+            branch: master
             subdir: .
             tag: 1
             onlyrelease: 1
           - platform: oc
-            repo: testrepo2
-            branch: main
+            repo: moroway-app-oc
+            branch: master
             subdir: moroway-app-oc
             tag: 0
             onlyrelease: 0
