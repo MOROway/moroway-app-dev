@@ -8,7 +8,7 @@ const APP_DATA = {
             "year": {{date_year}},
             "month": {{date_month}},
             "day": {{date_day}}
-        },
-        "platform": "{{platform}}"
-    }
+        }
+    },
+    "platform": "{{platform}}"
 };

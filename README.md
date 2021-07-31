@@ -9,9 +9,9 @@ This repository provides the build tools for MOROway App. The code here is used 
 * The "web"-platform is the main platform and can be used with any web browser. The ready-to-use code for the "web"-platform can be found [here](https://github.com/MOROway/moroway-app).<sup>[&#91;1&#93;](#morowayrepoautoupdate)</sup>
 * The "windows"-platform provides the PWA available at Microsoft Store.
 * The "android"-platform is used within the Java Wrapper App available at Google Play Store. The wrapper app is not open-source.
-* The "oc"-platform is used within the Apache Cordova Wrapper App available at F-Droid. The wrapper app can be found [here](https://github.com/MOROway/moroway-app-oc). This wrapper app contains a [already built version](https://github.com/MOROway/moroway-app-oc/moroway-app-oc) <sup>[&#91;1&#93;](#morowayrepoautoupdate)</sup> of the "oc"-platform.
+* The "oc"-platform is used within the Apache Cordova Wrapper App available at F-Droid. The wrapper app can be found [here](https://github.com/MOROway/moroway-app-oc). This wrapper app contains a [already built version](https://github.com/MOROway/moroway-app-oc/moroway-app-oc) of the "oc"-platform.
 
-<a name="morowayrepoautoupdate">&#91;1&#93;</a> The MOROway App components are auto updated by a [Github Action](https://github.com/MOROway/moroway-app-dev/actions). This action uses code derived from the [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository/) Github Action (License: MIT, by Carles Pina Estany).
+<a name="morowayrepoautoupdate">&#91;1&#93;</a> Auto updated by a [Github Action](https://github.com/MOROway/moroway-app-dev/actions). This action uses code derived from the [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository/) Github Action (License: MIT, by Carles Pina Estany).
 
 ## Directories
 
