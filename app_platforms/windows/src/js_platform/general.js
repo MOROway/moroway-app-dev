@@ -43,4 +43,3 @@ if ("serviceWorker" in navigator && window.location.href.indexOf("https://") == 
         });
     });
 }
-

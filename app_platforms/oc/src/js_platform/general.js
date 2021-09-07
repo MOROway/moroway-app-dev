@@ -50,14 +50,14 @@ function globalDR() {
     window.plugins.webintent.onNewIntent(function (url) {
         followIntent(url);
     });
-    Object.keys(window.localStorage).forEach(function(key){
+    /*Object.keys(window.localStorage).forEach(function(key){
         NativeStorage.setItem(key,window.localStorage.getItem(key));
     });
     localStorageSetItemOrig = window.localStorage.setItem.bind(localStorage);
     window.localStorage.setItem = function(key, value) {
         NativeStorage.setItem(key,value);
         return localStorageSetItemOrig(key,value);
-    };/*
+    };*/
     NativeStorage.keys(function(keys){
         keys.forEach(function(key){
             NativeStorage.getItem(key, function(result){
@@ -65,5 +65,5 @@ function globalDR() {
                 NativeStorage.remove(key);
             });
         });
-    });*/
+    });
 }

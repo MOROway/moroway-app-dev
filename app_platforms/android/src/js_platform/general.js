@@ -44,7 +44,7 @@ function setSettingsHTMLLocal(elem, standalone, storageArea, showLang) {
                 }
             }
         }
-        var settings = getSettings(false, storageArea);	
+        var settings = getSettings(false, storageArea);
         for (var i = 0; i < Object.keys(settings).length; i++) {
             var a = Object.values(settings)[i];
             var b = Object.keys(settings)[i];
