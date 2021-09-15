@@ -24,7 +24,7 @@ function placeOptions(state){
                 menu.container.style.visibility = "hidden";
                 settingsElem.style.display = "block";
                 settingsElem.querySelector("#settings-help").style.display = menu.help.style.display == "none" ? "block" : "none";
-            }, false);
+            });
             settingsElem.querySelector("#settings-apply").onclick = function(){
                 settings = getSettings();
                 if(typeof settingsElem.scrollTo == "function") {
@@ -36,14 +36,14 @@ function placeOptions(state){
             settingsElem.querySelector("#settings-help").onclick = function(){
                 followLink("./help","_blank",LINK_STATE_INTERNAL_HTML);
             };
-            menu.help.addEventListener("click", function(){followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);}, false);
-            menu.team.addEventListener("click", function(){followLink("?mode=multiplay", "_self", LINK_STATE_INTERNAL_HTML);}, false);
-            menu.single.addEventListener("click", showConfirmLeaveMultiplayerMode, false);
-            menu.controlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || controlCenter.showCarCenter; controlCenter.showCarCenter = false;}, false);
-            menu.carControlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || !controlCenter.showCarCenter; controlCenter.showCarCenter = true;}, false);
+            menu.help.addEventListener("click", function(){followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);});
+            menu.team.addEventListener("click", function(){followLink("?mode=multiplay", "_self", LINK_STATE_INTERNAL_HTML);});
+            menu.single.addEventListener("click", showConfirmLeaveMultiplayerMode);
+            menu.controlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || controlCenter.showCarCenter; controlCenter.showCarCenter = false;});
+            menu.carControlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || !controlCenter.showCarCenter; controlCenter.showCarCenter = true;});
             menu.chat.addEventListener("click", function(){
                 document.querySelector("#chat").openChat();
-            }, false);
+            });
             menu.changelog = document.createElement("button");
             var changelogChild = document.createElement("i");
             changelogChild.className = menu.help.querySelector("i").className;
@@ -51,7 +51,7 @@ function placeOptions(state){
             menu.changelog.className = menu.help.className;
             menu.changelog.id = "canvas-changelog";
             menu.changelog.title = getString("platformWindowsAppScreenChangelog");
-            menu.changelog.addEventListener("click", function(){followLink("whatsnew/#newest", "_blank", LINK_STATE_INTERNAL_HTML);}, false);
+            menu.changelog.addEventListener("click", function(){followLink("whatsnew/#newest", "_blank", LINK_STATE_INTERNAL_HTML);});
             menu.container.appendChild(menu.changelog);
             menu.feedback = document.createElement("button");
             var feedbackChild = document.createElement("i");
@@ -60,7 +60,7 @@ function placeOptions(state){
             menu.feedback.className = menu.help.className;
             menu.feedback.id = "canvas-feedback";
             menu.feedback.title = getString("platformWindowsAppScreenFeedback");
-            menu.feedback.addEventListener("click", function(){followLink(getServerHTMLLink("feedback", "off"), "_blank", LINK_STATE_NORMAL);}, false);
+            menu.feedback.addEventListener("click", function(){followLink(getServerHTMLLink("feedback", "off"), "_blank", LINK_STATE_NORMAL);});
             menu.container.appendChild(menu.feedback);
             menu.feedback.style.color = menu.changelog.style.color = menu.help.style.color = menu.settings.style.color = menu.team.style.color = menu.single.style.color = menu.controlCenter.style.color = menu.carControlCenter.style.color = menu.chat.style.color = "white";
             menu.feedback.style.background =  menu.changelog.style.background =  menu.help.style.background = menu.settings.style.background = menu.team.style.background = menu.single.style.background = menu.controlCenter.style.background = menu.carControlCenter.style.background = menu.chat.style.background = "black";

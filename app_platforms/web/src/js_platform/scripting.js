@@ -19,15 +19,15 @@ function placeOptions(state){
                 showServerNote();
             }
             setSettingsHTML(document.querySelector("#settings-inner"),false);
-            menu.items.help.addEventListener("click", function(){followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);}, false);
-            menu.items.team.addEventListener("click", function(){followLink("?mode=multiplay", "_self", LINK_STATE_INTERNAL_HTML);}, false);
-            menu.items.single.addEventListener("click", showConfirmLeaveMultiplayerMode, false);
+            menu.items.help.addEventListener("click", function(){followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);});
+            menu.items.team.addEventListener("click", function(){followLink("?mode=multiplay", "_self", LINK_STATE_INTERNAL_HTML);});
+            menu.items.single.addEventListener("click", showConfirmLeaveMultiplayerMode);
             var settingsElem = document.querySelector("#settings");
             menu.items.settings.addEventListener("click", function(){
                 menu.container.style.visibility = "hidden";
                 settingsElem.style.display = "block";
                 settingsElem.querySelector("#settings-help").style.display = menu.items.help.style.display == "none" ? "block" : "none";
-            }, false);
+            });
             settingsElem.querySelector("#settings-apply").onclick = function(){
                 settings = getSettings();
                 settingsElem.scrollTo(0,0);
@@ -37,11 +37,11 @@ function placeOptions(state){
             settingsElem.querySelector("#settings-help").onclick = function(){
                 followLink("./help","_blank",LINK_STATE_INTERNAL_HTML);
             };
-            menu.items.controlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || controlCenter.showCarCenter; controlCenter.showCarCenter = false;}, false);
-            menu.items.carControlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || !controlCenter.showCarCenter; controlCenter.showCarCenter = true;}, false);
+            menu.items.controlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || controlCenter.showCarCenter; controlCenter.showCarCenter = false;});
+            menu.items.carControlCenter.addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || !controlCenter.showCarCenter; controlCenter.showCarCenter = true;});
             menu.items.chat.addEventListener("click", function(){
                 document.querySelector("#chat").openChat();
-            }, false);
+            });
         }
         for (var item in menu.items) {
             menu.items[item].style.display = "inline";

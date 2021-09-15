@@ -16,7 +16,7 @@ function init_local(){
         }
     });
 
-    document.querySelector("#privacy-statement-link").addEventListener("click", function(){notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight); followLink( getServerHTMLLink("privacy"),"_blank", LINK_STATE_NORMAL);}, false);
+    document.querySelector("#privacy-statement-link").addEventListener("click", function(){notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight); followLink( getServerHTMLLink("privacy"),"_blank", LINK_STATE_NORMAL);});
     handleServerJSONValues("privacy", function(res){
         var privacy = document.querySelector("#privacy-statement");
         privacy.innerHTML = "";

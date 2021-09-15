@@ -24,15 +24,37 @@ function loop_files () {
 	done
 }
 
+function get_conf() {
+	conf=$(cat ./conf)
+	if [[ -f ./conf_local ]]; then
+		conf=$(cat ./conf ./conf_local)
+	fi
+	pattern="^$1="
+	if [[ "$2" == 1 ]] && [[ ! -z $(echo "$conf" | grep -e "^debug:$1=") ]]; then
+		pattern="^debug:$1="
+	fi
+	echo $( echo "$conf" | grep -e "$pattern" | tail -1 | sed s/[^=]*=// )
+}
+
 dir=$( dirname "$0" )
 cd "$dir"
+
+platforms=$(ls "../app_platforms")
+while getopts :d:p: opts; do
+   case $opts in
+	   d) d=$OPTARG;;
+	   p) p=$OPTARG;;
+   esac
+done
+debug=0
+if [[ "$d" == 1 ]]; then
+	debug=1
+fi
 
 [[ ! -d ../out ]] && mkdir ../out
 log "build started" 0
 
-conf=$(cat ./conf)
-
-version=$( echo "$conf" | grep "version=" | sed s/.*=// );
+version="$(get_conf "version" "$debug")"
 [[ -z "$version" ]] && logexit 1 "version empty"
 version_major=$(echo "$version" | sed 's/^\([0-9]\+\)\.[0-9]\+\.[0-9]\+$/\1/')
 version_minor=$(echo "$version" | sed 's/^[0-9]\+\.\([0-9]\+\)\.[0-9]\+$/\1/')
@@ -40,18 +62,16 @@ version_patch=$(echo "$version" | sed 's/^[0-9]\+\.[0-9]\+\.\([0-9]\+\)$/\1/')
 [[ "$version_major" != $(echo "$version_major" | sed 's/[^0-9]//g') || "$version_minor" != $(echo "$version_minor" | sed 's/[^0-9]//g') || "$version_patch" != $(echo "$version_patch" | sed 's/[^0-9]//g') ]] && logexit 1 "version invalid"
 date '+%Y' > changelogs/meta/year/"$version"
 
-beta=$( echo "$conf" | grep "beta=" | sed s/.*=// | sed s/[^0-9]//g );
+beta=$( echo "$(get_conf "beta" "$debug")" | sed s/[^0-9]//g )
 [[ -z "$beta" ]] && logexit 2 "beta empty"
-beta_platform=""
+beta_identifier=""
 if (( $beta > 0 )); then
-	beta_platform="-beta-$beta"
+	beta_identifier="-beta-$beta"
 fi
-platforms=$(ls "../app_platforms")
-while getopts :p: opts; do
-   case $opts in
-      p) p=$OPTARG;;
-   esac
-done
+
+sharelink=$( echo "$(get_conf "sharelink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g' )
+serverlink=$( echo "$(get_conf "serverlink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g' )
+
 valid_platform=0
 for platform in ${platforms[@]}; do
 	if [[ "$p" == "$platform" ]] || [[ -z "$p" ]]; then
@@ -59,16 +79,16 @@ for platform in ${platforms[@]}; do
 		log "platform/version $platform/$version.$beta"
 		from=../app
 		fromPf=../app_platforms/"$platform"
-		to=../out/"$platform"/"$version$beta_platform"
+		to=../out/"$platform"/"$version$beta_identifier"
 		[[ ! -d ../out/"$platform"/ ]] && mkdir ../out/"$platform"/
 		[[ -d "$to" ]] && rm -r "$to"
 		mkdir "$to"
 		if [[ $beta == 0 ]]; then
 			[[ -L ../out/"$platform"/current ]] && rm ../out/"$platform"/current
-			ln -s "$version$beta_platform" ../out/"$platform"/current
+			ln -s "$version$beta_identifier" ../out/"$platform"/current
 		fi
 		[[ -L ../out/"$platform"/latest ]] && rm ../out/"$platform"/latest
-		ln -s "$version$beta_platform" ../out/"$platform"/latest
+		ln -s "$version$beta_identifier" ../out/"$platform"/latest
 
 		# Copy Core and Platforms
 		cp -pr "$from/"* "$to"
@@ -90,7 +110,11 @@ for platform in ${platforms[@]}; do
 
 		# Modify Content
 		file="$to/src/js/appdata.js"
-		content=$(cat "$file" | sed "s/{{version_major}}/$version_major/" | sed "s/{{version_minor}}/$version_minor/" | sed "s/{{version_patch}}/$version_patch/" | sed "s/{{date_year}}/"$(date "+%Y")"/" | sed "s/{{date_month}}/"$(date "+%-m")"/" | sed "s/{{date_day}}/"$(date "+%-d")"/" | sed "s/{{platform}}/$platform/")
+		debugBool=false;
+		if [[ "$debug" == 1 ]]; then
+			debugBool=true;
+		fi
+		content=$(cat "$file" | sed "s/{{version_major}}/$version_major/" | sed "s/{{version_minor}}/$version_minor/" | sed "s/{{version_patch}}/$version_patch/" | sed "s/{{date_year}}/"$(date "+%Y")"/" | sed "s/{{date_month}}/"$(date "+%-m")"/" | sed "s/{{date_day}}/"$(date "+%-d")"/" | sed "s/{{platform}}/$platform/" | sed "s/{{beta}}/$beta/" | sed "s/{{debug}}/$debugBool/")
 		printf '%s' "$content" > "$file";
 		file="$to/src/js/general.js"
 		content=$(cat "$file")
@@ -126,7 +150,15 @@ for platform in ${platforms[@]}; do
 				content=$(echo "$content" | sed "s/[{]\+changelog=$clang[}]\+/$changelogs/")
 			fi
 		done
-		content=$(echo "$content" | sed "s/{{changelog=[^}]*}}//g")
+		hypertextprotocol=https
+		if [[ "$debug" == 1 ]]; then
+			hypertextprotocol=http
+		fi
+		websocketprotocol=wss
+		if [[ "$debug" == 1 ]]; then
+			websocketprotocol=ws
+		fi
+		content=$(echo "$content" | sed "s/{{changelog=[^}]*}}//g" | sed "s!{{sharelink}}!$sharelink!" | sed "s!{{shareserver}}!$(echo "$sharelink" | sed "s!\(.*:/\{2\}[^/]*\).*!\1/!")!" | sed "s!{{serverlink}}!$serverlink!" | sed "s/{{hypertextprotocol}}/$hypertextprotocol/" | sed "s/{{websocketprotocol}}/$websocketprotocol/")
 		printf '%s' "$content" > "$file";
 		all_files=$( loop_files "$to" "$to" )
 		file="$to/sw.js"
@@ -150,7 +182,7 @@ for platform in ${platforms[@]}; do
 			if [[ -f "$file_ex" ]]; then
 				rm "$file_ex"
 			fi
-			content=$(cat "$file" | sed "s/{{sw_platform}}/$platform/" | sed "s/{{sw_version}}/$version/" | sed "s/{{sw_beta}}/$beta_platform/" | sed "s#{{sw_files}}#$sw_files_text#")
+			content=$(cat "$file" | sed "s/{{sw_platform}}/$platform/" | sed "s/{{sw_version}}/$version/" | sed "s/{{sw_beta}}/$beta_identifier/" | sed "s#{{sw_files}}#$sw_files_text#")
 			printf '%s' "$content" > "$file";
 		fi
 		for html_file in ${all_files[@]}; do

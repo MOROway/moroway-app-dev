@@ -10,12 +10,16 @@ function followLink(input1,input2, input3){
 
 ////Optional code (app works without it)
 //Enable offline functionality
-if ("serviceWorker" in navigator && window.location.href.indexOf("https://") == 0) {
+if ("serviceWorker" in navigator && window.location.href.indexOf(PROTOCOL_HTTP + "://") == 0) {
     window.addEventListener("load", function() {
         navigator.serviceWorker.register(document.baseURI + "sw.js").then(function(registration) {
-            console.log("ServiceWorker registration successful with scope: ", registration.scope);
+            if(APP_DATA.debug) {
+                console.log("ServiceWorker registration successful with scope: ", registration.scope);
+            }
         }, function(err) {
-            console.log("ServiceWorker registration failed: ", err);
+            if(APP_DATA.debug) {
+                console.log("ServiceWorker registration failed: ", err);
+            }
         });
     });
 }
