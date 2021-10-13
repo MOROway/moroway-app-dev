@@ -109,6 +109,7 @@ for platform in ${platforms[@]}; do
 		fi
 
 		# Modify Content
+		# App Data
 		file="$to/src/js/appdata.js"
 		debugBool=false;
 		if [[ "$debug" == 1 ]]; then
@@ -116,6 +117,7 @@ for platform in ${platforms[@]}; do
 		fi
 		content=$(cat "$file" | sed "s/{{version_major}}/$version_major/" | sed "s/{{version_minor}}/$version_minor/" | sed "s/{{version_patch}}/$version_patch/" | sed "s/{{date_year}}/"$(date "+%Y")"/" | sed "s/{{date_month}}/"$(date "+%-m")"/" | sed "s/{{date_day}}/"$(date "+%-d")"/" | sed "s/{{platform}}/$platform/" | sed "s/{{beta}}/$beta/" | sed "s/{{debug}}/$debugBool/")
 		printf '%s' "$content" > "$file";
+		# General Script
 		file="$to/src/js/general.js"
 		content=$(cat "$file")
 		for clangdir in changelogs/*
@@ -160,6 +162,7 @@ for platform in ${platforms[@]}; do
 		fi
 		content=$(echo "$content" | sed "s/{{changelog=[^}]*}}//g" | sed "s!{{sharelink}}!$sharelink!" | sed "s!{{shareserver}}!$(echo "$sharelink" | sed "s!\(.*:/\{2\}[^/]*\).*!\1/!")!" | sed "s!{{serverlink}}!$serverlink!" | sed "s/{{hypertextprotocol}}/$hypertextprotocol/" | sed "s/{{websocketprotocol}}/$websocketprotocol/")
 		printf '%s' "$content" > "$file";
+		# Service Worker
 		all_files=$( loop_files "$to" "$to" )
 		file="$to/sw.js"
 		if [[ -f "$file" ]]; then
@@ -185,6 +188,7 @@ for platform in ${platforms[@]}; do
 			content=$(cat "$file" | sed "s/{{sw_platform}}/$platform/" | sed "s/{{sw_version}}/$version/" | sed "s/{{sw_beta}}/$beta_identifier/" | sed "s#{{sw_files}}#$sw_files_text#")
 			printf '%s' "$content" > "$file";
 		fi
+		# HTML Content
 		for html_file in ${all_files[@]}; do
 			if [[ "$html_file" =~ .html$ ]]; then
 				if [[ -f "$to/manifest.webmanifest" ]]; then
@@ -197,14 +201,11 @@ for platform in ${platforms[@]}; do
 					then
 						content=$(echo "$content" | perl -0pe "s/\{\{dep_check\}\}//")
 					else
-						content=$(echo "$content" | perl -0pe "s/\n.*\{\{dep_check\}\}.*\n/\n/")
+						content=$(echo "$content" | perl -0pe "s/(^|[\n]).*\{\{dep_check\}\}.*\n/\n/")
 					fi
 				done
 				printf '%s' "$content" > "$to/$html_file"
 
-			fi
-			if [[ $use == 1 ]] && [[ $sw_file != "index.html" ]]; then
-				sw_files_text="$sw_files_text'$sw_file',"
 			fi
 		done
 

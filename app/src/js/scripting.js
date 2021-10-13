@@ -154,8 +154,13 @@ function onMouseUp(event) {
 }
 function onMouseOut(event) {
     event.preventDefault();
+    hardware.mouse.out = true;
     hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.keyboard.keysHold = [];
     hardware.mouse.cursor = "none";
+}
+function onMouseEnter(event) {
+    hardware.mouse.out = false;
 }
 function onMouseWheel(event) {
     event.preventDefault();
@@ -200,20 +205,20 @@ function onMouseRight(event) {
 function getTouchMove(event) {
     event.preventDefault();
     if( event.changedTouches.length == 1) {
-        var deltaX=-2*(hardware.mouse.moveX - (event.changedTouches[0].clientX*client.devicePixelRatio));
-        var deltaY=-2*(hardware.mouse.moveY - (event.changedTouches[0].clientY*client.devicePixelRatio));
-        if(client.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height)/10) {
+        var deltaX=-5*(hardware.mouse.moveX - (event.changedTouches[0].clientX*client.devicePixelRatio));
+        var deltaY=-5*(hardware.mouse.moveY - (event.changedTouches[0].clientY*client.devicePixelRatio));
+        if(client.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height)/30) {
             getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
             hardware.mouse.isHold = false;
         } else {
-            hardware.mouse.moveX = (event.changedTouches[0].clientX*client.devicePixelRatio);
-            hardware.mouse.moveY = (event.changedTouches[0].clientY*client.devicePixelRatio);
             hardware.mouse.isMoving = true;
             if(typeof movingTimeOut !== "undefined"){
                 window.clearTimeout(movingTimeOut);
             }
             movingTimeOut = window.setTimeout(function(){hardware.mouse.isMoving = false;}, 5000);
         }
+        hardware.mouse.moveX = (event.changedTouches[0].clientX*client.devicePixelRatio);
+        hardware.mouse.moveY = (event.changedTouches[0].clientY*client.devicePixelRatio);
     } else if( event.changedTouches.length == 2) {
         hardware.mouse.isHold = false;
         var hypot = Math.hypot( event.changedTouches[0].clientX - event.changedTouches[1].clientX, event.changedTouches[0].clientY - event.touches[1].clientY);
@@ -232,7 +237,7 @@ function getTouchStart(event) {
     delete client.hasPinched;
     var xTS = (event.changedTouches[0].clientX*client.devicePixelRatio);
     var yTS = (event.changedTouches[0].clientY*client.devicePixelRatio);
-    if(Math.max(hardware.mouse.moveX,xTS) < 1.1*Math.min(hardware.mouse.moveX,xTS) && Math.max(hardware.mouse.moveY,yTS) < 1.1*Math.min(hardware.mouse.moveY,yTS) && Date.now() - hardware.mouse.downTime < 2*doubleClickTime && Date.now() - hardware.mouse.upTime < 2*doubleClickTime) {
+    if(Math.max(hardware.mouse.moveX,xTS) < 1.1 * Math.min(hardware.mouse.moveX,xTS) && Math.max(hardware.mouse.moveY,yTS) < 1.1 * Math.min(hardware.mouse.moveY,yTS) && Date.now() - hardware.mouse.downTime < 2 * doubleClickTime && Date.now() - hardware.mouse.upTime < 2*doubleClickTime) {
         client.PinchX = xTS;
         client.PinchY = yTS;
         getGesture({type: "doubletap", deltaX:client.PinchX,deltaY:client.PinchY});
@@ -241,8 +246,8 @@ function getTouchStart(event) {
         hardware.mouse.rightClickPrepare = true;
     } else {
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
-        hardware.mouse.moveX = hardware.mouse.downX =  xTS;
-        hardware.mouse.moveY = hardware.mouse.downY =  yTS;
+        hardware.mouse.moveX = hardware.mouse.downX = xTS;
+        hardware.mouse.moveY = hardware.mouse.downY = yTS;
         if(hardware.mouse.isHoldTimeout !== undefined && hardware.mouse.isHoldTimeout !== null) {
             window.clearTimeout(hardware.mouse.isHoldTimeout);
         }
@@ -273,11 +278,15 @@ function getTouchEnd(event) {
     }
 
 }
-function getTouchLeave(event) {
+function getTouchCancel(event) {
     hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.keyboard.keysHold = [];
 }
 
 function onKeyDown(event) {
+    if(!client.hidden && !hardware.mouse.out) {
+        hardware.keyboard.keysHold[event.key] = true;
+    }
     if(event.ctrlKey && (event.key == "+" || event.key == "-" || (event.key == "0" && client.realScale > 1))) {
         event.preventDefault();
         if(client.realScale == 1) {
@@ -295,34 +304,14 @@ function onKeyDown(event) {
         }
         getGesture({type: "pinchend"});
         delete client.hasPinched;
-    } else if(client.realScale > 1 && isHardwareAvailable("cursorascircle") && settings.cursorascircle && (event.key == "ArrowRight" || event.key == "ArrowLeft" || event.key == "ArrowDown" || event.key == "ArrowUp")) {
-        event.preventDefault();
-        var oTSX=client.touchScaleX;
-        var oTSY=client.touchScaleY;
-        var deltaDiv = 20;
-        var deltaX,deltaY;
-        if(event.key == "ArrowRight") {
-            deltaX=-canvas.width*client.realScale/deltaDiv;
-            deltaY=0;
-        } else if(event.key == "ArrowLeft") {
-            deltaX=canvas.width*client.realScale/deltaDiv;
-            deltaY=0;
-        } else if(event.key == "ArrowUp") {
-            deltaX=0;
-            deltaY=canvas.height*client.realScale/deltaDiv;
-        } else if(event.key == "ArrowDown") {
-            deltaX=0;
-            deltaY=-canvas.height*client.realScale/deltaDiv;
-        }
-        getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
-        client.touchScaleXKeyFake -= (client.touchScaleX-oTSX)/client.realScale;
-        client.touchScaleYKeyFake -= (client.touchScaleY-oTSY)/client.realScale;
     } else if ((event.key == "ArrowUp" && (konamistate === 0 || konamistate == 1)) || (event.key == "ArrowDown" && (konamistate == 2 || konamistate == 3)) || (event.key == "ArrowLeft" && (konamistate == 4 || konamistate == 6)) || (event.key == "ArrowRight" && (konamistate == 5 || konamistate == 7)) || (event.key == "b" && konamistate == 8)){
         if(typeof konamiTimeOut !== "undefined"){
             window.clearTimeout(konamiTimeOut);
         }
-        konamistate +=1;
-        konamiTimeOut = window.setTimeout(function(){konamistate = 0;}, 1000);
+        konamistate++;
+        konamiTimeOut = window.setTimeout(function(){
+            konamistate = 0;
+        }, 1000);
     } else if (event.key == "a" && konamistate == 9){
         if(typeof konamiTimeOut !== "undefined"){
             window.clearTimeout(konamiTimeOut);
@@ -338,6 +327,15 @@ function onKeyDown(event) {
             drawBackground();
         }
     }
+}
+function onKeyUp(event) {
+    hardware.keyboard.keysHold[event.key] = false;
+}
+
+function onVisibilityChange() {
+    client.hidden = document.visibilityState == "hidden";
+    hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.keyboard.keysHold = [];
 }
 
 /******************************************
@@ -1009,7 +1007,28 @@ function drawObjects() {
     if(hardware.mouse.cursor != "none") {
         hardware.mouse.cursor = "default";
     }
-
+    if(client.realScale > 1 && isHardwareAvailable("cursorascircle") && settings.cursorascircle) {
+        var oTSX=client.touchScaleX;
+        var oTSY=client.touchScaleY;
+        var deltaDiv = 20;
+        var deltaX = 0;
+        var deltaY = 0;
+        if(hardware.keyboard.keysHold["ArrowLeft"]) {
+            deltaX += canvas.width*client.realScale/deltaDiv;
+        }
+        if(hardware.keyboard.keysHold["ArrowUp"]) {
+            deltaY += canvas.height*client.realScale/deltaDiv;
+        }
+        if(hardware.keyboard.keysHold["ArrowRight"]) {
+            deltaX -= canvas.width*client.realScale/deltaDiv;
+        }
+        if(hardware.keyboard.keysHold["ArrowDown"]) {
+            deltaY -= canvas.height*client.realScale/deltaDiv;
+        }
+        getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
+        client.touchScaleXKeyFake -= (client.touchScaleX-oTSX)/client.realScale;
+        client.touchScaleYKeyFake -= (client.touchScaleY-oTSY)/client.realScale;
+    }
     /////TRAINS/////
     var inTrain = false;
     if(!resized) {
@@ -1162,7 +1181,7 @@ function drawObjects() {
 
     /////KONAMI/Animals/////
     if(konamistate < 0) {
-        var animalPos = [{x: background.x+background.width*0.88, y: background.y+background.height*0.58},{x: background.x+background.width*0.055, y: background.y+background.height*0.07}];
+        var animalPos = [{x: background.x+background.width*0.88, y: background.y+background.height*0.57},{x: background.x+background.width*0.055, y: background.y+background.height*0.07}];
         var animals = [];
         var animal = 0;
         while (getString(["appScreenKonamiAnimals",animal]) != "undefined" && animal < animalPos.length) {
@@ -1693,6 +1712,18 @@ function drawObjects() {
         context.beginPath();
         context.arc(switches.innerWide.left.x+background.x,(switches.innerWide.left.y)*switchesBeforeFac+background.y, background.width/100,0,2*Math.PI);
         context.fill();
+        context.restore();
+        context.save();
+        context.strokeStyle = "orange";
+        context.lineWidth = 3;
+        context.beginPath();
+        context.moveTo(switches.sidings2.left.x+background.x-background.width/20,switches.sidings2.left.y+background.y+switchesBeforeAddSidings[0]);
+        context.lineTo(switches.sidings2.left.x+background.x,switches.sidings2.left.y+background.y+switchesBeforeAddSidings[0]);
+        context.stroke();
+        context.beginPath();
+        context.moveTo(switches.sidings3.left.x+background.x-background.width/20,switches.sidings3.left.y+background.y+switchesBeforeAddSidings[1]);
+        context.lineTo(switches.sidings3.left.x+background.x,switches.sidings3.left.y+background.y+switchesBeforeAddSidings[1]);
+        context.stroke();
         context.restore();
         context.lineWidth = 2;
         context.fillStyle = "black";
@@ -2268,7 +2299,7 @@ var trains;
 var minTrainSpeed = 10;
 var trainParams;
 var switches = {inner2outer: {left: {turned: false, angles: {normal: 1.01*Math.PI, turned: 0.941*Math.PI}}, right: {turned: false, angles: {normal: 1.5*Math.PI, turned: 1.56*Math.PI}}}, outer2inner: {left: {turned: false, angles: {normal: 0.25*Math.PI, turned: 2.2*Math.PI}}, right: {turned: false, angles: {normal: 0.27*Math.PI, turned: 0.35*Math.PI}}}, innerWide: {left: {turned: false, angles: {normal: 1.44*Math.PI, turned: 1.37*Math.PI}}, right: {turned: false, angles: {normal: 1.02*Math.PI, turned: 1.1*Math.PI}}}, outerAltState3: {left: {turned: true, angles: {normal: 1.75*Math.PI, turned: 1.85*Math.PI}}, right: {turned: true, angles: {normal: 0.75*Math.PI, turned: 0.65*Math.PI}}}, sidings1: {left: {turned: false, angles: {normal: 1.75*Math.PI, turned: 1.7*Math.PI}}}, sidings2: {left: {turned: false, angles: {normal: 1.65*Math.PI, turned: 1.72*Math.PI}}}, sidings3: {left: {turned: false, angles: {normal: 1.65*Math.PI, turned: 1.73*Math.PI}}}};
-var switchesBeforeFac;
+var switchesBeforeFac, switchesBeforeAddSidings;
 
 var cars = [{src: 16, fac: 0.02, speed: 0.0008, startFrameFac: 0.65, angles: {start: Math.PI,normal: 0}},{src: 17, fac: 0.02, speed: 0.001, startFrameFac: 0.335, angles: {start: 0, normal: Math.PI}},{src: 0, fac: 0.0202, speed: 0.00082, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}}];
 var carPaths = [{start: [{type: "curve_right", x:[0.29,0.29],y:[0.38,0.227]}], normal: [{type: "curve_hright", x:[0.29,0.29],y:[0.227,0.347]},{type: "linear_vertical", x:[0,0], y: [0,0]},{type: "curve_hright2", x:[0,0], y: [0.282,0.402]},{type: "curve_l2r", x:[0,0.25], y: [0.402,0.412]},{type: "linear", x: [0.25,0.225], y: [0.412,0.412]},{type: "curve_right", x: [0.225,0.225], y: [0.412,0.227]},{type: "linear", x:[0.225,0.29], y:[0.227,0.227]}]},{start: [{type: "curve_left", x:[0.26,0.26], y: [0.3,0.198]},{type: "curve_r2l", x:[0.26,0.216], y: [0.198,0.197]}], normal: [{type: "curve_left", x:[0.216,0.216], y: [0.197,0.419]},{type: "linear", x:[0.216,0.246], y:[0.419,419]},{type: "curve_r2l", x:[0.246,0.286], y:[0.419,0.43]},{type: "linear", x:[0.286,0.31], y:[0.43,0.43]},{type: "curve_hleft", x:[0.31,0.31], y: [0.43,0.33]},{type: "linear_vertical", x:[0,0], y: [0,0]},{type: "curve_hleft2", x:[0,0], y: [0.347,0.197]},{type: "linear", x:[0,0.216], y:[0.197,0.197]},{type: "curve_left", x:[0.216,0.216], y: [0.197,0.419]},{type: "linear", x:[0.216,0.246], y:[0.419,419]},{type: "curve_r2l", x:[0.246,0.276], y:[0.419,0.434]},{type: "linear", x:[0.276,0.38], y:[0.434,434]},{type: "curve_l2r", x:[0.38,0.46], y:[0.434,0.419]},{type: "linear", x:[0.46,0.631], y:[0.419,0.419]},{type: "curve_r2l", x:[0.631,0.665], y:[0.419,0.43]},{type: "curve_left", x:[0.665,0.665], y: [0.43,0.322]},{type: "curve_l2r", x:[0.665,0.59], y: [0.322,0.39]},{type: "linear", x:[0.59,0.339], y:[0.39,0.39]},{type: "curve_hright", x:[0.339,0.339], y: [0.39,0.32]},{type: "linear_vertical", x:[0,0], y: [0,0]},{type: "curve_hleft2", x:[0,0], y: [0.347,0.197]},{type: "linear", x:[0,0.216], y:[0.197,0.197]}]},{start: [{type: "curve_right", x:[0.2773,0.2773],y:[0.38,0.227]},{type: "linear", x:[0.2773,0.29],y:[0.227,0.227]}], normal: [{type: "curve_hright", x:[0.29,0.29],y:[0.227,0.347]},{type: "linear_vertical", x:[0,0], y: [0,0]},{type: "curve_hleft2", x:[0,0], y: [0.299,0.419]},{type: "linear", x:[0,0.631], y:[0.419,0.419]},{type: "curve_r2l", x:[0.631,0.665], y:[0.419,0.43]},{type: "curve_left", x:[0.665,0.665], y: [0.43,0.322]},{type: "curve_l2r", x:[0.665,0.59], y: [0.322,0.39]},{type: "linear", x:[0.59,0.339], y:[0.39,0.39]},{type: "curve_l2r", x:[0.339,0.25], y: [0.39,0.412]},{type: "linear", x: [0.25,0.225], y: [0.412,0.412]},{type: "curve_right", x: [0.225,0.225], y: [0.412,0.227]},{type: "linear", x:[0.225,0.29], y:[0.227,0.227]}]}];
@@ -2281,7 +2312,7 @@ var classicUI = {trainSwitch: {src: 11, selectedTrainDisplay: {}}, transformer: 
 
 var controlCenter = {showCarCenter: null, fontFamily: "sans-serif"};
 
-var hardware = {mouse: {moveX:0, moveY:0,downX:0, downY:0, downTime: 0,upX:0, upY:0, upTime: 0, isMoving: false, isHold: false, rightClick: false, cursor: "default"}};
+var hardware = {mouse: {moveX:0, moveY:0,downX:0, downY:0, downTime: 0,upX:0, upY:0, upTime: 0, isMoving: false, isHold: false, rightClick: false, cursor: "default"}, keyboard: {keysHold: []}};
 var client = {devicePixelRatio: 1,realScaleMax:6,realScaleMin:1.2};
 var onlineGame = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {"t": ["src", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], "tc": ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"]}, chatSticker: 7, resized: false};
 var onlineConnection = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
@@ -2364,27 +2395,21 @@ function resize() {
 window.onload = function() {
 
     function chooseInputMethod(event){
-        client.realScale = 1;
-        client.lastTouchScale=1;
-        client.touchScale=1;
-        client.touchScaleX=0;
-        client.touchScaleY=0;
-        client.touchScaleXKeyFake=0;
-        client.touchScaleYKeyFake=0;
-        var type = event.type;
+        hardware.mouse.out = false;
         canvasForeground.removeEventListener("touchstart",chooseInputMethod);
         canvasForeground.removeEventListener("mousemove",chooseInputMethod);
         canvasForeground.addEventListener("touchmove", getTouchMove);
         canvasForeground.addEventListener("touchstart", getTouchStart);
-        canvasForeground.addEventListener("touchleave", getTouchLeave);
         canvasForeground.addEventListener("touchend", getTouchEnd);
+        canvasForeground.addEventListener("touchcancel", getTouchCancel);
         canvasForeground.addEventListener("mousemove", onMouseMove);
         canvasForeground.addEventListener("mousedown", onMouseDown);
         canvasForeground.addEventListener("mouseup", onMouseUp);
         canvasForeground.addEventListener("mouseout", onMouseOut);
+        canvasForeground.addEventListener("mouseenter", onMouseEnter);
         canvasForeground.addEventListener("wheel", onMouseWheel);
         canvasForeground.addEventListener("contextmenu", onMouseRight);
-        if(type == "touchstart"){
+        if(event.type == "touchstart"){
             client.chosenInputMethod = "touch";
             getTouchStart(event);
         } else {
@@ -2835,6 +2860,9 @@ window.onload = function() {
                 });
                 resize();
                 drawInterval = message.data.animateInterval;
+                client.realScale = client.lastTouchScale = client.touchScale = 1;
+                client.touchScaleX = client.touchScaleY= 0;
+                client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
                 drawObjects();
                 var timeWait = 0.5;
                 var timeLoad = 1.5;
@@ -2946,7 +2974,8 @@ window.onload = function() {
                 }
             } else if(message.data.k == "debug") {
                 rotationPoints = message.data.rotationPoints;
-                switchesBeforeFac =message.data.switchesBeforeFac;
+                switchesBeforeFac = message.data.switchesBeforeFac;
+                switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
                 if(!debug) {
                     console.log(message.data.animateInterval);
                 }
@@ -3005,7 +3034,10 @@ window.onload = function() {
     contextSemiForeground = canvasSemiForeground.getContext("2d");
     contextForeground = canvasForeground.getContext("2d");
 
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    onVisibilityChange();
     document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
     if(getQueryString("mode") == "multiplay") {
         if ("WebSocket" in window) {
             onlineGame.enabled = true;
