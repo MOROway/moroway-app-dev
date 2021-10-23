@@ -37,7 +37,7 @@ function get_conf() {
 }
 
 dir=$( dirname "$0" )
-cd "$dir"
+cd "$dir" || logexit 3 "set working dir failed"
 
 platforms=$(ls "../app_platforms")
 while getopts :d:p: opts; do
@@ -216,7 +216,7 @@ for platform in ${platforms[@]}; do
 		if [[ -f ../wrapper/"$platform"/build.sh ]];
 		then
 			log "start platform-wrapper build"
-			$(../wrapper/"$platform"/build.sh -v "$version" > /dev/null 2>&1) || logexit 1000 "platform-wrapper build"
+			$(../wrapper/"$platform"/build.sh -b "$beta" -d "$debug" -o "$(realpath ../out/"$platform"/latest/)" -v "$version" -w "$(realpath .)" > /dev/null 2>&1) || logexit 1000 "platform-wrapper build"
 			log "finished platform-wrapper build"
 		fi
 

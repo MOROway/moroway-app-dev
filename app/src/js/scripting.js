@@ -17,7 +17,7 @@ function extendedMeasureViewspace() {
 }
 
 function drawImage(pic,x,y,width,height, cxt){
-    if( cxt == undefined) {
+    if(cxt == undefined) {
         cxt = context;
     }
     cxt.drawImage(pic,Math.floor(x),Math.floor(y),Math.floor(width),Math.floor(height));
@@ -89,8 +89,8 @@ function getGesture(gesture){
         client.realScale = 1;
         client.touchScale = 1;
         client.lastTouchScale = 1;
-        client.touchScaleX=0;
-        client.touchScaleY=0;
+        client.touchScaleX = 0;
+        client.touchScaleY = 0;
     } else {
         hardware.mouse.isMoving = true;
     }
@@ -205,8 +205,8 @@ function onMouseRight(event) {
 function getTouchMove(event) {
     event.preventDefault();
     if( event.changedTouches.length == 1) {
-        var deltaX=-5*(hardware.mouse.moveX - (event.changedTouches[0].clientX*client.devicePixelRatio));
-        var deltaY=-5*(hardware.mouse.moveY - (event.changedTouches[0].clientY*client.devicePixelRatio));
+        var deltaX = -5 * (hardware.mouse.moveX - (event.changedTouches[0].clientX*client.devicePixelRatio));
+        var deltaY = -5 * (hardware.mouse.moveY - (event.changedTouches[0].clientY*client.devicePixelRatio));
         if(client.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height)/30) {
             getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
             hardware.mouse.isHold = false;
@@ -311,21 +311,23 @@ function onKeyDown(event) {
         konamistate++;
         konamiTimeOut = window.setTimeout(function(){
             konamistate = 0;
-        }, 1000);
+        }, 500);
     } else if (event.key == "a" && konamistate == 9){
         if(typeof konamiTimeOut !== "undefined"){
             window.clearTimeout(konamiTimeOut);
         }
         konamistate = -1;
         drawBackground();
-    } else {
-        if(typeof konamiTimeOut !== "undefined"){
-            window.clearTimeout(konamiTimeOut);
-        }
-        konamistate = (konamistate < 0 && konamistate > -2) ? --konamistate : 0;
+    } else if (konamistate < 0 && (event.key == "Enter" || event.key == " " || event.key == "a" || event.key == "b")) {
+        konamistate = (konamistate > -2) ? --konamistate : 0;
         if(konamistate == 0) {
             drawBackground();
         }
+    } else if (konamistate > 0) {
+        if(typeof konamiTimeOut !== "undefined"){
+            window.clearTimeout(konamiTimeOut);
+        }
+        konamistate = 0;
     }
 }
 function onKeyUp(event) {
@@ -350,7 +352,7 @@ function drawBackground() {
     var pic = pics[background.src];
     var width = pic.height/pic.width - canvas.height/canvas.width < 0 ? canvas.height*(pic.width/pic.height) : canvas.width;
     var height = pic.height/pic.width - canvas.height/canvas.width < 0 ? canvas.height : canvas.width*(pic.height/pic.width);
-    if(client.realScale == 1) {
+    if(konamistate >= 0 && client.realScale == 1) {
         drawImage(pic, -(width-canvas.width)/2,-(height-canvas.height)/2, width,height, contextBackground);
     }
     /////DRAW/BACKGROUND/Layer-1/////
@@ -373,31 +375,31 @@ function drawBackground() {
         contextSemiForeground.fillStyle = bgGradient;
         contextSemiForeground.fillRect(0,0,background.x,canvas.height);
         contextSemiForeground.fillRect(0,0,canvas.width,background.y);
-        contextSemiForeground.fillRect(canvas.width-background.x,0,background.x,canvas.height);
-        contextSemiForeground.fillRect(0,canvas.height-background.y,canvas.width,background.y);
+        contextSemiForeground.fillRect(background.x+background.width,0,background.x,canvas.height);
+        contextSemiForeground.fillRect(0,background.y+background.height,canvas.width,background.y);
         contextSemiForeground.restore();
     }
 
     /////DRAW/BACKGROUND/Konami/////
     if(konamistate < 0) {
         /////DRAW/BACKGROUND/Layer-1/////
-        var imgData = contextBackground.getImageData(background.x, background.y, background.width, background.height);
+        var imgData = contextBackground.getImageData(0, 0, canvas.width, canvas.height);
         var data = imgData.data;
         for (var i = 0; i < data.length; i += 8) {
             data[i] = data[i+4] = Math.min(255,data[i] < 120 ? data[i]/1.3 : data[i]*1.1);
             data[i+1] = data[i+5] = Math.min(255,data[i+1] < 120 ? data[i+1]/1.3 : data[i+1]*1.1);
             data[i+2] = data[i+6] = Math.min(255,data[i+2] < 120 ? data[i+2]/1.3 : data[i+2]*1.1);
         }
-        contextBackground.putImageData(imgData, background.x, background.y);
+        contextBackground.putImageData(imgData, 0, 0);
         /////DRAW/BACKGROUND/Layer-2/////
-        imgData = contextSemiForeground.getImageData(background.x, background.y, background.width, background.height);
+        imgData = contextSemiForeground.getImageData(0, 0, canvas.width, canvas.height);
         data = imgData.data;
         for (i = 0; i < data.length; i += 8) {
             data[i] = data[i+4] = Math.min(255,data[i] < 120 ? data[i]/1.3 : data[i]*1.1);
             data[i+1] = data[i+5] = Math.min(255,data[i+1] < 120 ? data[i+1]/1.3 : data[i+1]*1.1);
             data[i+2] = data[i+6] = Math.min(255,data[i+2] < 120 ? data[i+2]/1.3 : data[i+2]*1.1);
         }
-        contextSemiForeground.putImageData(imgData, background.x, background.y);
+        contextSemiForeground.putImageData(imgData, 0, 0);
     }
 }
 
@@ -649,10 +651,7 @@ function drawObjects() {
                                     actionSync("trains", input1, [{"accelerationSpeed": trains[input1].accelerationSpeed *= -1},{"speedInPercent":50}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",input1]]}]);
                                 } else {
                                     actionSync("trains", input1, [{"move": true},{"speedInPercent":50}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",input1]]}]);
-                                    trains[input1].move = true;
-                                    trains[input1].accelerationSpeed = 1;
                                 }
-                                trains[input1].speedInPercent = 50;
                             }
                         }
                     }, (hardware.lastInputTouch > hardware.lastInputMouse) ? longTouchWaitTime : doubleClickWaitTime);
@@ -798,7 +797,7 @@ function drawObjects() {
                 context.strokeStyle = "rgb(" + Math.floor(input1/carWays.length*255) + ",0,0)";
                 context.lineWidth = 1;
                 context.moveTo(background.x+carWays[input1][currentObject.cType][0].x,background.y+carWays[input1][currentObject.cType][0].y);
-                for(var i = 1; i < carWays[input1][currentObject.cType].length;i+=10){
+                for(var i = 1; i < carWays[input1][currentObject.cType].length;i += 10){
                     context.lineTo(background.x+carWays[input1][currentObject.cType][i].x,background.y+carWays[input1][currentObject.cType][i].y);
                 }
                 if(currentObject.cType == "normal") {
@@ -1008,8 +1007,8 @@ function drawObjects() {
         hardware.mouse.cursor = "default";
     }
     if(client.realScale > 1 && isHardwareAvailable("cursorascircle") && settings.cursorascircle) {
-        var oTSX=client.touchScaleX;
-        var oTSY=client.touchScaleY;
+        var oTSX = client.touchScaleX;
+        var oTSY = client.touchScaleY;
         var deltaDiv = 20;
         var deltaX = 0;
         var deltaY = 0;
@@ -1068,7 +1067,7 @@ function drawObjects() {
                 context.moveTo(background.x+carWays[i][cCars[i].cType][counter].x,background.y+carWays[i][cCars[i].cType][counter].y);
             }
             if(carParams.isBackToRoot) {
-                for(var j = arrLen-1; j >= 0; j-=cAbstrNo) {
+                for(var j = arrLen-1; j >= 0; j -= cAbstrNo) {
                     points.x[i][countJ] = carWays[i][cCars[i].cType][counter].x;
                     points.y[i][countJ] = carWays[i][cCars[i].cType][counter].y;
                     points.angle[i][countJ] = carWays[i][cCars[i].cType][counter].angle;
@@ -1084,7 +1083,7 @@ function drawObjects() {
                     counter = counter-cAbstrNo < 0 ? (carWays[i][cCars[i].cType].length-1)+(counter-cAbstrNo) : counter-cAbstrNo;
                 }
             } else {
-                for(var j = 0; j < arrLen; j+=cAbstrNo) {
+                for(var j = 0; j < arrLen; j += cAbstrNo) {
                     points.x[i][countJ] = carWays[i][cCars[i].cType][counter].x;
                     points.y[i][countJ] = carWays[i][cCars[i].cType][counter].y;
                     points.angle[i][countJ] = carWays[i][cCars[i].cType][counter].angle;
@@ -1112,14 +1111,14 @@ function drawObjects() {
             changeNum++;
             for(var i = 0; i < cCars.length; i++) {
                 for(var k = 0; k < cCars.length; k++) {
-                    if(i!=k && !cCars[i].collStop && !cCars[i].parking) {
+                    if(i != k && !cCars[i].collStop && !cCars[i].parking) {
                         cCars[i].collStopNo[k] = carAutoModeIsFutureCollision(i,k);
                     }
                 }
             }
             for(var i = 0; i < cCars.length; i++) {
                 for(var k = 0; k < cCars.length; k++) {
-                    if(i!=k && !cCars[i].collStop){
+                    if(i != k && !cCars[i].collStop){
                         var a = cCars[i].collStopNo[k]/cCars[i].speed;
                         var b = cCars[i].collStopNo[k]/cCars[k].speed;
                         var isA;
@@ -1315,7 +1314,7 @@ function drawObjects() {
                     hardware.mouse.isHold = false;
                 }
                 if(trainParams.selected >= trains.length) {
-                    trainParams.selected=0;
+                    trainParams.selected = 0;
                 } else if (trainParams.selected < 0) {
                     trainParams.selected = trains.length-1;
                 }
@@ -1326,11 +1325,11 @@ function drawObjects() {
         }
         if(settings.alwaysShowSelectedTrain){
             context.font = classicUI.trainSwitch.selectedTrainDisplay.font;
-            context.fillStyle="#000";
-            context.strokeStyle="#eee";
+            context.fillStyle = "#000";
+            context.strokeStyle = "#eee";
             context.fillRect(classicUI.trainSwitch.x+classicUI.trainSwitch.width,classicUI.trainSwitch.y+classicUI.trainSwitch.height-sTDposY, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
             context.strokeRect(classicUI.trainSwitch.x+classicUI.trainSwitch.width,classicUI.trainSwitch.y+classicUI.trainSwitch.height-sTDposY, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
-            context.fillStyle="#eee";
+            context.fillStyle = "#eee";
             context.translate(classicUI.trainSwitch.x+classicUI.trainSwitch.width+classicUI.trainSwitch.selectedTrainDisplay.width/2,0);
             context.textBaseline = "middle";
             context.fillText(getString(["appScreenTrainNames",trainParams.selected]), -context.measureText(getString(["appScreenTrainNames",trainParams.selected])).width/2,classicUI.trainSwitch.y+classicUI.trainSwitch.height-sTDposY+classicUI.trainSwitch.selectedTrainDisplay.height/2);
@@ -1393,11 +1392,8 @@ function drawObjects() {
                                 actionSync("trains", trainParams.selected, [{"speedInPercent":50},{"accelerationSpeed": trains[trainParams.selected].accelerationSpeed *= -1}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
                             } else {
                                 actionSync("trains", trainParams.selected, [{"speedInPercent":50},{"move": true}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
-                                trains[trainParams.selected].move=true;
-                                trains[trainParams.selected].accelerationSpeed = 1;
                             }
                         }
-                        trains[trainParams.selected].speedInPercent=50;
                     }
                 } else if((hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY > y) && adjustScaleX(hardware.mouse.wheelX < x) )) || (!(adjustScaleY(hardware.mouse.moveY) > y && adjustScaleX(hardware.mouse.moveX) < x ))) {
                     var angle;
@@ -1424,13 +1420,9 @@ function drawObjects() {
                     if(cAngle > 0 && trains[trainParams.selected].accelerationSpeed > 0 && trains[trainParams.selected].speedInPercent != cAngle) {
                         var accSpeed = (trains[trainParams.selected].currentSpeedInPercent)/cAngle;
                         actionSync("trains", trainParams.selected, [{"accelerationSpeedCustom":accSpeed}], null);
-                        trains[trainParams.selected].accelerationSpeedCustom=accSpeed;
-                        trains[trainParams.selected].currentSpeedInPercent = trains[trainParams.selected].accelerationSpeedCustom*trains[trainParams.selected].speedInPercent;
                     }
                     if(cAngle > 0) {
                         actionSync("trains", trainParams.selected, [{"speedInPercent":cAngle}], null);
-                        trains[trainParams.selected].speedInPercent=cAngle;
-                        trains[trainParams.selected].currentSpeedInPercent = trains[trainParams.selected].accelerationSpeedCustom*trains[trainParams.selected].speedInPercent;
                     } else {
                         hardware.mouse.isHold = false;
                     }
@@ -1438,8 +1430,6 @@ function drawObjects() {
                         actionSync("trains", trainParams.selected, [{"accelerationSpeed":trains[trainParams.selected].accelerationSpeed *= -1}], [{getString:["appScreenObjectStops", "."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
                     } else if(cAngle > 0 && !trains[trainParams.selected].move) {
                         actionSync("trains", trainParams.selected, [{"move":true}],[{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
-                        trains[trainParams.selected].move = true;
-                        trains[trainParams.selected].accelerationSpeed = 1;
                     } else if (cAngle > 0 && trains[trainParams.selected].accelerationSpeed < 0) {
                         actionSync("trains", trainParams.selected, [{"accelerationSpeed":trains[trainParams.selected].accelerationSpeed *= -1}], null);
                     }
@@ -1467,9 +1457,10 @@ function drawObjects() {
             context.fillRect(x-2,y-2,4,4);
             var a = -(classicUI.transformer.input.diffY-classicUI.transformer.input.height/2); var b = classicUI.transformer.width/2-(classicUI.transformer.width/2-classicUI.transformer.input.width/2);
             var c = classicUI.transformer.input.diffY+classicUI.transformer.input.height/2; var d = b;
-            var x1 = classicUI.transformer.x+classicUI.transformer.width/2; var y1 =classicUI.transformer.y+classicUI.transformer.height/2;
-            var x =[x1+c*Math.sin(classicUI.transformer.angle)-d*Math.cos(classicUI.transformer.angle),x1+c*Math.sin(classicUI.transformer.angle), x1+c*Math.sin(classicUI.transformer.angle)+d*Math.cos(classicUI.transformer.angle), x1 -(a+b)*Math.cos(classicUI.transformer.angle),x1-a*Math.cos(classicUI.transformer.angle),x1 -(a-b)*Math.cos(classicUI.transformer.angle)];
-            var y =[y1-c*Math.cos(classicUI.transformer.angle)-d*Math.sin(classicUI.transformer.angle),y1-c*Math.cos(classicUI.transformer.angle),y1-c*Math.cos(classicUI.transformer.angle)+d*Math.sin(classicUI.transformer.angle), y1+(a-b)*Math.sin(classicUI.transformer.angle),y1+a*Math.sin(classicUI.transformer.angle),y1+(a+b)*Math.sin(classicUI.transformer.angle)];
+            var x1 = classicUI.transformer.x+classicUI.transformer.width/2;
+            var y1 = classicUI.transformer.y+classicUI.transformer.height/2;
+            var x = [x1 + c * Math.sin(classicUI.transformer.angle)-d*Math.cos(classicUI.transformer.angle),x1+c*Math.sin(classicUI.transformer.angle), x1+c*Math.sin(classicUI.transformer.angle)+d*Math.cos(classicUI.transformer.angle), x1 -(a+b)*Math.cos(classicUI.transformer.angle),x1-a*Math.cos(classicUI.transformer.angle),x1 -(a-b)*Math.cos(classicUI.transformer.angle)];
+            var y = [y1 - c * Math.cos(classicUI.transformer.angle)-d*Math.sin(classicUI.transformer.angle),y1-c*Math.cos(classicUI.transformer.angle),y1-c*Math.cos(classicUI.transformer.angle)+d*Math.sin(classicUI.transformer.angle), y1+(a-b)*Math.sin(classicUI.transformer.angle),y1+a*Math.sin(classicUI.transformer.angle),y1+(a+b)*Math.sin(classicUI.transformer.angle)];
             context.fillRect(x[0],y[0],4,4);
             context.fillRect(x[1],y[1],4,4);
             context.fillRect(x[2],y[2],4,4);
@@ -1477,8 +1468,8 @@ function drawObjects() {
             context.fillRect(x[4],y[4],4,4);
             context.fillRect(x[5],y[5],4,4);
             context.fillStyle = "black";
-            var x=x1+ classicUI.transformer.input.diffY*Math.sin(classicUI.transformer.angle);
-            var y=y1- classicUI.transformer.input.diffY*Math.cos(classicUI.transformer.angle);
+            var x = x1 + classicUI.transformer.input.diffY*Math.sin(classicUI.transformer.angle);
+            var y = y1 - classicUI.transformer.input.diffY*Math.cos(classicUI.transformer.angle);
             context.beginPath();
             context.arc(x,y,classicUI.transformer.input.width/2,Math.PI,Math.PI+classicUI.transformer.input.maxAngle,false);
             context.stroke();
@@ -1508,7 +1499,7 @@ function drawObjects() {
             if (hardware.mouse.isHold && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !inTrain){
                 hardware.mouse.isHold = false;
                 if(onlineGame.enabled){
-                    teamplaySync("action","switches", [key,side], [{"turned":!switches[key][side].turned}], [{getString:["appScreenSwitchTurns", "."]}]);
+                    actionSync("switches", [key,side], [{"turned":!switches[key][side].turned}], [{getString:["appScreenSwitchTurns", "."]}]);
                 } else {
                     switches[key][side].turned = !switches[key][side].turned;
                     switches[key][side].lastStateChange = frameNo;
@@ -1586,7 +1577,7 @@ function drawObjects() {
         context.restore();
         context.save();
         context.lineWidth = 5;
-        context.strokeStyle= "red";
+        context.strokeStyle = "red";
         context.fillStyle = "blue";
         var debugPoints = [ rotationPoints.inner.narrow, rotationPoints.inner.wide, rotationPoints.outer.narrow ];
         for (var debugPoint in debugPoints) {
@@ -1657,7 +1648,7 @@ function drawObjects() {
             context.arc(rotationPoints.outer.altState3.right.x[debugPointI]+background.x,rotationPoints.outer.altState3.right.y[debugPointI]+background.y, background.width/100,0,2*Math.PI);
             context.fill();
         }
-        context.strokeStyle= "rgba(175,0,0," + (switches.sidings1.left.turned && switches.sidings2.left.turned ? "1" : "0.3") + ")";
+        context.strokeStyle = "rgba(175,0,0," + (switches.sidings1.left.turned && switches.sidings2.left.turned ? "1" : "0.3") + ")";
         context.beginPath();
         context.moveTo(rotationPoints.inner.sidings.first.x[0]+background.x,rotationPoints.inner.sidings.first.y[0]+background.y);
         context.bezierCurveTo(rotationPoints.inner.sidings.first.x[1]+background.x, rotationPoints.inner.sidings.first.y[1]+background.y,rotationPoints.inner.sidings.first.x[2]+background.x, rotationPoints.inner.sidings.first.y[2]+background.y,rotationPoints.inner.sidings.first.x[3]+background.x, rotationPoints.inner.sidings.first.y[3]+background.y);
@@ -1670,7 +1661,7 @@ function drawObjects() {
         context.moveTo(rotationPoints.inner.sidings.firstS2.x[0]+background.x,rotationPoints.inner.sidings.firstS2.y[0]+background.y);
         context.bezierCurveTo(rotationPoints.inner.sidings.firstS2.x[1]+background.x, rotationPoints.inner.sidings.firstS2.y[1]+background.y,rotationPoints.inner.sidings.firstS2.x[2]+background.x, rotationPoints.inner.sidings.firstS2.y[2]+background.y,rotationPoints.inner.sidings.firstS2.x[3]+background.x, rotationPoints.inner.sidings.firstS2.y[3]+background.y);
         context.stroke();
-        context.strokeStyle= "rgba(150,0,0," + (switches.sidings1.left.turned && !switches.sidings2.left.turned && switches.sidings3.left.turned ? "1" : "0.3") + ")";
+        context.strokeStyle = "rgba(150,0,0," + (switches.sidings1.left.turned && !switches.sidings2.left.turned && switches.sidings3.left.turned ? "1" : "0.3") + ")";
         context.beginPath();
         context.moveTo(rotationPoints.inner.sidings.second.x[0]+background.x,rotationPoints.inner.sidings.second.y[0]+background.y);
         context.bezierCurveTo(rotationPoints.inner.sidings.second.x[1]+background.x, rotationPoints.inner.sidings.second.y[1]+background.y,rotationPoints.inner.sidings.second.x[2]+background.x, rotationPoints.inner.sidings.second.y[2]+background.y,rotationPoints.inner.sidings.second.x[3]+background.x, rotationPoints.inner.sidings.second.y[3]+background.y);
@@ -1684,7 +1675,7 @@ function drawObjects() {
         context.bezierCurveTo(rotationPoints.inner.sidings.secondS2.x[1]+background.x, rotationPoints.inner.sidings.secondS2.y[1]+background.y,rotationPoints.inner.sidings.secondS2.x[2]+background.x, rotationPoints.inner.sidings.secondS2.y[2]+background.y,rotationPoints.inner.sidings.secondS2.x[3]+background.x, rotationPoints.inner.sidings.secondS2.y[3]+background.y);
         context.stroke();
         context.beginPath();
-        context.strokeStyle= "rgba(125,0,0," + (switches.sidings1.left.turned && !switches.sidings2.left.turned && !switches.sidings3.left.turned ? "1" : "0.3") + ")";
+        context.strokeStyle = "rgba(125,0,0," + (switches.sidings1.left.turned && !switches.sidings2.left.turned && !switches.sidings3.left.turned ? "1" : "0.3") + ")";
         context.beginPath();
         context.moveTo(rotationPoints.inner.sidings.third.x[0]+background.x,rotationPoints.inner.sidings.third.y[0]+background.y);
         context.bezierCurveTo(rotationPoints.inner.sidings.third.x[1]+background.x, rotationPoints.inner.sidings.third.y[1]+background.y,rotationPoints.inner.sidings.third.x[2]+background.x, rotationPoints.inner.sidings.third.y[2]+background.y,rotationPoints.inner.sidings.third.x[3]+background.x, rotationPoints.inner.sidings.third.y[3]+background.y);
@@ -1727,7 +1718,7 @@ function drawObjects() {
         context.restore();
         context.lineWidth = 2;
         context.fillStyle = "black";
-        context.strokeStyle= "black";
+        context.strokeStyle = "black";
         for(var debugTrain in trains){
             context.save();
             context.translate(trains[debugTrain].x, trains[debugTrain].y);
@@ -2051,7 +2042,7 @@ function drawObjects() {
                     if(isClick || isHold) {
                         newSpeed = Math.round(((isClick ? hardware.mouse.upX : hardware.mouse.moveX)-background.x-controlCenter.translateOffset-controlCenter.maxTextWidth)/controlCenter.maxTextWidth/0.5*100);
                     } else {
-                        if(trains[cTrain].speedInPercent ==undefined || trains[cTrain].speedInPercent == 0) {
+                        if(trains[cTrain].speedInPercent == undefined || trains[cTrain].speedInPercent == 0) {
                             trains[cTrain].speedInPercent = minTrainSpeed;
                         }
                         newSpeed = Math.round(trains[cTrain].speedInPercent*(hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9));
@@ -2141,22 +2132,22 @@ function drawObjects() {
 
     /////KONAMI/Colors/////
     if(konamistate < -1) {
-        var imgData = context.getImageData(background.x, background.y, background.width, background.height);
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
         var data = imgData.data;
         for (var i = 0; i < data.length; i += 8) {
             data[i] = data[i+4] = Math.min(255,data[i] < 120 ? data[i]/1.3 : data[i]*1.1);
             data[i+1] = data[i+5] = Math.min(255,data[i+1] < 120 ? data[i+1]/1.3 : data[i+1]*1.1);
             data[i+2] = data[i+6] = Math.min(255,data[i+2] < 120 ? data[i+2]/1.3 : data[i+2]*1.1);
         }
-        context.putImageData(imgData, background.x, background.y);
-        imgData = contextForeground.getImageData(background.x, background.y, background.width, background.height);
+        context.putImageData(imgData, 0, 0);
+        imgData = contextForeground.getImageData(0, 0, canvas.width, canvas.height);
         var data = imgData.data;
         for (var i = 0; i < data.length; i += 8) {
             data[i] = data[i+4] = Math.min(255,data[i] < 120 ? data[i]/1.3 : data[i]*1.1);
             data[i+1] = data[i+5] = Math.min(255,data[i+1] < 120 ? data[i+1]/1.3 : data[i+1]*1.1);
             data[i+2] = data[i+6] = Math.min(255,data[i+2] < 120 ? data[i+2]/1.3 : data[i+2]*1.1);
         }
-        contextForeground.putImageData(imgData, background.x, background.y);
+        contextForeground.putImageData(imgData, 0, 0);
     }
 
     /////BACKGROUND/Margins-2////
@@ -2185,8 +2176,8 @@ function drawObjects() {
         context.fillStyle = bgGradient;
         context.fillRect(0,0,background.x,canvas.height);
         context.fillRect(0,0,canvas.width,background.y);
-        context.fillRect(canvas.width-background.x,0,background.x,canvas.height);
-        context.fillRect(0,canvas.height-background.y,canvas.width,background.y);
+        context.fillRect(background.x+background.width,0,background.x,canvas.height);
+        context.fillRect(0,background.y+background.height,canvas.width,background.y);
         context.restore();
     }
 
@@ -2226,7 +2217,7 @@ function drawObjects() {
 function actionSync (objname, index, params, notification) {
     if(onlineGame.enabled) {
         if(!onlineGame.stop) {
-            teamplaySync ("action", objname, index, params, notification);
+            teamplaySync("action", objname, index, params, notification);
         }
     } else {
         switch (objname) {
@@ -2356,8 +2347,8 @@ function resize() {
     carWays.forEach(function(way){
         Object.keys(way).forEach(function(cType) {
             way[cType].forEach(function(point){
-                point.x*=background.width/oldbackground.width;
-                point.y*=background.height/oldbackground.height;
+                point.x *= background.width/oldbackground.width;
+                point.y *= background.height/oldbackground.height;
             });
         });
     });
@@ -2436,8 +2427,8 @@ window.onload = function() {
                 Object.keys(carPaths[i]).forEach(function(cType) {
                     carPaths[i][cType].forEach(function(cPoint){
                         for(var k = 0; k < cPoint.x.length && k < cPoint.y.length; k++){
-                            cPoint.x[k]*=background.width;
-                            cPoint.y[k]*=background.height;
+                            cPoint.x[k] *= background.width;
+                            cPoint.y[k] *= background.height;
                         }
                     });
                     for(var j = 0; j < carPaths[i][cType].length; j++){
@@ -2450,13 +2441,13 @@ window.onload = function() {
                                 break;
                             case "curve_hright2":
                                 var x0 = carPaths[i][cType][j-1].x[0]-(carPaths[i][cType][j].y[1]-carPaths[i][cType][j].y[0])/2;
-                                carPaths[i][cType][j].x =[x0,x0];
-                                carPaths[i][cType][j+1 >= carPaths[i][cType].length ? 0 : j+1].x[0]=x0;
+                                carPaths[i][cType][j].x = [x0,x0];
+                                carPaths[i][cType][j+1 >= carPaths[i][cType].length ? 0 : j+1].x[0] = x0;
                                 break;
                             case "curve_hleft2":
                                 var x0 = carPaths[i][cType][j-1].x[0]-(carPaths[i][cType][j].y[0]-carPaths[i][cType][j].y[1])/2;
-                                carPaths[i][cType][j].x =[x0,x0];
-                                carPaths[i][cType][j+1 >= carPaths[i][cType].length ? 0 : j+1].x[0]=x0;
+                                carPaths[i][cType][j].x = [x0,x0];
+                                carPaths[i][cType][j+1 >= carPaths[i][cType].length ? 0 : j+1].x[0] = x0;
                                 break;
                             }
                         }
@@ -2490,8 +2481,8 @@ window.onload = function() {
         function defineCarWays(cType, isFirst, i, j, obj, currentObject, stateNullAgain) {
 
             function curve_right(p){
-                if(p.x[0]!=p.x[1]){
-                    p.x[1]=p.x[0];
+                if(p.x[0] != p.x[1]) {
+                    p.x[1] = p.x[0];
                 }
                 var radius = Math.abs(p.y[0]-p.y[1])/2;
                 var arc = Math.abs(currentObject.angle)*radius;
@@ -2522,8 +2513,8 @@ window.onload = function() {
             }
 
             function curve_left(p){
-                if(p.x[0]!=p.x[1]){
-                    p.x[1]=p.x[0];
+                if(p.x[0] != p.x[1]) {
+                    p.x[1] = p.x[0];
                 }
                 var radius = Math.abs(p.y[0]-p.y[1])/2;
                 var arc = Math.abs(currentObject.angle)*radius;
@@ -2834,8 +2825,8 @@ window.onload = function() {
                     var chatTrainContainer = document.querySelector("#chat #chat-msg-trains-inner");
                     for(var stickerTrain = 0; stickerTrain < trains.length; stickerTrain++){
                         var elem = document.createElement("img");
-                        elem.title=getString(["appScreenTrainNames", stickerTrain]);
-                        elem.src="./assets/chat_train_" + stickerTrain + ".png";
+                        elem.title = getString(["appScreenTrainNames", stickerTrain]);
+                        elem.src = "./assets/chat_train_" + stickerTrain + ".png";
                         elem.dataset.stickerNumber = stickerTrain;
                         elem.addEventListener("click", function(event){
                             onlineConnection.send({mode:"chat-msg", message: "{{stickerTrain=" + event.target.dataset.stickerNumber + "}}"});
@@ -2861,7 +2852,7 @@ window.onload = function() {
                 resize();
                 drawInterval = message.data.animateInterval;
                 client.realScale = client.lastTouchScale = client.touchScale = 1;
-                client.touchScaleX = client.touchScaleY= 0;
+                client.touchScaleX = client.touchScaleY = 0;
                 client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
                 drawObjects();
                 var timeWait = 0.5;
@@ -2980,7 +2971,7 @@ window.onload = function() {
                     console.log(message.data.animateInterval);
                 }
                 console.log(message.data.trains);
-                debug=true;
+                debug = true;
             } else if(message.data.k == "debugDrawPoints") {
                 debugDrawPoints = message.data.p;
                 debugDrawPointsCrash = message.data.pC;
@@ -3196,7 +3187,7 @@ window.onload = function() {
                     }
                     for(var sticker = 0; sticker < onlineGame.chatSticker; sticker++){
                         var elem = document.createElement("img");
-                        elem.src="./assets/chat_sticker_" + sticker + ".png";
+                        elem.src = "./assets/chat_sticker_" + sticker + ".png";
                         elem.dataset.stickerNumber = sticker;
                         elem.addEventListener("click", function(event){
                             onlineConnection.send({mode:"chat-msg", message: "{{sticker=" + event.target.dataset.stickerNumber + "}}"});
@@ -3225,6 +3216,7 @@ window.onload = function() {
                     var tpLeaveNo = document.querySelector("#tp-leave #tp-leave-no");
                     tpLeaveYes.addEventListener("click", function(){ followLink("?", "_self", LINK_STATE_INTERNAL_HTML); });
                     tpLeaveNo.addEventListener("click", function(){ document.querySelector("#tp-leave").style.display = ""; });
+                    document.querySelector("#setup #setup-exit").addEventListener("click", function(){ followLink("?", "_self", LINK_STATE_INTERNAL_HTML); });
                     onlineConnection.connect = (function(host) {
                         function hideLoadingAnimation(){
                             window.clearInterval(loadingAnimElemChangingFilter);

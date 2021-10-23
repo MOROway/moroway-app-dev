@@ -11,12 +11,13 @@
 				font-family: sans-serif;
 				padding: 0;
 				margin: 0;
+				text-align: center;
 			}
 
 			body {
 				display: flex;
-				justify-content: center;
 				flex-direction: column;
+				justify-content: center;
 				align-content: center;
 				min-height: 100vh;
 				background: linear-gradient(0deg, black 0%, rgb(80,0,0) 40%, rgb(80,0,0) 60%, black 100%);
@@ -26,20 +27,10 @@
 				background : black;
 			}
 
-			header, header > * {
-				text-align: center;
-				padding-top: 25px;
-				padding-bottom: 25px;
-			}
-
-			article {
-				text-align: center;
-				padding: 25px;
-			}
-
 			#header {
+				padding-top: 55px;
+				padding-bottom: 50px;
 				border-top: 4px solid rgb(80,0,0);
-				padding-top: 30px;
 			}
 
 			#header h1 {
@@ -47,13 +38,8 @@
 				color: rgb(160,10,40);
 			}
 
-			#links, #links div {
-				margin: 0;
-			}
-
 			#links {
-				margin: 0;
-				padding-left: 0;
+				padding-top: 25px;
 				padding-bottom: 30px;
 				border-bottom: 4px solid rgb(80,0,0);
 			}
@@ -61,10 +47,6 @@
 			#links div {
 				display: inline-block;
 				vertical-align: top;
-			}
-
-			#linksimg {
-				padding: 0;
 			}
 
 			#linksdiv {
@@ -75,27 +57,26 @@
 
 			#linksdiv p {
 				font-size: 2.1em;
+				text-align: inherit;
 				padding: 9px;
 			}
 
 			#linksdiv p:first-of-type {
 				transform: rotate(-3deg);
-				margin-top: 0;
 				padding-top: 0;
 			}
 
 			#linksdiv p:last-of-type {
 				transform: rotate(5deg);
-				margin-bottom: 0;
 				padding-bottom: 0;
 			}
 
-			#links a {
+			#linksdiv a {
 				font-family: monospace;
 				text-decoration: none;
 			}
 
-			#links a:hover {
+			#linksdiv a:hover {
 				color: #ff22cc;
 			}
 		</style>
@@ -107,7 +88,7 @@
 				document.querySelector("#linksdiv").style.borderLeft = "";
 				document.querySelector("#linksdiv").style.textAlign = "";
 				document.querySelector("#linksdiv p:first-of-type").style.transform = document.querySelector("#linksdiv p:last-of-type").style.transform = "";
-				if(document.querySelector("#linksimg img").offsetWidth + document.querySelector("#linksdiv").offsetWidth >= window.innerWidth) {
+				if(document.querySelector("#linksimg").offsetWidth + document.querySelector("#linksdiv").offsetWidth >= 0.9*window.innerWidth) {
 					document.querySelector("#linksimg img").style.width = "50vw";
 					document.querySelector("#linksimg img").style.height = "";
 					document.querySelector("#linksdiv").style.marginTop = "20px";
