@@ -1,0 +1,9 @@
+{
+    "browserWindow": {
+        "fullscreen": true,
+        "autoHideMenuBar": true,
+        "webPreferences": {
+            "nativeWindowOpen": true
+        }
+    }
+}

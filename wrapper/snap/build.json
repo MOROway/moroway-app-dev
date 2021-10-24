@@ -1,0 +1,10 @@
+{
+    "electron": {
+        "linux": {
+            "package": [
+                "snap"
+            ],
+            "category": "Game"
+        }
+    }
+}

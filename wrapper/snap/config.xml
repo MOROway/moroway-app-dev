@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="moroway-app" version="7.3.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>MOROway App</name>
+    <description>MOROway snApp</description>
+    <author>Jonathan Herrmann-Engel</author>
+    <content src="index.html" />
+    <hook src="scripts/external_links.bash" type="before_build" />
+    <hook src="scripts/external_links.bash" type="before_run" />
+    <platform name="electron">
+        <preference name="ElectronSettingsFilePath" value="res/electron/settings.json" />
+        <icon src="res/electron/icon.png" />
+    </platform>
+</widget>

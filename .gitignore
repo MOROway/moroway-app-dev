@@ -1,4 +1,5 @@
 git-publish.sh
 build/conf_local
 out
-wrapper
+wrapper/*
+!wrapper/snap

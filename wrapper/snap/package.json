@@ -1,0 +1,11 @@
+{
+  "cordova": {
+    "plugins": {},
+    "platforms": [
+      "electron"
+    ]
+  },
+  "devDependencies": {
+    "cordova-electron": "^3.0.0"
+  }
+}
