@@ -1,12 +1,13 @@
 # MOROway App Development Tools
 
+[![MOROway App](https://img.shields.io/badge/MOROway-App-303030?labelColor=d2781b&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgAgMAAAAOFJJnAAAACVBMVEVHcEzd3d0aEBBbVPhdAAAAAXRSTlMAQObYZgAAAGhJREFUGNO9z8EJgDAMheHg0U3sPq9gJpBO0SV691JI35QmghUX8D99gVye0JNoogO6hr+AOnS8YJsojjwUrVg87w+i4w+wg4SasKEQ2WRpODbk+kW60WEJ6hjZ1s4a4897qSS/eMrsAtAOYJYAOeqSAAAAAElFTkSuQmCC&style=for-the-badge)](https://moroway.github.io/moroway-app-dev/)
+[![10 Years](https://img.shields.io/badge/10-Years-303030?labelColor=d2781b&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAn1BMVEVHcEz////////////////////////5KSn5KSn////////////////////////////////////////////////////////////////////////////////////////////////4KCj5KSn5KSn5Nzf////7gYH5KSn5KSn5KSn5KSn5KSn5KSn5KSn////4JCT8lJT5KSn4KCj4JSX8lZVvuPG2AAAALnRSTlMAnUViB9EWIOL6vBTsCZow8KoKefQbAeNnVjv5eB/iAnSAEByJ4dtAcYLoyARwTnjJiQAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAH9JREFUGNNjYEAHSrqa6gwMLGyibCwQAXYOQ0V5JkZWcVZGJhaIgJGKAo8epwCnHo+wEFjAWE2Ak4tZipmLU0RCDCSgb6DHxw2U4ubTY5WFCKjyg43jl5OWBAuYCPKCBXgF9WSwC2BoQTcUw1oMh6E5XVlbSwPFczrK7ErIvgcAVx4OEk6I7TQAAAAASUVORK5CYII=&style=for-the-badge)](https://moroway.github.io/10years/)
+
 ## General
 
 This repository provides the build tools for MOROway App. The code here is used to build the read-to-use versions of MOROway App.
 
 ## Platforms
-
-![MOROway App](https://img.shields.io/badge/MOROway-App-303030?labelColor=d2781b&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgAgMAAAAOFJJnAAAACVBMVEVHcEzd3d0aEBBbVPhdAAAAAXRSTlMAQObYZgAAAGhJREFUGNO9z8EJgDAMheHg0U3sPq9gJpBO0SV691JI35QmghUX8D99gVye0JNoogO6hr+AOnS8YJsojjwUrVg87w+i4w+wg4SasKEQ2WRpODbk+kW60WEJ6hjZ1s4a4897qSS/eMrsAtAOYJYAOeqSAAAAAElFTkSuQmCC&style=for-the-badge)
 
 [![Webapp](https://img.shields.io/github/release/MOROway/moroway-app.svg?label=web&labelColor=d2781b&color=303030
 )](https://app.moroway.de)
