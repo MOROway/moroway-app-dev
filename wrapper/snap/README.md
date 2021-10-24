@@ -10,7 +10,7 @@ The MOROway snApp ("snap App") wrapper app brings the MOROway App to Linux. MORO
 
 ### MOROway App
 
-* MOROway App snApp: [Apache License 2.0](./LICENSE)
+* MOROway snApp: [Apache License 2.0](./LICENSE)
 * MOROway App: [Apache License 2.0](https://github.com/MOROway/moroway-app-dev/blob/master/LICENSE)
 
 ### MOROway App: Included Open Source Projects

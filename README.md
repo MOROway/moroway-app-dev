@@ -6,7 +6,16 @@ This repository provides the build tools for MOROway App. The code here is used 
 
 ## Platforms
 
-* The "web"-platform is the main platform and can be used with any web browser. The ready-to-use code for the "web"-platform can be found [here](https://github.com/MOROway/moroway-app).<sup>[1](#morowayrepoautoupdate)</sup>
+![MOROway App](https://img.shields.io/badge/MOROway-App-303030?labelColor=d2781b&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgAgMAAAAOFJJnAAAACVBMVEVHcEzd3d0aEBBbVPhdAAAAAXRSTlMAQObYZgAAAGhJREFUGNO9z8EJgDAMheHg0U3sPq9gJpBO0SV691JI35QmghUX8D99gVye0JNoogO6hr+AOnS8YJsojjwUrVg87w+i4w+wg4SasKEQ2WRpODbk+kW60WEJ6hjZ1s4a4897qSS/eMrsAtAOYJYAOeqSAAAAAElFTkSuQmCC&style=for-the-badge)
+
+[![Webapp](https://img.shields.io/github/release/MOROway/moroway-app.svg?label=web&labelColor=d2781b&color=303030
+)](https://app.moroway.de)
+[![Microsoft Store](https://img.shields.io/badge/windows-Microsoft%20Store-303030?labelColor=d2781b)](https://www.microsoft.com/p/moroway-app/9nb7t5b9rd91)
+[![Play Store](https://img.shields.io/badge/android-Play%20Store-303030?labelColor=d2781b)](https://play.google.com/store/apps/details?id=appinventor.ai_Jonathan_Herrmann_Engel.MOROway)
+[![F-Droid](https://img.shields.io/f-droid/v/de.moroway.oc.svg?label=oc&color=303030&labelColor=d2781b)](https://f-droid.org/de/packages/de.moroway.oc/)
+[![Snap Store](https://img.shields.io/badge/snap-Snap%20Store-303030?labelColor=d2781b)](https://snapcraft.io/moroway-app)
+
+* The "web"-platform is the main platform and can be used with any modern web browser. The ready-to-use code for the "web"-platform can be found [here](https://github.com/MOROway/moroway-app).<sup>[1](#morowayrepoautoupdate)</sup>
 * The "windows"-platform provides the PWA available at Microsoft Store.
 * The "android"-platform is used within the Java Wrapper App available at Google Play Store. The wrapper app is not open-source.
 * The "oc"-platform is used within the Apache Cordova Android Wrapper App available at F-Droid. The wrapper app can be found [here](https://github.com/MOROway/moroway-app-oc). This wrapper app contains a [already built version](https://github.com/MOROway/moroway-app-oc/tree/master/moroway-app-oc) of the "oc"-platform.
