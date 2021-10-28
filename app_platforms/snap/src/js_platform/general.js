@@ -24,7 +24,7 @@ function followLink(input1, input2, input3){
         if(input2 == "_self") {
             window.location.href = input1;
         } else {
-            window.open(input1, input2, "fullscreen=true");
+            _openNormalLink.exec(input1);
         }
         break;
     case LINK_STATE_INTERNAL_LICENSE_FILE:
@@ -34,3 +34,8 @@ function followLink(input1, input2, input3){
 }
 
 ////Optional code (app works without it))
+window.addEventListener("keydown", function(event){
+    if(event.key == "Alt") {
+        event.preventDefault();
+    }
+});

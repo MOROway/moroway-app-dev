@@ -2130,26 +2130,6 @@ function drawObjects() {
         hardware.mouse.rightClick = false;
     }
 
-    /////KONAMI/Colors/////
-    if(konamistate < -1) {
-        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-        var data = imgData.data;
-        for (var i = 0; i < data.length; i += 8) {
-            data[i] = data[i+4] = Math.min(255,data[i] < 120 ? data[i]/1.3 : data[i]*1.1);
-            data[i+1] = data[i+5] = Math.min(255,data[i+1] < 120 ? data[i+1]/1.3 : data[i+1]*1.1);
-            data[i+2] = data[i+6] = Math.min(255,data[i+2] < 120 ? data[i+2]/1.3 : data[i+2]*1.1);
-        }
-        context.putImageData(imgData, 0, 0);
-        imgData = contextForeground.getImageData(0, 0, canvas.width, canvas.height);
-        var data = imgData.data;
-        for (var i = 0; i < data.length; i += 8) {
-            data[i] = data[i+4] = Math.min(255,data[i] < 120 ? data[i]/1.3 : data[i]*1.1);
-            data[i+1] = data[i+5] = Math.min(255,data[i+1] < 120 ? data[i+1]/1.3 : data[i+1]*1.1);
-            data[i+2] = data[i+6] = Math.min(255,data[i+2] < 120 ? data[i+2]/1.3 : data[i+2]*1.1);
-        }
-        contextForeground.putImageData(imgData, 0, 0);
-    }
-
     /////BACKGROUND/Margins-2////
     if(konamistate < 0) {
         context.save();
