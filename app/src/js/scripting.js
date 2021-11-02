@@ -41,6 +41,13 @@ function getFontSize(f, a){
     return parseInt(f.substr(0,f.length-(f.length-f.indexOf(a))), 10);
 }
 
+function showConfirmLeaveMultiplayerMode(){
+    var tpLeave = document.querySelector("#tp-leave");
+    if(onlineGame.enabled && tpLeave.style.display == "") {
+        tpLeave.style.display = "block";
+    }
+}
+
 /******************************************
 *        mouse touch key functions        *
 ******************************************/
@@ -201,6 +208,9 @@ function onMouseRight(event) {
         hardware.mouse.rightClickWheelScrolls = false;
     }
 }
+function preventMouseZoomDuringLoad(event) {
+    event.preventDefault();
+}
 
 function getTouchMove(event) {
     event.preventDefault();
@@ -287,6 +297,9 @@ function onKeyDown(event) {
     if(!client.hidden && !hardware.mouse.out) {
         hardware.keyboard.keysHold[event.key] = true;
     }
+    if(event.key == "Tab" || event.key == "Enter") {
+        event.preventDefault();
+    }
     if(event.ctrlKey && (event.key == "+" || event.key == "-" || (event.key == "0" && client.realScale > 1))) {
         event.preventDefault();
         if(client.realScale == 1) {
@@ -332,6 +345,11 @@ function onKeyDown(event) {
 }
 function onKeyUp(event) {
     hardware.keyboard.keysHold[event.key] = false;
+}
+function preventKeyZoomDuringLoad(event) {
+    if(event.ctrlKey && (event.key == "+" || event.key == "-" || event.key == "0")) {
+        event.preventDefault();
+    }
 }
 
 function onVisibilityChange() {
@@ -538,10 +556,69 @@ function calcControlCenter() {
     contextForeground.restore();
 }
 
-function showConfirmLeaveMultiplayerMode(){
-    var tpLeave = document.querySelector("#tp-leave");
-    if(onlineGame.enabled && tpLeave.style.display == "") {
-        tpLeave.style.display = "block";
+function resizeCars(oldBg) {
+    cars.forEach(function(car){
+        car.speed *= background.width/oldBg.width;
+        car.x *= background.width/oldBg.width;
+        car.y *= background.height/oldBg.height;
+        car.width *= background.width / oldBg.width;
+        car.height *= background.height / oldBg.height;
+    });
+}
+
+function resize() {
+    resized = true;
+    if(onlineGame.enabled) {
+        if(onlineGame.resizedTimeout != undefined && onlineGame.resizedTimeout != null) {
+            window.clearTimeout(onlineGame.resizedTimeout);
+        }
+        onlineGame.resized = true;
+    }
+    client.realScale = client.touchScale = client.lastTouchScale = 1;
+    client.touchScaleX = client.touchScaleY = client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
+    oldbackground = copyJSObject(background);
+    extendedMeasureViewspace();
+    placeBackground();
+
+    animateWorker.postMessage({k: "resize", background: background,oldbackground: oldbackground});
+
+    carWays.forEach(function(way){
+        Object.keys(way).forEach(function(cType) {
+            way[cType].forEach(function(point){
+                point.x *= background.width/oldbackground.width;
+                point.y *= background.height/oldbackground.height;
+            });
+        });
+    });
+    resizeCars(oldbackground);
+
+    taxOffice.params.fire.x *= background.width/oldbackground.width;
+    taxOffice.params.fire.y *= background.height/oldbackground.height;
+    taxOffice.params.fire.size *= background.width/oldbackground.width;
+    taxOffice.params.smoke.x *= background.width/oldbackground.width;
+    taxOffice.params.smoke.y *= background.height/oldbackground.height;
+    taxOffice.params.smoke.size *= background.width/oldbackground.width;
+    for (var i = 0; i <  taxOffice.params.number; i++) {
+        taxOffice.fire[i].x *= background.width/oldbackground.width;
+        taxOffice.fire[i].y *= background.height/oldbackground.height;
+        taxOffice.fire[i].size *= background.width/oldbackground.width;
+        taxOffice.smoke[i].x *= background.width/oldbackground.width;
+        taxOffice.smoke[i].y *= background.height/oldbackground.height;
+        taxOffice.smoke[i].size *= background.width/oldbackground.width;
+    }
+    taxOffice.params.bluelights.cars.forEach(function(car){
+        car.x[0] *= background.width/oldbackground.width;
+        car.x[1] *= background.width/oldbackground.width;
+        car.y[0] *= background.height/oldbackground.height;
+        car.y[1] *= background.height/oldbackground.height;
+        car.size *= background.width/oldbackground.width;
+    });
+
+    placeClassicUIElements();
+    calcControlCenter();
+
+    if(typeof placeOptions == "function") {
+        placeOptions("resize");
     }
 }
 
@@ -2299,70 +2376,7 @@ var debugTrainCollisions;
 /******************************************
 *         Window Event Listeners          *
 ******************************************/
-function resizeCars(oldBg) {
-    cars.forEach(function(car){
-        car.speed *= background.width/oldBg.width;
-        car.x *= background.width/oldBg.width;
-        car.y *= background.height/oldBg.height;
-        car.width *= background.width / oldBg.width;
-        car.height *= background.height / oldBg.height;
-    });
-}
-function resize() {
-    resized = true;
-    if(onlineGame.enabled) {
-        if(onlineGame.resizedTimeout != undefined && onlineGame.resizedTimeout != null) {
-            window.clearTimeout(onlineGame.resizedTimeout);
-        }
-        onlineGame.resized = true;
-    }
-    client.realScale = client.touchScale = client.lastTouchScale = 1;
-    client.touchScaleX = client.touchScaleY = client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
-    oldbackground = copyJSObject(background);
-    extendedMeasureViewspace();
-    placeBackground();
 
-    animateWorker.postMessage({k: "resize", background: background,oldbackground: oldbackground});
-
-    carWays.forEach(function(way){
-        Object.keys(way).forEach(function(cType) {
-            way[cType].forEach(function(point){
-                point.x *= background.width/oldbackground.width;
-                point.y *= background.height/oldbackground.height;
-            });
-        });
-    });
-    resizeCars(oldbackground);
-
-    taxOffice.params.fire.x *= background.width/oldbackground.width;
-    taxOffice.params.fire.y *= background.height/oldbackground.height;
-    taxOffice.params.fire.size *= background.width/oldbackground.width;
-    taxOffice.params.smoke.x *= background.width/oldbackground.width;
-    taxOffice.params.smoke.y *= background.height/oldbackground.height;
-    taxOffice.params.smoke.size *= background.width/oldbackground.width;
-    for (var i = 0; i <  taxOffice.params.number; i++) {
-        taxOffice.fire[i].x *= background.width/oldbackground.width;
-        taxOffice.fire[i].y *= background.height/oldbackground.height;
-        taxOffice.fire[i].size *= background.width/oldbackground.width;
-        taxOffice.smoke[i].x *= background.width/oldbackground.width;
-        taxOffice.smoke[i].y *= background.height/oldbackground.height;
-        taxOffice.smoke[i].size *= background.width/oldbackground.width;
-    }
-    taxOffice.params.bluelights.cars.forEach(function(car){
-        car.x[0] *= background.width/oldbackground.width;
-        car.x[1] *= background.width/oldbackground.width;
-        car.y[0] *= background.height/oldbackground.height;
-        car.y[1] *= background.height/oldbackground.height;
-        car.size *= background.width/oldbackground.width;
-    });
-
-    placeClassicUIElements();
-    calcControlCenter();
-
-    if(typeof placeOptions == "function") {
-        placeOptions("resize");
-    }
-}
 window.onload = function() {
 
     function chooseInputMethod(event){
@@ -2380,6 +2394,7 @@ window.onload = function() {
         canvasForeground.addEventListener("mouseenter", onMouseEnter);
         canvasForeground.addEventListener("wheel", onMouseWheel);
         canvasForeground.addEventListener("contextmenu", onMouseRight);
+        document.removeEventListener("wheel", preventMouseZoomDuringLoad);
         if(event.type == "touchstart"){
             client.chosenInputMethod = "touch";
             getTouchStart(event);
@@ -2854,6 +2869,10 @@ window.onload = function() {
                             }
                             setLocalAppDataCopy();
                             destroy(toHide);
+                            document.addEventListener("keydown", onKeyDown);
+                            document.addEventListener("keyup", onKeyUp);
+                            document.removeEventListener("keydown", preventKeyZoomDuringLoad);
+                            document.removeEventListener("keyup", preventKeyZoomDuringLoad);
                         }, timeLoad*900);
                     }
                 }, timeWait*1000);
@@ -2968,6 +2987,7 @@ window.onload = function() {
         } else if(!settings.saveGame) {
             removeSavedGame();
         }
+
         animateWorker.postMessage({k: "start", background: background, switches: switches, online: onlineGame.enabled, onlineInterval: onlineGame.animateInterval});
     }
     function resetForElem(parent, elem, to) {
@@ -3005,10 +3025,15 @@ window.onload = function() {
     contextSemiForeground = canvasSemiForeground.getContext("2d");
     contextForeground = canvasForeground.getContext("2d");
 
+    hardware.lastInputMouse = hardware.lastInputTouch = 0;
+    canvasForeground.addEventListener("touchstart",chooseInputMethod);
+    canvasForeground.addEventListener("mousemove",chooseInputMethod);
+    document.addEventListener("wheel", preventMouseZoomDuringLoad);
+    document.addEventListener("keydown", preventKeyZoomDuringLoad);
+    document.addEventListener("keyup", preventKeyZoomDuringLoad);
     document.addEventListener("visibilitychange", onVisibilityChange);
     onVisibilityChange();
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("keyup", onKeyUp);
+
     if(getQueryString("mode") == "multiplay") {
         if ("WebSocket" in window) {
             onlineGame.enabled = true;
@@ -3045,10 +3070,7 @@ window.onload = function() {
                 toShow.style.display = "block";
             }
         });
-    },2500);
-    hardware.lastInputMouse = hardware.lastInputTouch = 0;
-    canvasForeground.addEventListener("touchstart",chooseInputMethod);
-    canvasForeground.addEventListener("mousemove",chooseInputMethod);
+    }, 2500);
 
     extendedMeasureViewspace();
 

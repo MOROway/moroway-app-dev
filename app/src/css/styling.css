@@ -140,6 +140,8 @@ canvas {
     text-overflow: ellipsis;
     visibility: hidden;
     font-size: 95%;
+    cursor: pointer;
+    user-select: none;
 }
 
 .tp-notify span {
@@ -256,9 +258,14 @@ canvas {
     text-transform: uppercase;
     font-size: 0.9em;
     font-weight: 1000;
+    user-select: none;
+}
+#chat .chat-send-toggle {
+    cursor: pointer;
 }
 #chat .chat-msg-send-container-subtitle {
     font-size: 0.8em;
+    user-select: none;
 }
 #chat .chat-send-inner {
     display: none;
@@ -272,12 +279,14 @@ canvas {
     height: 55px;
     margin: 5px;
     border-radius: 25%;
+    user-select: none;
 }
 #chat #chat-msg-stickers img {
     width: 45px;
     height: 45px;
     padding: 5px;
     border-radius: 5px;
+    user-select: none;
 }
 #chat #chat-msg-send-inner {
     display: block;
