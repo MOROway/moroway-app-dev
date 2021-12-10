@@ -887,7 +887,7 @@ function drawObjects() {
                 var counter = carParams.isBackToRoot ? (currentObject.counter-1 < 0 ? carWays[input1][currentObject.cType].length-1 : currentObject.counter-1) : (currentObject.counter+1 > carWays[input1][currentObject.cType].length-1 ? 0 : currentObject.counter+1);
                 if(!carParams.isBackToRoot && counter === 0 && currentObject.cType == "start") {
                     currentObject.cType = "normal";
-                } else if (carParams.isBackToRoot && counter === 0 && currentObject.cType == "normal") {
+                } else if (carParams.isBackToRoot && currentObject.cType == "normal" && (counter === 0 || carWays[input1][currentObject.cType][counter].shortcutToParking)) {
                     currentObject.counter = counter = carWays[input1].start.length-1;
                     currentObject.cType = "start";
                 } else if (carParams.isBackToRoot && counter <= currentObject.startFrame && currentObject.cType == "start") {
@@ -928,7 +928,7 @@ function drawObjects() {
                     }
                 } else if (currentObject.cType == "normal") {
                     currentObject.counter = currentObject.backToInit || currentObject.backwardsState > 0 ? (--currentObject.counter < 0 ? carWays[input1].normal.length-1 : currentObject.counter) : (++currentObject.counter > carWays[input1].normal.length-1 ? 0 : currentObject.counter);
-                    if(currentObject.backToInit && currentObject.counter === 0) {
+                    if(currentObject.backToInit && (currentObject.counter === 0 || carWays[input1][currentObject.cType][currentObject.counter].shortcutToParking)) {
                         currentObject.counter = carWays[input1].start.length-1;
                         currentObject.cType = "start";
                     }
@@ -2494,6 +2494,7 @@ window.onload = function() {
                         currentObject.x = p.x[1];
                         currentObject.y = p.y[1];
                         currentObject.angle = Math.PI;
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 } else {
@@ -2501,6 +2502,7 @@ window.onload = function() {
                         currentObject.x = p.x[1];
                         currentObject.y = p.y[1];
                         currentObject.angle = 0;
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 }
@@ -2526,6 +2528,7 @@ window.onload = function() {
                         currentObject.x = p.x[1];
                         currentObject.y = p.y[1];
                         currentObject.angle = 0;
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 } else {
@@ -2533,10 +2536,17 @@ window.onload = function() {
                         currentObject.x = p.x[1];
                         currentObject.y = p.y[1];
                         currentObject.angle = Math.PI;
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 }
                 currentObject.displayAngle = -currentObject.angle;
+            }
+
+            function testShortcutToParking() {
+                if((carPaths[i][cType][currentObject.state].x[1] == carPaths[i]["start"][carPaths[i]["start"].length-1].x[1]) && (carPaths[i][cType][currentObject.state].y[1] == carPaths[i]["start"][carPaths[i]["start"].length-1].y[1])) {
+                    currentObject.shortcutToParking = true;
+                }
             }
 
             if(typeof j == "undefined") {
@@ -2558,6 +2568,10 @@ window.onload = function() {
             obj[j] = {};
             obj[j].x = currentObject.x;
             obj[j].y = currentObject.y;
+            if(currentObject.shortcutToParking) {
+                obj[j].shortcutToParking = true;
+                currentObject.shortcutToParking = false;
+            }
             while(currentObject.displayAngle  < 0) {
                 currentObject.displayAngle  += Math.PI*2;
             }
@@ -2574,11 +2588,13 @@ window.onload = function() {
                 if(currentObject.angle < Math.PI/2) {
                     if(currentObject.x >= carPaths[i][cType][currentObject.state].x[1]){
                         currentObject.x = carPaths[i][cType][currentObject.state].x[1];
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 } else {
                     if(currentObject.x <= carPaths[i][cType][currentObject.state].x[1]){
                         currentObject.x = carPaths[i][cType][currentObject.state].x[1];
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 }
@@ -2591,11 +2607,13 @@ window.onload = function() {
                 if(currentObject.angle < Math.PI) {
                     if(currentObject.y >= carPaths[i][cType][currentObject.state].y[1]){
                         currentObject.y = carPaths[i][cType][currentObject.state].y[1];
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 } else {
                     if(currentObject.y <= carPaths[i][cType][currentObject.state].y[1]){
                         currentObject.y = carPaths[i][cType][currentObject.state].y[1];
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 }
@@ -2698,6 +2716,7 @@ window.onload = function() {
                         currentObject.x = p.x[1]+(p.y[1]-p.y[0])/2;
                         currentObject.y = p.y[1]-(p.y[1]-p.y[0])/2;
                         currentObject.angle = currentObject.displayAngle = 0.5*Math.PI;
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 } else {
@@ -2705,6 +2724,7 @@ window.onload = function() {
                         currentObject.x = p.x[1]-(p.y[0]-p.y[1])/2;
                         currentObject.y = p.y[1]+(p.y[0]-p.y[1])/2;
                         currentObject.angle = currentObject.displayAngle = 1.5*Math.PI;
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 }
@@ -2720,6 +2740,7 @@ window.onload = function() {
                         currentObject.x = p.x[1]+(p.y[0]-p.y[1])/2;
                         currentObject.y = p.y[1]+(p.y[0]-p.y[1])/2;
                         currentObject.angle = currentObject.displayAngle = 1.5*Math.PI;
+                        testShortcutToParking();
                         currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
                     }
                 }
