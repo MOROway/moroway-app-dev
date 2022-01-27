@@ -564,6 +564,7 @@ function placeTrainsAtInitialPositions() {
     trains.forEach(function(train, i){
         train.standardDirection = train.standardDirectionStartValue;
         delete train.standardDirectionStartValue;
+        train.endOfTrack = false;
 
         train.width = train.fac * background.width;
         train.height = train.fac *(trainPics[i].height * (background.width / trainPics[i].width));
