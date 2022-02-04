@@ -10,10 +10,10 @@ function extendedMeasureViewspace() {
     client.devicePixelRatio = window.devicePixelRatio;
     client.width = window.innerWidth;
     client.height = window.innerHeight;
-    canvasForeground.style.width = canvasSemiForeground.style.width = canvasBackground.style.width = canvas.style.width = window.innerWidth + "px";
-    canvasForeground.style.height = canvasSemiForeground.style.height = canvasBackground.style.height = canvas.style.height = window.innerHeight + "px";
-    canvasForeground.width = canvasSemiForeground.width = canvasBackground.width = canvas.width = window.innerWidth * client.devicePixelRatio;
-    canvasForeground.height = canvasSemiForeground.height = canvasBackground.height = canvas.height = window.innerHeight * client.devicePixelRatio;
+    canvasForeground.style.width = canvasSemiForeground.style.width = canvasBackground.style.width = canvas.style.width = client.width + "px";
+    canvasForeground.style.height = canvasSemiForeground.style.height = canvasBackground.style.height = canvas.style.height = client.height + "px";
+    canvasForeground.width = canvasSemiForeground.width = canvasBackground.width = canvas.width = client.width * client.devicePixelRatio;
+    canvasForeground.height = canvasSemiForeground.height = canvasBackground.height = canvas.height = client.height * client.devicePixelRatio;
 }
 
 function drawImage(pic,x,y,width,height, cxt){
@@ -198,11 +198,11 @@ function onMouseRight(event) {
     event.preventDefault();
     if(controlCenter.showCarCenter === null && hardware.mouse.rightClick && client.realScale == 1) {
         controlCenter.showCarCenter = true;
-        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null,null, client.y, false);
+        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null, null, client.y + optMenu.container.height, false);
     } else {
         hardware.mouse.rightClick = !hardware.mouse.rightClick;
         if(hardware.mouse.rightClick && client.realScale == 1) {
-            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null,null, client.y, false);
+            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null, null, client.y + optMenu.container.height, false);
         }
         hardware.mouse.rightClickEvent = false;
         hardware.mouse.rightClickWheelScrolls = false;
@@ -276,12 +276,12 @@ function getTouchEnd(event) {
     if(hardware.mouse.rightClickPrepare != undefined && hardware.mouse.rightClickPrepare) {
         if(controlCenter.showCarCenter === null && hardware.mouse.rightClick && client.realScale == 1) {
             controlCenter.showCarCenter = true;
-            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null,null, client.y, false);
+            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null, null, client.y + optMenu.container.height, false);
             hardware.mouse.rightClickPrepare = false;
         } else {
             hardware.mouse.rightClick = !hardware.mouse.rightClick;
             if(hardware.mouse.rightClick && client.realScale == 1) {
-                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null,null, client.y, false);
+                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null, null, client.y + optMenu.container.height, false);
             }
             hardware.mouse.rightClickEvent = hardware.mouse.rightClickHold = hardware.mouse.rightClickPrepare = false;
         }
@@ -394,7 +394,7 @@ function drawBackground() {
         contextSemiForeground.fillRect(0,0,background.x,canvas.height);
         contextSemiForeground.fillRect(0,0,canvas.width,background.y);
         contextSemiForeground.fillRect(background.x+background.width,0,background.x,canvas.height);
-        contextSemiForeground.fillRect(0,background.y+background.height,canvas.width,background.y);
+        contextSemiForeground.fillRect(0,background.y+background.height+optMenu.container.height * client.devicePixelRatio,canvas.width,background.y);
         contextSemiForeground.restore();
     }
 
@@ -421,48 +421,201 @@ function drawBackground() {
     }
 }
 
-function placeBackground() {
+function drawOptionsMenu(state) {
+    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
+    if(optMenu.items.length > 0) {
+        optMenu.container.width = background.width / client.devicePixelRatio;
+        var innerWidth = (settings.classicUI || optMenu.floating ? 0.5 : 1) * optMenu.container.width;
+        var availableHeight = optMenu.floating ? client.y : optMenu.container.height;
+        if(optMenu.small && (!optMenu.floating || client.width * 0.75 >= client.height)) {
+            innerWidth /= 2.5;
+            optMenu.container.element.style.justifyContent = "end";
+        } else {
+            optMenu.container.element.style.justifyContent = "";
+        }
+        optMenu.container.elementInner.style.width = innerWidth + 'px';
+        optMenu.container.element.style.width = optMenu.container.width + 'px';
+        optMenu.container.elementInner.style.height = optMenu.container.element.style.height = availableHeight + 'px';
 
-    if (canvasBackground.width / canvasBackground.height < pics[background.src].width / pics[background.src].height) {
-        background.width = canvasBackground.width;
-        background.height = pics[background.src].height * (canvas.width / pics[background.src].width);
-        background.x = 0;
-        background.y = canvasBackground.height / 2 - background.height / 2;
-    } else {
-        background.width = pics[background.src].width * (canvasBackground.height / pics[background.src].height);
-        background.height = canvasBackground.height;
-        background.x = canvasBackground.width / 2 - background.width / 2;
-        background.y = 0;
+        var itemDefaultSize = availableHeight * 0.5;
+        var itemSize = Math.min(itemDefaultSize, itemDefaultSize*innerWidth/(itemDefaultSize*optMenu.items.length));
+
+        if(optMenu.floating) {
+            itemSize = Math.min(itemSize, Math.max(itemSize / 2, 30));
+            optMenu.container.element.style.top = (client.y + background.height / client.devicePixelRatio) + 'px';
+            optMenu.container.element.style.background = "transparent";
+        } else {
+            optMenu.container.element.style.top = client.y + background.height / client.devicePixelRatio + 'px';
+            optMenu.container.element.style.background = "";
+        }
+        optMenu.container.element.style.left = client.x + 'px';
+
+        switch (state) {
+            case "hide-outer":
+                optMenu.container.element.style.display = "none";
+            case "hide":
+                optMenu.visible = false;
+                optMenu.container.elementInner.style.display = "";
+                break;
+            case "show":
+                optMenu.visible = true;
+                optMenu.container.elementInner.style.display = "inline-flex";
+                optMenu.container.element.style.display = "";
+                break;
+            case "invisible-outer":
+                optMenu.container.element.style.visibility = "hidden";
+            case "invisible":
+                optMenu.visible = false;
+                optMenu.container.elementInner.style.visibility = "hidden";
+                break;
+            case "visible":
+                optMenu.visible = true;
+                optMenu.container.element.style.visibility = optMenu.container.elementInner.style.visibility = "";
+                break;
+        }
+
+        for(var i = 0; i < optMenu.items.length; i++) {
+            optMenu.items[i].style.width = optMenu.items[i].style.height = optMenu.items[i].querySelector("i").style.fontSize = optMenu.items[i].querySelector("i").style.lineHeight = itemSize + 'px';
+        }
+
+        if(typeof drawOptionsMenuLocal == "function") {
+            drawOptionsMenuLocal(state);
+        }
     }
-    client.x = background.x / client.devicePixelRatio;
-    client.y = background.y / client.devicePixelRatio;
-
-    drawBackground();
-
 }
 
-function placeClassicUIElements(){
-    var fac = 0.042;
+function calcOptionsMenuAndBackground(state) {
+    function calcBackground(simulate) {
+        var additionalHeight;
+        if(simulate === true) {
+            additionalHeight = 0;
+        } else {
+            simulate = false;
+            additionalHeight = optMenu.container.height * client.devicePixelRatio;
+        }
+
+        if (canvasBackground.width / canvasBackground.height / ((canvasBackground.height - additionalHeight) / canvasBackground.height) < pics[background.src].width / pics[background.src].height) {
+            background.width = canvasBackground.width;
+            background.height = pics[background.src].height * (canvas.width / pics[background.src].width);
+            background.x = 0;
+            background.y = canvasBackground.height / 2 - background.height / 2 - additionalHeight / 2;
+        } else {
+            background.width = pics[background.src].width * (canvasBackground.height / pics[background.src].height) * ((canvasBackground.height - additionalHeight) / canvasBackground.height);
+            background.height = canvasBackground.height - additionalHeight;
+            background.x = canvasBackground.width / 2 - background.width / 2;
+            background.y = 0;
+        }
+        client.x = background.x / client.devicePixelRatio;
+        client.y = background.y / client.devicePixelRatio;
+
+        if(!simulate) {
+            drawBackground();
+        }
+    }
+    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
+    if(state == "load") {
+        optMenu.container = {};
+        optMenu.container.elementInner = document.querySelector("#canvas-options-inner");
+        optMenu.container.element = document.querySelector("#canvas-options");
+        optMenu.container.element.addEventListener("wheel", function(){
+                event.preventDefault();
+        });
+        if(onlineGame.enabled) {
+            document.querySelector("#canvas-team").classList.add("hidden");
+            document.querySelector("#canvas-chat-open").addEventListener("click", function(){
+                document.querySelector("#chat").openChat();
+            });
+            document.querySelector("#canvas-single").addEventListener("click", showConfirmLeaveMultiplayerMode);
+        } else {
+            document.querySelector("#canvas-single").classList.add("hidden");
+            document.querySelector("#canvas-chat-open").classList.add("hidden");
+            document.querySelector("#canvas-team").addEventListener("click", function(){followLink("?mode=multiplay", "_self", LINK_STATE_INTERNAL_HTML);});
+        }
+        var settingsElem = document.querySelector("#settings");
+        document.querySelector("#canvas-settings").addEventListener("click", function(){
+            drawOptionsMenu("invisible");
+            settingsElem.style.display = "block";
+        });
+        settingsElem.querySelector("#settings-apply").onclick = function(){
+            settings = getSettings();
+            if(typeof settingsElem.scrollTo == "function") {
+                settingsElem.scrollTo(0,0);
+            }
+            settingsElem.style.display = "";
+            calcClassicUIElements();
+            drawOptionsMenu("visible");
+            resize();
+        };
+        document.querySelector("#canvas-help").addEventListener("click", function(){followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);});
+        document.querySelector("#canvas-control-center").addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || controlCenter.showCarCenter; controlCenter.showCarCenter = false;});
+        document.querySelector("#canvas-car-control-center").addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || !controlCenter.showCarCenter; controlCenter.showCarCenter = true;});
+        optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
+    }
+    if(optMenu.items.length > 0) {
+        optMenu.small = !client.isSmall;
+        optMenu.visible = true;
+        optMenu.container.height = optMenu.small ? Math.max(25,Math.ceil(client.height/25)) : Math.max(50,Math.ceil(client.height/15));
+        calcBackground(true);
+        if(optMenu.small && client.y >= optMenu.container.height) {
+            optMenu.floating = true;
+            optMenu.container.height = 0;
+        } else {
+            optMenu.floating = false;
+        }
+    } else {
+        optMenu.visible = false;
+        optMenu.container.height = 0;
+    }
+    if(typeof calcOptionsMenuLocal == "function") {
+        calcOptionsMenuLocal(state);
+    }
+    calcBackground();
+}
+
+function calcClassicUIElements(){
+    function realWidth(angle, width, height){
+        return Math.sin(angle) * width + Math.cos(angle) * height;
+    }
+    function realHeight(angle, width, height){
+        return Math.sin(angle) * height + Math.cos(angle) * width;
+    }
+    var fac = optMenu.small ? 0.042 : 0.059;
     classicUI.trainSwitch.width = fac * (background.width);
     classicUI.trainSwitch.height = fac * (pics[classicUI.trainSwitch.src].height * (background.width / pics[classicUI.trainSwitch.src].width));
-    fac = 0.07;
-    classicUI.transformer.width = fac * (background.width);
-    classicUI.transformer.height = fac * (pics[classicUI.transformer.src].height * (background.width / pics[classicUI.transformer.src].width));
+    if(optMenu.small) {
+        fac = 0.07;
+        classicUI.transformer.width = fac * (background.width);
+        classicUI.transformer.height = fac * (pics[classicUI.transformer.src].height * (background.width / pics[classicUI.transformer.src].width));
+    } else {
+        classicUI.transformer.height = Math.max(3 * optMenu.container.height * client.devicePixelRatio, background.height/5);
+        classicUI.transformer.width = classicUI.transformer.height / pics[classicUI.transformer.src].height * pics[classicUI.transformer.src].width;
+        while(realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - optMenu.container.height * client.devicePixelRatio > background.height / 5 || realWidth(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) > background.width / 5) {
+            classicUI.transformer.height *= 0.9;
+            classicUI.transformer.width = classicUI.transformer.height / pics[classicUI.transformer.src].height * pics[classicUI.transformer.src].width;
+        }
+    }
     fac = 0.7;
     classicUI.transformer.input.width = classicUI.transformer.input.height = fac * classicUI.transformer.width;
     fac = 0.17;
     classicUI.transformer.directionInput.width = fac * classicUI.transformer.width;
     classicUI.transformer.directionInput.height = fac * (pics[classicUI.transformer.directionInput.src].height * ( classicUI.transformer.width/ pics[classicUI.transformer.directionInput.src].width));
-
-    classicUI.trainSwitch.x = background.x + background.width /99;
-    classicUI.trainSwitch.y = background.y + background.height / 1.175;
-    classicUI.transformer.x = background.x + background.width / 1.1;
-    classicUI.transformer.y = background.y + background.height/1.4;
+    if(optMenu.small) {
+        classicUI.trainSwitch.x = background.x + background.width /99;
+        classicUI.trainSwitch.y = background.y + background.height / 1.175;
+        classicUI.transformer.x = background.x + background.width / 1.1;
+        classicUI.transformer.y = background.y + background.height/1.4;
+    } else {
+        classicUI.trainSwitch.x = background.x + background.width / 220;
+        classicUI.trainSwitch.y = background.y + background.height / 1.19;
+        classicUI.transformer.x =(background.x + background.width - (classicUI.transformer.width) - (realWidth(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.width)/2);//TODO
+        classicUI.transformer.y =  0.99*(background.y + background.height + optMenu.container.height * client.devicePixelRatio - classicUI.transformer.height - (realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.height)/2);//TODO
+        while(classicUI.transformer.y > background.y + background.height) {
+            classicUI.transformer.y *= 0.9;
+        }
+    }
     classicUI.transformer.input.diffY = classicUI.transformer.height/6;
     classicUI.transformer.directionInput.diffX = classicUI.transformer.width*0.46-classicUI.transformer.directionInput.width;
     classicUI.transformer.directionInput.diffY = classicUI.transformer.height*0.46-classicUI.transformer.directionInput.height;
-
-    var cwidth =  background.width*0.07;
     context.textBaseline = "middle";
     var longestName = 0;
     for (var i = 1; i < trains.length; i++){
@@ -470,10 +623,31 @@ function placeClassicUIElements(){
             longestName = i;
         }
     }
-    classicUI.trainSwitch.selectedTrainDisplay.font = measureFontSize(getString(["appScreenTrainNames",longestName]),"sans-serif",background.height*cwidth/background.width,cwidth, 5, background.height/100,0);
+    classicUI.trainSwitch.selectedTrainDisplay.fontFamily = "sans-serif";
+    var heightMultiply = 1.6;
+    var widthMultiply = 1.2;
+    var wantedWidth = (optMenu.small ? 0.35 : 0.9)*background.width/4/widthMultiply;
+    var tempFont = measureFontSize(getString(["appScreenTrainNames",longestName]),classicUI.trainSwitch.selectedTrainDisplay.fontFamily,wantedWidth/getString(["appScreenTrainNames",longestName]).length,wantedWidth, 3, background.width*0.004,0);
+    var tempFontSize = optMenu.small ? getFontSize(tempFont, "px") : Math.min(0.9*optMenu.container.height * client.devicePixelRatio/heightMultiply, getFontSize(tempFont, "px"));
+    classicUI.trainSwitch.selectedTrainDisplay.visible = settings.alwaysShowSelectedTrain && tempFontSize >= 7;
+    classicUI.trainSwitch.selectedTrainDisplay.font = tempFontSize + "px " + classicUI.trainSwitch.selectedTrainDisplay.fontFamily;
     context.font = classicUI.trainSwitch.selectedTrainDisplay.font;
-    classicUI.trainSwitch.selectedTrainDisplay.width = 1.2*context.measureText(getString(["appScreenTrainNames",longestName])).width;
-    classicUI.trainSwitch.selectedTrainDisplay.height = 1.6*getFontSize(classicUI.trainSwitch.selectedTrainDisplay.font, "px");
+    classicUI.trainSwitch.selectedTrainDisplay.width = widthMultiply * context.measureText(getString(["appScreenTrainNames",longestName])).width;
+    classicUI.trainSwitch.selectedTrainDisplay.height = heightMultiply * getFontSize(classicUI.trainSwitch.selectedTrainDisplay.font, "px");
+    classicUI.trainSwitch.selectedTrainDisplay.x = (optMenu.small ? classicUI.trainSwitch.width : 0) + classicUI.trainSwitch.x;
+    classicUI.trainSwitch.selectedTrainDisplay.y = (optMenu.small ? (classicUI.trainSwitch.y+classicUI.trainSwitch.height-classicUI.trainSwitch.selectedTrainDisplay.height*1.3) : (background.y + background.height +(optMenu.container.height * client.devicePixelRatio - classicUI.trainSwitch.selectedTrainDisplay.height) / 2));
+    if(!optMenu.small && classicUI.trainSwitch.selectedTrainDisplay.visible) {
+        classicUI.trainSwitch.y = classicUI.trainSwitch.selectedTrainDisplay.y-classicUI.trainSwitch.height*0.9;
+        while(classicUI.trainSwitch.height - (classicUI.trainSwitch.height - (background.y + background.height - classicUI.trainSwitch.y)) < background.height / 8) {
+            classicUI.trainSwitch.height *= 1.1;
+            classicUI.trainSwitch.width *= 1.1;
+            classicUI.trainSwitch.y = classicUI.trainSwitch.selectedTrainDisplay.y-classicUI.trainSwitch.height*0.9;
+        }
+    } else if(!optMenu.small) {
+        classicUI.trainSwitch.height = Math.min(background.height * 0.05 + optMenu.container.height * client.devicePixelRatio, realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height));
+        classicUI.trainSwitch.width = (pics[classicUI.trainSwitch.src].width * (classicUI.trainSwitch.height / pics[classicUI.trainSwitch.src].height));
+        classicUI.trainSwitch.y = background.y + background.height * 0.9;
+    }
     classicUI.switches.radius = 0.02*background.width;
 }
 
@@ -578,7 +752,7 @@ function resize() {
     client.touchScaleX = client.touchScaleY = client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
     oldbackground = copyJSObject(background);
     extendedMeasureViewspace();
-    placeBackground();
+    calcOptionsMenuAndBackground("resize");
 
     animateWorker.postMessage({k: "resize", background: background,oldbackground: oldbackground});
 
@@ -614,17 +788,16 @@ function resize() {
         car.size *= background.width/oldbackground.width;
     });
 
-    placeClassicUIElements();
+    calcClassicUIElements();
     calcControlCenter();
+    drawOptionsMenu("resize");
 
-    if(typeof placeOptions == "function") {
-        placeOptions("resize");
-    }
 }
 
 /******************************************
              draw  functions
 ******************************************/
+
 function drawObjects() {
     function drawTrains(input1){
         function drawTrain(i) {
@@ -790,13 +963,13 @@ function drawObjects() {
                         carParams.autoModeOff = false;
                         carParams.autoModeRuns = true;
                         carParams.autoModeInit = true;
-                        notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                        notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                     } else if(carParams.autoModeOff && !currentObject.move && currentObject.backwardsState === 0) {
                         currentObject.lastDirectionChange = frameNo;
                         currentObject.backwardsState = 1;
                         currentObject.backToInit = false;
                         currentObject.move = !carCollisionCourse(input1,false);
-                        notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack","."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 750,null,null, client.y);
+                        notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack","."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 750,null, null, client.y + optMenu.container.height);
                     }
                 } else {
                     if(typeof clickTimeOut !== "undefined"){
@@ -810,23 +983,23 @@ function drawObjects() {
                         }
                         if(!carCollisionCourse(input1,false)) {
                             if(carParams.autoModeRuns) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                                 carParams.autoModeRuns = false;
                             } else if(carParams.init || carParams.autoModeOff) {
                                 currentObject.parking = false;
                                 if (currentObject.move){
                                     currentObject.move = false;
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y + optMenu.container.height);
                                 } else {
                                     currentObject.move = !carCollisionCourse(input1,false);
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                                 }
                                 currentObject.backwardsState = 0;
                                 currentObject.backToInit = false;
                                 carParams.init = false;
                                 carParams.autoModeOff = true;
                             } else {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                                 carParams.autoModeRuns = true;
                                 carParams.autoModeInit = true;
                             }
@@ -850,11 +1023,11 @@ function drawObjects() {
                         if(carParams.autoModeOff) {
                             currentObject.move = true;
                             currentObject.backToInit = true;
-                            notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y);
+                            notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y + optMenu.container.height);
                         } else {
                             carParams.autoModeRuns = true;
                             carParams.isBackToRoot = true;
-                            notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750 ,null,  null, client.y);
+                            notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750 ,null,  null, client.y + optMenu.container.height);
                         }
                     }
                 }
@@ -986,7 +1159,7 @@ function drawObjects() {
                 context.rect(-currentObject.width/2, -currentObject.height/2, currentObject.width, currentObject.height);
                 if (context.isPointInPath(x1, y1) || context.isPointInPath(x2, y2) || context.isPointInPath(x3, y3)){
                     if(input2 && cars[input1].move){
-                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames",input1]), getString(["appScreenCarNames",i])), NOTIFICATION_PRIO_DEFAULT, 2000,null,null, client.y);
+                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames",input1]), getString(["appScreenCarNames",i])), NOTIFICATION_PRIO_DEFAULT, 2000,null, null, client.y + optMenu.container.height);
                     }
                     collision = true;
                     cars[input1].move = cars[input1].backToInit = false;
@@ -1066,10 +1239,10 @@ function drawObjects() {
         client.oldTouchScaleX = client.touchScaleX;
         client.oldTouchScaleY = client.touchScaleY;
         drawBackground();
-        if(client.realScale > 1 && typeof placeOptions == "function") {
-            placeOptions("hide");
-        } else if(typeof placeOptions == "function") {
-            placeOptions("show");
+        if(client.realScale != 1) {
+            drawOptionsMenu("hide-outer");
+        } else {
+            drawOptionsMenu("show");
         }
     }
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -1078,7 +1251,7 @@ function drawObjects() {
     contextForeground.setTransform(client.realScale,0,0,client.realScale,-(client.realScale-1)*canvas.width/2+client.touchScaleX,-(client.realScale-1)*canvas.height/2+client.touchScaleY);
     frameNo++;
     if(frameNo % 1000000 === 0){
-        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames","."),frameNo/1000000), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y);
+        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames","."),frameNo/1000000), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
     }
     if(hardware.mouse.cursor != "none") {
         hardware.mouse.cursor = "default";
@@ -1232,7 +1405,7 @@ function drawObjects() {
         for(var i = 0; i < cCars.length; i++) {
             for(var k = 0; k < cCars.length; k++) {
                 if(i!= k && carCollisionCourse(i,false) && carCollisionCourse(k,false)){
-                    notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NOTIFICATION_PRIO_HIGH, 5000, null, null, window.innerHeight);
+                    notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NOTIFICATION_PRIO_HIGH, 5000, null, null, client.height);
                     carParams.autoModeOff = true;
                     carParams.autoModeRuns = false;
                 }
@@ -1245,7 +1418,7 @@ function drawObjects() {
             }
         });
         if(collStopQuantity == cars.length){
-            notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NOTIFICATION_PRIO_HIGH, 5000, null, null, window.innerHeight);
+            notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NOTIFICATION_PRIO_HIGH, 5000, null, null, client.height);
             carParams.autoModeOff = true;
             carParams.autoModeRuns = false;
         }
@@ -1343,7 +1516,7 @@ function drawObjects() {
     }
 
     /////CLASSIC UI/////
-    if(settings.classicUI) {
+    if(settings.classicUI && !(client.realScale == 1 && hardware.mouse.rightClick)) {
         var step = Math.PI/30;
         if(trains[trainParams.selected].accelerationSpeed > 0){
             if(classicUI.transformer.input.angle < trains[trainParams.selected].speedInPercent/100 * classicUI.transformer.input.maxAngle){
@@ -1365,19 +1538,29 @@ function drawObjects() {
                 }
             }
         }
+        var wasInSwitchPath = false;
+        if(classicUI.trainSwitch.selectedTrainDisplay.visible){
+            context.save();
+            context.beginPath();
+            context.rect(classicUI.trainSwitch.selectedTrainDisplay.x,classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
+            if ((context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+                wasInSwitchPath = true;
+            }
+            context.font = classicUI.trainSwitch.selectedTrainDisplay.font;
+            context.fillStyle = "#000";
+            context.strokeStyle = "#eee";
+            context.fillRect(classicUI.trainSwitch.selectedTrainDisplay.x,classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
+            context.strokeRect(classicUI.trainSwitch.selectedTrainDisplay.x,classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
+            context.fillStyle = "#eee";
+            context.translate(classicUI.trainSwitch.selectedTrainDisplay.x+classicUI.trainSwitch.selectedTrainDisplay.width/2,0);
+            context.textBaseline = "middle";
+            context.fillText(getString(["appScreenTrainNames",trainParams.selected]), -context.measureText(getString(["appScreenTrainNames",trainParams.selected])).width/2,classicUI.trainSwitch.selectedTrainDisplay.y+classicUI.trainSwitch.selectedTrainDisplay.height/2);
+            context.restore();
+        }
         context.save();
         drawImage(pics[classicUI.trainSwitch.src], classicUI.trainSwitch.x, classicUI.trainSwitch.y, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
         context.beginPath();
-        var wasInSwitchPath = false;
         context.rect(classicUI.trainSwitch.x, classicUI.trainSwitch.y, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
-        if ((context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
-            wasInSwitchPath = true;
-        }
-        context.restore();
-        context.save();
-        context.beginPath();
-        var sTDposY = classicUI.trainSwitch.selectedTrainDisplay.height*1.3;
-        context.rect(classicUI.trainSwitch.x+classicUI.trainSwitch.width,classicUI.trainSwitch.y+classicUI.trainSwitch.height-sTDposY, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
         if (wasInSwitchPath || (context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
             hardware.mouse.cursor = "pointer";
             if(typeof movingTimeOut !== "undefined"){
@@ -1395,21 +1578,10 @@ function drawObjects() {
                 } else if (trainParams.selected < 0) {
                     trainParams.selected = trains.length-1;
                 }
-                if (!settings.alwaysShowSelectedTrain) {
-                    notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames",trainParams.selected])), NOTIFICATION_PRIO_HIGH, 1250, null, null, window.innerHeight, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH);
+                if (!classicUI.trainSwitch.selectedTrainDisplay.visible) {
+                    notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames",trainParams.selected])), NOTIFICATION_PRIO_HIGH, 1250, null, null, client.height, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH);
                 }
             }
-        }
-        if(settings.alwaysShowSelectedTrain){
-            context.font = classicUI.trainSwitch.selectedTrainDisplay.font;
-            context.fillStyle = "#000";
-            context.strokeStyle = "#eee";
-            context.fillRect(classicUI.trainSwitch.x+classicUI.trainSwitch.width,classicUI.trainSwitch.y+classicUI.trainSwitch.height-sTDposY, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
-            context.strokeRect(classicUI.trainSwitch.x+classicUI.trainSwitch.width,classicUI.trainSwitch.y+classicUI.trainSwitch.height-sTDposY, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
-            context.fillStyle = "#eee";
-            context.translate(classicUI.trainSwitch.x+classicUI.trainSwitch.width+classicUI.trainSwitch.selectedTrainDisplay.width/2,0);
-            context.textBaseline = "middle";
-            context.fillText(getString(["appScreenTrainNames",trainParams.selected]), -context.measureText(getString(["appScreenTrainNames",trainParams.selected])).width/2,classicUI.trainSwitch.y+classicUI.trainSwitch.height-sTDposY+classicUI.trainSwitch.selectedTrainDisplay.height/2);
         }
         context.restore();
         context.save();
@@ -1419,7 +1591,7 @@ function drawObjects() {
         if(trains[trainParams.selected].accelerationSpeed > 0){
             drawImage(pics[classicUI.transformer.src], -classicUI.transformer.width/2, -classicUI.transformer.height/2 , classicUI.transformer.width, classicUI.transformer.height);
         }
-        if(!client.isSmall){
+        if(!client.isTiny ||  !(typeof(client.realScale) == "undefined" || client.realScale <= Math.max(1,client.realScaleMax/3))){
             context.save();
             context.translate( classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
             drawImage(pics[classicUI.transformer.directionInput.src], -classicUI.transformer.directionInput.width/2, -classicUI.transformer.directionInput.height/2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
@@ -1581,7 +1753,7 @@ function drawObjects() {
                     switches[key][side].turned = !switches[key][side].turned;
                     switches[key][side].lastStateChange = frameNo;
                     animateWorker.postMessage({k: "switches", switches: switches});
-                    notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y,NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
+                    notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height,NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
                 }
                 contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 255, 144,1)" : "rgba(255,0,0,1)";
                 contextForeground.closePath();
@@ -1911,7 +2083,7 @@ function drawObjects() {
                             carParams.autoModeOff = false;
                             carParams.autoModeRuns = true;
                             carParams.autoModeInit = true;
-                            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
 
                         } else if(contextClick) {
                             cars[cCar].move = !carCollisionCourse(cCar,false);
@@ -1920,7 +2092,7 @@ function drawObjects() {
                             cars[cCar].backToInit = false;
                             carParams.init = false;
                             carParams.autoModeOff = true;
-                            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                         }
                     }
                 }
@@ -1961,10 +2133,10 @@ function drawObjects() {
                                 cars[cCar].backToInit = false;
                                 if (cars[cCar].move){
                                     cars[cCar].move = false;
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y + optMenu.container.height);
                                 } else {
                                     cars[cCar].move = noCollisionCCar;
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                                 }
                             }
                         }
@@ -1996,7 +2168,7 @@ function drawObjects() {
                                 cars[cCar].backwardsState = 1;
                                 cars[cCar].backToInit = false;
                                 cars[cCar].move = !carCollisionCourse(cCar,false);
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack","."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 750,null,null, client.y);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack","."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 750,null, null, client.y + optMenu.container.height);
                             }
                         }
                     }
@@ -2033,7 +2205,7 @@ function drawObjects() {
                             if(contextClick) {
                                 cars[cCar].move = true;
                                 cars[cCar].backToInit = true;
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames",cCar])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y + optMenu.container.height);
                             }
                         }
                     }
@@ -2061,10 +2233,10 @@ function drawObjects() {
                         if(cCar == 0) {
                             hardware.mouse.cursor = "pointer";
                             if(contextClick && carParams.autoModeRuns) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                                 carParams.autoModeRuns = false;
                             } else if(contextClick) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height);
                                 carParams.autoModeRuns = true;
                                 carParams.autoModeInit = true;
                             }
@@ -2074,7 +2246,7 @@ function drawObjects() {
                                 if(contextClick) {
                                     carParams.autoModeRuns = true;
                                     carParams.isBackToRoot = true;
-                                    notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750 ,null,  null, client.y);
+                                    notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750 ,null,  null, client.y + optMenu.container.height);
                                 }
                             }
                         }
@@ -2234,7 +2406,7 @@ function drawObjects() {
         context.fillRect(0,0,background.x,canvas.height);
         context.fillRect(0,0,canvas.width,background.y);
         context.fillRect(background.x+background.width,0,background.x,canvas.height);
-        context.fillRect(0,background.y+background.height,canvas.width,background.y);
+        context.fillRect(0,background.y+background.height+optMenu.container.height * client.devicePixelRatio,canvas.width,background.y);
         context.restore();
     }
 
@@ -2286,7 +2458,7 @@ function actionSync (objname, index, params, notification) {
                     notifyArr.push(getString.apply( null, elem.getString ));
                 });
                 var notifyStr = formatJSString.apply( null, notifyArr );
-                notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null,null,client.y);
+                notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + optMenu.container.height);
             }
             break;
         }
@@ -2362,6 +2534,8 @@ var controlCenter = {showCarCenter: null, fontFamily: "sans-serif"};
 
 var hardware = {mouse: {moveX:0, moveY:0,downX:0, downY:0, downTime: 0,upX:0, upY:0, upTime: 0, isMoving: false, isHold: false, rightClick: false, cursor: "default"}, keyboard: {keysHold: []}};
 var client = {devicePixelRatio: 1,realScaleMax:6,realScaleMin:1.2};
+var optMenu = {};
+
 var onlineGame = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {"t": ["src", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], "tc": ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"]}, chatSticker: 7, resized: false};
 var onlineConnection = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
 
@@ -2408,6 +2582,301 @@ window.onload = function() {
     function initialDisplay() {
 
         function defineCarParams(){
+
+            function defineCarWays(cType, isFirst, i, j, obj, currentObject, stateNullAgain) {
+
+                function curve_right(p){
+                    if(p.x[0] != p.x[1]) {
+                        p.x[1] = p.x[0];
+                    }
+                    var radius = Math.abs(p.y[0]-p.y[1])/2;
+                    var arc = Math.abs(currentObject.angle)*radius;
+                    arc += currentObject.speed;
+                    currentObject.angle = (arc / radius);
+                    var chord = 2* radius * Math.sin((currentObject.angle)/2);
+                    var gamma = Math.PI/2-(Math.PI-(currentObject.angle))/2;
+                    var x = Math.cos(gamma)*chord;
+                    var y = Math.sin(gamma)*chord;
+                    currentObject.x = ( p.y[1] < p.y[0] ) ? x + p.x[1] : x + p.x[0];
+                    currentObject.y = ( p.y[1] < p.y[0] ) ? y + p.y[1] : y + p.y[0];
+                    if(p.y[1] > p.y[0]) {
+                        if(arc >= Math.PI*radius || currentObject.angle >= Math.PI){
+                            currentObject.x = p.x[1];
+                            currentObject.y = p.y[1];
+                            currentObject.angle = Math.PI;
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    } else {
+                        if(arc >= 2*Math.PI*radius || currentObject.angle >= 2*Math.PI){
+                            currentObject.x = p.x[1];
+                            currentObject.y = p.y[1];
+                            currentObject.angle = 0;
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    }
+                    currentObject.displayAngle = currentObject.angle;
+                }
+
+                function curve_left(p){
+                    if(p.x[0] != p.x[1]) {
+                        p.x[1] = p.x[0];
+                    }
+                    var radius = Math.abs(p.y[0]-p.y[1])/2;
+                    var arc = Math.abs(currentObject.angle)*radius;
+                    arc += currentObject.speed;
+                    currentObject.angle = (arc / radius);
+                    var chord = 2* radius * Math.sin((currentObject.angle)/2);
+                    var gamma = Math.PI/2-(Math.PI-(currentObject.angle))/2;
+                    var x = Math.cos(gamma)*chord;
+                    var y = Math.sin(gamma)*chord;
+                    currentObject.x = ( p.y[1] < p.y[0] ) ? p.x[0] + x : p.x[1] + x;
+                    currentObject.y = ( p.y[1] < p.y[0] ) ? p.y[0] - y : p.y[1] - y;
+                    if(p.y[1] > p.y[0]) {
+                        if(arc >= 2*Math.PI*radius || currentObject.angle >= 2*Math.PI){
+                            currentObject.x = p.x[1];
+                            currentObject.y = p.y[1];
+                            currentObject.angle = 0;
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    } else {
+                        if(arc >= Math.PI*radius || currentObject.angle >= Math.PI){
+                            currentObject.x = p.x[1];
+                            currentObject.y = p.y[1];
+                            currentObject.angle = Math.PI;
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    }
+                    currentObject.displayAngle = -currentObject.angle;
+                }
+
+                function testShortcutToParking() {
+                    if((carPaths[i][cType][currentObject.state].x[1] == carPaths[i]["start"][carPaths[i]["start"].length-1].x[1]) && (carPaths[i][cType][currentObject.state].y[1] == carPaths[i]["start"][carPaths[i]["start"].length-1].y[1])) {
+                        currentObject.shortcutToParking = true;
+                    }
+                }
+
+                if(typeof j == "undefined") {
+                    j = 0;
+                }
+                if(typeof obj == "undefined") {
+                    obj = [];
+                }
+                if(typeof currentObject == "undefined"){
+                    currentObject = copyJSObject(cars[i]);
+                    currentObject.state = 0;
+                    currentObject.angle = currentObject.displayAngle = cars[i].angles[cType];
+                    currentObject.x = carPaths[i][cType][0].x[0];
+                    currentObject.y = carPaths[i][cType][0].y[0];
+                }
+                if(typeof stateNullAgain == "undefined"){
+                    stateNullAgain = false;
+                }
+                obj[j] = {};
+                obj[j].x = currentObject.x;
+                obj[j].y = currentObject.y;
+                if(currentObject.shortcutToParking) {
+                    obj[j].shortcutToParking = true;
+                    currentObject.shortcutToParking = false;
+                }
+                while(currentObject.displayAngle  < 0) {
+                    currentObject.displayAngle  += Math.PI*2;
+                }
+
+                while (currentObject.displayAngle  >= Math.PI*2){
+                    currentObject.displayAngle -= Math.PI*2;
+                }
+                obj[j].angle = currentObject.displayAngle;
+                switch(carPaths[i][cType][currentObject.state].type){
+
+                case "linear":
+                    currentObject.angle = currentObject.angle < Math.PI/2 ? 0 : Math.PI;
+                    currentObject.x += currentObject.speed*(currentObject.angle < Math.PI/2 ? 1 : -1);
+                    if(currentObject.angle < Math.PI/2) {
+                        if(currentObject.x >= carPaths[i][cType][currentObject.state].x[1]){
+                            currentObject.x = carPaths[i][cType][currentObject.state].x[1];
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    } else {
+                        if(currentObject.x <= carPaths[i][cType][currentObject.state].x[1]){
+                            currentObject.x = carPaths[i][cType][currentObject.state].x[1];
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    }
+                    currentObject.displayAngle = currentObject.angle;
+                    break;
+
+                case "linear_vertical":
+                    currentObject.angle = currentObject.angle < Math.PI ? 0.5*Math.PI : 1.5*Math.PI;
+                    currentObject.y += currentObject.speed*(currentObject.angle < Math.PI ? 1 : -1);
+                    if(currentObject.angle < Math.PI) {
+                        if(currentObject.y >= carPaths[i][cType][currentObject.state].y[1]){
+                            currentObject.y = carPaths[i][cType][currentObject.state].y[1];
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    } else {
+                        if(currentObject.y <= carPaths[i][cType][currentObject.state].y[1]){
+                            currentObject.y = carPaths[i][cType][currentObject.state].y[1];
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    }
+                    currentObject.displayAngle = currentObject.angle;
+                    break;
+
+                case "curve_right":
+                    curve_right(carPaths[i][cType][currentObject.state]);
+                    break;
+
+                case "curve_left":
+                    curve_left(carPaths[i][cType][currentObject.state]);
+                    break;
+
+                case "curve_r2l":
+                    var p = copyJSObject(carPaths[i][cType][currentObject.state]);
+                    if(carPaths[i][cType][currentObject.state].y[0] < carPaths[i][cType][currentObject.state].y[1]) {
+                        var dx = (carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
+                        var dy = (carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
+                        if(currentObject.angle <= Math.PI){
+                            p.y[1] = carPaths[i][cType][currentObject.state].y[0]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_right(p);
+                            if(currentObject.y >= carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2) {
+                                var diff = currentObject.angle-Math.PI*45/180;
+                                currentObject.angle = Math.PI*315/180-diff;
+                                currentObject.x = carPaths[i][cType][currentObject.state].x[0]-(carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
+                                currentObject.y = carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
+                            }
+                        } else {
+                            p.x[0] = carPaths[i][cType][currentObject.state].x[1];
+                            p.y[0] = carPaths[i][cType][currentObject.state].y[1]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_left(p);
+                        }
+                    } else {
+                        var dx = (carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
+                        var dy = (carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
+                        if(currentObject.angle >= Math.PI){
+                            p.y[1] = carPaths[i][cType][currentObject.state].y[0]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_right(p);
+                            if(currentObject.y <= carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2) {
+                                var diff = currentObject.angle-Math.PI*225/180;
+                                currentObject.angle = Math.PI*135/180-diff;
+                                currentObject.x = carPaths[i][cType][currentObject.state].x[0]+(carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
+                                currentObject.y = carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
+                            }
+                        } else {
+                            p.x[0] = carPaths[i][cType][currentObject.state].x[1];
+                            p.y[0] = carPaths[i][cType][currentObject.state].y[1]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_left(p);
+                        }
+                    }
+                    break;
+
+                case "curve_l2r":
+                    if(carPaths[i][cType][currentObject.state].y[0] < carPaths[i][cType][currentObject.state].y[1]) {
+                        var dx = (carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
+                        var dy = (carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
+                        var p = copyJSObject(carPaths[i][cType][currentObject.state]);
+                        if(currentObject.angle >= Math.PI){
+                            p.y[1] = carPaths[i][cType][currentObject.state].y[0]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_left(p);
+                            if(currentObject.y >= carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2) {
+                                var diff = currentObject.angle-Math.PI*225/180;
+                                currentObject.angle = Math.PI*135/180-diff;
+                                currentObject.x = carPaths[i][cType][currentObject.state].x[0]-(carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
+                                currentObject.y = carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
+                            }
+                        } else {
+                            p.x[0] = carPaths[i][cType][currentObject.state].x[1];
+                            p.y[0] = carPaths[i][cType][currentObject.state].y[1]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_right(p);
+
+                        }
+                    } else {
+                        var dx = (carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
+                        var dy = (carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
+                        var p = copyJSObject(carPaths[i][cType][currentObject.state]);
+                        if(currentObject.angle <= Math.PI){
+                            p.y[1] = carPaths[i][cType][currentObject.state].y[0]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_left(p);
+                            if(currentObject.y <= carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2) {
+                                var diff = currentObject.angle-Math.PI*45/180;
+                                currentObject.angle = Math.PI*315/180-diff;
+                                currentObject.x = carPaths[i][cType][currentObject.state].x[0]+(carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
+                                currentObject.y = carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
+                            }
+                        } else {
+                            p.x[0] = carPaths[i][cType][currentObject.state].x[1];
+                            p.y[0] = carPaths[i][cType][currentObject.state].y[1]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
+                            curve_right(p);
+                        }
+                    }
+                    break;
+
+                case "curve_hright":
+                    var p = copyJSObject(carPaths[i][cType][currentObject.state]);
+                    curve_right(p);
+                    if(p.y[1] > p.y[0]) {
+                        if(currentObject.angle >= 0.5*Math.PI){
+                            currentObject.x = p.x[1]+(p.y[1]-p.y[0])/2;
+                            currentObject.y = p.y[1]-(p.y[1]-p.y[0])/2;
+                            currentObject.angle = currentObject.displayAngle = 0.5*Math.PI;
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    } else {
+                        if(currentObject.angle >= 1.5*Math.PI){
+                            currentObject.x = p.x[1]-(p.y[0]-p.y[1])/2;
+                            currentObject.y = p.y[1]+(p.y[0]-p.y[1])/2;
+                            currentObject.angle = currentObject.displayAngle = 1.5*Math.PI;
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    }
+                    break;
+
+                case "curve_hleft":
+                    var p = copyJSObject(carPaths[i][cType][currentObject.state]);
+                    curve_left(p);
+                    if (p.y[1] > p.y[0]) {
+                        //TODO
+                    } else {
+                        if(currentObject.angle >= 0.5*Math.PI){
+                            currentObject.x = p.x[1]+(p.y[0]-p.y[1])/2;
+                            currentObject.y = p.y[1]+(p.y[0]-p.y[1])/2;
+                            currentObject.angle = currentObject.displayAngle = 1.5*Math.PI;
+                            testShortcutToParking();
+                            currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
+                        }
+                    }
+                    break;
+
+                case "curve_hright2":
+                    curve_right(carPaths[i][cType][currentObject.state]);
+                    break;
+
+                case "curve_hleft2":
+                    if((currentObject.angle == 0.5*Math.PI || currentObject.angle == 1.5*Math.PI)){
+                        currentObject.angle = (2 * Math.PI - (currentObject.angle));
+                    }
+                    curve_left(carPaths[i][cType][currentObject.state]);
+                    break;
+
+                }
+                if(!stateNullAgain && (currentObject.state > 0 || currentObject.state == -1)) {
+                    stateNullAgain = true;
+                    if(isFirst){
+                        cars[i].startFrame = cars[i].counter = Math.floor(cars[i].startFrameFac*j);
+                    }
+                }
+                return ((currentObject.state === 0 || currentObject.state == -1)  && stateNullAgain) ? obj : defineCarWays(cType,isFirst,i,++j,obj, currentObject, stateNullAgain);
+            }
+
             cars.forEach(function(car, i){
                 car.speed *= background.width;
                 car.collStop = true;
@@ -2418,8 +2887,10 @@ window.onload = function() {
                     carParams.lowestSpeedNo = i;
                 }
             });
-            cars.forEach(function(car,i){
-                Object.keys(carPaths[i]).forEach(function(cType) {
+            for(var i = 0; i < cars.length; i++) {
+                var types = Object.keys(carPaths[i]);
+                for(var cTypeNo = 0; cTypeNo < types.length; cTypeNo++) {
+                    var cType = types[cTypeNo];
                     carPaths[i][cType].forEach(function(cPoint){
                         for(var k = 0; k < cPoint.x.length && k < cPoint.y.length; k++){
                             cPoint.x[k] *= background.width;
@@ -2450,334 +2921,48 @@ window.onload = function() {
                     if(typeof carWays[i] == "undefined"){
                         carWays[i] = {};
                     }
-                    carWays[i][cType] = defineCarWays(cType, ((typeof carPaths[i].start == "undefined" && cType == "normal") || (cType == "start")), i);
-                });
-            });
+                    try {
+                        carWays[i][cType] = defineCarWays(cType, ((typeof carPaths[i].start == "undefined" && cType == "normal") || (cType == "start")), i);
+                    } catch (e) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         function placeCarsAtInitialPositions() {
             for (var i = 0; i < cars.length; i++){
                 cars[i].width = cars[i].fac * background.width;
                 cars[i].height = cars[i].fac * (pics[cars[i].src].height * (background.width / pics[cars[i].src].width));
-                if(i === 0){
-                    carParams.thickestCar = i;
-                } else if (cars[i].height > cars[carParams.thickestCar].height) {
-                    carParams.thickestCar = i;
-                }
                 cars[i].cType =  typeof carWays[i].start == "undefined" ?  "normal" : "start";
                 cars[i].displayAngle = carWays[i][cars[i].cType][cars[i].counter].angle;
                 cars[i].x = carWays[i][cars[i].cType][cars[i].counter].x;
                 cars[i].y = carWays[i][cars[i].cType][cars[i].counter].y;
                 cars[i].backToInit = false;
                 cars[i].parking = true;
-            }
-        }
-
-        function defineCarWays(cType, isFirst, i, j, obj, currentObject, stateNullAgain) {
-
-            function curve_right(p){
-                if(p.x[0] != p.x[1]) {
-                    p.x[1] = p.x[0];
-                }
-                var radius = Math.abs(p.y[0]-p.y[1])/2;
-                var arc = Math.abs(currentObject.angle)*radius;
-                arc += currentObject.speed;
-                currentObject.angle = (arc / radius);
-                var chord = 2* radius * Math.sin((currentObject.angle)/2);
-                var gamma = Math.PI/2-(Math.PI-(currentObject.angle))/2;
-                var x = Math.cos(gamma)*chord;
-                var y = Math.sin(gamma)*chord;
-                currentObject.x = ( p.y[1] < p.y[0] ) ? x + p.x[1] : x + p.x[0];
-                currentObject.y = ( p.y[1] < p.y[0] ) ? y + p.y[1] : y + p.y[0];
-                if(p.y[1] > p.y[0]) {
-                    if(arc >= Math.PI*radius || currentObject.angle >= Math.PI){
-                        currentObject.x = p.x[1];
-                        currentObject.y = p.y[1];
-                        currentObject.angle = Math.PI;
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                } else {
-                    if(arc >= 2*Math.PI*radius || currentObject.angle >= 2*Math.PI){
-                        currentObject.x = p.x[1];
-                        currentObject.y = p.y[1];
-                        currentObject.angle = 0;
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                }
-                currentObject.displayAngle = currentObject.angle;
-            }
-
-            function curve_left(p){
-                if(p.x[0] != p.x[1]) {
-                    p.x[1] = p.x[0];
-                }
-                var radius = Math.abs(p.y[0]-p.y[1])/2;
-                var arc = Math.abs(currentObject.angle)*radius;
-                arc += currentObject.speed;
-                currentObject.angle = (arc / radius);
-                var chord = 2* radius * Math.sin((currentObject.angle)/2);
-                var gamma = Math.PI/2-(Math.PI-(currentObject.angle))/2;
-                var x = Math.cos(gamma)*chord;
-                var y = Math.sin(gamma)*chord;
-                currentObject.x = ( p.y[1] < p.y[0] ) ? p.x[0] + x : p.x[1] + x;
-                currentObject.y = ( p.y[1] < p.y[0] ) ? p.y[0] - y : p.y[1] - y;
-                if(p.y[1] > p.y[0]) {
-                    if(arc >= 2*Math.PI*radius || currentObject.angle >= 2*Math.PI){
-                        currentObject.x = p.x[1];
-                        currentObject.y = p.y[1];
-                        currentObject.angle = 0;
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                } else {
-                    if(arc >= Math.PI*radius || currentObject.angle >= Math.PI){
-                        currentObject.x = p.x[1];
-                        currentObject.y = p.y[1];
-                        currentObject.angle = Math.PI;
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                }
-                currentObject.displayAngle = -currentObject.angle;
-            }
-
-            function testShortcutToParking() {
-                if((carPaths[i][cType][currentObject.state].x[1] == carPaths[i]["start"][carPaths[i]["start"].length-1].x[1]) && (carPaths[i][cType][currentObject.state].y[1] == carPaths[i]["start"][carPaths[i]["start"].length-1].y[1])) {
-                    currentObject.shortcutToParking = true;
+                if(i === 0){
+                    carParams.thickestCar = i;
+                } else if (cars[i].height > cars[carParams.thickestCar].height) {
+                    carParams.thickestCar = i;
                 }
             }
-
-            if(typeof j == "undefined") {
-                j = 0;
-            }
-            if(typeof obj == "undefined") {
-                obj = [];
-            }
-            if(typeof currentObject == "undefined"){
-                currentObject = copyJSObject(cars[i]);
-                currentObject.state = 0;
-                currentObject.angle = currentObject.displayAngle = cars[i].angles[cType];
-                currentObject.x = carPaths[i][cType][0].x[0];
-                currentObject.y = carPaths[i][cType][0].y[0];
-            }
-            if(typeof stateNullAgain == "undefined"){
-                stateNullAgain = false;
-            }
-            obj[j] = {};
-            obj[j].x = currentObject.x;
-            obj[j].y = currentObject.y;
-            if(currentObject.shortcutToParking) {
-                obj[j].shortcutToParking = true;
-                currentObject.shortcutToParking = false;
-            }
-            while(currentObject.displayAngle  < 0) {
-                currentObject.displayAngle  += Math.PI*2;
-            }
-
-            while (currentObject.displayAngle  >= Math.PI*2){
-                currentObject.displayAngle -= Math.PI*2;
-            }
-            obj[j].angle = currentObject.displayAngle;
-            switch(carPaths[i][cType][currentObject.state].type){
-
-            case "linear":
-                currentObject.angle = currentObject.angle < Math.PI/2 ? 0 : Math.PI;
-                currentObject.x += currentObject.speed*(currentObject.angle < Math.PI/2 ? 1 : -1);
-                if(currentObject.angle < Math.PI/2) {
-                    if(currentObject.x >= carPaths[i][cType][currentObject.state].x[1]){
-                        currentObject.x = carPaths[i][cType][currentObject.state].x[1];
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                } else {
-                    if(currentObject.x <= carPaths[i][cType][currentObject.state].x[1]){
-                        currentObject.x = carPaths[i][cType][currentObject.state].x[1];
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                }
-                currentObject.displayAngle = currentObject.angle;
-                break;
-
-            case "linear_vertical":
-                currentObject.angle = currentObject.angle < Math.PI ? 0.5*Math.PI : 1.5*Math.PI;
-                currentObject.y += currentObject.speed*(currentObject.angle < Math.PI ? 1 : -1);
-                if(currentObject.angle < Math.PI) {
-                    if(currentObject.y >= carPaths[i][cType][currentObject.state].y[1]){
-                        currentObject.y = carPaths[i][cType][currentObject.state].y[1];
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                } else {
-                    if(currentObject.y <= carPaths[i][cType][currentObject.state].y[1]){
-                        currentObject.y = carPaths[i][cType][currentObject.state].y[1];
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                }
-                currentObject.displayAngle = currentObject.angle;
-                break;
-
-            case "curve_right":
-                curve_right(carPaths[i][cType][currentObject.state]);
-                break;
-
-            case "curve_left":
-                curve_left(carPaths[i][cType][currentObject.state]);
-                break;
-
-            case "curve_r2l":
-                var p = copyJSObject(carPaths[i][cType][currentObject.state]);
-                if(carPaths[i][cType][currentObject.state].y[0] < carPaths[i][cType][currentObject.state].y[1]) {
-                    var dx = (carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
-                    var dy = (carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
-                    if(currentObject.angle <= Math.PI){
-                        p.y[1] = carPaths[i][cType][currentObject.state].y[0]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_right(p);
-                        if(currentObject.y >= carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2) {
-                            var diff = currentObject.angle-Math.PI*45/180;
-                            currentObject.angle = Math.PI*315/180-diff;
-                            currentObject.x = carPaths[i][cType][currentObject.state].x[0]-(carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
-                            currentObject.y = carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
-                        }
-                    } else {
-                        p.x[0] = carPaths[i][cType][currentObject.state].x[1];
-                        p.y[0] = carPaths[i][cType][currentObject.state].y[1]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_left(p);
-                    }
-                } else {
-                    var dx = (carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
-                    var dy = (carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
-                    if(currentObject.angle >= Math.PI){
-                        p.y[1] = carPaths[i][cType][currentObject.state].y[0]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_right(p);
-                        if(currentObject.y <= carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2) {
-                            var diff = currentObject.angle-Math.PI*225/180;
-                            currentObject.angle = Math.PI*135/180-diff;
-                            currentObject.x = carPaths[i][cType][currentObject.state].x[0]+(carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
-                            currentObject.y = carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
-                        }
-                    } else {
-                        p.x[0] = carPaths[i][cType][currentObject.state].x[1];
-                        p.y[0] = carPaths[i][cType][currentObject.state].y[1]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_left(p);
-                    }
-                }
-                break;
-
-            case "curve_l2r":
-                if(carPaths[i][cType][currentObject.state].y[0] < carPaths[i][cType][currentObject.state].y[1]) {
-                    var dx = (carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
-                    var dy = (carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
-                    var p = copyJSObject(carPaths[i][cType][currentObject.state]);
-                    if(currentObject.angle >= Math.PI){
-                        p.y[1] = carPaths[i][cType][currentObject.state].y[0]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_left(p);
-                        if(currentObject.y >= carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2) {
-                            var diff = currentObject.angle-Math.PI*225/180;
-                            currentObject.angle = Math.PI*135/180-diff;
-                            currentObject.x = carPaths[i][cType][currentObject.state].x[0]-(carPaths[i][cType][currentObject.state].x[0]-carPaths[i][cType][currentObject.state].x[1])/2;
-                            currentObject.y = carPaths[i][cType][currentObject.state].y[0]+(carPaths[i][cType][currentObject.state].y[1]-carPaths[i][cType][currentObject.state].y[0])/2;
-                        }
-                    } else {
-                        p.x[0] = carPaths[i][cType][currentObject.state].x[1];
-                        p.y[0] = carPaths[i][cType][currentObject.state].y[1]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_right(p);
-
-                    }
-                } else {
-                    var dx = (carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
-                    var dy = (carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
-                    var p = copyJSObject(carPaths[i][cType][currentObject.state]);
-                    if(currentObject.angle <= Math.PI){
-                        p.y[1] = carPaths[i][cType][currentObject.state].y[0]-2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_left(p);
-                        if(currentObject.y <= carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2) {
-                            var diff = currentObject.angle-Math.PI*45/180;
-                            currentObject.angle = Math.PI*315/180-diff;
-                            currentObject.x = carPaths[i][cType][currentObject.state].x[0]+(carPaths[i][cType][currentObject.state].x[1]-carPaths[i][cType][currentObject.state].x[0])/2;
-                            currentObject.y = carPaths[i][cType][currentObject.state].y[0]-(carPaths[i][cType][currentObject.state].y[0]-carPaths[i][cType][currentObject.state].y[1])/2;
-                        }
-                    } else {
-                        p.x[0] = carPaths[i][cType][currentObject.state].x[1];
-                        p.y[0] = carPaths[i][cType][currentObject.state].y[1]+2*((Math.pow(dy,2)+Math.pow(dx,2))/(2*dy));
-                        curve_right(p);
-                    }
-                }
-                break;
-
-            case "curve_hright":
-                var p = copyJSObject(carPaths[i][cType][currentObject.state]);
-                curve_right(p);
-                if(p.y[1] > p.y[0]) {
-                    if(currentObject.angle >= 0.5*Math.PI){
-                        currentObject.x = p.x[1]+(p.y[1]-p.y[0])/2;
-                        currentObject.y = p.y[1]-(p.y[1]-p.y[0])/2;
-                        currentObject.angle = currentObject.displayAngle = 0.5*Math.PI;
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                } else {
-                    if(currentObject.angle >= 1.5*Math.PI){
-                        currentObject.x = p.x[1]-(p.y[0]-p.y[1])/2;
-                        currentObject.y = p.y[1]+(p.y[0]-p.y[1])/2;
-                        currentObject.angle = currentObject.displayAngle = 1.5*Math.PI;
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                }
-                break;
-
-            case "curve_hleft":
-                var p = copyJSObject(carPaths[i][cType][currentObject.state]);
-                curve_left(p);
-                if (p.y[1] > p.y[0]) {
-                    //TODO
-                } else {
-                    if(currentObject.angle >= 0.5*Math.PI){
-                        currentObject.x = p.x[1]+(p.y[0]-p.y[1])/2;
-                        currentObject.y = p.y[1]+(p.y[0]-p.y[1])/2;
-                        currentObject.angle = currentObject.displayAngle = 1.5*Math.PI;
-                        testShortcutToParking();
-                        currentObject.state = ++currentObject.state >= carPaths[i][cType].length ? (carPaths[i][cType].length == 1 ? -1 : 0) : currentObject.state;
-                    }
-                }
-                break;
-
-            case "curve_hright2":
-                curve_right(carPaths[i][cType][currentObject.state]);
-                break;
-
-            case "curve_hleft2":
-                if((currentObject.angle == 0.5*Math.PI || currentObject.angle == 1.5*Math.PI)){
-                    currentObject.angle = (2 * Math.PI - (currentObject.angle));
-                }
-                curve_left(carPaths[i][cType][currentObject.state]);
-                break;
-
-            }
-            if(!stateNullAgain && (currentObject.state > 0 || currentObject.state == -1)) {
-                stateNullAgain = true;
-                if(isFirst){
-                    cars[i].startFrame = cars[i].counter = Math.floor(cars[i].startFrameFac*j);
-                }
-            }
-            return ((currentObject.state === 0 || currentObject.state == -1)  && stateNullAgain) ? obj : defineCarWays(cType,isFirst,i,++j,obj, currentObject, stateNullAgain);
         }
 
         context.clearRect(0, 0, canvas.width, canvas.height);
+        calcOptionsMenuAndBackground("load");
 
-        placeBackground();
-
-        defineCarParams();
-        if(settings.saveGame && !onlineGame.enabled && window.localStorage.getItem("morowayAppSavedCars") != null && window.localStorage.getItem("morowayAppSavedCarParams") != null && window.localStorage.getItem("morowayAppSavedBg") != null && window.localStorage.getItem("morowayAppSavedWithVersion") != null) {
-            cars = JSON.parse(window.localStorage.getItem("morowayAppSavedCars"));
-            carParams = JSON.parse(window.localStorage.getItem("morowayAppSavedCarParams"));
-            resizeCars(JSON.parse(window.localStorage.getItem("morowayAppSavedBg")));
+        //Cars
+        if(defineCarParams()) {
+            if(settings.saveGame && !onlineGame.enabled && window.localStorage.getItem("morowayAppSavedCars") != null && window.localStorage.getItem("morowayAppSavedCarParams") != null && window.localStorage.getItem("morowayAppSavedBg") != null && window.localStorage.getItem("morowayAppSavedWithVersion") != null) {
+                cars = JSON.parse(window.localStorage.getItem("morowayAppSavedCars"));
+                carParams = JSON.parse(window.localStorage.getItem("morowayAppSavedCarParams"));
+                resizeCars(JSON.parse(window.localStorage.getItem("morowayAppSavedBg")));
+            } else {
+                placeCarsAtInitialPositions();
+            }
         } else {
-            placeCarsAtInitialPositions();
+            carWays = cars = [];
         }
 
         //TAX OFFICE
@@ -2814,7 +2999,7 @@ window.onload = function() {
         }
 
         animateWorker.onerror = function() {
-            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 60000, function(){followLink("error#animate", "_blank", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 60000, function(){followLink("error#animate", "_blank", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
         };
         animateWorker.onmessage = function(message) {
             if(message.data.k == "getTrainPics") {
@@ -2854,11 +3039,9 @@ window.onload = function() {
                 trainParams = message.data.trainParams;
             } else if(message.data.k == "ready") {
                 trains = message.data.trains;
-                placeClassicUIElements();
+                calcClassicUIElements();
                 calcControlCenter();
-                if(typeof placeOptions == "function") {
-                    placeOptions("load");
-                }
+                drawOptionsMenu("show");
                 window.addEventListener("resize", function(){
                     if(resizeTimeout !== undefined && resizeTimeout !== null) {
                         window.clearTimeout(resizeTimeout);
@@ -2881,8 +3064,8 @@ window.onload = function() {
                         toHide.style.opacity = "0";
                         window.setTimeout(function(){
                             var localAppData = getLocalAppDataCopy();
-                            if(settings.classicUI && !settings.alwaysShowSelectedTrain){
-                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames",trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH,3000,null,null, client.y);
+                            if(settings.classicUI && !classicUI.trainSwitch.selectedTrainDisplay.visible){
+                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames",trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH,3000,null, null, client.y + optMenu.container.height);
                             } else if(localAppData !== null && (localAppData.version.major < APP_DATA.version.major || localAppData.version.minor < APP_DATA.version.minor) && typeof appUpdateNotification == "function") {
                                 appUpdateNotification();
                             } else if (typeof appReadyNotification == "function") {
@@ -2974,8 +3157,10 @@ window.onload = function() {
                             });
                         });
                         window.localStorage.setItem("morowayAppSavedGameSwitches", JSON.stringify(saveSwitches));
-                        window.localStorage.setItem("morowayAppSavedCars", JSON.stringify(cars));
-                        window.localStorage.setItem("morowayAppSavedCarParams", JSON.stringify(carParams));
+                        if(cars.length == carWays.length && cars.length > 0) {
+                            window.localStorage.setItem("morowayAppSavedCars", JSON.stringify(cars));
+                            window.localStorage.setItem("morowayAppSavedCarParams", JSON.stringify(carParams));
+                        }
                         window.localStorage.setItem("morowayAppSavedBg", JSON.stringify(background));
                         window.localStorage.setItem("morowayAppSavedWithVersion", JSON.stringify(APP_DATA.version));
                     } else if (!settings.saveGame){
@@ -3060,7 +3245,7 @@ window.onload = function() {
             onlineGame.enabled = true;
         } else {
             onlineGame.enabled = false;
-            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y);
+            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + optMenu.container.height);
         }
     } else {
         onlineGame.enabled = false;
@@ -3138,7 +3323,7 @@ window.onload = function() {
                         }
                     }
                     chat.resizeChat = function () {
-                        chatInnerContainer.style.maxHeight = Math.max(50,(Math.min(window.innerHeight,chat.offsetHeight) - chatControls.offsetHeight)) + "px";
+                        chatInnerContainer.style.maxHeight = Math.max(50,(Math.min(client.height,chat.offsetHeight) - chatControls.offsetHeight)) + "px";
                         chatScrollToBottom.toggleDisplay();
                     }
                     window.addEventListener("resize", chat.resizeChat);
@@ -3147,16 +3332,12 @@ window.onload = function() {
                             chatNotify.hide(chatNotify, true);
                         }
                         chat.style.display = "block";
-                        if(typeof placeOptions == "function") {
-                            placeOptions("invisible");
-                        }
+                        drawOptionsMenu("invisible");
                         chat.resizeChat();
                     }
                     chat.closeChat = function () {
                        chat.style.display = "";
-                       if(typeof placeOptions == "function") {
-                           placeOptions("visible");
-                       }
+                       drawOptionsMenu("visible");
                     }
                     window.addEventListener("keyup", function(){
                        if (event.key === "Escape") {
@@ -3199,7 +3380,7 @@ window.onload = function() {
                                 }
                             }
                             if(!smileySupport) {
-                                notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y);
+                                notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + optMenu.container.height);
                             }
                         });
                     }
@@ -3393,7 +3574,7 @@ window.onload = function() {
                         };
                         onlineConnection.socket.onclose = function () {
                             showNewGameLink();
-                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
                         };
                         onlineConnection.socket.onmessage = function (message) {
                             var json = JSON.parse(message.data);
@@ -3404,7 +3585,7 @@ window.onload = function() {
                             case "hello":
                                 if(json.errorLevel < 2) {
                                     if(json.errorLevel == 1){
-                                        notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NOTIFICATION_PRIO_DEFAULT, 900, null,null,client.y);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NOTIFICATION_PRIO_DEFAULT, 900, null, null, client.y + optMenu.container.height);
                                     }
                                     var parent = document.querySelector("#content");
                                     var elem = parent.querySelector("#setup");
@@ -3435,7 +3616,7 @@ window.onload = function() {
                                 } else {
                                     document.querySelector("#content").style.display = "none";
                                     window.setTimeout(function(){followLink("error#tp-update", "_self", LINK_STATE_INTERNAL_HTML);},1000);
-                                    notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null,null,client.y);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + optMenu.container.height);
                                 }
                                 break;
                             case "init":
@@ -3448,7 +3629,7 @@ window.onload = function() {
                                     }
                                 } else {
                                     showNewGameLink();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
                                 }
                                 break;
                             case "connect":
@@ -3463,12 +3644,12 @@ window.onload = function() {
                                     elem.querySelector("#setup-start-gamelink").textContent = getShareLink(onlineGame.gameId, onlineGame.gameKey);
                                     elem.querySelector("#setup-start-button").onclick = function(){
                                         if(!copy("#setup #setup-start #setup-start-gamelink")) {
-                                            notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y);
+                                            notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + optMenu.container.height);
                                         }
                                     };
                                 } else {
                                     showNewGameLink();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayCreateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayCreateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
                                 }
                                 break;
                             case "join":
@@ -3478,14 +3659,14 @@ window.onload = function() {
                                         showStartGame(json.message);
                                     } else {
                                         showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-join", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-join", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
                                     }
                                 } else {
                                     if(json.errorLevel === 0){
                                         showStartGame(json.message);
                                     } else {
                                         showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinTeammateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinTeammateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
                                     }
                                 }
                                 break;
@@ -3498,7 +3679,7 @@ window.onload = function() {
                                             var elem = parent.querySelector("#game-wait");
                                             resetForElem(parent, elem);
                                         } else {
-                                            notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NOTIFICATION_PRIO_DEFAULT, 1000, null,null,client.y);
+                                            notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + optMenu.container.height);
                                         }
                                         break;
                                     case "run":
@@ -3512,14 +3693,13 @@ window.onload = function() {
                                         var parent = document.querySelector("#game");
                                         var elem = parent.querySelector("#game-gameplay");
                                         resetForElem(parent, elem);
-                                        if(typeof placeOptions == "function") {
-                                            placeOptions("resize");
-                                        }
+                                        calcOptionsMenuAndBackground("resize");
+                                        drawOptionsMenu("resize");
                                         break;
                                     }
                                 } else {
                                     showNewGameLink();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayStartError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayStartError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
                                 }
                                 break;
                             case "action":
@@ -3538,7 +3718,7 @@ window.onload = function() {
                                     if(onlineGame.sessionId != json.sessionId){
                                         notifyStr = json.sessionName + ": " + notifyStr;
                                     }
-                                    notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null,null,client.y);
+                                    notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + optMenu.container.height);
                                 }
                                 var obj;
                                 switch (input.objname){
@@ -3614,7 +3794,7 @@ window.onload = function() {
                             case "sync-done":
                                 onlineGame.syncing = false;
                                 if(json.message == "sync-cancel") {
-                                    notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y);
+                                    notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
                                 }
                                 if(!onlineGame.stop){
                                     if(onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
@@ -3632,7 +3812,7 @@ window.onload = function() {
                                 }
                                 onlineGame.stop = true;
                                 animateWorker.postMessage({k: "pause"});
-                                notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y);
+                                notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
                                 break;
                             case "resume":
                                 if(onlineGame.stop){
@@ -3643,16 +3823,16 @@ window.onload = function() {
                                         onlineGame.syncRequest = window.setTimeout(sendSyncRequest, onlineGame.syncInterval);
                                     }
                                     onlineGame.stop = false;
-                                    notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
                                     animateWorker.postMessage({k: "resume"});
                                 }
                                 break;
                             case "leave":
                                 if(json.errorLevel == 2){
                                     showNewGameLink();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayTeammateLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayTeammateLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
                                 } else {
-                                    notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplaySomebodyLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y);
+                                    notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplaySomebodyLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
                                 }
                                 break;
                             case "chat-msg":
@@ -3688,18 +3868,18 @@ window.onload = function() {
                                 }
                                 chatInner.appendChild(chatInnerContainerMsg);
                                 if(onlineGame.sessionId != json.sessionId && chat.style.display == "") {
-                                    notify("#tp-chat-notifier", json.sessionName + ": " + json.message, NOTIFICATION_PRIO_DEFAULT, 4000, null, null, window.innerHeight, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT+json.sessionId);
+                                    notify("#tp-chat-notifier", json.sessionName + ": " + json.message, NOTIFICATION_PRIO_DEFAULT, 4000, null, null, client.height, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT+json.sessionId);
                                 }
                                 chat.resizeChat();
                                 break;
                             case "unknown":
-                                notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NOTIFICATION_PRIO_HIGH, 2000, null, null, client.y);
+                                notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NOTIFICATION_PRIO_HIGH, 2000, null, null, client.y + optMenu.container.height);
                                 break;
                             }
                         };
                         onlineConnection.socket.onerror = function () {
                             showNewGameLink();
-                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
                         };
                     });
                     onlineConnection.send = (function(obj) {
@@ -3720,7 +3900,7 @@ window.onload = function() {
             }
         };
         pics[pic.id].onerror = function() {
-            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 60000, function(){followLink("error#pic", "_blank", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y);
+            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 60000, function(){followLink("error#pic", "_blank", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
         };
     });
 };

@@ -95,33 +95,29 @@ canvas {
 }
 
 #canvas-options {
-    z-index: 1;
+    display: flex;
     position: absolute;
+    background: black;
+    justify-content: center;
+    align-items: center;
+}
+
+#canvas-options-inner {
+    z-index: 1;
     display: none;
+    justify-content: center;
+    align-items: center;
 }
 
 .canvas-options-button {
-    display: none;
-    height: 32px;
-    width: 32px;
-    padding: 4px;
-    margin: 3px;
+    display: inline-flex;
+    padding: 0px;
+    margin: auto;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     color: rgb(210, 120, 27);
     background: transparent;
-}
-.canvas-options-button.small {
-    height: 30px;
-    width: 30px;
-    padding: 3px;
-    margin: 0px;
-    color: rgb(48, 48, 48);
-    background: rgb(210, 120, 27);
-}
-.canvas-options-button i {
-    font-size: 24px;
 }
 
 .tp-notify {
