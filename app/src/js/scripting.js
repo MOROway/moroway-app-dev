@@ -574,10 +574,10 @@ function calcOptionsMenuAndBackground(state) {
 
 function calcClassicUIElements(){
     function realWidth(angle, width, height){
-        return Math.sin(angle) * width + Math.cos(angle) * height;
+        return Math.abs(Math.sin(angle)) * height + Math.abs(Math.cos(angle)) * width;
     }
     function realHeight(angle, width, height){
-        return Math.sin(angle) * height + Math.cos(angle) * width;
+        return Math.abs(Math.sin(angle)) * width + Math.abs(Math.cos(angle)) * height;
     }
     var fac = optMenu.small ? 0.042 : 0.059;
     classicUI.trainSwitch.width = fac * (background.width);
@@ -607,8 +607,8 @@ function calcClassicUIElements(){
     } else {
         classicUI.trainSwitch.x = background.x + background.width / 220;
         classicUI.trainSwitch.y = background.y + background.height / 1.19;
-        classicUI.transformer.x =(background.x + background.width - (classicUI.transformer.width) - (realWidth(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.width)/2);//TODO
-        classicUI.transformer.y =  0.99*(background.y + background.height + optMenu.container.height * client.devicePixelRatio - classicUI.transformer.height - (realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.height)/2);//TODO
+        classicUI.transformer.x = background.x + background.width - (classicUI.transformer.width) - (realWidth(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.width)/2;
+        classicUI.transformer.y = background.y + background.height + optMenu.container.height * client.devicePixelRatio - classicUI.transformer.height -(realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.height)/2;
         while(classicUI.transformer.y > background.y + background.height) {
             classicUI.transformer.y *= 0.9;
         }
