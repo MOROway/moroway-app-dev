@@ -5,7 +5,7 @@
 
 ## General
 
-This repository provides the build tools for MOROway App. The code here is used to build the read-to-use versions of MOROway App.
+This repository provides the build tools for MOROway App. The code here is used to build the ready-to-use versions of MOROway App.
 
 ## Platforms
 

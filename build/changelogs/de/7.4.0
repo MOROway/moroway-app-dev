@@ -1,2 +1,4 @@
-Größe Darstellung des Optionsmenüs und der klassischen Steuerelemente auf kleinen Bildschirmen
-Fehlerkorrekturen
+Größe Darstellung des Optionsmenüs und der klassischen Steuerelemente auf kleinen Bildschirmen.
+Klassische Steuerelemente: Verbesserter Trafo zeigt, ob sich ein Zug fahrbereit ist (rotes Licht an/aus) und ob sich die Richtung ändern lässt (Pfeilsymbol weiß/ausgeblichen).
+Klassische Steuerelemente: Aktuelle Richtung ist auf dem Pfeilsymbol hervorgehoben.
+Fehlerkorrekturen (inklusive Zoom mit Touchgesten).

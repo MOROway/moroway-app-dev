@@ -23,22 +23,25 @@ function drawImage(pic,x,y,width,height, cxt){
     cxt.drawImage(pic,Math.floor(x),Math.floor(y),Math.floor(width),Math.floor(height));
 }
 
-function measureFontSize(t,f,a,b,c, d, r){
+function measureFontSize(text, fontFamily, fontSize, wantedTextWidth, approximation, tolerance, recursion){
+    if(typeof recursion != "number") {
+        recursion = 0;
+    }
     context.save();
-    var font = (a) + "px " + f;
+    var font = fontSize + "px " + fontFamily;
     context.font = font;
-    var twidth = context.measureText(t).width;
+    var textWidth = context.measureText(text).width;
     context.restore();
-    if(twidth != b && (Math.abs(twidth-b) > d && r < 100)){
-        a *= (twidth > b) ? (1-c/100) : (1+c/100);
-        return measureFontSize(t,f,a,b,c,d, ++r);
+    if(textWidth != wantedTextWidth && Math.abs(textWidth-wantedTextWidth) > tolerance && recursion < 100){
+        fontSize *= (textWidth > wantedTextWidth) ? (1-approximation/100) : (1+approximation/100);
+        return measureFontSize(text, fontFamily, fontSize, wantedTextWidth, approximation, tolerance, ++recursion);
     } else {
         return font;
     }
 }
 
-function getFontSize(f, a){
-    return parseInt(f.substr(0,f.length-(f.length-f.indexOf(a))), 10);
+function getFontSize(font, unit){
+    return parseInt(font.substr(0,font.length-(font.length-font.indexOf(unit))), 10);
 }
 
 function showConfirmLeaveMultiplayerMode(){
@@ -70,6 +73,12 @@ function getGesture(gesture){
         client.touchScale = gesture.scale;
         client.touchScaleX = (canvas.width/2-gesture.deltaX)*client.realScale;
         client.touchScaleY = (canvas.height/2-gesture.deltaY)*client.realScale;
+        delete gesture.deltaX;
+        delete gesture.deltaY;
+        break;
+    case "pinchoffset":
+        client.touchScaleX += (canvas.width/2-gesture.deltaX);
+        client.touchScaleY += (canvas.height/2-gesture.deltaY);
         delete gesture.deltaX;
         delete gesture.deltaY;
         break;
@@ -229,17 +238,21 @@ function getTouchMove(event) {
         }
         hardware.mouse.moveX = (event.changedTouches[0].clientX*client.devicePixelRatio);
         hardware.mouse.moveY = (event.changedTouches[0].clientY*client.devicePixelRatio);
-    } else if( event.changedTouches.length == 2) {
+    } else if (event.changedTouches.length == 2) {
         hardware.mouse.isHold = false;
         var hypot = Math.hypot( event.changedTouches[0].clientX - event.changedTouches[1].clientX, event.changedTouches[0].clientY - event.touches[1].clientY);
         if(typeof(client.PinchOHypot) == "undefined") {
             client.PinchOHypot = hypot;
+            var deltaX =  (event.changedTouches[0].clientX + event.changedTouches[1].clientX) / 2 * client.devicePixelRatio;
+            var deltaY =  (event.changedTouches[0].clientY + event.changedTouches[1].clientY) / 2 * client.devicePixelRatio;
             if(client.realScale == 1) {
-                client.PinchX = (event.changedTouches[0].clientX+(event.changedTouches[0].clientX, event.changedTouches[1].clientX)/2)*client.devicePixelRatio;
-                client.PinchY = (event.changedTouches[0].clientY+(event.changedTouches[0].clientY, event.changedTouches[1].clientY)/2)*client.devicePixelRatio;
+                client.PinchX = deltaX;
+                client.PinchY = deltaY;
+            } else {
+                getGesture({type: "pinchoffset", deltaX: deltaX, deltaY: deltaY});
             }
         }
-        getGesture({type: "pinch", scale:hypot/client.PinchOHypot, deltaX:client.PinchX,deltaY:client.PinchY});
+        getGesture({type: "pinch", scale: hypot/client.PinchOHypot, deltaX: client.PinchX, deltaY: client.PinchY});
     }
 }
 function getTouchStart(event) {
@@ -598,12 +611,12 @@ function calcClassicUIElements(){
     classicUI.transformer.input.width = classicUI.transformer.input.height = fac * classicUI.transformer.width;
     fac = 0.17;
     classicUI.transformer.directionInput.width = fac * classicUI.transformer.width;
-    classicUI.transformer.directionInput.height = fac * (pics[classicUI.transformer.directionInput.src].height * ( classicUI.transformer.width/ pics[classicUI.transformer.directionInput.src].width));
+    classicUI.transformer.directionInput.height = fac * (pics[classicUI.transformer.directionInput.srcStandardDirection].height * ( classicUI.transformer.width/ pics[classicUI.transformer.directionInput.srcStandardDirection].width));
     if(optMenu.small) {
-        classicUI.trainSwitch.x = background.x + background.width /99;
+        classicUI.trainSwitch.x = background.x + background.width / 99;
         classicUI.trainSwitch.y = background.y + background.height / 1.175;
         classicUI.transformer.x = background.x + background.width / 1.1;
-        classicUI.transformer.y = background.y + background.height/1.4;
+        classicUI.transformer.y = background.y + background.height / 1.4;
     } else {
         classicUI.trainSwitch.x = background.x + background.width / 220;
         classicUI.trainSwitch.y = background.y + background.height / 1.19;
@@ -613,7 +626,7 @@ function calcClassicUIElements(){
             classicUI.transformer.y *= 0.9;
         }
     }
-    classicUI.transformer.input.diffY = classicUI.transformer.height/6;
+    classicUI.transformer.input.diffY = classicUI.transformer.height / 6;
     classicUI.transformer.directionInput.diffX = classicUI.transformer.width*0.46-classicUI.transformer.directionInput.width;
     classicUI.transformer.directionInput.diffY = classicUI.transformer.height*0.46-classicUI.transformer.directionInput.height;
     context.textBaseline = "middle";
@@ -627,7 +640,7 @@ function calcClassicUIElements(){
     var heightMultiply = 1.6;
     var widthMultiply = 1.2;
     var wantedWidth = (optMenu.small ? 0.35 : 0.9)*background.width/4/widthMultiply;
-    var tempFont = measureFontSize(getString(["appScreenTrainNames",longestName]),classicUI.trainSwitch.selectedTrainDisplay.fontFamily,wantedWidth/getString(["appScreenTrainNames",longestName]).length,wantedWidth, 3, background.width*0.004,0);
+    var tempFont = measureFontSize(getString(["appScreenTrainNames",longestName]),classicUI.trainSwitch.selectedTrainDisplay.fontFamily,wantedWidth/getString(["appScreenTrainNames",longestName]).length,wantedWidth, 3, background.width*0.004);
     var tempFontSize = optMenu.small ? getFontSize(tempFont, "px") : Math.min(0.9*optMenu.container.height * client.devicePixelRatio/heightMultiply, getFontSize(tempFont, "px"));
     classicUI.trainSwitch.selectedTrainDisplay.visible = settings.alwaysShowSelectedTrain && tempFontSize >= 7;
     classicUI.trainSwitch.selectedTrainDisplay.font = tempFontSize + "px " + classicUI.trainSwitch.selectedTrainDisplay.fontFamily;
@@ -668,12 +681,12 @@ function calcControlCenter() {
         controlCenter.fontSizes.trainSizes.trainNamesLength = [];
     }
     contextForeground.save();
-    controlCenter.fontSizes.closeTextHeight = Math.min(controlCenter.maxTextWidth/12,getFontSize(measureFontSize(getString("appScreenControlCenterClose",null,"upper"),controlCenter.fontFamily,controlCenter.maxTextWidth/12,controlCenter.maxTextHeight, 5, 1.2,0), "px"));
-    controlCenter.fontSizes.trainSizes.speedTextHeight = Math.min(0.5*controlCenter.maxTextHeight/trains.length,getFontSize(measureFontSize(getString("appScreenControlCenterSpeedOff"),controlCenter.fontFamily,0.5*(controlCenter.maxTextWidth*0.5)/getString("appScreenControlCenterSpeedOff").length,0.5*(controlCenter.maxTextWidth*0.5), 5, 1.2,0), "px"));
+    controlCenter.fontSizes.closeTextHeight = Math.min(controlCenter.maxTextWidth/12,getFontSize(measureFontSize(getString("appScreenControlCenterClose",null,"upper"),controlCenter.fontFamily,controlCenter.maxTextWidth/12,controlCenter.maxTextHeight, 5, 1.2), "px"));
+    controlCenter.fontSizes.trainSizes.speedTextHeight = Math.min(0.5*controlCenter.maxTextHeight/trains.length,getFontSize(measureFontSize(getString("appScreenControlCenterSpeedOff"),controlCenter.fontFamily,0.5*(controlCenter.maxTextWidth*0.5)/getString("appScreenControlCenterSpeedOff").length,0.5*(controlCenter.maxTextWidth*0.5), 5, 1.2), "px"));
     var cText;
     for(var cTrain = 0; cTrain < trains.length; cTrain++) {
         cText = getString(["appScreenTrainNames",cTrain]);
-        controlCenter.fontSizes.trainSizes.trainNames[cTrain] = Math.min(0.625*controlCenter.maxTextHeight/trains.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2,0), "px"));
+        controlCenter.fontSizes.trainSizes.trainNames[cTrain] = Math.min(0.625*controlCenter.maxTextHeight/trains.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2), "px"));
         contextForeground.font = controlCenter.fontSizes.trainSizes.trainNames[cTrain] +"px "+controlCenter.fontFamily;
         controlCenter.fontSizes.trainSizes.trainNamesLength[cTrain] = contextForeground.measureText(cText).width;
     }
@@ -702,29 +715,29 @@ function calcControlCenter() {
         controlCenter.fontSizes.carSizes.auto = {};
     }
     cText = getString("appScreenCarControlCenterAutoModeActivate");
-    controlCenter.fontSizes.carSizes.init.autoModeActivate = Math.min(0.5*controlCenter.maxTextHeight/cars.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,1.5*controlCenter.maxTextWidth/cText.length,1.5*controlCenter.maxTextWidth, 5, 1.2,0), "px"));
+    controlCenter.fontSizes.carSizes.init.autoModeActivate = Math.min(0.5*controlCenter.maxTextHeight/cars.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,1.5*controlCenter.maxTextWidth/cText.length,1.5*controlCenter.maxTextWidth, 5, 1.2), "px"));
     contextForeground.font = controlCenter.fontSizes.carSizes.init.autoModeActivate +"px "+controlCenter.fontFamily;
     controlCenter.fontSizes.carSizes.init.autoModeActivateLength = contextForeground.measureText(cText).width;
     for(var cCar = 0; cCar < cars.length; cCar++) {
         cText = formatJSString(getString("appScreenCarControlCenterStartCar"), getString(["appScreenCarNames",cCar]));
-        controlCenter.fontSizes.carSizes.init.carNames[cCar] = Math.min(0.5*controlCenter.maxTextHeight/cars.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,1.5*controlCenter.maxTextWidth/cText.length,1.5*controlCenter.maxTextWidth, 5, 1.2,0), "px"));
+        controlCenter.fontSizes.carSizes.init.carNames[cCar] = Math.min(0.5*controlCenter.maxTextHeight/cars.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,1.5*controlCenter.maxTextWidth/cText.length,1.5*controlCenter.maxTextWidth, 5, 1.2), "px"));
         contextForeground.font = controlCenter.fontSizes.carSizes.init.carNames[cCar] +"px "+controlCenter.fontFamily;
         controlCenter.fontSizes.carSizes.init.carNamesLength[cCar] = contextForeground.measureText(cText).width;
         cText = formatJSString(getString(["appScreenCarNames",cCar]));
-        controlCenter.fontSizes.carSizes.manual.carNames[cCar] = Math.min(0.625*controlCenter.maxTextHeight/cars.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2,0), "px"));
+        controlCenter.fontSizes.carSizes.manual.carNames[cCar] = Math.min(0.625*controlCenter.maxTextHeight/cars.length,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2), "px"));
         contextForeground.font = controlCenter.fontSizes.carSizes.manual.carNames[cCar] +"px "+controlCenter.fontFamily;
         controlCenter.fontSizes.carSizes.manual.carNamesLength[cCar] = contextForeground.measureText(cText).width;
     }
     cText = getString("appScreenCarControlCenterAutoModePause");
-    controlCenter.fontSizes.carSizes.auto.pause = Math.min(0.625*controlCenter.maxTextHeight/2,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2,0), "px"));
+    controlCenter.fontSizes.carSizes.auto.pause = Math.min(0.625*controlCenter.maxTextHeight/2,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2), "px"));
     contextForeground.font = controlCenter.fontSizes.carSizes.auto.pause +"px "+controlCenter.fontFamily;
     controlCenter.fontSizes.carSizes.auto.pauseLength = contextForeground.measureText(cText).width;
     cText = getString("appScreenCarControlCenterAutoModeResume");
-    controlCenter.fontSizes.carSizes.auto.resume = Math.min(0.625*controlCenter.maxTextHeight/2,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2,0), "px"));
+    controlCenter.fontSizes.carSizes.auto.resume = Math.min(0.625*controlCenter.maxTextHeight/2,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2), "px"));
     contextForeground.font = controlCenter.fontSizes.carSizes.auto.resume +"px "+controlCenter.fontFamily;
     controlCenter.fontSizes.carSizes.auto.resumeLength = contextForeground.measureText(cText).width;
     cText = getString("appScreenCarControlCenterAutoModeBackToRoot");
-    controlCenter.fontSizes.carSizes.auto.backToRoot = Math.min(0.625*controlCenter.maxTextHeight/2,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2,0), "px"));
+    controlCenter.fontSizes.carSizes.auto.backToRoot = Math.min(0.625*controlCenter.maxTextHeight/2,getFontSize(measureFontSize(cText,controlCenter.fontFamily,0.625*controlCenter.maxTextWidth/cText.length,0.625*controlCenter.maxTextWidth, 5, 1.2), "px"));
     contextForeground.font = controlCenter.fontSizes.carSizes.auto.backToRoot +"px "+controlCenter.fontFamily;
     controlCenter.fontSizes.carSizes.auto.backToRootLength = contextForeground.measureText(cText).width;
     contextForeground.restore();
@@ -852,7 +865,7 @@ function drawObjects() {
                 context.scale(-1,1);
                 context.textAlign = "center";
                 var icon = i == -1 || currentObject.konamiUseTrainIcon ? getString(["appScreenTrainIcons",input1]) : getString("appScreenTrainCarIcon");
-                context.font = measureFontSize(icon, "sans-serif",100,currentObject.width, 5, currentObject.width/100, 0);
+                context.font = measureFontSize(icon, "sans-serif",100,currentObject.width, 5, currentObject.width/100);
                 context.fillStyle = "white";
                 context.scale(1,currentObject.height/getFontSize(context.font,"px"));
                 context.fillText(icon,0,0);
@@ -931,7 +944,7 @@ function drawObjects() {
             context.scale(-1,1);
             context.textAlign = "center";
             var icon = getString(["appScreenCarIcons",input1]);
-            context.font = measureFontSize(icon,"sans-serif",100,currentObject.width, 5, currentObject.width/100, 0);
+            context.font = measureFontSize(icon,"sans-serif",100,currentObject.width, 5, currentObject.width/100);
             context.fillStyle = "white";
             context.scale(1,currentObject.height/getFontSize(context.font,"px"));
             context.fillText(icon,0,0);
@@ -1120,7 +1133,7 @@ function drawObjects() {
         }
     }
 
-    function carCollisionCourse(input1, input2, fixFac){
+    function carCollisionCourse(input1, sendNotification, fixFac){
         context.save();
         context.setTransform(1, 0, 0, 1, 0, 0);
         var collision = false;
@@ -1158,7 +1171,7 @@ function drawObjects() {
                 context.beginPath();
                 context.rect(-currentObject.width/2, -currentObject.height/2, currentObject.width, currentObject.height);
                 if (context.isPointInPath(x1, y1) || context.isPointInPath(x2, y2) || context.isPointInPath(x3, y3)){
-                    if(input2 && cars[input1].move){
+                    if(sendNotification && cars[input1].move){
                         notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames",input1]), getString(["appScreenCarNames",i])), NOTIFICATION_PRIO_DEFAULT, 2000,null, null, client.y + optMenu.container.height);
                     }
                     collision = true;
@@ -1440,7 +1453,7 @@ function drawObjects() {
         animals.forEach(function(animal,i){
             context.save();
             context.translate(animalPos[i].x, animalPos[i].y);
-            context.font = measureFontSize(animal, "sans-serif",100,background.width*0.001, 5,background.width*0.012, 0);
+            context.font = measureFontSize(animal, "sans-serif",100,background.width*0.001, 5,background.width*0.012);
             context.fillStyle = "white";
             context.textAlign = "center";
             context.fillText(animal, 0, 0);
@@ -1587,14 +1600,24 @@ function drawObjects() {
         context.save();
         context.translate(classicUI.transformer.x+classicUI.transformer.width/2, classicUI.transformer.y+classicUI.transformer.height/2);
         context.rotate(classicUI.transformer.angle);
-        drawImage(pics[classicUI.transformer.asrc], -classicUI.transformer.width/2, -classicUI.transformer.height/2 , classicUI.transformer.width, classicUI.transformer.height);
+        drawImage(pics[classicUI.transformer.src], -classicUI.transformer.width/2, -classicUI.transformer.height/2 , classicUI.transformer.width, classicUI.transformer.height);
+        if(!collisionCourse(trainParams.selected)) {
+            drawImage(pics[classicUI.transformer.readySrc], -classicUI.transformer.width/2, -classicUI.transformer.height/2 , classicUI.transformer.width, classicUI.transformer.height);
+        }
         if(trains[trainParams.selected].accelerationSpeed > 0){
-            drawImage(pics[classicUI.transformer.src], -classicUI.transformer.width/2, -classicUI.transformer.height/2 , classicUI.transformer.width, classicUI.transformer.height);
+            drawImage(pics[classicUI.transformer.onSrc], -classicUI.transformer.width/2, -classicUI.transformer.height/2 , classicUI.transformer.width, classicUI.transformer.height);
         }
         if(!client.isTiny ||  !(typeof(client.realScale) == "undefined" || client.realScale <= Math.max(1,client.realScaleMax/3))){
             context.save();
             context.translate( classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
-            drawImage(pics[classicUI.transformer.directionInput.src], -classicUI.transformer.directionInput.width/2, -classicUI.transformer.directionInput.height/2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
+            if(trains[trainParams.selected].move) {
+                context.globalAlpha = 0.5;
+            }
+            if(trains[trainParams.selected].standardDirection) {
+                drawImage(pics[classicUI.transformer.directionInput.srcStandardDirection], -classicUI.transformer.directionInput.width/2, -classicUI.transformer.directionInput.height/2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
+            } else {
+                drawImage(pics[classicUI.transformer.directionInput.srcNotStandardDirection], -classicUI.transformer.directionInput.width/2, -classicUI.transformer.directionInput.height/2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
+            }
             context.beginPath();
             context.rect(-classicUI.transformer.directionInput.width/2, -classicUI.transformer.directionInput.height/2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
             if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !trains[trainParams.selected].move) {
@@ -1619,7 +1642,7 @@ function drawObjects() {
         }
         context.beginPath();
         context.rect(-classicUI.transformer.input.width/2, -classicUI.transformer.input.height/2, classicUI.transformer.input.width, classicUI.transformer.input.height);
-        if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+        if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !collisionCourse(trainParams.selected)) {
             hardware.mouse.cursor = "pointer";
         }
         if ((context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) || (context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls)) {
@@ -1824,6 +1847,12 @@ function drawObjects() {
             context.fillRect(point.x-3,point.y-3,6,6);
         });
         context.restore();
+        if(client.realScale > 1) {
+            context.save();
+            context.fillStyle = "violet";
+            context.fillRect(client.PinchX - 10, client.PinchY -10, 20, 20);
+            context.restore();
+        }
         context.save();
         context.lineWidth = 5;
         context.strokeStyle = "red";
@@ -2396,7 +2425,7 @@ function drawObjects() {
             contextForeground.textAlign = "center";
             contextForeground.fillStyle = bgGradient;
             var konamiText = getString("appScreenKonami", "!");
-            contextForeground.font = measureFontSize(konamiText,"monospace",100,background.width/1.1,5, background.width/300, 0);
+            contextForeground.font = measureFontSize(konamiText,"monospace",100,background.width/1.1,5, background.width/300);
             contextForeground.fillText(konamiText,background.x+background.width/2,background.y+background.height/2);
             contextForeground.fillText(getString("appScreenKonamiIconRow"),background.x+background.width/2,background.y+background.height/4);
             contextForeground.fillText(getString("appScreenKonamiIconRow"),background.x+background.width/2,background.y+background.height/2+background.height/4);
@@ -2509,7 +2538,7 @@ var doubleClickWaitTime = doubleClickTime*2;
 var konamistate = 0;
 var konamiTimeOut;
 
-var pics = [{id: 0, extension: "png"},{id: 1, extension: "png"},{id: 2, extension: "png"},{id: 3, extension: "png"},{id: 4, extension: "png"},{id: 5, extension: "png"},{id: 6, extension: "png"},{id: 7, extension: "png"},{id: 8, extension: "png"},{id: 9, extension: "jpg"},{id: 10, extension: "png"},{id: 11, extension: "png"},{id: 12, extension: "png"},{id: 13, extension: "png"},{id: 14, extension: "png"},{id: 15, extension: "png"},{id: 16, extension: "png"},{id: 17, extension: "png"},{id: 18, extension: "png"},{id: 19, extension: "png"},{id: 20, extension: "png"},{id: 21, extension: "png"},{id: 22, extension: "png"}];
+var pics = [{id: 0, extension: "png"},{id: 1, extension: "png"},{id: 2, extension: "png"},{id: 3, extension: "png"},{id: 4, extension: "png"},{id: 5, extension: "png"},{id: 6, extension: "png"},{id: 7, extension: "png"},{id: 8, extension: "png"},{id: 9, extension: "jpg"},{id: 10, extension: "png"},{id: 11, extension: "png"},{id: 12, extension: "png"},{id: 13, extension: "png"},{id: 14, extension: "png"},{id: 15, extension: "png"},{id: 16, extension: "png"},{id: 17, extension: "png"},{id: 18, extension: "png"},{id: 19, extension: "png"},{id: 20, extension: "png"},{id: 21, extension: "png"},{id: 22, extension: "png"},{id: 23, extension: "png"},{id: 24, extension: "png"}];
 
 var background = {src: 9, secondLayer: 10};
 var oldbackground;
@@ -2528,7 +2557,7 @@ var carParams = {init: true, wayNo: 7};
 
 var taxOffice = {params: {number: 45, frameNo: 6, frameProbability: 0.6, fire: {x: 0.07, y: 0.06, size: 0.000833, color:{red: {red: 200, green: 0, blue: 0, alpha: 0.4}, yellow: {red: 255, green: 160, blue: 0, alpha: 1}, probability: 0.8}}, smoke: {x: 0.07, y: 0.06, size: 0.02, color: {red: 130, green: 120, blue: 130, alpha: 0.3}}, bluelights: {frameNo: 16, cars: [{frameNo: 0, x: [-0.0105, -0.0026], y: [0.175, 0.0045], size: 0.0008},{frameNo: 3, x: [0.0275, -0.00275], y: [0.1472, 0.0092], size: 0.001},{frameNo: 5, x: [0.0568, 0.0008], y: [0.177, 0.0148], size: 0.001}]}}};
 
-var classicUI = {trainSwitch: {src: 11, selectedTrainDisplay: {}}, transformer: {src:13, asrc: 12, angle:(Math.PI/5),input:{src:14,angle:0,minAngle:minTrainSpeed,maxAngle:1.5*Math.PI},directionInput:{src:15,}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
+var classicUI = {trainSwitch: {src: 11, selectedTrainDisplay: {}}, transformer: {src: 12, onSrc: 13, readySrc: 23, angle:(Math.PI/5),input:{src:14,angle:0,minAngle:minTrainSpeed,maxAngle:1.5*Math.PI},directionInput:{srcStandardDirection:15, srcNotStandardDirection: 24}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
 
 var controlCenter = {showCarCenter: null, fontFamily: "sans-serif"};
 
