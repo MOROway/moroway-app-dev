@@ -2557,7 +2557,7 @@ var carParams = {init: true, wayNo: 7};
 
 var taxOffice = {params: {number: 45, frameNo: 6, frameProbability: 0.6, fire: {x: 0.07, y: 0.06, size: 0.000833, color:{red: {red: 200, green: 0, blue: 0, alpha: 0.4}, yellow: {red: 255, green: 160, blue: 0, alpha: 1}, probability: 0.8}}, smoke: {x: 0.07, y: 0.06, size: 0.02, color: {red: 130, green: 120, blue: 130, alpha: 0.3}}, bluelights: {frameNo: 16, cars: [{frameNo: 0, x: [-0.0105, -0.0026], y: [0.175, 0.0045], size: 0.0008},{frameNo: 3, x: [0.0275, -0.00275], y: [0.1472, 0.0092], size: 0.001},{frameNo: 5, x: [0.0568, 0.0008], y: [0.177, 0.0148], size: 0.001}]}}};
 
-var classicUI = {trainSwitch: {src: 11, selectedTrainDisplay: {}}, transformer: {src: 12, onSrc: 13, readySrc: 23, angle:(Math.PI/5),input:{src:14,angle:0,minAngle:minTrainSpeed,maxAngle:1.5*Math.PI},directionInput:{srcStandardDirection:15, srcNotStandardDirection: 24}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
+var classicUI = {trainSwitch: {src: 11, selectedTrainDisplay: {}}, transformer: {src: 12, onSrc: 13, readySrc: 23, angle:(Math.PI/5),input:{src:14,angle:0,minAngle:minTrainSpeed,maxAngle:1.5*Math.PI},directionInput:{srcStandardDirection: 24, srcNotStandardDirection: 15}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
 
 var controlCenter = {showCarCenter: null, fontFamily: "sans-serif"};
 
