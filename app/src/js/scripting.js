@@ -564,6 +564,7 @@ function calcOptionsMenuAndBackground(state) {
         document.querySelector("#canvas-car-control-center").addEventListener("click", function(){hardware.mouse.rightClick = !hardware.mouse.rightClick || !controlCenter.showCarCenter; controlCenter.showCarCenter = true;});
         optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
     }
+    optMenu.floating = false;
     if(optMenu.items.length > 0) {
         optMenu.small = !client.isSmall;
         optMenu.visible = true;
@@ -572,10 +573,13 @@ function calcOptionsMenuAndBackground(state) {
         if(optMenu.small && client.y >= optMenu.container.height) {
             optMenu.floating = true;
             optMenu.container.height = 0;
-        } else {
-            optMenu.floating = false;
+        } else if (optMenu.container.height >= client.height / 2) {
+            optMenu.small = true;
+            optMenu.visible = false;
+            optMenu.container.height = 0;
         }
     } else {
+        optMenu.small = true;
         optMenu.visible = false;
         optMenu.container.height = 0;
     }
@@ -602,9 +606,11 @@ function calcClassicUIElements(){
     } else {
         classicUI.transformer.height = Math.max(3 * optMenu.container.height * client.devicePixelRatio, background.height/5);
         classicUI.transformer.width = classicUI.transformer.height / pics[classicUI.transformer.src].height * pics[classicUI.transformer.src].width;
-        while(realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - optMenu.container.height * client.devicePixelRatio > background.height / 5 || realWidth(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) > background.width / 5) {
+        var i = 0;
+        while(i < 100 && (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - optMenu.container.height * client.devicePixelRatio > background.height / 5 || realWidth(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) > background.width / 5)) {
             classicUI.transformer.height *= 0.9;
             classicUI.transformer.width = classicUI.transformer.height / pics[classicUI.transformer.src].height * pics[classicUI.transformer.src].width;
+            i++;
         }
     }
     fac = 0.7;
@@ -622,8 +628,10 @@ function calcClassicUIElements(){
         classicUI.trainSwitch.y = background.y + background.height / 1.19;
         classicUI.transformer.x = background.x + background.width - (classicUI.transformer.width) - (realWidth(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.width)/2;
         classicUI.transformer.y = background.y + background.height + optMenu.container.height * client.devicePixelRatio - classicUI.transformer.height -(realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.height)/2;
-        while(classicUI.transformer.y > background.y + background.height) {
+        var i = 0;
+        while(i < 100 && classicUI.transformer.y > background.y + background.height) {
             classicUI.transformer.y *= 0.9;
+            i++;
         }
     }
     classicUI.transformer.input.diffY = classicUI.transformer.height / 6;
@@ -651,10 +659,12 @@ function calcClassicUIElements(){
     classicUI.trainSwitch.selectedTrainDisplay.y = (optMenu.small ? (classicUI.trainSwitch.y+classicUI.trainSwitch.height-classicUI.trainSwitch.selectedTrainDisplay.height*1.3) : (background.y + background.height +(optMenu.container.height * client.devicePixelRatio - classicUI.trainSwitch.selectedTrainDisplay.height) / 2));
     if(!optMenu.small && classicUI.trainSwitch.selectedTrainDisplay.visible) {
         classicUI.trainSwitch.y = classicUI.trainSwitch.selectedTrainDisplay.y-classicUI.trainSwitch.height*0.9;
-        while(classicUI.trainSwitch.height - (classicUI.trainSwitch.height - (background.y + background.height - classicUI.trainSwitch.y)) < background.height / 8) {
+        var i = 0;
+        while(i < 100 && classicUI.trainSwitch.height - (classicUI.trainSwitch.height - (background.y + background.height - classicUI.trainSwitch.y)) < background.height / 8) {
             classicUI.trainSwitch.height *= 1.1;
             classicUI.trainSwitch.width *= 1.1;
             classicUI.trainSwitch.y = classicUI.trainSwitch.selectedTrainDisplay.y-classicUI.trainSwitch.height*0.9;
+            i++;
         }
     } else if(!optMenu.small) {
         classicUI.trainSwitch.height = Math.min(background.height * 0.05 + optMenu.container.height * client.devicePixelRatio, realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height));
