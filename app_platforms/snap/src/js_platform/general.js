@@ -1,4 +1,3 @@
-////Required code (needs to be set on each platform)
 function followLink(input1, input2, input3){
     switch (input3) {
     case LINK_STATE_NORMAL:
@@ -33,7 +32,6 @@ function followLink(input1, input2, input3){
     }
 }
 
-////Optional code (app works without it))
 window.addEventListener("keydown", function(event){
     if(event.key == "Alt") {
         event.preventDefault();

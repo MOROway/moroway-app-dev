@@ -1,4 +1,3 @@
-////Required code (needs to be set on each platform)
 function followLink(input1, input2, input3){
     var followLink = true;
     switch (input3) {
@@ -31,7 +30,6 @@ function followLink(input1, input2, input3){
     }
 }
 
-////Optional code (app works without it)
 function setSettingsHTMLLocal(elem, standalone, storageArea, showLang) {
     if(typeof(window.localStorage) != "undefined"){
         if(showLang) {

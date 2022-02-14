@@ -1,6 +1,3 @@
-////Required code (needs to be set on each platform)
-
-////Optional code (app works without it)
 function init_local(){
     var pics = document.querySelector("#website-pics");
     pics.style.display = "none";
@@ -26,5 +23,17 @@ function init_local(){
             privacy.innerHTML += "<br>";
             privacy.appendChild(span);
         });
+    });
+
+    var about = document.querySelector("#website-about");
+    handleServerJSONValues("about", function(res){
+        if(typeof(res) == "object" && Array.isArray(res)) {
+            res.forEach(function(aboutText){
+                var p = document.createElement("p");
+                p.textContent = aboutText;
+                about.querySelector("#website-about-text").appendChild(p);
+            });
+            about.style.display = "block";
+        }
     });
 }

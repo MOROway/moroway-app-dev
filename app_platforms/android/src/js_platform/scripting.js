@@ -1,6 +1,3 @@
-////Required code (needs to be set on each platform)
-
-////Optional code (app works without it)
 function calcOptionsMenuLocal(state){
     if(state == "load") {
         for(var i = 0; i < optMenu.items.length; i++) {
