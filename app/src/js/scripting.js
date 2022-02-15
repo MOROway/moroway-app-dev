@@ -1713,7 +1713,7 @@ function drawObjects() {
                     } else if(cAngle > 0 && !trains[trainParams.selected].move) {
                         actionSync("trains", trainParams.selected, [{"move":true}],[{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
                     } else if (cAngle > 0 && trains[trainParams.selected].accelerationSpeed < 0) {
-                        actionSync("trains", trainParams.selected, [{"accelerationSpeed":trains[trainParams.selected].accelerationSpeed *= -1}], null);
+                        actionSync("trains", trainParams.selected, [{"accelerationSpeed":trains[trainParams.selected].accelerationSpeed *= -1}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
                     }
                 } else {
                     hardware.mouse.isHold = false;
@@ -2341,13 +2341,15 @@ function drawObjects() {
                         newSpeed = 100;
                     }
                     if(trains[cTrain].accelerationSpeed > 0 && newSpeed == 0) {
-                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1}], null);
+                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1}], [{getString:["appScreenObjectStops", "."]}, {getString:[["appScreenTrainNames",cTrain]]}], true);
                     } else if(trains[cTrain].accelerationSpeed > 0 ) {
+                        var accSpeed = (trains[cTrain].currentSpeedInPercent)/newSpeed;
+                        actionSync("trains", cTrain, [{"accelerationSpeedCustom":accSpeed}], null);
                         actionSync("trains", cTrain, [{"speedInPercent": newSpeed}],null);
                     } else if(!trains[cTrain].move && newSpeed > 0) {
-                        actionSync("trains", cTrain, [{"move":true},{"speedInPercent":newSpeed}], null);
+                        actionSync("trains", cTrain, [{"move":true},{"speedInPercent":newSpeed}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",cTrain]]}], true);
                     } else if (trains[cTrain].accelerationSpeed < 0 && newSpeed > 0) {
-                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1},{"speedInPercent":newSpeed}], null);
+                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1},{"speedInPercent":newSpeed}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",cTrain]]}], true);
                     }
                     if(newSpeed > 0 && newSpeed < 100) {
                         hardware.mouse.cursor = "grabbing";
@@ -2356,11 +2358,11 @@ function drawObjects() {
                 contextForeground.strokeRect(controlCenter.maxTextWidth,maxTextHeight*cTrain,controlCenter.maxTextWidth*0.5,maxTextHeight);
                 if(noCollisionCTrain && (contextClick && hardware.mouse.upX-background.x-controlCenter.translateOffset > controlCenter.maxTextWidth*1.5 && hardware.mouse.upX-background.x-controlCenter.translateOffset < controlCenter.maxTextWidth*1.75 && hardware.mouse.upY-background.y-controlCenter.translateOffset > maxTextHeight*cTrain && hardware.mouse.upY-background.y-controlCenter.translateOffset < maxTextHeight*cTrain+maxTextHeight)) {
                     if(trains[cTrain].accelerationSpeed > 0){
-                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1}], null);
+                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1}], [{getString:["appScreenObjectStops", "."]}, {getString:[["appScreenTrainNames",cTrain]]}], true);
                     } else if(!trains[cTrain].move) {
-                        actionSync("trains", cTrain, [{"move":true},{"speedInPercent":50}], null);
+                        actionSync("trains", cTrain, [{"move":true},{"speedInPercent":50}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",cTrain]]}], true);
                     } else if (trains[cTrain].accelerationSpeed < 0) {
-                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1},{"speedInPercent":50}], null);
+                        actionSync("trains", cTrain, [{"accelerationSpeed":trains[cTrain].accelerationSpeed *= -1},{"speedInPercent":50}], [{getString:["appScreenObjectStarts", "."]}, {getString:[["appScreenTrainNames",cTrain]]}], true);
                     }
                 }
                 contextForeground.save();
@@ -2380,7 +2382,7 @@ function drawObjects() {
                 contextForeground.restore();
                 contextForeground.strokeRect(controlCenter.maxTextWidth*1.5,maxTextHeight*cTrain,controlCenter.maxTextWidth*0.25,maxTextHeight);
                 if(contextClick && !trains[cTrain].move && hardware.mouse.upX-background.x-controlCenter.translateOffset > controlCenter.maxTextWidth*1.7 && hardware.mouse.upX-background.x-controlCenter.translateOffset < controlCenter.maxTextWidth*2 && hardware.mouse.upY-background.y-controlCenter.translateOffset > maxTextHeight*cTrain && hardware.mouse.upY-background.y-controlCenter.translateOffset < maxTextHeight*cTrain+maxTextHeight) {
-                    actionSync("trains", cTrain, [{"standardDirection":!trains[cTrain].standardDirection}],null);
+                    actionSync("trains", cTrain, [{"standardDirection":!trains[cTrain].standardDirection}], [{getString:["appScreenObjectChangesDirection","."]}, {getString:[["appScreenTrainNames",cTrain]]}], true);
                 }
                 contextForeground.save();
                 contextForeground.translate(controlCenter.maxTextWidth*1.875,maxTextHeight/2+maxTextHeight*cTrain);
@@ -2482,16 +2484,16 @@ function drawObjects() {
 
 }
 
-function actionSync (objname, index, params, notification) {
+function actionSync (objname, index, params, notification, notificationOnlyForOthers) {
     if(onlineGame.enabled) {
         if(!onlineGame.stop) {
-            teamplaySync("action", objname, index, params, notification);
+            teamplaySync("action", objname, index, params, notification, notificationOnlyForOthers);
         }
     } else {
         switch (objname) {
         case "trains":
             animateWorker.postMessage({k: "train", i: index, params: params});
-            if(notification !== null) {
+            if(notification !== null && !notificationOnlyForOthers) {
                 var notifyArr = [];
                 notification.forEach(function(elem){
                     notifyArr.push(getString.apply( null, elem.getString ));
@@ -2504,7 +2506,7 @@ function actionSync (objname, index, params, notification) {
     }
 }
 
-function teamplaySync (mode, objname, index, params, notification) {
+function teamplaySync (mode, objname, index, params, notification, notificationOnlyForOthers) {
     switch (mode) {
     case "action":
         var output = {};
@@ -2512,6 +2514,7 @@ function teamplaySync (mode, objname, index, params, notification) {
         output.index = index;
         output.params = params;
         output.notification = notification;
+        output.notificationOnlyForOthers = notificationOnlyForOthers;
         onlineConnection.send({mode: "action", gameId: onlineGame.id, message: JSON.stringify(output)});
         break;
     case "sync-ready":
@@ -3757,9 +3760,10 @@ window.onload = function() {
                                     if(onlineGame.sessionId != json.sessionId){
                                         notifyStr = json.sessionName + ": " + notifyStr;
                                     }
-                                    notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + optMenu.container.height);
+                                    if(onlineGame.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
+                                        notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + optMenu.container.height);
+                                    }
                                 }
-                                var obj;
                                 switch (input.objname){
                                 case "trains":
                                     if(onlineGame.sessionId != json.sessionId){
@@ -3782,7 +3786,7 @@ window.onload = function() {
                                     }
                                     break;
                                 case "switches":
-                                    obj = switches[input.index[0]][input.index[1]];
+                                    var obj = switches[input.index[0]][input.index[1]];
                                     input.params.forEach(function(param){
                                         obj[Object.keys(param)[0]] = Object.values(param)[0];
                                     });
