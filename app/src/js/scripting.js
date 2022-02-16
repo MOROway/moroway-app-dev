@@ -243,8 +243,8 @@ function getTouchMove(event) {
         var hypot = Math.hypot( event.changedTouches[0].clientX - event.changedTouches[1].clientX, event.changedTouches[0].clientY - event.touches[1].clientY);
         if(typeof(client.PinchOHypot) == "undefined") {
             client.PinchOHypot = hypot;
-            var deltaX =  (event.changedTouches[0].clientX + event.changedTouches[1].clientX) / 2 * client.devicePixelRatio;
-            var deltaY =  (event.changedTouches[0].clientY + event.changedTouches[1].clientY) / 2 * client.devicePixelRatio;
+            var deltaX = (event.changedTouches[0].clientX + event.changedTouches[1].clientX) / 2 * client.devicePixelRatio;
+            var deltaY = (event.changedTouches[0].clientY + event.changedTouches[1].clientY) / 2 * client.devicePixelRatio;
             if(client.realScale == 1) {
                 client.PinchX = deltaX;
                 client.PinchY = deltaY;
@@ -629,7 +629,7 @@ function calcClassicUIElements(){
         classicUI.trainSwitch.x = background.x + (realWidth(classicUI.trainSwitch.angle, classicUI.trainSwitch.width,classicUI.trainSwitch.height) - classicUI.trainSwitch.width) / 2;
         classicUI.trainSwitch.y = background.y + background.height / 1.1;
         classicUI.transformer.x = background.x + background.width - (classicUI.transformer.width) - (realWidth(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.width)/2;
-        classicUI.transformer.y =  background.y + background.height + optMenu.container.height - classicUI.transformer.height - (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - classicUI.transformer.height) / 2;
+        classicUI.transformer.y = background.y + background.height + optMenu.container.height * client.devicePixelRatio - classicUI.transformer.height - (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - classicUI.transformer.height) / 2;
         if(classicUI.transformer.y > background.y + background.height) {
             classicUI.transformer.y = background.y + background.height;
         }
@@ -669,7 +669,7 @@ function calcClassicUIElements(){
     } else if(!optMenu.small) {
         classicUI.trainSwitch.height = classicUI.transformer.height;
         classicUI.trainSwitch.width = (pics[classicUI.trainSwitch.src].width * (classicUI.trainSwitch.height / pics[classicUI.trainSwitch.src].height));
-        classicUI.trainSwitch.y =  classicUI.transformer.y;
+        classicUI.trainSwitch.y = classicUI.transformer.y;
     }
     classicUI.switches.radius = 0.02*background.width;
 }
@@ -1130,7 +1130,7 @@ function drawObjects() {
                     }
                 }
                 currentObject.backwardsState *= (1-currentObject.speed/background.width*100);
-                if (currentObject.backwardsState <=  0.1 && currentObject.backwardsState > 0) {
+                if (currentObject.backwardsState <= 0.1 && currentObject.backwardsState > 0) {
                     currentObject.backwardsState = 0;
                     currentObject.move = false;
                 }
@@ -1319,7 +1319,7 @@ function drawObjects() {
             carParams.autoModeInit = false;
         }
         var points = {x:[], y:[], angle:[]};
-        var arrLen =  carParams.wayNo*20;
+        var arrLen = carParams.wayNo*20;
         var abstrNo = Math.ceil(arrLen*0.05);
         var cCars = copyJSObject(cars);
         for(var i = 0; i < cCars.length; i++) {
@@ -1723,7 +1723,7 @@ function drawObjects() {
             } else {
                 classicUI.transformer.input.angle = 0;
                 trains[trainParams.selected].speedInPercent = 0;
-                trains[trainParams.selected].move =  false;
+                trains[trainParams.selected].move = false;
                 hardware.mouse.isHold = false;
             }
             if(classicUI.transformer.input.angle > 0 && classicUI.transformer.input.angle < classicUI.transformer.input.maxAngle) {
@@ -2068,9 +2068,9 @@ function drawObjects() {
 
     /////CONTROL CENTER/////
     if(client.realScale == 1 && hardware.mouse.rightClick){
-        var colorLight =  "floralwhite";
-        var colorDark =  "rgb(120,120,120)";
-        var colorBorder =  "rgba(255,255,255,0.7)";
+        var colorLight = "floralwhite";
+        var colorDark = "rgb(120,120,120)";
+        var colorBorder = "rgba(255,255,255,0.7)";
         var contextClick = (hardware.mouse.rightClickEvent && Math.abs(hardware.mouse.downX-hardware.mouse.upX) < canvas.width/100 && Math.abs(hardware.mouse.downY-hardware.mouse.upY) < canvas.width/100);
         hardware.mouse.rightClickEvent = false;
         if(hardware.mouse.cursor != "none") {
@@ -2468,7 +2468,7 @@ function drawObjects() {
         contextForeground.fill();
         contextForeground.restore();
     }
-    canvasForeground.style.cursor =  isHardwareAvailable("cursorascircle") ? (settings.cursorascircle ? "none" : hardware.mouse.cursor) : "default";
+    canvasForeground.style.cursor = isHardwareAvailable("cursorascircle") ? (settings.cursorascircle ? "none" : hardware.mouse.cursor) : "default";
     hardware.mouse.wheelScrolls = false;
 
     /////REPAINT/////
@@ -2979,7 +2979,7 @@ window.onload = function() {
             for (var i = 0; i < cars.length; i++){
                 cars[i].width = cars[i].fac * background.width;
                 cars[i].height = cars[i].fac * (pics[cars[i].src].height * (background.width / pics[cars[i].src].width));
-                cars[i].cType =  typeof carWays[i].start == "undefined" ?  "normal" : "start";
+                cars[i].cType = typeof carWays[i].start == "undefined" ?  "normal" : "start";
                 cars[i].displayAngle = carWays[i][cars[i].cType][cars[i].counter].angle;
                 cars[i].x = carWays[i][cars[i].cType][cars[i].counter].x;
                 cars[i].y = carWays[i][cars[i].cType][cars[i].counter].y;
