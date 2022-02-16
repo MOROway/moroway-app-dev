@@ -3190,22 +3190,29 @@ window.onload = function() {
             } else if(message.data.k == "save-game") {
                 if(typeof(window.localStorage) != "undefined") {
                     if(settings.saveGame && !onlineGame.enabled) {
-                        window.localStorage.setItem("morowayAppSavedGameTrains", JSON.stringify(message.data.saveTrains));
-                        var saveSwitches = {};
-                        Object.keys(switches).forEach(function(key) {
-                            saveSwitches[key] = {};
-                            Object.keys(switches[key]).forEach(function(side) {
-                                saveSwitches[key][side] = switches[key][side].turned;
+                        try {
+                            window.localStorage.setItem("morowayAppSavedGameTrains", JSON.stringify(message.data.saveTrains));
+                            var saveSwitches = {};
+                            Object.keys(switches).forEach(function(key) {
+                                saveSwitches[key] = {};
+                                Object.keys(switches[key]).forEach(function(side) {
+                                    saveSwitches[key][side] = switches[key][side].turned;
+                                });
                             });
-                        });
-                        window.localStorage.setItem("morowayAppSavedGameSwitches", JSON.stringify(saveSwitches));
-                        if(cars.length == carWays.length && cars.length > 0) {
-                            window.localStorage.setItem("morowayAppSavedCars", JSON.stringify(cars));
-                            window.localStorage.setItem("morowayAppSavedCarParams", JSON.stringify(carParams));
+                            window.localStorage.setItem("morowayAppSavedGameSwitches", JSON.stringify(saveSwitches));
+                            if(cars.length == carWays.length && cars.length > 0) {
+                                window.localStorage.setItem("morowayAppSavedCars", JSON.stringify(cars));
+                                window.localStorage.setItem("morowayAppSavedCarParams", JSON.stringify(carParams));
+                            }
+                            window.localStorage.setItem("morowayAppSavedBg", JSON.stringify(background));
+                            window.localStorage.setItem("morowayAppSavedWithVersion", JSON.stringify(APP_DATA.version));
+                        } catch (e) {
+                            if(debug) {
+                                console.log(e.name + "/" + e.message);
+                            }
+                            notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + optMenu.container.height);
                         }
-                        window.localStorage.setItem("morowayAppSavedBg", JSON.stringify(background));
-                        window.localStorage.setItem("morowayAppSavedWithVersion", JSON.stringify(APP_DATA.version));
-                    } else if (!settings.saveGame){
+                    } else if (!settings.saveGame) {
                         removeSavedGame();
                     }
                     animateWorker.postMessage({k: "game-saved"});
