@@ -619,19 +619,19 @@ function calcClassicUIElements(){
     classicUI.transformer.directionInput.width = fac * classicUI.transformer.width;
     classicUI.transformer.directionInput.height = fac * (pics[classicUI.transformer.directionInput.srcStandardDirection].height * ( classicUI.transformer.width/ pics[classicUI.transformer.directionInput.srcStandardDirection].width));
     if(optMenu.small) {
+        classicUI.trainSwitch.angle = 0;
         classicUI.trainSwitch.x = background.x + background.width / 99;
         classicUI.trainSwitch.y = background.y + background.height / 1.175;
         classicUI.transformer.x = background.x + background.width / 1.1;
         classicUI.transformer.y = background.y + background.height / 1.4;
     } else {
-        classicUI.trainSwitch.x = background.x + background.width / 220;
-        classicUI.trainSwitch.y = background.y + background.height / 1.19;
+        classicUI.trainSwitch.angle = -classicUI.transformer.angle;
+        classicUI.trainSwitch.x = background.x + (realWidth(classicUI.trainSwitch.angle, classicUI.trainSwitch.width,classicUI.trainSwitch.height) - classicUI.trainSwitch.width) / 2;
+        classicUI.trainSwitch.y = background.y + background.height / 1.1;
         classicUI.transformer.x = background.x + background.width - (classicUI.transformer.width) - (realWidth(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.width)/2;
-        classicUI.transformer.y = background.y + background.height + optMenu.container.height * client.devicePixelRatio - classicUI.transformer.height -(realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height)-classicUI.transformer.height)/2;
-        var i = 0;
-        while(i < 100 && classicUI.transformer.y > background.y + background.height) {
-            classicUI.transformer.y *= 0.9;
-            i++;
+        classicUI.transformer.y =  background.y + background.height + optMenu.container.height - classicUI.transformer.height - (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - classicUI.transformer.height) / 2;
+        if(classicUI.transformer.y > background.y + background.height) {
+            classicUI.transformer.y = background.y + background.height;
         }
     }
     classicUI.transformer.input.diffY = classicUI.transformer.height / 6;
@@ -667,9 +667,9 @@ function calcClassicUIElements(){
             i++;
         }
     } else if(!optMenu.small) {
-        classicUI.trainSwitch.height = Math.min(background.height * 0.05 + optMenu.container.height * client.devicePixelRatio, realHeight(classicUI.transformer.angle, classicUI.transformer.width,classicUI.transformer.height));
+        classicUI.trainSwitch.height = classicUI.transformer.height;
         classicUI.trainSwitch.width = (pics[classicUI.trainSwitch.src].width * (classicUI.trainSwitch.height / pics[classicUI.trainSwitch.src].height));
-        classicUI.trainSwitch.y = background.y + background.height * 0.9;
+        classicUI.trainSwitch.y =  classicUI.transformer.y;
     }
     classicUI.switches.radius = 0.02*background.width;
 }
@@ -1581,9 +1581,11 @@ function drawObjects() {
             context.restore();
         }
         context.save();
-        drawImage(pics[classicUI.trainSwitch.src], classicUI.trainSwitch.x, classicUI.trainSwitch.y, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        context.translate(classicUI.trainSwitch.x+classicUI.trainSwitch.width/2, classicUI.trainSwitch.y+classicUI.trainSwitch.height/2);
+        context.rotate(classicUI.trainSwitch.angle);
+        drawImage(pics[classicUI.trainSwitch.src], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
         context.beginPath();
-        context.rect(classicUI.trainSwitch.x, classicUI.trainSwitch.y, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        context.rect(-classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
         if (wasInSwitchPath || (context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
             hardware.mouse.cursor = "pointer";
             if(typeof movingTimeOut !== "undefined"){

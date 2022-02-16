@@ -1,4 +1,3 @@
 Bigger menu and "Classic UI" display on small screens.
-Classic UI: Improved transformer now indicates if train can move (red light on/off) and if direction can be changed (arrow symbol white/faded out).
-Classic UI: Current direction is higlighted in transformer's arrow symbol.
-Bugfixes (including zoom with touch gestures).
+Improved "Classic UI" transformer.
+Bugfixes.
