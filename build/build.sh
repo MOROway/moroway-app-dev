@@ -115,15 +115,13 @@ for platform in ${platforms[@]}; do
 		if [[ "$debug" == 1 ]]; then
 			debugBool=true;
 		fi
-		content=$(cat "$file" | sed "s/{{version_major}}/$version_major/" | sed "s/{{version_minor}}/$version_minor/" | sed "s/{{version_patch}}/$version_patch/" | sed "s/{{date_year}}/"$(date "+%Y")"/" | sed "s/{{date_month}}/"$(date "+%-m")"/" | sed "s/{{date_day}}/"$(date "+%-d")"/" | sed "s/{{platform}}/$platform/" | sed "s/{{beta}}/$beta/" | sed "s/{{debug}}/$debugBool/")
-		printf '%s' "$content" > "$file";
+		sed -i "s/{{version_major}}/$version_major/;s/{{version_minor}}/$version_minor/;s/{{version_patch}}/$version_patch/;s/{{date_year}}/"$(date "+%Y")"/;s/{{date_month}}/"$(date "+%-m")"/;s/{{date_day}}/"$(date "+%-d")"/;s/{{platform}}/$platform/;s/{{beta}}/$beta/;s/{{debug}}/$debugBool/" "$file"
 		# General Script
 		file="$to/src/js/general.js"
-		content=$(cat "$file")
 		for clangdir in changelogs/*
 		do
 			clang=$(basename "$clangdir")
-			if [[ "$clang" != meta ]] && [[ ! -z $(echo "$content" | grep "{{changelog=$clang}}") ]]; then
+			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]]; then
 				changelogs=""
 				for changelogfile in "$clangdir"/*.0
 				do
@@ -149,7 +147,7 @@ for platform in ${platforms[@]}; do
 					changelogs="$changelogs"$( echo "$changelog" | sed 's/,$/],/')
 				done
 				changelogs=$( echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g')
-				content=$(echo "$content" | sed "s/[{]\+changelog=$clang[}]\+/$changelogs/")
+				sed -i "s/[{]\+changelog=$clang[}]\+/$changelogs/" "$file"
 			fi
 		done
 		hypertextprotocol=https
@@ -160,8 +158,8 @@ for platform in ${platforms[@]}; do
 		if [[ "$debug" == 1 ]]; then
 			websocketprotocol=ws
 		fi
-		content=$(echo "$content" | sed "s/{{changelog=[^}]*}}//g" | sed "s!{{sharelink}}!$sharelink!" | sed "s!{{shareserver}}!$(echo "$sharelink" | sed "s!\(.*:/\{2\}[^/]*\).*!\1/!")!" | sed "s!{{serverlink}}!$serverlink!" | sed "s/{{hypertextprotocol}}/$hypertextprotocol/" | sed "s/{{websocketprotocol}}/$websocketprotocol/")
-		printf '%s' "$content" > "$file";
+		shareserver=$(echo "$sharelink" | sed "s!\(.*:/\{2\}[^/]*\).*!\1/!")
+		sed -i "s/{{changelog=[^}]*}}//g;s!{{sharelink}}!$sharelink!;s!{{shareserver}}!$shareserver!;s!{{serverlink}}!$serverlink!;s/{{hypertextprotocol}}/$hypertextprotocol/;s/{{websocketprotocol}}/$websocketprotocol/" "$file"
 		# Service Worker
 		all_files=$( loop_files "$to" "$to" )
 		file="$to/sw.js"
@@ -185,27 +183,25 @@ for platform in ${platforms[@]}; do
 			if [[ -f "$file_ex" ]]; then
 				rm "$file_ex"
 			fi
-			content=$(cat "$file" | sed "s/{{sw_platform}}/$platform/" | sed "s/{{sw_version}}/$version/" | sed "s/{{sw_beta}}/$beta_identifier/" | sed "s#{{sw_files}}#$sw_files_text#")
-			printf '%s' "$content" > "$file";
+			sed -i "s/{{sw_platform}}/$platform/;s/{{sw_version}}/$version/;s/{{sw_beta}}/$beta_identifier/;s#{{sw_files}}#$sw_files_text#" "$file"
 		fi
 		# HTML Content
 		for html_file in ${all_files[@]}; do
 			if [[ "$html_file" =~ .html$ ]]; then
 				if [[ -f "$to/manifest.webmanifest" ]]; then
-					content=$(cat "$to/$html_file" | sed 's/{{webmanifest}}/<link rel="manifest" href="manifest.webmanifest">/')
+					sed -i 's/{{webmanifest}}/<link rel="manifest" href="manifest.webmanifest">/' "$to/$html_file"
 				else
-					content=$(cat "$to/$html_file" | sed 's/{{webmanifest}}//' | perl -pe "s/^\s+\n\$//")
+					sed -i 's/{{webmanifest}}//' "$to/$html_file";
+					perl -pi -e "s/^\s+\n\$//" "$to/$html_file"
 				fi
-				while [[ ! -z $(echo "$content" | grep "{{dep_check}}" | head -1) ]]; do
-					if [[ -f "$to/"$(echo "$content" | grep "{{dep_check}}" | head -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]];
+				while [[ ! -z $(cat "$to/$html_file" | grep "{{dep_check}}" | head -1) ]]; do
+					if [[ -f "$to/"$(cat "$to/$html_file" | grep "{{dep_check}}" | head -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]];
 					then
-						content=$(echo "$content" | perl -0pe "s/\{\{dep_check\}\}//")
+						perl -0pi -e "s/\{\{dep_check\}\}//"  "$to/$html_file"
 					else
-						content=$(echo "$content" | perl -0pe "s/(^|[\n]).*\{\{dep_check\}\}.*\n/\n/")
+						perl -0pi -e "s/(^|[\n]).*\{\{dep_check\}\}.*\n/\n/"  "$to/$html_file"
 					fi
 				done
-				printf '%s' "$content" > "$to/$html_file"
-
 			fi
 		done
 

@@ -1584,6 +1584,19 @@ function drawObjects() {
         context.translate(classicUI.trainSwitch.x+classicUI.trainSwitch.width/2, classicUI.trainSwitch.y+classicUI.trainSwitch.height/2);
         context.rotate(classicUI.trainSwitch.angle);
         drawImage(pics[classicUI.trainSwitch.src], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        context.save();
+        var alpha = 0;
+        var alphaFramesMax = 55;
+        if (trainParams.selectedLastChange != undefined && frameNo - trainParams.selectedLastChange < alphaFramesMax) {
+            alpha = 1;
+        } else if (trainParams.selectedLastChange != undefined && frameNo - alphaFramesMax - trainParams.selectedLastChange < alphaFramesMax) {
+            alpha = 1 - ((frameNo - alphaFramesMax - trainParams.selectedLastChange)/alphaFramesMax);
+        }
+        context.globalAlpha = 1 - alpha;
+        drawImage(pics[classicUI.trainSwitch.srcFill], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        context.globalAlpha = alpha;
+        drawImage(pics[trains[trainParams.selected].trainSwitchSrc], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        context.restore();
         context.beginPath();
         context.rect(-classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
         if (wasInSwitchPath || (context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
@@ -1603,6 +1616,7 @@ function drawObjects() {
                 } else if (trainParams.selected < 0) {
                     trainParams.selected = trains.length-1;
                 }
+                trainParams.selectedLastChange = frameNo;
                 if (!classicUI.trainSwitch.selectedTrainDisplay.visible) {
                     notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames",trainParams.selected])), NOTIFICATION_PRIO_HIGH, 1250, null, null, client.height, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH);
                 }
@@ -2553,7 +2567,7 @@ var doubleClickWaitTime = doubleClickTime*2;
 var konamistate = 0;
 var konamiTimeOut;
 
-var pics = [{id: 0, extension: "png"},{id: 1, extension: "png"},{id: 2, extension: "png"},{id: 3, extension: "png"},{id: 4, extension: "png"},{id: 5, extension: "png"},{id: 6, extension: "png"},{id: 7, extension: "png"},{id: 8, extension: "png"},{id: 9, extension: "jpg"},{id: 10, extension: "png"},{id: 11, extension: "png"},{id: 12, extension: "png"},{id: 13, extension: "png"},{id: 14, extension: "png"},{id: 15, extension: "png"},{id: 16, extension: "png"},{id: 17, extension: "png"},{id: 18, extension: "png"},{id: 19, extension: "png"},{id: 20, extension: "png"},{id: 21, extension: "png"},{id: 22, extension: "png"},{id: 23, extension: "png"},{id: 24, extension: "png"}];
+var pics = [{id: 0, extension: "png"},{id: 1, extension: "png"},{id: 2, extension: "png"},{id: 3, extension: "png"},{id: 4, extension: "png"},{id: 5, extension: "png"},{id: 6, extension: "png"},{id: 7, extension: "png"},{id: 8, extension: "png"},{id: 9, extension: "jpg"},{id: 10, extension: "png"},{id: 11, extension: "png"},{id: 12, extension: "png"},{id: 13, extension: "png"},{id: 14, extension: "png"},{id: 15, extension: "png"},{id: 16, extension: "png"},{id: 17, extension: "png"},{id: 18, extension: "png"},{id: 19, extension: "png"},{id: 20, extension: "png"},{id: 21, extension: "png"},{id: 22, extension: "png"},{id: 23, extension: "png"},{id: 24, extension: "png"},{id: 25, extension: "png"},{id: 26, extension: "png"},{id: 27, extension: "png"},{id: 28, extension: "png"},{id: 29, extension: "png"},{id: 30, extension: "png"},{id: 31, extension: "png"}];
 
 var background = {src: 9, secondLayer: 10};
 var oldbackground;
@@ -2572,7 +2586,7 @@ var carParams = {init: true, wayNo: 7};
 
 var taxOffice = {params: {number: 45, frameNo: 6, frameProbability: 0.6, fire: {x: 0.07, y: 0.06, size: 0.000833, color:{red: {red: 200, green: 0, blue: 0, alpha: 0.4}, yellow: {red: 255, green: 160, blue: 0, alpha: 1}, probability: 0.8}}, smoke: {x: 0.07, y: 0.06, size: 0.02, color: {red: 130, green: 120, blue: 130, alpha: 0.3}}, bluelights: {frameNo: 16, cars: [{frameNo: 0, x: [-0.0105, -0.0026], y: [0.175, 0.0045], size: 0.0008},{frameNo: 3, x: [0.0275, -0.00275], y: [0.1472, 0.0092], size: 0.001},{frameNo: 5, x: [0.0568, 0.0008], y: [0.177, 0.0148], size: 0.001}]}}};
 
-var classicUI = {trainSwitch: {src: 11, selectedTrainDisplay: {}}, transformer: {src: 12, onSrc: 13, readySrc: 23, angle:(Math.PI/5),input:{src:14,angle:0,minAngle:minTrainSpeed,maxAngle:1.5*Math.PI},directionInput:{srcStandardDirection: 24, srcNotStandardDirection: 15}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
+var classicUI = {trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {}}, transformer: {src: 12, onSrc: 13, readySrc: 23, angle:(Math.PI/5),input:{src:14,angle:0,minAngle:minTrainSpeed,maxAngle:1.5*Math.PI},directionInput:{srcStandardDirection: 24, srcNotStandardDirection: 15}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
 
 var controlCenter = {showCarCenter: null, fontFamily: "sans-serif"};
 
@@ -2580,7 +2594,7 @@ var hardware = {mouse: {moveX:0, moveY:0,downX:0, downY:0, downTime: 0,upX:0, up
 var client = {devicePixelRatio: 1,realScaleMax:6,realScaleMin:1.2};
 var optMenu = {};
 
-var onlineGame = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {"t": ["src", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], "tc": ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"]}, chatSticker: 7, resized: false};
+var onlineGame = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {"t": ["src", "trainSwitchSrc", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], "tc": ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"]}, chatSticker: 7, resized: false};
 var onlineConnection = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
 
 var resizeTimeout;
