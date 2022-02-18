@@ -1593,9 +1593,13 @@ function drawObjects() {
             alpha = 1 - ((frameNo - alphaFramesMax - trainParams.selectedLastChange)/alphaFramesMax);
         }
         context.globalAlpha = 1 - alpha;
-        drawImage(pics[classicUI.trainSwitch.srcFill], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        if(context.globalAlpha > 0) {
+            drawImage(pics[classicUI.trainSwitch.srcFill], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        }
         context.globalAlpha = alpha;
-        drawImage(pics[trains[trainParams.selected].trainSwitchSrc], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        if(context.globalAlpha > 0) {
+            drawImage(pics[trains[trainParams.selected].trainSwitchSrc], -classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        }
         context.restore();
         context.beginPath();
         context.rect(-classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
