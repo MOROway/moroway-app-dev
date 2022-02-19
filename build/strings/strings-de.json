@@ -40,7 +40,7 @@
 	"appScreenSaveGameError": "Fehler beim Speichern des Spieles",
 	"appScreenTeamplayTitle": "Mehrspielermodus",
 	"appScreenTeamplayUnsetTitle": "Einzelspielermodus",
-	"appScreenTeamplayNoWebsocket": "Merhspieler-Funktionen können nicht geladen werden – bitte aktualisieren Sie Ihren Browser",
+	"appScreenTeamplayNoWebsocket": "Mehrspieler-Funktionen können nicht geladen werden – bitte aktualisieren Sie Ihren Browser",
 	"appScreenTeamplayUpdateNote": "App-Aktualisierung empfohlen",
 	"appScreenTeamplayUpdateError": "App-Aktualisierung erforderlich",
 	"appScreenTeamplayConnectionError": "Fehler: Keine Verbindung möglich oder Verbindung verloren",
@@ -212,7 +212,7 @@
 	"helpScreenPrivacyStatement": "Datenschutzerklärung",
 	"helpScreenPrivacyStatementBackupLink": "Datenschutzerklärung öffnen",
 	"helpScreenPrivacyStatementBackupLinkNotification": "Link geöffnet",
-	"helpScreenContact": "Noch Fragen?",
+	"helpScreenContact": "Kontakt",
 	"helpScreenContactFeedback": "Feedback {{0}}",
 	"helpScreenContactFeedbackPs": [
 		"Sie kennen uns unbekannte Bugs? Sie haben Vorschläge, Feedback, Lob, Kritik, Fragen oder ein anderes Anliegen, dass Sie kommunizieren möchten? Hier sind die Kontaktdaten!"
@@ -266,7 +266,7 @@
 	"errorScreenErrorMissingPicsP2": "Zweite Möglichkeit: Ihr Browser konnte eine richtig verlinkte Mediendatei nicht abrufen, da Sie kein Internet haben oder die Bilddatei blockiert wurde. In diesem Fall prüfen Sie bitte Ihre Verbindung / Firewall.",
 	"errorScreenErrorTeamplay": "Fehler beim Mehrspielermodus",
 	"errorScreenErrorTeamplayJoin": "Kein Spielbeitritt möglich",
-	"errorScreenErrorTeamplayJoinP1": "Wenn Sie einem Spiel nicht beitreten können, ist dies entweder voll, obsolet oder bereits gestartet. Erstellen Sie ein neues Spiel!",
+	"errorScreenErrorTeamplayJoinP1": "Wenn Sie einem Spiel nicht beitreten können, ist dies entweder voll, obsolet oder bereits gestartet. Erstellen Sie ein neues Spiel.",
 	"errorScreenErrorTeamplayConnection": "Verbindung kann nicht hergestellt werden",
 	"errorScreenErrorTeamplayConnectionP1": "Probleme beim Verbinden können verschiedene Ursachen haben. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, einen aktuellen Browser und die neuste Version der MOROway App verwenden.",
 	"errorScreenErrorTeamplayConnectionP2": "Sollte dies nicht helfen, kann es sich um einen Serverfehler handeln. Hier ist folglich Geduld gefragt, bis der Server repariert ist.",
@@ -329,5 +329,13 @@
 	"helpScreenGraphicalDescriptionIcon": "🎈",
 	"helpScreenLegalFontsIcon": "🌐",
 	"helpScreenLegalAppOCIcon": "📱",
-	"helpScreenGeneralWelcomeIcon": "🏡"
+	"helpScreenGeneralWelcomeIcon": "🏡",
+	"helpScreenLegalAppSnapIcon": "💻",
+	"helpScreenPrivacyStatementIcon": "🦮",
+	"helpScreenLegalOwnIcon": "✌️",
+	"helpScreenDownloadAppsIcon": "💾",
+	"helpScreenContactFeedbackIcon": "📫",
+	"helpScreenMOROmoreAboutIcon": "📜",
+	"helpScreenDownloadViewSourceIcon": "🔍️",
+	"helpScreenMOROmoreWebsiteIcon": "🛤️"
 }
