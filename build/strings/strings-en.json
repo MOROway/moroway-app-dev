@@ -6,7 +6,7 @@
 	"generalTitleHelpScreen": "Legal / Help",
 	"generalTitleErrorScreen": "Known Issues",
 	"generalTitleWhatsNewScreen": "Changelog",
-	"generalNoDOMStorageSupport": "Sorry - DOM Storage not supported",
+	"generalNoDOMStorageSupport": "Sorry - DOM storage not supported",
 	"generalServerNoteButtonLater": "show again",
 	"generalServerNoteInfoLater": "Only works if this message remains valid.",
 	"generalServerNoteButtonGo": "show me more",
