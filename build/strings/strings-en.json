@@ -58,7 +58,7 @@
     "appScreenTeamplaySetupStartButtonError": "Error: Cannot copy game link",
     "appScreenTeamplayGameStart": "Clicking 'start' will start the game when you and your teammate(s) clicked the button. As soon as anyone clicks the button it's impossible to join for further teammates. Currently {{0}} devices (including you) joined the game.",
     "appScreenTeamplayGameStartButton": "Start",
-    "appScreenTeamplayTeammateWait": "Please wait for teammate to get ready...",
+    "appScreenTeamplayTeammateWait": "Please wait for teammate to get ready…",
     "appScreenTeamplayTeammateReady": "Your teammate is ready. Are you, too",
     "appScreenTeamplayTeammateLeft": "Teammate left. Game is obsolete",
     "appScreenTeamplaySomebodyLeft": "Teammate left",
@@ -142,11 +142,11 @@
     ],
     "appScreenCarStepsBack": "{{0}} moves back",
     "appScreenCarParking": "{{0}} moves back to initial position",
-    "appScreenCarAutoModeChange": "Auto-Mode  {{0}}",
+    "appScreenCarAutoModeChange": "Auto-Mode {{0}}",
     "appScreenCarAutoModeInit": "activated",
     "appScreenCarAutoModePause": "paused",
     "appScreenCarAutoModeParking": "Cars move back to initial position",
-    "appScreenCarAutoModeCrash": "Auto mode: car crash! Switching over to manual control... good luck!",
+    "appScreenCarAutoModeCrash": "Auto mode: car crash! Switching over to manual control… good luck!",
     "appScreenCarControlCenterTitle": "Car Control Center",
     "appScreenCarControlCenterAutoModeActivate": "Start auto mode",
     "appScreenCarControlCenterStartCar": "Start {{0}}",
@@ -307,7 +307,7 @@
     "helpScreenMOROmoreWebsite": "MOROway Website {{0}}",
     "helpScreenMOROmoreWebsiteIcon": "🛤️",
     "helpScreenMOROmoreWebsitePs": [
-        "Visit our website..."
+        "Visit our website…"
     ],
     "helpScreenMOROmoreWebsiteButtonLink": "Website",
     "whatsNewScreenVersionNumber": "Version {{0}}",
