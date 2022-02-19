@@ -322,5 +322,12 @@
 		"🚕"
 	],
 	"helpScreenLegalAppSnap": "MOROway snApp {{0}}",
-	"helpScreenLegalAppSnapCordova": "Apache Cordova"
+	"helpScreenLegalAppSnapCordova": "Apache Cordova",
+	"helpScreenGeneralTrainsIcon": "🚂",
+	"helpScreenGeneralCarsIcon": "🚗",
+	"helpScreenGeneralTeamplayIcon": "🎮",
+	"helpScreenGraphicalDescriptionIcon": "🎈",
+	"helpScreenLegalFontsIcon": "🌐",
+	"helpScreenLegalAppOCIcon": "📱",
+	"helpScreenGeneralWelcomeIcon": "🏡"
 }
