@@ -7,10 +7,10 @@
 	"generalTitleErrorScreen": "Bekannte Fehler",
 	"generalTitleWhatsNewScreen": "Versionsgeschichte",
 	"generalNoDOMStorageSupport": "Leider wird DOM-Speicher nicht unterstützt",
-	"generalServerNoteButtonLater": "Nochmals einblenden.",
+	"generalServerNoteButtonLater": "Nochmals einblenden",
 	"generalServerNoteInfoLater": "Funktioniert nur, wenn diese Nachricht gültig bleibt.",
 	"generalServerNoteButtonGo": "Mehr erfahren",
-	"generalServerNoteButtonNo": "okay",
+	"generalServerNoteButtonNo": "Okay",
 	"optTitle_morowayApp_showNotifications": "Benachrichtigungen",
 	"optDesc_morowayApp_showNotifications": "Zeigt Texteinblendungen bei verschiedenen Aktionen an.",
 	"optInfo_morowayApp_showNotifications": "Funktioniert nicht auf kleinen Bildschirmen. Einige Benachrichtigungen werden trotz Deaktivierung dieser Option angezeigt.",
@@ -320,5 +320,14 @@
 		"🏎️",
 		"🚗",
 		"🚕"
-	]
+	],
+	"helpScreenLegalAppSnap": "MOROway snApp {{0}}",
+	"helpScreenLegalAppSnapCordova": "Apache Cordova",
+	"helpScreenGeneralTrainsIcon": "🚂",
+	"helpScreenGeneralCarsIcon": "🚗",
+	"helpScreenGeneralTeamplayIcon": "🎮",
+	"helpScreenGraphicalDescriptionIcon": "🎈",
+	"helpScreenLegalFontsIcon": "🌐",
+	"helpScreenLegalAppOCIcon": "📱",
+	"helpScreenGeneralWelcomeIcon": "🏡"
 }
