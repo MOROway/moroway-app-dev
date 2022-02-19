@@ -118,6 +118,15 @@ for platform in ${platforms[@]}; do
 		sed -i "s/{{version_major}}/$version_major/;s/{{version_minor}}/$version_minor/;s/{{version_patch}}/$version_patch/;s/{{date_year}}/"$(date "+%Y")"/;s/{{date_month}}/"$(date "+%-m")"/;s/{{date_day}}/"$(date "+%-d")"/;s/{{platform}}/$platform/;s/{{beta}}/$beta/;s/{{debug}}/$debugBool/" "$file"
 		# General Script
 		file="$to/src/js/general.js"
+		strings="{"
+		for clang in strings/strings-*.json
+		do
+			langCode=$(echo "$clang" | sed 's/[^-]*-\([^.]*\).*/\1/')
+			stringsCurrent=$(cat "$clang" | sed 's/\\\(.\)/\\\\\1/g' | sed 's!/!\\/!g' | perl -0pe 's/(\n|\s|\t)*([^\n]*)\n/\2/g' | perl -0pe 's/\n*}$/,/g')
+			strings="$strings$langCode:$stringsCurrent{{changelog=$langCode}}},"
+		done
+		strings=$(echo "$strings" | perl -0pe 's/,$/}/g')
+		perl -0pi -e "s/\{\{strings\}\}/$strings/" "$file"
 		for clangdir in changelogs/*
 		do
 			clang=$(basename "$clangdir")
@@ -146,8 +155,8 @@ for platform in ${platforms[@]}; do
 					fi
 					changelogs="$changelogs"$( echo "$changelog" | sed 's/,$/],/')
 				done
-				changelogs=$( echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g')
-				sed -i "s/[{]\+changelog=$clang[}]\+/$changelogs/" "$file"
+				changelogs=$( echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g' | perl -0pe 's/,$//g')
+				sed -i "s/{{changelog=$clang}}/$changelogs/" "$file"
 			fi
 		done
 		hypertextprotocol=https

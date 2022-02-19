@@ -58,45 +58,35 @@ function showConfirmLeaveMultiplayerMode(){
 function getGesture(gesture){
     switch(gesture.type) {
     case "doubletap":
-        if(client.lastTouchScale != 1 || client.touchScale != 1) {
-            client.lastTouchScale = 1;
-            client.touchScale = 1;
+        if(client.realScale != 1) {
+            client.realScale = 1;
         } else {
-            client.touchScale = client.realScale = client.realScaleMax/2;
+            client.lastTouchScale = client.realScale = client.realScaleMax/2;
             client.touchScaleX = (canvas.width/2-gesture.deltaX)*client.realScale;
             client.touchScaleY = (canvas.height/2-gesture.deltaY)*client.realScale;
         }
-        delete gesture.deltaX;
-        delete gesture.deltaY;
         break;
     case "pinch":
         client.touchScale = gesture.scale;
+        client.realScale = Math.max(Math.min(client.lastTouchScale * client.touchScale,client.realScaleMax),1);
         client.touchScaleX = (canvas.width/2-gesture.deltaX)*client.realScale;
         client.touchScaleY = (canvas.height/2-gesture.deltaY)*client.realScale;
-        delete gesture.deltaX;
-        delete gesture.deltaY;
         break;
     case "pinchoffset":
         client.touchScaleX += (canvas.width/2-gesture.deltaX);
         client.touchScaleY += (canvas.height/2-gesture.deltaY);
-        delete gesture.deltaX;
-        delete gesture.deltaY;
         break;
     case "pinchend":
         client.lastTouchScale = client.realScale;
         client.touchScale = 1;
-        client.hasPinched = true;
         delete client.PinchOHypot;
         break;
-    }
-    var newScale = Math.max(Math.min(client.lastTouchScale * client.touchScale,client.realScaleMax),1);
-    client.touchScaleX *= newScale/client.realScale;
-    client.touchScaleY *= newScale/client.realScale;
-    client.realScale = newScale;
-    if(gesture.deltaX != undefined && gesture.deltaY != undefined && client.PinchOHypot == undefined && client.hasPinched == undefined) {
+    case "swipe":
         client.touchScaleX += gesture.deltaX/4;
         client.touchScaleY += gesture.deltaY/4;
+        break;
     }
+
     client.PinchX = canvas.width/2-client.touchScaleX/client.realScale;
     client.PinchY = canvas.height/2-client.touchScaleY/client.realScale;
 
@@ -111,8 +101,8 @@ function getGesture(gesture){
         hardware.mouse.isMoving = true;
     }
 
-    var xMax = (client.realScale - 1) * (canvas.width / 2-background.x/client.devicePixelRatio);
-    var yMax = (client.realScale - 1) * (canvas.height / 2-background.y/client.devicePixelRatio);
+    var xMax = (client.realScale - 1) * (canvas.width / 2 - client.x);
+    var yMax = (client.realScale - 1) * (canvas.height / 2 - client.y);
     if (client.touchScaleX > xMax) {
         client.touchScaleX = xMax;
     }
@@ -149,7 +139,6 @@ function onMouseMove(event) {
         client.PinchOHypot = 1;
         getGesture({type: "pinch", scale:1, deltaX:client.PinchX,deltaY:client.PinchY});
         getGesture({type: "pinchend"});
-        delete client.hasPinched;
     }
 }
 function onMouseDown(event) {
@@ -191,7 +180,6 @@ function onMouseWheel(event) {
             getGesture({type: "pinch", scale:1/client.realScaleMin, deltaX:client.PinchX,deltaY:client.PinchY});
         }
         getGesture({type: "pinchend"});
-        delete client.hasPinched;
     } else {
         hardware.mouse.wheelScrolls = !hardware.mouse.rightClick;
         hardware.mouse.rightClickWheelScrolls = hardware.mouse.rightClick;
@@ -223,9 +211,9 @@ function preventMouseZoomDuringLoad(event) {
 
 function getTouchMove(event) {
     event.preventDefault();
-    if( event.changedTouches.length == 1) {
-        var deltaX = -5 * (hardware.mouse.moveX - (event.changedTouches[0].clientX*client.devicePixelRatio));
-        var deltaY = -5 * (hardware.mouse.moveY - (event.changedTouches[0].clientY*client.devicePixelRatio));
+    if( event.touches.length == 1) {
+        var deltaX = -5 * (hardware.mouse.moveX - (event.touches[0].clientX*client.devicePixelRatio));
+        var deltaY = -5 * (hardware.mouse.moveY - (event.touches[0].clientY*client.devicePixelRatio));
         if(client.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height)/30) {
             getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
             hardware.mouse.isHold = false;
@@ -236,15 +224,15 @@ function getTouchMove(event) {
             }
             movingTimeOut = window.setTimeout(function(){hardware.mouse.isMoving = false;}, 5000);
         }
-        hardware.mouse.moveX = (event.changedTouches[0].clientX*client.devicePixelRatio);
-        hardware.mouse.moveY = (event.changedTouches[0].clientY*client.devicePixelRatio);
-    } else if (event.changedTouches.length == 2) {
+        hardware.mouse.moveX = (event.touches[0].clientX*client.devicePixelRatio);
+        hardware.mouse.moveY = (event.touches[0].clientY*client.devicePixelRatio);
+    } else if (event.touches.length == 2) {
         hardware.mouse.isHold = false;
-        var hypot = Math.hypot( event.changedTouches[0].clientX - event.changedTouches[1].clientX, event.changedTouches[0].clientY - event.touches[1].clientY);
+        var hypot = Math.hypot( event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
         if(typeof(client.PinchOHypot) == "undefined") {
             client.PinchOHypot = hypot;
-            var deltaX = (event.changedTouches[0].clientX + event.changedTouches[1].clientX) / 2 * client.devicePixelRatio;
-            var deltaY = (event.changedTouches[0].clientY + event.changedTouches[1].clientY) / 2 * client.devicePixelRatio;
+            var deltaX = (event.touches[0].clientX + event.touches[1].clientX) / 2 * client.devicePixelRatio;
+            var deltaY = (event.touches[0].clientY + event.touches[1].clientY) / 2 * client.devicePixelRatio;
             if(client.realScale == 1) {
                 client.PinchX = deltaX;
                 client.PinchY = deltaY;
@@ -257,7 +245,6 @@ function getTouchMove(event) {
 }
 function getTouchStart(event) {
     event.preventDefault();
-    delete client.hasPinched;
     var xTS = (event.changedTouches[0].clientX*client.devicePixelRatio);
     var yTS = (event.changedTouches[0].clientY*client.devicePixelRatio);
     if(Math.max(hardware.mouse.moveX,xTS) < 1.1 * Math.min(hardware.mouse.moveX,xTS) && Math.max(hardware.mouse.moveY,yTS) < 1.1 * Math.min(hardware.mouse.moveY,yTS) && Date.now() - hardware.mouse.downTime < 2 * doubleClickTime && Date.now() - hardware.mouse.upTime < 2*doubleClickTime) {
@@ -329,7 +316,6 @@ function onKeyDown(event) {
             getGesture({type: "doubletap", deltaX:client.PinchX,deltaY:client.PinchY});
         }
         getGesture({type: "pinchend"});
-        delete client.hasPinched;
     } else if ((event.key == "ArrowUp" && (konamistate === 0 || konamistate == 1)) || (event.key == "ArrowDown" && (konamistate == 2 || konamistate == 3)) || (event.key == "ArrowLeft" && (konamistate == 4 || konamistate == 6)) || (event.key == "ArrowRight" && (konamistate == 5 || konamistate == 7)) || (event.key == "b" && konamistate == 8)){
         if(typeof konamiTimeOut !== "undefined"){
             window.clearTimeout(konamiTimeOut);
@@ -1279,7 +1265,7 @@ function drawObjects() {
     if(hardware.mouse.cursor != "none") {
         hardware.mouse.cursor = "default";
     }
-    if(client.realScale > 1 && isHardwareAvailable("cursorascircle") && settings.cursorascircle) {
+    if(client.realScale > 1) {
         var oTSX = client.touchScaleX;
         var oTSY = client.touchScaleY;
         var deltaDiv = 20;
@@ -1297,9 +1283,11 @@ function drawObjects() {
         if(hardware.keyboard.keysHold["ArrowDown"]) {
             deltaY -= canvas.height*client.realScale/deltaDiv;
         }
-        getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
-        client.touchScaleXKeyFake -= (client.touchScaleX-oTSX)/client.realScale;
-        client.touchScaleYKeyFake -= (client.touchScaleY-oTSY)/client.realScale;
+        if(deltaX != 0 || deltaY != 0) {
+            getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
+            client.touchScaleXKeyFake -= (client.touchScaleX-oTSX)/client.realScale;
+            client.touchScaleYKeyFake -= (client.touchScaleY-oTSY)/client.realScale;
+        }
     }
     /////TRAINS/////
     var inTrain = false;
@@ -2486,7 +2474,7 @@ function drawObjects() {
         contextForeground.fill();
         contextForeground.restore();
     }
-    canvasForeground.style.cursor = isHardwareAvailable("cursorascircle") ? (settings.cursorascircle ? "none" : hardware.mouse.cursor) : "default";
+    canvasForeground.style.cursor = isHardwareAvailable("cursorascircle") && settings.cursorascircle ? "none" : hardware.mouse.cursor;
     hardware.mouse.wheelScrolls = false;
 
     /////REPAINT/////
@@ -3112,7 +3100,7 @@ window.onload = function() {
                 });
                 resize();
                 drawInterval = message.data.animateInterval;
-                client.realScale = client.lastTouchScale = client.touchScale = 1;
+                client.realScale = client.touchScale = client.lastTouchScale = 1;
                 client.touchScaleX = client.touchScaleY = 0;
                 client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
                 drawObjects();
