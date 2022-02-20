@@ -339,7 +339,6 @@
 	"platformOcStartSettings": "Settings",
 	"platformSnapAppExit": "exit app",
 	"platformWindowsLinkError": "Error! Couldn't open link.",
-	"test": "test",
 	"whatsNewScreenVersionIsNew": "New",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
 	"whatsNewScreenVersionNumberMinor": "New in version {{0}}.{{1}}"
