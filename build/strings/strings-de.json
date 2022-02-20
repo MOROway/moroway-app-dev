@@ -10,7 +10,7 @@
 	"appScreenCarControlCenterAutoModePause": "Pause",
 	"appScreenCarControlCenterAutoModeResume": "Weiter",
 	"appScreenCarControlCenterStartCar": "{{0}} starten",
-	"appScreenCarControlCenterTitle": "Auto Control Center",
+	"appScreenCarControlCenterTitle": "Autokontrollzentrum",
 	"appScreenCarIcons": [
 		"🏎️",
 		"🚗",
@@ -25,7 +25,7 @@
 	"appScreenCarStepsBack": "{{0}} setzt zurück",
 	"appScreenControlCenterClose": "schließen",
 	"appScreenControlCenterSpeedOff": "gestoppt",
-	"appScreenControlCenterTitle": "Zug Control Center",
+	"appScreenControlCenterTitle": "Zugkontrollzentrum",
 	"appScreenFurtherInformation": "Mehr Informationen",
 	"appScreenHasLoaded": "Anwendung geladen",
 	"appScreenHasUpdated": "Neue Version",
