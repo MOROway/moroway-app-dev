@@ -10,7 +10,7 @@
 	"appScreenCarControlCenterAutoModePause": "Pause",
 	"appScreenCarControlCenterAutoModeResume": "Weiter",
 	"appScreenCarControlCenterStartCar": "{{0}} starten",
-	"appScreenCarControlCenterTitle": "Auto Control Center",
+	"appScreenCarControlCenterTitle": "Autokontrollzentrum",
 	"appScreenCarIcons": [
 		"🏎️",
 		"🚗",
@@ -25,7 +25,7 @@
 	"appScreenCarStepsBack": "{{0}} setzt zurück",
 	"appScreenControlCenterClose": "schließen",
 	"appScreenControlCenterSpeedOff": "gestoppt",
-	"appScreenControlCenterTitle": "Zug Control Center",
+	"appScreenControlCenterTitle": "Zugkontrollzentrum",
 	"appScreenFurtherInformation": "Mehr Informationen",
 	"appScreenHasLoaded": "Anwendung geladen",
 	"appScreenHasUpdated": "Neue Version",
@@ -76,7 +76,7 @@
 	"appScreenTeamplayCreateError": "Spiel konnte nicht erstellt werden",
 	"appScreenTeamplayGamePaused": "Spiel angehalten",
 	"appScreenTeamplayGameResumed": "Spiel fortgesetzt",
-	"appScreenTeamplayGameStart": "Sobald Sie und alle Ihre Mitspieler auf Start geklickt haben, geht das Spiel los. Sobald irgendein Mitspieler diese Schaltfläche bedient hat, kann niemand mehr dem Spiel beitreten. Zur Zeit sind {{0}} Spieler (inklusive Ihnen) beigetreten.",
+	"appScreenTeamplayGameStart": "Sobald Sie und alle Ihre Mitspieler auf „Start“ geklickt haben, startet das Spiel. Sobald ein Spieler diese Schaltfläche bedient hat, kann niemand mehr dem Spiel beitreten. Zur Zeit sind {{0}} Spieler (inklusive Ihnen) beigetreten.",
 	"appScreenTeamplayGameStartButton": "Start",
 	"appScreenTeamplayJoinError": "Beitritt zum Spiel nicht möglich (voll oder obsolet)",
 	"appScreenTeamplayJoinTeammateError": "Ihr Mitspieler konnte dem Spiel nicht beitreten",
@@ -248,6 +248,10 @@
 	"helpScreenLegalAppOCInsomnia": "Insomnia",
 	"helpScreenLegalAppOCInsomniaPs": [
 		"Die MOROway App OC Variante nutzt das Insomnia-PhoneGap-Plugin erstellt von Eddy Verbruggen."
+	],
+	"helpScreenLegalAppOCNativeStorage": "cordova-plugin-nativestorage",
+	"helpScreenLegalAppOCNativeStoragePs": [
+		"Die MOROway App OC Variante nutzt das Native Storage Plugin erstellt von TheCocoaProject."
 	],
 	"helpScreenLegalAppOCSplashscreen": "cordova-plugin-splashscreen",
 	"helpScreenLegalAppOCSplashscreenPs": [
