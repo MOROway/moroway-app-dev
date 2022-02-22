@@ -9,7 +9,7 @@
 	"appScreenCarControlCenterAutoModeBackToRoot": "Autos parken",
 	"appScreenCarControlCenterAutoModePause": "Pause",
 	"appScreenCarControlCenterAutoModeResume": "Weiter",
-	"appScreenCarControlCenterStartCar": "{{0}} starten",
+	"appScreenCarControlCenterStartCar": "„{{0}}“ starten",
 	"appScreenCarControlCenterTitle": "Autokontrollzentrum",
 	"appScreenCarIcons": [
 		"🏎️",
@@ -29,7 +29,7 @@
 	"appScreenFurtherInformation": "Mehr Informationen",
 	"appScreenHasLoaded": "Anwendung geladen",
 	"appScreenHasUpdated": "Neue Version",
-	"appScreenIsFail": "FEHLER – Wir kümmern uns so schnell wie möglich",
+	"appScreenIsFail": "Fehler – Wir kümmern uns so schnell wie möglich",
 	"appScreenKonami": "Super - Sie haben den Konamicode geknackt",
 	"appScreenKonamiAnimals": [
 		"🐢",
@@ -90,7 +90,7 @@
 	"appScreenTeamplaySetupInitDetail": "Erlaubte Zeichen: Buchstaben und Zahlen.",
 	"appScreenTeamplaySetupStart": "Laden Sie Ihre(n) Mitspieler über folgenden Link ein",
 	"appScreenTeamplaySetupStartButton": "Kopieren",
-	"appScreenTeamplaySetupStartButtonError": "Error: Link kann nicht kopiert werden",
+	"appScreenTeamplaySetupStartButtonError": "Fehler: Link kann nicht kopiert werden",
 	"appScreenTeamplaySomebodyLeft": "Ein Mitspieler hat das Spiel verlassen",
 	"appScreenTeamplayStartError": "Spiel konnte nicht gestartet werden",
 	"appScreenTeamplaySyncError": "Spielsynchronisation fehlgeschlagen!",
@@ -122,8 +122,8 @@
 	"appScreenTrainSelected": "{{0}} {{1}}ausgewählt",
 	"appScreenTrainSelectedAuto": "automatisch",
 	"errorScreenErrorAnimate": "Animations Web Worker",
-	"errorScreenErrorAnimateGeneral": "Web Worker Fehler",
-	"errorScreenErrorAnimateGeneralP1": "Der Thread für den Animations Web Worker konnte nicht erstellt werden oder es trat während der Laufzeit ein Fehler auf. Ist Ihr Browser aktuell?",
+	"errorScreenErrorAnimateGeneral": "„Web Worker“-Fehler",
+	"errorScreenErrorAnimateGeneralP1": "Der Thread für den Animations-„Web Worker“ konnte nicht erstellt werden oder es trat während der Laufzeit ein Fehler auf. Ist Ihr Browser aktuell?",
 	"errorScreenErrorMissing": "Fehlende Elemente",
 	"errorScreenErrorMissingPics": "Bilder",
 	"errorScreenErrorMissingPicsP1": "Erste Möglichkeit: Wir haben ein Bild falsch verlinkt oder fehlerhaft vom Server entfernt. Dies kann von Ihnen nicht behoben werden; Sie müssen sich gedulden, bis wir die Anwendung repariert haben.",
@@ -158,7 +158,7 @@
 	],
 	"helpScreenContactFeedbackSend": "Feedback senden",
 	"helpScreenContactFeedbackSendNotification": "Feedback-Seite geöffnet",
-	"helpScreenContactImprintTitle": "Impressum",
+	"helpScreenContactImprintTitle": "Kontaktinformationen",
 	"helpScreenDownload": "Downloads",
 	"helpScreenDownloadApps": "Apps {{0}}",
 	"helpScreenDownloadAppsAndroid": "Android",
@@ -176,14 +176,14 @@
 	"helpScreenDownloadAppsWindows": "Windows",
 	"helpScreenDownloadAppsWindowsButton": "Microsoft Store",
 	"helpScreenDownloadAppsWindowsPs": [
-		"Laden Sie sich die App auf Ihren Windows 10 Laptop bzw. PC über den Microsoft Store."
+		"Laden Sie sich diese App auf Ihren Windows Laptop bzw. PC über den Microsoft Store."
 	],
-	"helpScreenDownloadViewSource": "Source Code {{0}}",
+	"helpScreenDownloadViewSource": "Quelltext {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Beispiel-Code",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
-		"Den Source Code dieser App finden Sie auf GitHub."
+		"Den Quelltext dieser App finden Sie auf GitHub."
 	],
 	"helpScreenGeneral": "Allgemeines",
 	"helpScreenGeneralCars": "Autos {{0}}",
@@ -200,7 +200,7 @@
 		"Um ein Spiel mit Freunden zu starten, wählen Sie den Mehrspielermodus in der Hauptansicht.",
 		"Hier ist ein Spitzname einzugeben.",
 		"Nun ist ein Spiel erstellt und kann mit bis zu drei Freunden geteilt werden. Ein Schließen der App zerstört das Spiel. Nach einiger Zeit wird der Link ungültig.",
-		"Sobald Sie und all Ihre Mitspieler 'Start' gedrückt haben, startet das Spiel. Drücken Sie nicht auf Start, bevor alle Spieler dem Spiel beigetreten sind, da von nun an kein Beitritt mehr möglich ist.",
+		"Sobald Sie und all Ihre Mitspieler „Start“ gedrückt haben, startet das Spiel. Drücken Sie nicht auf Start, bevor alle Spieler dem Spiel beigetreten sind, da von nun an kein Beitritt mehr möglich ist.",
 		"Ab jetzt werden alle Aktionen synchronisiert und Sie können gemeinsam spielen. Außerdem steht Ihnen ein Chat zur Verfügung."
 	],
 	"helpScreenGeneralTrains": "Eisenbahnen {{0}}",
@@ -210,8 +210,8 @@
 		"Um mittels der klassischen Steuerelemente zu fahren, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im Appbildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im Appbildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
 		"Wenn Sie einen größeren Bildschirm verwenden, so können Sie die Geschwindigkeit des Zuges beeinflussen, indem Sie den Regler des Transformators an die gewünschte Position ziehen, ihn an unterschiedlichen Stellen anklicken oder über ihm am Mausrad drehen. Auf kleinen Bildschirmen wird unabhängig hiervon eine mittlere Geschwindigkeit eingestellt. Sie können diese Beschränkung durch Heranzoomen des Transformators umgehen.",
 		"Um auf größeren Bildschirmen die Richtung des jeweils ausgewählten Zuges am Transformator zu ändern, klicken Sie auf das Symbol mit den gespiegelten Pfeilen unten rechts im Transformator an. Die ausgewählte Richtung wird relativ zu den unteren Gleisen hervorgehoben. Wenn der Zug nicht komplett angehalten ist, kann die Richtung nicht gewechselt werden und das Pfeilsymbol ist ausgeblichen. Auf kleineren Bildschirmen kann die Richtung hier nicht verändert werden.",
-		"Auch können Sie einige Weichen stellen. Das Stellen einer Weiche erfolgt durch Klick auf das farbige Symbol der jeweiligen Weiche. Die Position der Symbole kann durch langen Klick bzw. Touch auf den Hintergrund der Anlage ermittelt werden. Ein rotes Weichensymbol bedeutet, dass die Weiche nicht gestellt worden ist, ein grünes das Gegenteil. Der Zug befährt immer den eingefärbten Weg.",
-		"Sie können ein \"Control Center\" für die Züge aufrufen durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund."
+		"Auch können Sie einige Weichen stellen. Das Stellen einer Weiche erfolgt durch Klick auf das farbige Symbol der jeweiligen Weiche. Die Position der Symbole kann durch langen Klick bzw. Touch auf den Hintergrund der Anlage ermittelt werden. Der Zug befährt immer den rot oder grün eingefärbten Weg.",
+		"Sie können durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund ein „Kontrollzentrum“ für die Züge aufrufen."
 	],
 	"helpScreenGeneralWelcome": "Willkommen {{0}}",
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Neuigkeiten",
@@ -271,21 +271,21 @@
 	"helpScreenLegalFontsIcon": "🌐",
 	"helpScreenLegalFontsMaterialIcons": "Material Icon Font",
 	"helpScreenLegalFontsMaterialIconsPs": [
-		"Wir verwenden an einigen Stellen die \"Material Icons\" der Google Inc."
+		"Wir verwenden an einigen Stellen die „Material Icons“ Schrift der Google Inc."
 	],
 	"helpScreenLegalFontsRoboto": "Roboto",
 	"helpScreenLegalFontsRobotoPs": [
-		"Wir verwenden an einigen Stellen die Schriftart \"Roboto\" der Google Inc."
+		"Wir verwenden an einigen Stellen die Schriftart „Roboto“ der Google Inc."
 	],
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "Allgemein",
 	"helpScreenLegalOwnCodePs": [
-		"Sie dürfen unsere Inhalte unter der Apache License Version 2.0 verwenden."
+		"Sie dürfen die MOROway App unter den Bedingungen der Apache License Version 2.0 weiterverwenden."
 	],
 	"helpScreenLegalOwnIcon": "✌️",
-	"helpScreenLegalOwnPics": "Grafiken",
+	"helpScreenLegalOwnPics": "Medieninhalte",
 	"helpScreenLegalOwnPicsPs": [
-		"Sie dürfen unsere Grafiken auch unter der Creative Commons Attribution 4.0 International-Lizenz verwenden."
+		"Sie dürfen unsere Medieninhalte auch unter der Creative Commons Attribution 4.0 International-Lizenz weiterverwenden."
 	],
 	"helpScreenLegalStrCopyright": "Copyright",
 	"helpScreenLegalStrLicense": "Lizenz",
@@ -293,10 +293,10 @@
 	"helpScreenMOROmoreAbout": "Über MOROway {{0}}",
 	"helpScreenMOROmoreAboutIcon": "📜",
 	"helpScreenMOROmoreWebsite": "MOROway-Website {{0}}",
-	"helpScreenMOROmoreWebsiteButtonLink": "Website",
+	"helpScreenMOROmoreWebsiteButtonLink": "Webseite",
 	"helpScreenMOROmoreWebsiteIcon": "🛤️",
 	"helpScreenMOROmoreWebsitePs": [
-		"Besuchen Sie unsere Website…"
+		"Besuchen Sie die MOROway Webseite…"
 	],
 	"helpScreenPrivacy": "Datenschutz",
 	"helpScreenPrivacyStatement": "Datenschutzerklärung",
@@ -309,20 +309,20 @@
 	"optDesc_morowayApp_alwaysShowSelectedTrain": "Zeigt den Namen des ausgewählten Zuges immer an.",
 	"optDesc_morowayApp_burnTheTaxOffice": "Zeigt Animationen zum brennenden Finanzamt.",
 	"optDesc_morowayApp_classicUI": "Zeigt die klassischen Steuerelemente wie Trafo und Zugauswahlbutton.",
-	"optDesc_morowayApp_cursorascircle": "Zeigt statt dem Maussymbol einen Farbkreis.",
+	"optDesc_morowayApp_cursorascircle": "Zeigt statt dem Mauszeiger einen Farbkreis.",
 	"optDesc_morowayApp_saveGame": "Speichert den Zustand des jeweils aktuellen Spieles für das nächste Spiel.",
 	"optDesc_morowayApp_showNotifications": "Zeigt Texteinblendungen bei verschiedenen Aktionen an.",
 	"optInfo_morowayApp_alwaysShowSelectedTrain": "Funktioniert nicht auf kleinen Bildschirmen. Erfodert aktivierte „Klassische Steuerelemente“.",
 	"optInfo_morowayApp_cursorascircle": "Funktioniert nicht auf Touchscreens.",
 	"optInfo_morowayApp_saveGame": "Wird im Mehrspieler-Modus ignoriert.",
 	"optInfo_morowayApp_showNotifications": "Funktioniert nicht auf kleinen Bildschirmen. Einige Benachrichtigungen werden trotz Deaktivierung dieser Option angezeigt.",
-	"optLangSelectChange": "Sprachwahl gespeichert - Erneut laden, um anzuwenden",
+	"optLangSelectChange": "Sprachwahl gespeichert - Neuladen, um anzuwenden",
 	"optLangSelectChangeButton": "Neuladen",
 	"optLangSelectInfo": "Sprache wählen (erfordert Neuladen)",
 	"optTitle_morowayApp_alwaysShowSelectedTrain": "Ausgewählter Zug",
 	"optTitle_morowayApp_burnTheTaxOffice": "Brennendes Finanzamt animieren",
 	"optTitle_morowayApp_classicUI": "Klassische Steuerelemente",
-	"optTitle_morowayApp_cursorascircle": "Cursor als Farbe darstellen",
+	"optTitle_morowayApp_cursorascircle": "Mauszeiger als Farbe darstellen",
 	"optTitle_morowayApp_saveGame": "Spiel speichern",
 	"optTitle_morowayApp_showNotifications": "Benachrichtigungen",
 	"platformOcAppUpdate": "Es sind neue Funktionen verfügbar!",
@@ -336,7 +336,7 @@
 	"platformOcStartGame": "Spielen",
 	"platformOcStartGameOnline": "Mehrspieler",
 	"platformOcStartHelp": "Hilfe/Credits",
-	"platformOcStartSettings": "Optionen",
+	"platformOcStartSettings": "Einstellungen",
 	"platformSnapAppExit": "App verlassen",
 	"platformWindowsLinkError": "Fehler - Link konnte nicht geöffnet werden.",
 	"whatsNewScreenVersionIsNew": "Neu",

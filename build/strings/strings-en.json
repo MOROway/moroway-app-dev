@@ -1,6 +1,6 @@
 {
 	"appScreenAMillionFrames": "{{0}} million frames shown",
-	"appScreenCarAutoModeChange": "automatic car control {{0}}",
+	"appScreenCarAutoModeChange": "Automatic car control {{0}}",
 	"appScreenCarAutoModeCrash": "Auto mode: car crash! Switching over to manual control… good luck!",
 	"appScreenCarAutoModeInit": "activated",
 	"appScreenCarAutoModeParking": "Cars move back to initial position",
@@ -9,7 +9,7 @@
 	"appScreenCarControlCenterAutoModeBackToRoot": "Park cars",
 	"appScreenCarControlCenterAutoModePause": "Pause",
 	"appScreenCarControlCenterAutoModeResume": "Resume",
-	"appScreenCarControlCenterStartCar": "Start {{0}}",
+	"appScreenCarControlCenterStartCar": "Start “{{0}}”",
 	"appScreenCarControlCenterTitle": "Car Control Center",
 	"appScreenCarIcons": [
 		"🏎️",
@@ -22,14 +22,14 @@
 		"Yellow car"
 	],
 	"appScreenCarParking": "{{0}} moves back to initial position",
-	"appScreenCarStepsBack": "{{0}} moves back",
+	"appScreenCarStepsBack": "{{0}} reverses",
 	"appScreenControlCenterClose": "close",
 	"appScreenControlCenterSpeedOff": "paused",
 	"appScreenControlCenterTitle": "Train Control Center",
 	"appScreenFurtherInformation": "More information",
 	"appScreenHasLoaded": "App ready",
 	"appScreenHasUpdated": "New version",
-	"appScreenIsFail": "FAIL - WE GONNA FIX IT ASAP",
+	"appScreenIsFail": "Error – we will fix it soon",
 	"appScreenKonami": "You cracked the Konami Code",
 	"appScreenKonamiAnimals": [
 		"🐢",
@@ -80,7 +80,7 @@
 	"appScreenTeamplayGameStartButton": "Start",
 	"appScreenTeamplayJoinError": "Couldn't join. Game is full or obsolete",
 	"appScreenTeamplayJoinTeammateError": "Teammate couldn't join game",
-	"appScreenTeamplayLeaveDialog": "Leave Multiplayer mode?",
+	"appScreenTeamplayLeaveDialog": "Leave multiplayer mode?",
 	"appScreenTeamplayLeaveDialogNo": "No",
 	"appScreenTeamplayLeaveDialogYes": "Yes",
 	"appScreenTeamplayNoWebsocket": "Can't load multiplayer functions - please update your browser",
@@ -88,9 +88,9 @@
 	"appScreenTeamplaySetupInit": "Enter Name",
 	"appScreenTeamplaySetupInitButton": "Go",
 	"appScreenTeamplaySetupInitDetail": "Allowed characters: Letters and numbers.",
-	"appScreenTeamplaySetupStart": "Invite your teammate using the following link",
+	"appScreenTeamplaySetupStart": "Invite your teammate(s) using the following link",
 	"appScreenTeamplaySetupStartButton": "Copy",
-	"appScreenTeamplaySetupStartButtonError": "Error: Cannot copy game link",
+	"appScreenTeamplaySetupStartButtonError": "Error: Can't copy game link",
 	"appScreenTeamplaySomebodyLeft": "Teammate left",
 	"appScreenTeamplayStartError": "Couldn't start game",
 	"appScreenTeamplaySyncError": "Game sync failed!",
@@ -98,7 +98,7 @@
 	"appScreenTeamplayTeammateReady": "Your teammate is ready. Are you, too",
 	"appScreenTeamplayTeammateWait": "Please wait for teammate to get ready…",
 	"appScreenTeamplayTitle": "Multiplayer",
-	"appScreenTeamplayUnknownRequest": "Server did not understand request",
+	"appScreenTeamplayUnknownRequest": "Server couldn't handle request",
 	"appScreenTeamplayUnsetTitle": "Single Player",
 	"appScreenTeamplayUpdateError": "App update required",
 	"appScreenTeamplayUpdateNote": "App update recommended",
@@ -122,16 +122,16 @@
 	"appScreenTrainSelected": "{{0}} {{1}}selected",
 	"appScreenTrainSelectedAuto": "auto",
 	"errorScreenErrorAnimate": "Animation – Web Worker",
-	"errorScreenErrorAnimateGeneral": "Unknown web worker error",
-	"errorScreenErrorAnimateGeneralP1": "An error with the animation web worker thread occured. Either it could not be registered or a runtime error occured. Is your browser up to date?",
+	"errorScreenErrorAnimateGeneral": "Web worker error",
+	"errorScreenErrorAnimateGeneralP1": "An error with the animation web worker thread occurred. Either it couldn't be registered or a runtime error occurred. Is your browser up to date?",
 	"errorScreenErrorMissing": "Missing Elements",
 	"errorScreenErrorMissingPics": "Images",
 	"errorScreenErrorMissingPicsP1": "If the image is accidentally removed from the server you have to wait for us to fix this problem.",
 	"errorScreenErrorMissingPicsP2": "If you have problems with your internet connection or firewall you have to fix it.",
-	"errorScreenErrorTeamplay": "Multiplayer Errors",
+	"errorScreenErrorTeamplay": "Multiplayer errors",
 	"errorScreenErrorTeamplayConnection": "Can't establish connection",
-	"errorScreenErrorTeamplayConnectionP1": "If you can't establish a connection to the game server, it can have multiple reasons. First of all make sure, you are connected to the Internet and use a modern browser as well as an up-to-date version of MOROway App.",
-	"errorScreenErrorTeamplayConnectionP2": "If following these steps does not helps there might be a server problem. If so try again later.",
+	"errorScreenErrorTeamplayConnectionP1": "If you can't establish a connection to the game server, it can have multiple reasons. First of all make sure, you are connected to the Internet, use a modern browser and an up-to-date version of MOROway App.",
+	"errorScreenErrorTeamplayConnectionP2": "If following these steps does not help there might be a server problem. If so, try again later.",
 	"errorScreenErrorTeamplayJoin": "Can't join game",
 	"errorScreenErrorTeamplayJoinP1": "If you can't join a game, it might be full, obsolete or already running. Please create a new game.",
 	"errorScreenErrorTeamplayUpdate": "Update required",
@@ -145,21 +145,21 @@
 	"generalTitle": "MOROway App",
 	"generalTitleErrorScreen": "Known Issues",
 	"generalTitleHelpScreen": "Legal / Help",
-	"generalTitleSettingsScreen": "Options",
+	"generalTitleSettingsScreen": "Settings",
 	"generalTitleWhatsNewScreen": "Changelog",
 	"helpScreenContact": "Contact",
-	"helpScreenContactBackupLink": "Open contact info",
-	"helpScreenContactBackupLinkNotification": "Contact info opened",
+	"helpScreenContactBackupLink": "Open contact information",
+	"helpScreenContactBackupLinkNotification": "Contact information opened",
 	"helpScreenContactFeedback": "Feedback {{0}}",
 	"helpScreenContactFeedbackBugs": "Report a bug",
 	"helpScreenContactFeedbackIcon": "📫",
 	"helpScreenContactFeedbackPs": [
-		"Get in touch using the contact infos displayed below!"
+		"Get in touch using the contact information displayed below!"
 	],
 	"helpScreenContactFeedbackSend": "Send feedback",
 	"helpScreenContactFeedbackSendNotification": "Feedback page opened",
 	"helpScreenContactImprintTitle": "Contact info",
-	"helpScreenDownload": "Download",
+	"helpScreenDownload": "Downloads",
 	"helpScreenDownloadApps": "Apps {{0}}",
 	"helpScreenDownloadAppsAndroid": "Android",
 	"helpScreenDownloadAppsAndroidButton": "Play Store",
@@ -176,22 +176,22 @@
 	"helpScreenDownloadAppsWindows": "Windows",
 	"helpScreenDownloadAppsWindowsButton": "Microsoft Store",
 	"helpScreenDownloadAppsWindowsPs": [
-		"You can download this app to your Laptop / PC via Microsoft Store."
+		"You can download this app to your Windows Laptop / PC via Microsoft Store."
 	],
-	"helpScreenDownloadViewSource": "Get Code {{0}}",
+	"helpScreenDownloadViewSource": "Source Code {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Sample code",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
-		"Get Source Code from GitHub."
+		"Get source code from GitHub."
 	],
 	"helpScreenGeneral": "General",
 	"helpScreenGeneralCars": "Cars {{0}}",
 	"helpScreenGeneralCarsIcon": "🚗",
 	"helpScreenGeneralCarsPs": [
-		"By touching / clicking of the three cars left to the main station, it starts. By touching and holding or double-clicking one of them they enter auto mode, which means they navigate automatically.",
-		"If you haven't enabled auto mode and operate more than one car, you risk a head-on collision. If this happens touch and hold or double-click one of the involved cars to move it back.",
-		"Touching or clicking on a stopped car's parking lot, will navigate it back there.",
+		"By touching / clicking one of the three cars left to the main station, it starts. By touching and holding / double-clicking one of them they enter automatic mode, which means they navigate automatically.",
+		"If you haven't enabled automatic mode and operate more than one car, you risk a head-on collision. If this happens touch and hold / double-click one of the involved cars to move it back.",
+		"Touching or clicking on a stopped car's parking lot will navigate it back there.",
 		"You may access a car \"Control Center\" by touching with three fingers / right-clicking the background of the train \"Control Center\"."
 	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
@@ -199,19 +199,19 @@
 	"helpScreenGeneralTeamplayPs": [
 		"If you wish to play together with your friends use the multiplayer mode.",
 		"First you have to enter a nick name.",
-		"Now a new game is created and the link can be shared with up to three friends. Please note: Closing the app will destroy the game. The links expire after a while.",
-		"After your teammate(s) joined you should touch / click 'start' and the game will start as soon as all your teammates touched / clicked the button. If you invited more than just one teammate, do not start the game before everyone joined, because after you or a teammate pressed the button nobody can join anymore.",
+		"Now a new game is created and the link can be shared with up to three friends. Please note: Closing the app will destroy the game. The link expires after a while.",
+		"After your teammate(s) joined you should touch / click “start” and the game will start as soon as all your teammates touched / clicked the button. If you invited more than just one teammate, do not start the game before everyone joined, because after you or a teammate pressed the button nobody can join anymore.",
 		"Now all actions are synced and you can play together. Furthermore a text chat is available."
 	],
 	"helpScreenGeneralTrains": "Trains {{0}}",
 	"helpScreenGeneralTrainsIcon": "🚂",
 	"helpScreenGeneralTrainsPs": [
-		"You may operate six trains; an steam engine, two high speed trains, an railbus, an local train and an street car. Start / stop a train by touching / clicking it. Touch and hold or double-click a train to change it's direction.",
-		"To navigate by using \"Classic UI\", select a train by touching / clicking the button on the lower-left side. Start / stop the selected train by operating the transformer.",
-		"On larger devices you are also able to control the trains's speed with the transformer. Tiny devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
+		"You may operate six trains; an steam engine, two high speed trains, an railbus, an local train and an street car. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
+		"To navigate by using “Classic UI”, select a train by touching / clicking on the button on the lower-left side. Start / stop the selected train by operating the transformer.",
+		"On larger devices you are also able to control the trains's speed using the transformer. Tiny devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
 		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on smaller devices.",
-		"You may turn some switches. Touch / click and hold the background to located the switches. Touch / click a switch to turn it. A red switch symbol indicates that the switch is not turned, a green one that it is turned. The train takes the red or green colored way.",
-		"You may access a train \"Control Center\" by touching with three fingers / right-clicking the background."
+		"You may turn some switches. Touch / click and hold the background to located the switches. Touch / click on a switch to turn it. The train takes the red or green colored way.",
+		"You may access a train “Control Center” by touching with three fingers / right-clicking the background."
 	],
 	"helpScreenGeneralWelcome": "Welcome {{0}}",
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Changelog",
@@ -234,7 +234,7 @@
 		"7: Change train direction.",
 		"8: Switches."
 	],
-	"helpScreenLegal": "Legal",
+	"helpScreenLegal": "Licenses",
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [
@@ -271,21 +271,21 @@
 	"helpScreenLegalFontsIcon": "🌐",
 	"helpScreenLegalFontsMaterialIcons": "Material Icon Font",
 	"helpScreenLegalFontsMaterialIconsPs": [
-		"This app uses \"Material Icon\" font by Google Inc."
+		"This app uses the “Material Icon” font by Google Inc."
 	],
 	"helpScreenLegalFontsRoboto": "Roboto",
 	"helpScreenLegalFontsRobotoPs": [
-		"This app uses \"Roboto\" font by Google Inc."
+		"This app uses “Roboto” font by Google Inc."
 	],
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "General",
 	"helpScreenLegalOwnCodePs": [
-		"Everything we created is licensed under the Apache License Version 2.0."
+		"MOROway App is licensed under the Apache License Version 2.0."
 	],
 	"helpScreenLegalOwnIcon": "✌️",
-	"helpScreenLegalOwnPics": "Assets",
+	"helpScreenLegalOwnPics": "Media files",
 	"helpScreenLegalOwnPicsPs": [
-		"Our assets are also licensed under the Creative Commons Attribution 4.0 International-License."
+		"Our media files are also licensed under the Creative Commons Attribution 4.0 International-License."
 	],
 	"helpScreenLegalStrCopyright": "Copyright",
 	"helpScreenLegalStrLicense": "License",
@@ -296,23 +296,23 @@
 	"helpScreenMOROmoreWebsiteButtonLink": "Website",
 	"helpScreenMOROmoreWebsiteIcon": "🛤️",
 	"helpScreenMOROmoreWebsitePs": [
-		"Visit our website…"
+		"Visit the MOROway website…"
 	],
 	"helpScreenPrivacy": "Privacy",
 	"helpScreenPrivacyStatement": "Privacy Statement",
-	"helpScreenPrivacyStatementBackupLink": "Open Privacy Statement",
+	"helpScreenPrivacyStatementBackupLink": "Open privacy statement",
 	"helpScreenPrivacyStatementBackupLinkNotification": "Link opened",
 	"helpScreenPrivacyStatementIcon": "🦮",
 	"langName": "English",
 	"optApply": "New configuration saved",
 	"optButton_morowayApp_saveGame_delete": "Delete saved game now",
-	"optDesc_morowayApp_alwaysShowSelectedTrain": "Displays name of the selected train.",
+	"optDesc_morowayApp_alwaysShowSelectedTrain": "Displays the name of the selected train.",
 	"optDesc_morowayApp_burnTheTaxOffice": "Shows some animations on the burning tax office.",
-	"optDesc_morowayApp_classicUI": "Displays control elements like transformer.",
+	"optDesc_morowayApp_classicUI": "Displays control elements like transformer and train selection button.",
 	"optDesc_morowayApp_cursorascircle": "Replaces the cursor with a colored circle.",
-	"optDesc_morowayApp_saveGame": "Saves each game's state for the next game.",
-	"optDesc_morowayApp_showNotifications": "Displays on-screen notifications.",
-	"optInfo_morowayApp_alwaysShowSelectedTrain": "Requires Classic UI. Does not work on small screens.",
+	"optDesc_morowayApp_saveGame": "Saves the game's current state for the next game.",
+	"optDesc_morowayApp_showNotifications": "Displays on-screen text notifications.",
+	"optInfo_morowayApp_alwaysShowSelectedTrain": "Requires “Classic UI”. Does not work on small screens.",
 	"optInfo_morowayApp_cursorascircle": "Does not work on touch screens.",
 	"optInfo_morowayApp_saveGame": "Ignored on multiplayer games.",
 	"optInfo_morowayApp_showNotifications": "Some notifications are shown even if deactivated. Does not work on small screens.",
@@ -337,7 +337,7 @@
 	"platformOcStartGameOnline": "Multiplayer",
 	"platformOcStartHelp": "Help/Legal",
 	"platformOcStartSettings": "Settings",
-	"platformSnapAppExit": "exit app",
+	"platformSnapAppExit": "Exit app",
 	"platformWindowsLinkError": "Error! Couldn't open link.",
 	"whatsNewScreenVersionIsNew": "New",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
