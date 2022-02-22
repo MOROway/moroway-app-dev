@@ -122,7 +122,7 @@ for platform in ${platforms[@]}; do
 		for clang in strings/strings-*.json
 		do
 			langCode=$(echo "$clang" | sed 's/[^-]*-\([^.]*\).*/\1/')
-			stringsCurrent=$(cat "$clang" | sed 's/\\\(.\)/\\\\\1/g' | sed 's!/!\\/!g' | perl -0pe 's/(\n|\s|\t)*([^\n]*)\n/\2/g' | perl -0pe 's/\n*}$/,/g')
+			stringsCurrent=$(cat "$clang" | sed 's/\\/\\\\/g' | sed 's!/!\\/!g' | perl -0pe 's/(\n|\s|\t)*([^\n]*)\n/\2/g' | perl -0pe 's/\n*}$/,/g')
 			strings="$strings$langCode:$stringsCurrent{{changelog=$langCode}}},"
 		done
 		strings=$(echo "$strings" | perl -0pe 's/,$/}/g')
