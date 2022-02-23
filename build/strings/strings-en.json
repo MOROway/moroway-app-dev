@@ -123,19 +123,28 @@
 	"appScreenTrainSelectedAuto": "auto",
 	"errorScreenErrorAnimate": "Animation – Web Worker",
 	"errorScreenErrorAnimateGeneral": "Web worker error",
-	"errorScreenErrorAnimateGeneralP1": "An error with the animation web worker thread occurred. Either it couldn't be registered or a runtime error occurred. Is your browser up to date?",
+	"errorScreenErrorAnimateGeneralPs": [
+		"An error with the animation web worker thread occurred. Either it couldn't be registered or a runtime error occurred. Is your browser up to date?"
+	],
 	"errorScreenErrorMissing": "Missing Elements",
 	"errorScreenErrorMissingPics": "Images",
-	"errorScreenErrorMissingPicsP1": "If the image is accidentally removed from the server you have to wait for us to fix this problem.",
-	"errorScreenErrorMissingPicsP2": "If you have problems with your internet connection or firewall you have to fix it.",
+	"errorScreenErrorMissingPicsPs": [
+		"If the image is accidentally removed from the server you have to wait for us to fix this problem.", "If you have problems with your internet connection or firewall you have to fix it."
+	],
 	"errorScreenErrorTeamplay": "Multiplayer errors",
 	"errorScreenErrorTeamplayConnection": "Can't establish connection",
-	"errorScreenErrorTeamplayConnectionP1": "If you can't establish a connection to the game server, it can have multiple reasons. First of all make sure, you are connected to the Internet, use a modern browser and an up-to-date version of MOROway App.",
-	"errorScreenErrorTeamplayConnectionP2": "If following these steps does not help there might be a server problem. If so, try again later.",
+	"errorScreenErrorTeamplayConnectionPs": [
+		"If you can't establish a connection to the game server, it can have multiple reasons. First of all make sure, you are connected to the Internet, use a modern browser and an up-to-date version of MOROway App.",
+		"If following these steps does not help there might be a server problem. If so, try again later."
+	],
 	"errorScreenErrorTeamplayJoin": "Can't join game",
-	"errorScreenErrorTeamplayJoinP1": "If you can't join a game, it might be full, obsolete or already running. Please create a new game.",
+	"errorScreenErrorTeamplayJoinPs": [
+		"If you can't join a game, it might be full, obsolete or already running. Please create a new game."
+	],
 	"errorScreenErrorTeamplayUpdate": "Update required",
-	"errorScreenErrorTeamplayUpdateP1": "You have to update to the newest version of MOROway App.",
+	"errorScreenErrorTeamplayUpdatePs": [
+		"You have to update to the newest version of MOROway App."
+	],
 	"generalBack": "Back",
 	"generalNoDOMStorageSupport": "Sorry - DOM storage not supported",
 	"generalServerNoteButtonGo": "show me more",

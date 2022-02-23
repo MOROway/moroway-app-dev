@@ -123,19 +123,30 @@
 	"appScreenTrainSelectedAuto": "automatisch",
 	"errorScreenErrorAnimate": "Animations Web Worker",
 	"errorScreenErrorAnimateGeneral": "„Web Worker“-Fehler",
-	"errorScreenErrorAnimateGeneralP1": "Der Thread für den Animations-„Web Worker“ konnte nicht erstellt werden oder es trat während der Laufzeit ein Fehler auf. Ist Ihr Browser aktuell?",
+	"errorScreenErrorAnimateGeneralPs": [
+		"Der Thread für den Animations-„Web Worker“ konnte nicht erstellt werden oder es trat während der Laufzeit ein Fehler auf. Ist Ihr Browser aktuell?"
+	],
 	"errorScreenErrorMissing": "Fehlende Elemente",
 	"errorScreenErrorMissingPics": "Bilder",
-	"errorScreenErrorMissingPicsP1": "Erste Möglichkeit: Wir haben ein Bild falsch verlinkt oder fehlerhaft vom Server entfernt. Dies kann von Ihnen nicht behoben werden; Sie müssen sich gedulden, bis wir die Anwendung repariert haben.",
-	"errorScreenErrorMissingPicsP2": "Zweite Möglichkeit: Ihr Browser konnte eine richtig verlinkte Mediendatei nicht abrufen, da Sie kein Internet haben oder die Bilddatei blockiert wurde. In diesem Fall prüfen Sie bitte Ihre Verbindung / Firewall.",
+	"errorScreenErrorMissingPicsPs": [
+		"Erste Möglichkeit: Wir haben ein Bild falsch verlinkt oder fehlerhaft vom Server entfernt. Dies kann von Ihnen nicht behoben werden; Sie müssen sich gedulden, bis wir die Anwendung repariert haben.",
+		"Zweite Möglichkeit: Ihr Browser konnte eine richtig verlinkte Mediendatei nicht abrufen, da Sie kein Internet haben oder die Bilddatei blockiert wurde. In diesem Fall prüfen Sie bitte Ihre Verbindung / Firewall."
+	],
 	"errorScreenErrorTeamplay": "Fehler beim Mehrspielermodus",
 	"errorScreenErrorTeamplayConnection": "Verbindung kann nicht hergestellt werden",
-	"errorScreenErrorTeamplayConnectionP1": "Probleme beim Verbinden können verschiedene Ursachen haben. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, einen aktuellen Browser und die neuste Version der MOROway App verwenden.",
-	"errorScreenErrorTeamplayConnectionP2": "Sollte dies nicht helfen, kann es sich um einen Serverfehler handeln. Hier ist folglich Geduld gefragt, bis der Server repariert ist.",
+	"errorScreenErrorTeamplayConnectionPs": [
+		"Probleme beim Verbinden können verschiedene Ursachen haben. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, einen aktuellen Browser und die neuste Version der MOROway App verwenden.",
+		"Sollte dies nicht helfen, kann es sich um einen Serverfehler handeln. Hier ist folglich Geduld gefragt, bis der Server repariert ist."
+	],
 	"errorScreenErrorTeamplayJoin": "Kein Spielbeitritt möglich",
 	"errorScreenErrorTeamplayJoinP1": "Wenn Sie einem Spiel nicht beitreten können, ist dies entweder voll, obsolet oder bereits gestartet. Erstellen Sie ein neues Spiel.",
+	"errorScreenErrorTeamplayJoinPs": [
+		"Wenn Sie einem Spiel nicht beitreten können, ist dies entweder voll, obsolet oder bereits gestartet. Erstellen Sie ein neues Spiel."
+	],
 	"errorScreenErrorTeamplayUpdate": "Update erforderlich",
-	"errorScreenErrorTeamplayUpdateP1": "Sie benötigen die neuste Version der MOROway App.",
+	"errorScreenErrorTeamplayUpdatePs": [
+		"Sie benötigen die neuste Version der MOROway App."
+	],
 	"generalBack": "Zurück",
 	"generalNoDOMStorageSupport": "Leider wird DOM-Speicher nicht unterstützt",
 	"generalServerNoteButtonGo": "Mehr erfahren",
