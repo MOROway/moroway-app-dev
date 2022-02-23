@@ -29,7 +29,7 @@
 	"appScreenFurtherInformation": "Mehr Informationen",
 	"appScreenHasLoaded": "Anwendung geladen",
 	"appScreenHasUpdated": "Neue Version",
-	"appScreenIsFail": "Fehler – Wir kümmern uns so schnell wie möglich",
+	"appScreenIsFail": "Ein Fehler ist aufgetreten",
 	"appScreenKonami": "Super - Sie haben den Konamicode geknackt",
 	"appScreenKonamiAnimals": [
 		"🐢",
@@ -192,7 +192,7 @@
 		"Sie können die drei links neben dem Bahnhof geparkten Autos (gelbes Cabrio, rotes Cabrio, weißer VW-Bus) jeweils per Klick auf das Fahrzeug zum Fahren bringen. Um alle Autos automatisch fahren zu lassen, aktivieren Sie durch Touchen und halten bzw. Doppelklicken eines Autos den automatischen Modus.",
 		"Sofern sie den automatischen Modus nicht aktiviert haben lassen sich die Autos getrennt per Klick starten und stoppen. Starten Sie mehrere Autos, riskieren Sie einen Frontalzusammenstoß. Um die betroffenen Autos hiernach erneut starten zu können, setzten Sie ein Auto durch Touchen und halten bzw. Doppelklicken des Autos zurück.",
 		"Touchen oder Klicken auf den leeren Parkplatz eines angehaltenen Autos bringt es dorthin zurück.",
-		"Sie können ein Auto \"Control Center\" aufrufen durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund des \"Control Centers\" für die Züge."
+		"Sie können ein Autokontrollzentrum aufrufen durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund des Zugkontrollzentrums. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden."
 	],
 	"helpScreenGeneralTeamplay": "Mehrspielermodus {{0}}",
 	"helpScreenGeneralTeamplayIcon": "🎮",
@@ -211,7 +211,7 @@
 		"Wenn Sie einen größeren Bildschirm verwenden, so können Sie die Geschwindigkeit des Zuges beeinflussen, indem Sie den Regler des Transformators an die gewünschte Position ziehen, ihn an unterschiedlichen Stellen anklicken oder über ihm am Mausrad drehen. Auf kleinen Bildschirmen wird unabhängig hiervon eine mittlere Geschwindigkeit eingestellt. Sie können diese Beschränkung durch Heranzoomen des Transformators umgehen.",
 		"Um auf größeren Bildschirmen die Richtung des jeweils ausgewählten Zuges am Transformator zu ändern, klicken Sie auf das Symbol mit den gespiegelten Pfeilen unten rechts im Transformator an. Die ausgewählte Richtung wird relativ zu den unteren Gleisen hervorgehoben. Wenn der Zug nicht komplett angehalten ist, kann die Richtung nicht gewechselt werden und das Pfeilsymbol ist ausgeblichen. Auf kleineren Bildschirmen kann die Richtung hier nicht verändert werden.",
 		"Auch können Sie einige Weichen stellen. Das Stellen einer Weiche erfolgt durch Klick auf das farbige Symbol der jeweiligen Weiche. Die Position der Symbole kann durch langen Klick bzw. Touch auf den Hintergrund der Anlage ermittelt werden. Der Zug befährt immer den rot oder grün eingefärbten Weg.",
-		"Sie können durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund ein „Kontrollzentrum“ für die Züge aufrufen."
+		"Sie können durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund ein Zugkontrollzentrum aufrufen. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden."
 	],
 	"helpScreenGeneralWelcome": "Willkommen {{0}}",
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Neuigkeiten",
@@ -315,7 +315,7 @@
 	"optInfo_morowayApp_alwaysShowSelectedTrain": "Funktioniert nicht auf kleinen Bildschirmen. Erfodert aktivierte „Klassische Steuerelemente“.",
 	"optInfo_morowayApp_cursorascircle": "Funktioniert nicht auf Touchscreens.",
 	"optInfo_morowayApp_saveGame": "Wird im Mehrspieler-Modus ignoriert.",
-	"optInfo_morowayApp_showNotifications": "Funktioniert nicht auf kleinen Bildschirmen. Einige Benachrichtigungen werden trotz Deaktivierung dieser Option angezeigt.",
+	"optInfo_morowayApp_showNotifications": "Einige Benachrichtigungen werden trotz Deaktivierung dieser Einstellung angezeigt. Funktioniert nicht auf kleinen Bildschirmen.",
 	"optLangSelectChange": "Sprachwahl gespeichert - Neuladen, um anzuwenden",
 	"optLangSelectChangeButton": "Neuladen",
 	"optLangSelectInfo": "Sprache wählen (erfordert Neuladen)",

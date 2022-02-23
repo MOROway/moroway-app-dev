@@ -29,7 +29,7 @@
 	"appScreenFurtherInformation": "More information",
 	"appScreenHasLoaded": "App ready",
 	"appScreenHasUpdated": "New version",
-	"appScreenIsFail": "Error – we will fix it soon",
+	"appScreenIsFail": "An error occurred",
 	"appScreenKonami": "You cracked the Konami Code",
 	"appScreenKonamiAnimals": [
 		"🐢",
@@ -116,8 +116,8 @@
 		"TGV Duplex",
 		"Railbus",
 		"Thalys",
-		"Street Car",
-		"Local Train"
+		"Street car",
+		"Local train"
 	],
 	"appScreenTrainSelected": "{{0}} {{1}}selected",
 	"appScreenTrainSelectedAuto": "auto",
@@ -192,7 +192,7 @@
 		"By touching / clicking one of the three cars left to the main station, it starts. By touching and holding / double-clicking one of them they enter automatic mode, which means they navigate automatically.",
 		"If you haven't enabled automatic mode and operate more than one car, you risk a head-on collision. If this happens touch and hold / double-click one of the involved cars to move it back.",
 		"Touching or clicking on a stopped car's parking lot will navigate it back there.",
-		"You may access a car \"Control Center\" by touching with three fingers / right-clicking the background of the train \"Control Center\"."
+		"You may access a car control center by touching with three fingers / right-clicking the background of the train control center. Alternatively you may use the options menu icon below the virtual model railroad."
 	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
 	"helpScreenGeneralTeamplayIcon": "🎮",
@@ -211,7 +211,7 @@
 		"On larger devices you are also able to control the trains's speed using the transformer. Tiny devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
 		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on smaller devices.",
 		"You may turn some switches. Touch / click and hold the background to located the switches. Touch / click on a switch to turn it. The train takes the red or green colored way.",
-		"You may access a train “Control Center” by touching with three fingers / right-clicking the background."
+		"You may access a train control center by touching with three fingers / right-clicking the background. Alternatively you may use the options menu icon below the virtual model railroad."
 	],
 	"helpScreenGeneralWelcome": "Welcome {{0}}",
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Changelog",
