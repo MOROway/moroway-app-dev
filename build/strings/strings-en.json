@@ -76,7 +76,7 @@
 	"appScreenTeamplayCreateError": "Couldn't create game",
 	"appScreenTeamplayGamePaused": "Game paused",
 	"appScreenTeamplayGameResumed": "Game resumed",
-	"appScreenTeamplayGameStart": "Using the 'start' button will start the game as soon as you and each teammate clicked the button. As soon as anyone clicks the button it is impossible to join for further teammates. Currently {{0}} player(s) (including you) joined the game.",
+	"appScreenTeamplayGameStart": "Using the “start” button will start the game as soon as you and each teammate clicked the button. As soon as anyone clicks the button it is impossible to join for further teammates. Currently {{0}} player(s) (including you) joined the game.",
 	"appScreenTeamplayGameStartButton": "Start",
 	"appScreenTeamplayJoinError": "Couldn't join. Game is full or obsolete",
 	"appScreenTeamplayJoinTeammateError": "Teammate couldn't join game",
