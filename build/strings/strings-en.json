@@ -129,7 +129,8 @@
 	"errorScreenErrorMissing": "Missing Elements",
 	"errorScreenErrorMissingPics": "Images",
 	"errorScreenErrorMissingPicsPs": [
-		"If the image is accidentally removed from the server you have to wait for us to fix this problem.", "If you have problems with your internet connection or firewall you have to fix it."
+		"You might have problems with your internet connection, firewall or media blocker.",
+		"If there is a problem with the server delivering the image, you will have to wait for us to fix it."
 	],
 	"errorScreenErrorTeamplay": "Multiplayer errors",
 	"errorScreenErrorTeamplayConnection": "Can't establish connection",
