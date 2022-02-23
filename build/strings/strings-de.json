@@ -129,8 +129,8 @@
 	"errorScreenErrorMissing": "Fehlende Elemente",
 	"errorScreenErrorMissingPics": "Bilder",
 	"errorScreenErrorMissingPicsPs": [
-		"Erste Möglichkeit: Wir haben ein Bild falsch verlinkt oder fehlerhaft vom Server entfernt. Dies kann von Ihnen nicht behoben werden; Sie müssen sich gedulden, bis wir die Anwendung repariert haben.",
-		"Zweite Möglichkeit: Ihr Browser konnte eine richtig verlinkte Mediendatei nicht abrufen, da Sie kein Internet haben oder die Bilddatei blockiert wurde. In diesem Fall prüfen Sie bitte Ihre Verbindung / Firewall."
+		"Sie könnten Probleme mit Ihrer Internetverbindung haben oder die Bilddatei könnte bei Ihnen blockiert worden sein.",
+		"Sollte hingegen ein Serverproblem vorliegen, müssen Sie sich gedulden, bis dieses behoben ist."
 	],
 	"errorScreenErrorTeamplay": "Fehler beim Mehrspielermodus",
 	"errorScreenErrorTeamplayConnection": "Verbindung kann nicht hergestellt werden",
