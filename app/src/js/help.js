@@ -29,6 +29,7 @@ function init(){
     document.querySelector("#contact-feedbacklink").addEventListener("click", function(){notify("#help-notifier", getString("helpScreenContactFeedbackSendNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight); followLink( getServerHTMLLink("feedback") ,"_blank", LINK_STATE_NORMAL);});
 
     document.querySelector("#download-sourcelink").addEventListener("click", function(){followLink(getServerRedirectLink("source_code"),"_blank", LINK_STATE_NORMAL);});
+    document.querySelector("#download-translations").addEventListener("click", function(){followLink(getServerRedirectLink("translations"),"_blank", LINK_STATE_NORMAL);});
 
     document.querySelector("#website-link").addEventListener("click", function(){followLink(getServerRedirectLink("moroweb"),"_blank", LINK_STATE_NORMAL);});
 
