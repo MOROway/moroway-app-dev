@@ -2,9 +2,6 @@ name: MOROway App Tag and Sync Repositories
 on:
   push:
     branches: [ main ]
-env:
-  GIT_USER: jonathanherrmannengel
-  GIT_MAIL: 38504994+jonathanherrmannengel@users.noreply.github.com
 jobs:
   sync-repos:
     runs-on: ubuntu-latest
@@ -21,10 +18,8 @@ jobs:
             echo "No release version"
             exit
           fi
-          git config --global user.email "$GIT_MAIL"
-          git config --global user.name "$GIT_USER"
-          tag=v$(cat conf | grep "version=" | sed 's/.*=//')
-          if [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]]; then
+          git show-ref --tags --verify --quiet -- "refs/tags/$tag"
+          if [[ "$?" == 0 ) ]]; then
             echo "::set-output name=create::0"
             echo "No new version"
             exit
@@ -42,6 +37,8 @@ jobs:
         shell: bash
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          GIT_USER: jonathanherrmannengel
+          GIT_MAIL: 38504994+jonathanherrmannengel@users.noreply.github.com
           PLATFORM: web
           REPO: moroway-app
           REPO_BRANCH: master
