@@ -68,14 +68,18 @@ jobs:
             msg="$msg Beta $beta"
           fi
           git add .
-          git diff-index --quiet HEAD || git commit --message "$msg"
-          if [[ "$USE_TAG" == 1 ]]; then
-            tag=v$version
-            if [[ "$beta" != 0 ]]; then
-              tag="$tag-beta$beta"
-            fi
-            [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]] && git tag --delete "$tag" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
-            git tag -a -m "$changelog" "$tag"
-            git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
+          git diff-index --quiet HEAD --
+          gitdiff="$?"
+          if [[ "$gitdiff" == 1 ]]; then
+            git commit --message "$msg"
+              if [[ "$USE_TAG" == 1 ]]; then
+                tag=v$version
+                if [[ "$beta" != 0 ]]; then
+                  tag="$tag-beta$beta"
+                fi
+                [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]] && git tag --delete "$tag" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
+                git tag -a -m "$changelog" "$tag"
+                git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
+              fi
+              git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git"
           fi
-          git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git"
