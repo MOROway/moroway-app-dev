@@ -199,7 +199,7 @@
 	"helpScreenDownloadViewSourceCodePic": "Sample code",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
-		"Get the source code from GitHub."
+		"Get the source code from “GitHub”."
 	],
 	"helpScreenGeneral": "General",
 	"helpScreenGeneralCars": "Cars {{0}}",
@@ -224,8 +224,8 @@
 	"helpScreenGeneralTrainsPs": [
 		"You may operate six trains; an steam engine, two high speed trains, an railbus, an local train and an street car. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
 		"To navigate by using “Classic UI”, select a train by touching / clicking on the button on the lower-left side. Start / stop the selected train by operating the transformer.",
-		"On larger devices you are also able to control the trains's speed using the transformer. Tiny devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
-		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on smaller devices.",
+		"On larger devices you are also able to control the trains's speed using the transformer. Small devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
+		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on small devices.",
 		"You may turn some switches. Touch / click and hold the background to located the switches. Touch / click on a switch to turn it. The train takes the red or green colored way.",
 		"You may access a train control center by touching with three fingers / right-clicking the background. Alternatively you may use the options menu icon below the virtual model railroad."
 	],
@@ -233,7 +233,7 @@
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Changelog",
 	"helpScreenGeneralWelcomeIcon": "🏡",
 	"helpScreenGeneralWelcomePs": [
-		"Hello, you use MOROway App. Enjoy!"
+		"Hello, you use “MOROway App”. The background image is a aerial view of the “MOROway” model railroad taken 2011. The central sidings have been newly taken in 2021 to make them usable. Enjoy!"
 	],
 	"helpScreenGeneralWelcomeVersion": "Current version: {{0}}.{{1}}.{{2}}{{6}} ({{3}}-{{4}}-{{5}})",
 	"helpScreenGraphical": "Graphical help",
@@ -254,16 +254,16 @@
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [
-		"The MOROway App OC variant is based upon Apache Cordova by The Apache Software Foundation."
+		"The MOROway App OC variant is based upon “Apache Cordova” by the Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCDialogs": "cordova-plugin-dialogs",
 	"helpScreenLegalAppOCDialogsPs": [
-		"The MOROway App OC variant uses the Dialogs Plugin by The Apache Software Foundation."
+		"The MOROway App OC variant uses the “Dialogs Plugin” by the Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCIcon": "📱",
 	"helpScreenLegalAppOCInsomnia": "Insomnia (prevent screen sleep)",
 	"helpScreenLegalAppOCInsomniaPs": [
-		"The MOROway App OC variant uses Insomnia-PhoneGap-Plugin by Eddy Verbruggen."
+		"The MOROway App OC variant uses the “Insomnia-PhoneGap-Plugin” by Eddy Verbruggen."
 	],
 	"helpScreenLegalAppOCNativeStorage": "cordova-plugin-nativestorage",
 	"helpScreenLegalAppOCNativeStoragePs": [
@@ -271,16 +271,16 @@
 	],
 	"helpScreenLegalAppOCSplashscreen": "cordova-plugin-splashscreen",
 	"helpScreenLegalAppOCSplashscreenPs": [
-		"The MOROway App OC variant uses the Splashscreen Plugin by The Apache Software Foundation."
+		"The MOROway App OC variant uses the “Splashscreen Plugin“ by the Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCWebintent": "cordova-webintent",
 	"helpScreenLegalAppOCWebintentPs": [
-		"The MOROway App OC variant uses WebIntent Android Plugin for Cordova by Boris Smus and contributors."
+		"The MOROway App OC variant uses the “WebIntent Android Plugin for Cordova” by Boris Smus and contributors."
 	],
 	"helpScreenLegalAppSnap": "MOROway snApp {{0}}",
 	"helpScreenLegalAppSnapCordova": "Apache Cordova",
 	"helpScreenLegalAppSnapCordovaPs": [
-		"The MOROway snApp variant is based upon Apache Cordova with platform Electron by The Apache Software Foundation."
+		"The MOROway “snApp” variant is based upon Apache Cordova with platform Electron by The Apache Software Foundation."
 	],
 	"helpScreenLegalAppSnapIcon": "💻",
 	"helpScreenLegalFonts": "Fonts {{0}}",
