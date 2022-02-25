@@ -71,7 +71,7 @@ jobs:
           git diff-index --quiet HEAD --
           gitdiff="$?"
           if [[ "$gitdiff" == 1 ]]; then
-            git commit --message "$msg"
+              git commit --message "$msg"
               if [[ "$USE_TAG" == 1 ]]; then
                 tag=v$version
                 if [[ "$beta" != 0 ]]; then
