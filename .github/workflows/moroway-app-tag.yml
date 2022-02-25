@@ -26,6 +26,6 @@ jobs:
             exit
           fi
           echo "::set-output name=create::1"
-      - if: steps.prepare.outputs.result == '1'
+      - if: steps.prepare.outputs.create == '1'
         name: Release
         uses: softprops/action-gh-release@v1
