@@ -19,7 +19,7 @@ jobs:
             exit
           fi
           git show-ref --tags --verify --quiet -- "refs/tags/$tag"
-          if [[ "$?" == 0 ) ]]; then
+          if [[ "$?" == 0 ]]; then
             echo "::set-output name=create::0"
             echo "No new version"
             exit
