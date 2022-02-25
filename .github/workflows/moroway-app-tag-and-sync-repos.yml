@@ -5,16 +5,6 @@ on:
 jobs:
   sync-repos:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: [web]
-        include:
-          - platform: web
-            repo: moroway-app
-            branch: master
-            subdir: .
-            tag: 1
-            redirectdocs: 1
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
@@ -23,8 +13,7 @@ jobs:
         run: |
           cd build
           beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
-          [[ -z "$beta" ]] && exit 1
-          if [[ "$beta" != 0 ]]; then
+          if [[ -z "$beta" ]] || [[ "$beta" != 0 ]]; then
             echo "::set-output name=create::0"
             echo "No release version"
             exit
@@ -50,21 +39,15 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
           GIT_USER: jonathanherrmannengel
           GIT_MAIL: 38504994+jonathanherrmannengel@users.noreply.github.com
-          PLATFORM: ${{ matrix.platform }}
-          REPO: ${{ matrix.repo }}
-          REPO_BRANCH: ${{ matrix.branch }}
-          REPO_DIR: ${{ matrix.subdir }}
-          USE_TAG: ${{ matrix.tag }}
-          REDIRECT_DOCS: ${{ matrix.redirectdocs }}
+          PLATFORM: web
+          REPO: moroway-app
+          REPO_BRANCH: master
+          REPO_DIR: .
+          TAG: ${{ steps.prepare.outputs.tag }}
+          REDIRECT_DOCS: 1
         run: |
           # Build moroway-app
           cd build
-          beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
-          [[ -z "$beta" ]] && exit 1
-          if [[ "$beta" != 0 ]]; then
-            echo "No release version"
-            exit
-          fi
           version=$(cat conf | grep "version=" | sed 's/.*=//')
           changelog="$version"$'\n'
           if [[ -f "changelogs/en/$version" ]]; then
@@ -93,11 +76,8 @@ jobs:
           gitdiff="$?"
           if [[ "$gitdiff" == 1 ]]; then
               git commit --message "$msg"
-              if [[ "$USE_TAG" == 1 ]]; then
-                tag=v$version
-                [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]] && git tag --delete "$tag" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
-                git tag -a -m "$changelog" "$tag"
-                git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
-              fi
+              [[ ! -z $(git tag -l | grep -e "^$TAG$" ) ]] && git tag --delete "$TAG" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
+              git tag -a -m "$changelog" "$TAG"
+              git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
               git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git"
           fi
