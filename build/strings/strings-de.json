@@ -199,7 +199,7 @@
 	"helpScreenDownloadViewSourceCodePic": "Beispiel-Code",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
-		"Den Quelltext dieser App finden Sie auf GitHub."
+		"Den Quelltext dieser Anwendung finden Sie auf „GitHub“."
 	],
 	"helpScreenGeneral": "Allgemeines",
 	"helpScreenGeneralCars": "Autos {{0}}",
@@ -225,7 +225,7 @@
 		"Zur Zeit lassen sich sechs Züge steuern; eine Dampflok, ein TGV Duplex, ein Schienen-Straßen-Bus, ein Thalys, ein Regionalzug und eine Straßenbahn. Das Starten bzw. Stoppen eines Zuges erfolgt durch Touch bzw. Klick auf den gewünschten Zug oder mit Hilfe der ausblendbaren klassischen Steuerelemente. Um einen Zug zu wenden, halten Sie den Zug an und touchen und halten bzw. doppelklicken Sie ihn.",
 		"Um mittels der klassischen Steuerelemente zu fahren, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im Appbildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im Appbildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
 		"Wenn Sie einen größeren Bildschirm verwenden, so können Sie die Geschwindigkeit des Zuges beeinflussen, indem Sie den Regler des Transformators an die gewünschte Position ziehen, ihn an unterschiedlichen Stellen anklicken oder über ihm am Mausrad drehen. Auf kleinen Bildschirmen wird unabhängig hiervon eine mittlere Geschwindigkeit eingestellt. Sie können diese Beschränkung durch Heranzoomen des Transformators umgehen.",
-		"Um auf größeren Bildschirmen die Richtung des jeweils ausgewählten Zuges am Transformator zu ändern, klicken Sie auf das Symbol mit den gespiegelten Pfeilen unten rechts im Transformator an. Die ausgewählte Richtung wird relativ zu den unteren Gleisen hervorgehoben. Wenn der Zug nicht komplett angehalten ist, kann die Richtung nicht gewechselt werden und das Pfeilsymbol ist ausgeblichen. Auf kleineren Bildschirmen kann die Richtung hier nicht verändert werden.",
+		"Um die Richtung des jeweils ausgewählten Zuges am Transformator zu ändern, klicken Sie auf das Symbol mit den gespiegelten Pfeilen unten rechts im Transformator an. Die ausgewählte Richtung wird relativ zu den unteren Gleisen hervorgehoben. Wenn der Zug nicht komplett angehalten ist, kann die Richtung nicht gewechselt werden und das Pfeilsymbol ist ausgeblichen. Auf kleineren Bildschirmen kann die Richtung hier nicht verändert werden.",
 		"Auch können Sie einige Weichen stellen. Das Stellen einer Weiche erfolgt durch Klick auf das farbige Symbol der jeweiligen Weiche. Die Position der Symbole kann durch langen Klick bzw. Touch auf den Hintergrund der Anlage ermittelt werden. Der Zug befährt immer den rot oder grün eingefärbten Weg.",
 		"Sie können durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund ein Zugkontrollzentrum aufrufen. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden."
 	],
@@ -233,7 +233,7 @@
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Neuigkeiten",
 	"helpScreenGeneralWelcomeIcon": "🏡",
 	"helpScreenGeneralWelcomePs": [
-		"Hallo! Sie benutzen die MOROway App. Der Hintergrund stellt eine Luftaufnahme der Modellbahn MOROway aus dem Jahre 2011 dar; 2021 wurde der Abschnitt mit den zentralen Abstellgleisen neu aufgenommen, um diese befahrbar zu machen. Viel Fahrspaß!"
+		"Hallo! Sie benutzen die „MOROway App“. Der Hintergrund stellt eine Luftaufnahme der Modellbahn „MOROway“ aus dem Jahre 2011 dar; 2021 wurde der Abschnitt mit den zentralen Abstellgleisen neu aufgenommen, um diese befahrbar zu machen. Viel Fahrspaß!"
 	],
 	"helpScreenGeneralWelcomeVersion": "Sie verwenden aktuell die am {{5}}. {{4}}. {{3}} erstellte Version {{0}}.{{1}}.{{2}}{{6}}",
 	"helpScreenGraphical": "Grafische Hilfe",
@@ -254,16 +254,16 @@
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [
-		"Die MOROway App OC Variante basiert auf Apache Cordova erstellt von der Apache Software Foundation."
+		"Die MOROway App OC Variante basiert auf „Apache Cordova“ erstellt von der Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCDialogs": "cordova-plugin-dialogs",
 	"helpScreenLegalAppOCDialogsPs": [
-		"Die MOROway App OC Variante nutzt das Dialogs-Plugin erstellt von der Apache Software Foundation."
+		"Die MOROway App OC Variante nutzt das „Dialogs Plugin“ erstellt von der Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCIcon": "📱",
 	"helpScreenLegalAppOCInsomnia": "Insomnia",
 	"helpScreenLegalAppOCInsomniaPs": [
-		"Die MOROway App OC Variante nutzt das Insomnia-PhoneGap-Plugin erstellt von Eddy Verbruggen."
+		"Die MOROway App OC Variante nutzt das „Insomnia-PhoneGap-Plugin“ erstellt von Eddy Verbruggen."
 	],
 	"helpScreenLegalAppOCNativeStorage": "cordova-plugin-nativestorage",
 	"helpScreenLegalAppOCNativeStoragePs": [
@@ -271,16 +271,16 @@
 	],
 	"helpScreenLegalAppOCSplashscreen": "cordova-plugin-splashscreen",
 	"helpScreenLegalAppOCSplashscreenPs": [
-		"Die MOROway App OC Variante nutzt das Splashscreen Plugin erstellt von der Apache Software Foundation."
+		"Die MOROway App OC Variante nutzt das „Splashscreen Plugin“ erstellt von der Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCWebintent": "Webintent",
 	"helpScreenLegalAppOCWebintentPs": [
-		"Die MOROway App OC Variante nutzt das WebIntent Android Plugin for Cordova erstellt von Boris Smus und Beitragenden."
+		"Die MOROway App OC Variante nutzt das „WebIntent Android Plugin for Cordova“ erstellt von Boris Smus und Beitragenden."
 	],
 	"helpScreenLegalAppSnap": "MOROway snApp {{0}}",
 	"helpScreenLegalAppSnapCordova": "Apache Cordova",
 	"helpScreenLegalAppSnapCordovaPs": [
-		"Die MOROway snApp Variante basiert auf Apache Cordova mit der Platform Electron von der Apache Software Foundation."
+		"Die MOROway „snApp“ Variante basiert auf Apache Cordova mit der Plattform Electron von der Apache Software Foundation."
 	],
 	"helpScreenLegalAppSnapIcon": "💻",
 	"helpScreenLegalFonts": "Verwendete Schriften {{0}}",
