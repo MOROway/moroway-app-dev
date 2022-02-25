@@ -28,7 +28,6 @@ jobs:
           echo "::set-output name=create::1"
           echo "::set-output name=tag::$tag"
       - if: steps.prepare.outputs.create == '1'
-        name: Release
-      - uses: rickstaa/action-create-tag@v1
+        uses: rickstaa/action-create-tag@v1
         with:
           tag: ${{ steps.vars.outputs.tag }}
