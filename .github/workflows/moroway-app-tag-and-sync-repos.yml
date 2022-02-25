@@ -18,6 +18,7 @@ jobs:
             echo "No release version"
             exit
           fi
+          tag=v$(cat conf | grep "version=" | sed 's/.*=//')
           git show-ref --tags --verify --quiet -- "refs/tags/$tag"
           if [[ "$?" == 0 ]]; then
             echo "::set-output name=create::0"
