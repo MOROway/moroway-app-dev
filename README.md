@@ -27,7 +27,7 @@ This repository provides the build tools for MOROway App. The code here is used 
 
 ## Weblate
 
-[![Weblate](https://hosted.weblate.org/widgets/moroway-app/-/app/svg-badge.svg)](https://hosted.weblate.org/engage/moroway-app/)
+[![Weblate](https://hosted.weblate.org/widgets/moroway-app/-/287x66-black.png)](https://hosted.weblate.org/engage/moroway-app/)
 
 MOROway App uses Weblate for translations.
 
