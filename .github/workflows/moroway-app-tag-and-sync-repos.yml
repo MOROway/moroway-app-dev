@@ -1,8 +1,7 @@
-name: MOROway App Sync Repositories
+name: MOROway App Tag and Sync Repositories
 on:
-  create:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+  push:
+    branches: [ main ]
 jobs:
   sync-repos:
     runs-on: ubuntu-latest
@@ -15,12 +14,37 @@ jobs:
             branch: master
             subdir: .
             tag: 1
-            onlyrelease: 1
             redirectdocs: 1
     steps:
-      # The following step contains code from https://github.com/cpina/github-action-push-to-another-repository/  (MIT License, by cpina)
       - uses: actions/checkout@v2
-      - name: Build moroway-app and publish to platform repository
+      - name: Prepare
+        id: prepare
+        shell: bash
+        run: |
+          cd build
+          beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
+          [[ -z "$beta" ]] && exit 1
+          if [[ "$beta" != 0 ]]; then
+            echo "::set-output name=create::0"
+            echo "No release version"
+            exit
+          fi
+          tag=v$(cat conf | grep "version=" | sed 's/.*=//')
+          if [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]]; then
+            echo "::set-output name=create::0"
+            echo "No new version"
+            exit
+          fi
+          echo "::set-output name=create::1"
+          echo "::set-output name=tag::$tag"
+      - if: steps.prepare.outputs.create == '1'
+        name: Tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ steps.prepare.outputs.tag }}
+      - if: steps.prepare.outputs.create == '1'
+        # The following step contains code from https://github.com/cpina/github-action-push-to-another-repository/  (MIT License, by cpina)
+        name: Build moroway-app and publish to platform repository
         shell: bash
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
@@ -31,14 +55,13 @@ jobs:
           REPO_BRANCH: ${{ matrix.branch }}
           REPO_DIR: ${{ matrix.subdir }}
           USE_TAG: ${{ matrix.tag }}
-          ONLY_RELEASE: ${{ matrix.onlyrelease }}
           REDIRECT_DOCS: ${{ matrix.redirectdocs }}
         run: |
           # Build moroway-app
           cd build
           beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
           [[ -z "$beta" ]] && exit 1
-          if [[ $ONLY_RELEASE == 1 ]] && [[ "$beta" != 0 ]]; then
+          if [[ "$beta" != 0 ]]; then
             echo "No release version"
             exit
           fi
@@ -65,9 +88,6 @@ jobs:
             echo '<!DOCTYPE html><title>Redirect to "MOROway App"-GitHub-Page</title><meta http-equiv="refresh" content="0; URL=../moroway-app-dev">' > docs/index.html
           fi
           msg="Auto update MOROway App to new version v$version"
-          if [[ "$beta" != 0 ]]; then
-            msg="$msg Beta $beta"
-          fi
           git add .
           git diff-index --quiet HEAD --
           gitdiff="$?"
@@ -75,9 +95,6 @@ jobs:
               git commit --message "$msg"
               if [[ "$USE_TAG" == 1 ]]; then
                 tag=v$version
-                if [[ "$beta" != 0 ]]; then
-                  tag="$tag-beta$beta"
-                fi
                 [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]] && git tag --delete "$tag" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
                 git tag -a -m "$changelog" "$tag"
                 git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$tag"
