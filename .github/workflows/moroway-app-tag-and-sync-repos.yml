@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
 jobs:
-  sync-repos:
+  tag-sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,7 +18,8 @@ jobs:
             echo "No release version"
             exit
           fi
-          tag=v$(cat conf | grep "version=" | sed 's/.*=//')
+          version=$(cat conf | grep "version=" | sed 's/.*=//')
+          tag=v$version
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           git show-ref --tags --verify --quiet -- "refs/tags/$tag"
           if [[ "$?" == 0 ]]; then
@@ -28,6 +29,7 @@ jobs:
           fi
           echo "::set-output name=create::1"
           echo "::set-output name=tag::$tag"
+          echo "::set-output name=version::$version"
       - if: steps.prepare.outputs.create == '1'
         name: Tag
         uses: rickstaa/action-create-tag@v1
@@ -45,18 +47,18 @@ jobs:
           REPO: moroway-app
           REPO_BRANCH: master
           REPO_DIR: .
-          TAG: ${{ steps.prepare.outputs.tag }}
           REDIRECT_DOCS: 1
+          TAG: ${{ steps.prepare.outputs.tag }}
+          VERSION: ${{ steps.prepare.outputs.version }}
         run: |
           # Build moroway-app
           cd build
-          version=$(cat conf | grep "version=" | sed 's/.*=//')
-          changelog="$version"$'\n'
-          if [[ -f "changelogs/en/$version" ]]; then
-            changelog="$changelog"$(cat "changelogs/en/$version" | sed 's/{{[0-9]\+}}}\s\?//g')$'\n'
+          changelog="$VERSION"$'\n'
+          if [[ -f "changelogs/en/$VERSION" ]]; then
+            changelog="$changelog"$(cat "changelogs/en/$VERSION" | sed 's/{{[0-9]\+}}}\s\?//g')$'\n'
           fi
-          if [[ -f "changelogs/en/$version-$PLATFORM" ]]; then
-            changelog="$changelog"$(cat "changelogs/en/$version-$PLATFORM" | sed 's/{{[0-9]\+}}}\s\?//g')$'\n'
+          if [[ -f "changelogs/en/$VERSION-$PLATFORM" ]]; then
+            changelog="$changelog"$(cat "changelogs/en/$VERSION-$PLATFORM" | sed 's/{{[0-9]\+}}}\s\?//g')$'\n'
           fi
           bash build.sh -p $PLATFORM
           # Publish to platform repository
@@ -72,7 +74,7 @@ jobs:
             mkdir docs
             echo '<!DOCTYPE html><title>Redirect to "MOROway App"-GitHub-Page</title><meta http-equiv="refresh" content="0; URL=../moroway-app-dev">' > docs/index.html
           fi
-          msg="Auto update MOROway App to new version v$version"
+          msg="Auto update MOROway App to new version v$VERSION"
           git add .
           git diff-index --quiet HEAD --
           gitdiff="$?"
