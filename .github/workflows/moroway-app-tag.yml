@@ -1,0 +1,31 @@
+name: MOROway App Auto Release
+on:
+  push:
+    branches: [ main ]
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare
+        id: prepare
+        shell: bash
+        run: |
+          cd build
+          beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
+          [[ -z "$beta" ]] && exit 1
+          if [[ "$beta" != 0 ]]; then
+            echo "::set-output name=create::0"
+            echo "No release version"
+            exit
+          fi
+          tag=v$(cat conf | grep "version=" | sed 's/.*=//')
+          if [[ ! -z $(git tag -l | grep -e "^$tag$" ) ]]; then
+            echo "::set-output name=create::0"
+            echo "No new version"
+            exit
+          fi
+          echo "::set-output name=create::1"
+      - if: steps.prepare.outputs.result == '1'
+        name: Release
+        uses: softprops/action-gh-release@v1

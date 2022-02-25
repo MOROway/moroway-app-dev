@@ -1,7 +1,8 @@
 name: MOROway App Sync Repositories
 on:
   push:
-    branches: [ main ]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
 jobs:
   sync-repos:
     runs-on: ubuntu-latest
