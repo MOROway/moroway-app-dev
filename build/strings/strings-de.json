@@ -192,14 +192,14 @@
 	"helpScreenDownloadTranslationsButtonTranslations": "Weblate",
 	"helpScreenDownloadTranslationsIcon": "🌍",
 	"helpScreenDownloadTranslationsPs": [
-		"Die Übersetzungen werden mit „Weblate“ verwaltet."
+		"Die Übersetzungen werden mit Weblate verwaltet."
 	],
 	"helpScreenDownloadViewSource": "Quelltext {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Beispiel-Code",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
-		"Den Quelltext dieser Anwendung finden Sie auf „GitHub“."
+		"Den Quelltext dieser Anwendung finden Sie auf GitHub."
 	],
 	"helpScreenGeneral": "Allgemeines",
 	"helpScreenGeneralCars": "Autos {{0}}",
@@ -233,7 +233,7 @@
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Neuigkeiten",
 	"helpScreenGeneralWelcomeIcon": "🏡",
 	"helpScreenGeneralWelcomePs": [
-		"Hallo! Sie benutzen die „MOROway App“. Der Hintergrund stellt eine Luftaufnahme der Modellbahn „MOROway“ aus dem Jahre 2011 dar; 2021 wurde der Abschnitt mit den zentralen Abstellgleisen neu aufgenommen, um diese befahrbar zu machen. Viel Fahrspaß!"
+		"Hallo! Sie benutzen die MOROway App. Der Hintergrund stellt eine Luftaufnahme der Modellbahn MOROway aus dem Jahre 2011 dar; 2021 wurde der Abschnitt mit den zentralen Abstellgleisen neu aufgenommen, um diese befahrbar zu machen. Viel Fahrspaß!"
 	],
 	"helpScreenGeneralWelcomeVersion": "Sie verwenden aktuell die am {{5}}. {{4}}. {{3}} erstellte Version {{0}}.{{1}}.{{2}}{{6}}",
 	"helpScreenGraphical": "Grafische Hilfe",
@@ -254,7 +254,7 @@
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [
-		"Die MOROway App OC Variante basiert auf „Apache Cordova“ erstellt von der Apache Software Foundation."
+		"Die MOROway App OC Variante basiert auf Apache Cordova erstellt von der Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCDialogs": "cordova-plugin-dialogs",
 	"helpScreenLegalAppOCDialogsPs": [
