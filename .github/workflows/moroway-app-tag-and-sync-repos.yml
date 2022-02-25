@@ -19,6 +19,7 @@ jobs:
             exit
           fi
           tag=v$(cat conf | grep "version=" | sed 's/.*=//')
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           git show-ref --tags --verify --quiet -- "refs/tags/$tag"
           if [[ "$?" == 0 ]]; then
             echo "::set-output name=create::0"
