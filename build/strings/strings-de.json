@@ -188,6 +188,12 @@
 	"helpScreenDownloadAppsWindowsPs": [
 		"Laden Sie sich diese App auf Ihren Windows Laptop bzw. PC über den Microsoft Store."
 	],
+	"helpScreenDownloadTranslations": "Übersetzungen",
+	"helpScreenDownloadTranslationsButtonTranslations": "Weblate",
+	"helpScreenDownloadTranslationsIcon": "🌍",
+	"helpScreenDownloadTranslationsPs": [
+		"Die Übersetzungen werden mit „Weblate“ verwaltet."
+	],
 	"helpScreenDownloadViewSource": "Quelltext {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Beispiel-Code",
