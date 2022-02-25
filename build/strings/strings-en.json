@@ -188,7 +188,7 @@
 	"helpScreenDownloadAppsWindowsPs": [
 		"You can download this app to your Windows Laptop / PC via Microsoft Store."
 	],
-	"helpScreenDownloadTranslations": "Translations",
+	"helpScreenDownloadTranslations": "Translations {{0}}",
 	"helpScreenDownloadTranslationsButtonTranslations": "Weblate",
 	"helpScreenDownloadTranslationsIcon": "🌍",
 	"helpScreenDownloadTranslationsPs": [
