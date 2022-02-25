@@ -1,4 +1,3 @@
-////Required code (needs to be set on each platform)
 function init_local() {
     var pics = document.querySelector("#website-pics");
     pics.style.display = "none";
@@ -17,5 +16,3 @@ function init_local() {
     document.querySelector("#legal-appsnap-licenses").classList.remove("hidden");
     document.querySelector("#legal-appsnap-cordova-license").addEventListener("click", function(){followLink("licenses_platform/cordova","_self", LINK_STATE_INTERNAL_LICENSE_FILE);});
 }
-
-////Optional code (app works without it)

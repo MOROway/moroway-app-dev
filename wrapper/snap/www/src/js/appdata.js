@@ -2,13 +2,13 @@
 const APP_DATA = {
     "version": {
         "major": 7,
-        "minor": 3,
-        "patch": 2,
+        "minor": 4,
+        "patch": 0,
         "beta": 0,
         "date": {
-            "year": 2021,
-            "month": 10,
-            "day": 28
+            "year": 2022,
+            "month": 2,
+            "day": 25
         }
     },
     "platform": "snap",
