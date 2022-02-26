@@ -1,4 +1,4 @@
-version=7.4.0
-beta=0
+version=7.4.1
+beta=1
 sharelink=https://app.moroway.de/{{0}}/{{1}}
 serverlink=herrmann-engel.de/projekte/moroway/moroway-app/server
