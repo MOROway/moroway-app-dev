@@ -25,8 +25,8 @@ jobs:
           version=$(cat conf | grep "version=" | sed 's/.*=//')
           tag=v$version
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          git show-ref --tags --verify --quiet -- "refs/tags/$tag"
-          if [[ "$?" == 0 ]]; then
+          exitcode=$(git show-ref --tags --verify --quiet -- "refs/tags/$tag" && echo 0 || echo 1)
+          if [[ "$exitcode" == 0 ]]; then
             echo "::set-output name=create::0"
             echo "No new version"
             exit
@@ -34,8 +34,6 @@ jobs:
           echo "::set-output name=create::1"
           echo "::set-output name=tag::$tag"
           echo "::set-output name=version::$version"
-          echo "new version!"
-          exit
       - if: steps.prepare.outputs.create == '1'
         name: Tag
         uses: rickstaa/action-create-tag@v1
@@ -96,8 +94,7 @@ jobs:
           fi
           msg="Auto update MOROway App to new version v$VERSION"
           git add .
-          git diff-index --quiet HEAD --
-          gitdiff="$?"
+          gitdiff=$(git diff-index --quiet HEAD -- && echo 0 || echo 1)
           if [[ "$gitdiff" == 1 ]]; then
               git commit --message "$msg"
               [[ ! -z $(git tag -l | grep -e "^$TAG$" ) ]] && git tag --delete "$TAG" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
