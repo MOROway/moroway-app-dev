@@ -62,19 +62,21 @@ function getGesture(gesture){
             client.realScale = 1;
         } else {
             client.lastTouchScale = client.realScale = client.realScaleMax/2;
-            client.touchScaleX = (canvas.width/2-gesture.deltaX)*client.realScale;
-            client.touchScaleY = (canvas.height/2-gesture.deltaY)*client.realScale;
+            client.PinchX = gesture.deltaX;
+            client.PinchY = gesture.deltaY;
         }
         break;
     case "pinch":
         client.touchScale = gesture.scale;
         client.realScale = Math.max(Math.min(client.lastTouchScale * client.touchScale,client.realScaleMax),1);
-        client.touchScaleX = (canvas.width/2-gesture.deltaX)*client.realScale;
-        client.touchScaleY = (canvas.height/2-gesture.deltaY)*client.realScale;
+        client.PinchX = gesture.deltaX;
+        client.PinchY = gesture.deltaY;
         break;
     case "pinchoffset":
         client.touchScaleX += (canvas.width/2-gesture.deltaX);
         client.touchScaleY += (canvas.height/2-gesture.deltaY);
+        client.PinchX = canvas.width/2-client.touchScaleX/client.realScale;
+        client.PinchY = canvas.height/2-client.touchScaleY/client.realScale;
         break;
     case "pinchend":
         client.lastTouchScale = client.realScale;
@@ -82,27 +84,24 @@ function getGesture(gesture){
         delete client.PinchOHypot;
         break;
     case "swipe":
-        client.touchScaleX += gesture.deltaX/4;
-        client.touchScaleY += gesture.deltaY/4;
+        client.PinchX -= gesture.deltaX/client.realScale;
+        client.PinchY -= gesture.deltaY/client.realScale;
         break;
     }
 
-    client.PinchX = canvas.width/2-client.touchScaleX/client.realScale;
-    client.PinchY = canvas.height/2-client.touchScaleY/client.realScale;
+    client.touchScaleX = (canvas.width/2-client.PinchX)*client.realScale;
+    client.touchScaleY = (canvas.height/2-client.PinchY)*client.realScale;
 
     if(client.realScale < client.realScaleMin) {
-        hardware.mouse.isMoving = false;
         client.realScale = 1;
         client.touchScale = 1;
         client.lastTouchScale = 1;
         client.touchScaleX = 0;
         client.touchScaleY = 0;
-    } else {
-        hardware.mouse.isMoving = true;
     }
 
-    var xMax = (client.realScale - 1) * (canvas.width / 2 - client.x);
-    var yMax = (client.realScale - 1) * (canvas.height / 2 - client.y);
+    var xMax = (client.realScale - 1) * (canvas.width / 2 - background.x);
+    var yMax = (client.realScale - 1) * (canvas.height / 2 - background.y);
     if (client.touchScaleX > xMax) {
         client.touchScaleX = xMax;
     }
@@ -115,11 +114,22 @@ function getGesture(gesture){
     if (client.touchScaleY < -yMax) {
         client.touchScaleY = -yMax;
     }
-
-    if(client.realScale == 1) {
-        client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
+    var xMin = background.x;
+    var xMax = canvas.width-background.x;
+    var yMin = background.y;
+    var yMax = canvas.height-background.y;
+    if (client.PinchX > xMax) {
+        client.PinchX = xMax;
     }
-
+    if (client.PinchX < xMin) {
+        client.PinchX = xMin;
+    }
+    if (client.PinchY > yMax) {
+        client.PinchY = yMax;
+    }
+    if (client.PinchY < yMin) {
+        client.PinchY = yMin;
+    }
 }
 
 function notInTransformerInput(x,y) {
@@ -177,28 +187,23 @@ function notInTransformerTrainSwitch(x,y) {
 }
 
 function onMouseMove(event) {
-    hardware.mouse.cursor = "default";
+    client.chosenInputMethod = "mouse";
     hardware.mouse.moveX = event.clientX*client.devicePixelRatio;
     hardware.mouse.moveY = event.clientY*client.devicePixelRatio;
-    if(client.realScale == 1) {
-        hardware.mouse.isMoving = true;
-        if(typeof movingTimeOut !== "undefined"){
-            window.clearTimeout(movingTimeOut);
-        }
-        movingTimeOut = window.setTimeout(function(){hardware.mouse.isMoving = false;}, 5000);
-    } else {
-        if(notInTransformerInput(hardware.mouse.moveX, hardware.mouse.moveY)) {
-            hardware.mouse.isHold = false;
-        }
-        client.PinchX = hardware.mouse.moveX+client.touchScaleXKeyFake;
-        client.PinchY = hardware.mouse.moveY+client.touchScaleYKeyFake;
-        client.PinchOHypot = 1;
-        getGesture({type: "pinch", scale:1, deltaX:client.PinchX,deltaY:client.PinchY});
-        getGesture({type: "pinchend"});
+    hardware.mouse.isMoving = true;
+    if(typeof movingTimeOut !== "undefined"){
+        window.clearTimeout(movingTimeOut);
+    }
+    movingTimeOut = window.setTimeout(function(){
+        hardware.mouse.isMoving = false;
+    }, 5000);
+    if(client.realScale > 1 && notInTransformerInput(hardware.mouse.moveX, hardware.mouse.moveY)) {
+        hardware.mouse.isHold = false;
     }
 }
 function onMouseDown(event) {
     event.preventDefault();
+    client.chosenInputMethod = "mouse";
     hardware.lastInputMouse = hardware.mouse.downTime = Date.now();
     hardware.mouse.isHold = (event.which == undefined || event.which == 1) && !hardware.mouse.rightClick;
     hardware.mouse.rightClickHold = (event.which == undefined || event.which == 1) && hardware.mouse.rightClick;
@@ -207,35 +212,48 @@ function onMouseDown(event) {
 }
 function onMouseUp(event) {
     event.preventDefault();
+    client.chosenInputMethod = "mouse";
     hardware.mouse.upX = event.clientX*client.devicePixelRatio;
     hardware.mouse.upY = event.clientY*client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
     hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
     hardware.mouse.rightClickEvent = event.which == 1 && hardware.mouse.rightClick;
 }
+function onMouseEnter(event) {
+    client.chosenInputMethod = "mouse";
+    hardware.mouse.out = false;
+}
 function onMouseOut(event) {
     event.preventDefault();
+    client.chosenInputMethod = null;
     hardware.mouse.out = true;
     hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
     hardware.keyboard.keysHold = [];
-    hardware.mouse.cursor = "none";
-}
-function onMouseEnter(event) {
-    hardware.mouse.out = false;
 }
 function onMouseWheel(event) {
     event.preventDefault();
+    client.chosenInputMethod = "mouse";
     if(event.ctrlKey && event.deltaY != 0) {
-        client.PinchX = hardware.mouse.moveX+client.touchScaleXKeyFake;
-        client.PinchY = hardware.mouse.moveY+client.touchScaleYKeyFake;
-        if(event.deltaY < 0) {
-            client.PinchOHypot = client.realScaleMin;
-            getGesture({type: "pinch", scale:client.realScaleMin, deltaX:client.PinchX,deltaY:client.PinchY});
-        } else {
-            client.PinchOHypot = 1/client.realScaleMin;
-            getGesture({type: "pinch", scale:1/client.realScaleMin, deltaX:client.PinchX,deltaY:client.PinchY});
+        if (client.realScale < client.realScaleMax || event.deltaY > 0) {
+            if(typeof(client.PinchOHypot) == "undefined") {
+                var deltaX = hardware.mouse.moveX;
+                var deltaY = hardware.mouse.moveY;
+                if(client.realScale == 1) {
+                    client.PinchX = deltaX;
+                    client.PinchY = deltaY;
+                } else {
+                    getGesture({type: "pinchoffset", deltaX: deltaX, deltaY: deltaY});
+                }
+                client.PinchOHypot = client.realScale;
+            }
+            var hypot = client.realScale;
+            if(event.deltaY < 0) {
+                hypot *= client.realScaleMin;
+            } else {
+                hypot /= client.realScaleMin;
+            }
+            getGesture({type: "pinch", scale:hypot/client.PinchOHypot, deltaX:client.PinchX,deltaY:client.PinchY});
         }
-        getGesture({type: "pinchend"});
     } else {
         hardware.mouse.wheelScrolls = !hardware.mouse.rightClick;
         hardware.mouse.rightClickWheelScrolls = hardware.mouse.rightClick;
@@ -249,6 +267,7 @@ function onMouseWheel(event) {
 }
 function onMouseRight(event) {
     event.preventDefault();
+    client.chosenInputMethod = "mouse";
     if(controlCenter.showCarCenter === null && hardware.mouse.rightClick && client.realScale == 1) {
         controlCenter.showCarCenter = true;
         notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000,null, null, client.y + optMenu.container.height, false);
@@ -267,18 +286,13 @@ function preventMouseZoomDuringLoad(event) {
 
 function getTouchMove(event) {
     event.preventDefault();
+    client.chosenInputMethod = "touch";
     if(event.touches.length == 1) {
         var deltaX = -5 * (hardware.mouse.moveX - (event.touches[0].clientX*client.devicePixelRatio));
         var deltaY = -5 * (hardware.mouse.moveY - (event.touches[0].clientY*client.devicePixelRatio));
         if(client.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height)/30 && notInTransformerInput(event.touches[0].clientX*client.devicePixelRatio,event.touches[0].clientY*client.devicePixelRatio)) {
-            getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
+            getGesture({type: "swipe", deltaX:deltaX/4,deltaY:deltaY/4});
             hardware.mouse.isHold = false;
-        } else {
-            hardware.mouse.isMoving = true;
-            if(typeof movingTimeOut !== "undefined"){
-                window.clearTimeout(movingTimeOut);
-            }
-            movingTimeOut = window.setTimeout(function(){hardware.mouse.isMoving = false;}, 5000);
         }
         hardware.mouse.moveX = (event.touches[0].clientX*client.devicePixelRatio);
         hardware.mouse.moveY = (event.touches[0].clientY*client.devicePixelRatio);
@@ -301,6 +315,7 @@ function getTouchMove(event) {
 }
 function getTouchStart(event) {
     event.preventDefault();
+    client.chosenInputMethod = "touch";
     var xTS = (event.changedTouches[0].clientX*client.devicePixelRatio);
     var yTS = (event.changedTouches[0].clientY*client.devicePixelRatio);
     if(event.touches.length == 1 && Math.max(hardware.mouse.moveX,xTS) < 1.1 * Math.min(hardware.mouse.moveX,xTS) && Math.max(hardware.mouse.moveY,yTS) < 1.1 * Math.min(hardware.mouse.moveY,yTS) && Date.now() - hardware.mouse.downTime < 2 * doubleClickTime && Date.now() - hardware.mouse.upTime < 2*doubleClickTime && notInTransformerTrainSwitch(xTS, yTS)) {
@@ -323,6 +338,7 @@ function getTouchStart(event) {
 }
 function getTouchEnd(event) {
     event.preventDefault();
+    client.chosenInputMethod = "touch";
     getGesture({type: "pinchend"});
     hardware.mouse.upX = (event.changedTouches[0].clientX*client.devicePixelRatio);
     hardware.mouse.upY = (event.changedTouches[0].clientY*client.devicePixelRatio);
@@ -345,6 +361,7 @@ function getTouchEnd(event) {
 
 }
 function getTouchCancel(event) {
+    client.chosenInputMethod = "touch";
     hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
     hardware.keyboard.keysHold = [];
 }
@@ -356,22 +373,31 @@ function onKeyDown(event) {
     if(event.key == "Tab" || event.key == "Enter") {
         event.preventDefault();
     }
-    if(event.ctrlKey && (event.key == "+" || event.key == "-" || (event.key == "0" && client.realScale > 1))) {
+    if(event.ctrlKey && event.key == "0" && client.realScale > 1) {
         event.preventDefault();
-        if(client.realScale == 1) {
-            client.PinchX = hardware.mouse.moveX+client.touchScaleXKeyFake;
-            client.PinchY = hardware.mouse.moveY+client.touchScaleYKeyFake;
+        getGesture({type: "doubletap", deltaX:client.PinchX,deltaY:client.PinchY});
+    } else if(event.ctrlKey && (event.key == "+" || event.key == "-")) {
+        event.preventDefault();
+        if (client.realScale < client.realScaleMax || event.key == "-") {
+            if(typeof(client.PinchOHypot) == "undefined") {
+                var deltaX = hardware.mouse.moveX;
+                var deltaY = hardware.mouse.moveY;
+                if(client.realScale == 1) {
+                    client.PinchX = deltaX;
+                    client.PinchY = deltaY;
+                } else {
+                    getGesture({type: "pinchoffset", deltaX: deltaX, deltaY: deltaY});
+                }
+                client.PinchOHypot = client.realScale;
+            }
+            var hypot = client.realScale;
+            if(event.key == "+") {
+                hypot *= client.realScaleMin;
+            } else {
+                hypot /= client.realScaleMin;
+            }
+            getGesture({type: "pinch", scale:hypot/client.PinchOHypot, deltaX:client.PinchX,deltaY:client.PinchY});
         }
-        if(event.key == "+") {
-            client.PinchOHypot = 2;
-            getGesture({type: "pinch", scale:2, deltaX:client.PinchX,deltaY:client.PinchY});
-        } else if(event.key == "-") {
-            client.PinchOHypot = 0.5;
-            getGesture({type: "pinch", scale:0.5, deltaX:client.PinchX,deltaY:client.PinchY});
-        } else {
-            getGesture({type: "doubletap", deltaX:client.PinchX,deltaY:client.PinchY});
-        }
-        getGesture({type: "pinchend"});
     } else if ((event.key == "ArrowUp" && (konamistate === 0 || konamistate == 1)) || (event.key == "ArrowDown" && (konamistate == 2 || konamistate == 3)) || (event.key == "ArrowLeft" && (konamistate == 4 || konamistate == 6)) || (event.key == "ArrowRight" && (konamistate == 5 || konamistate == 7)) || (event.key == "b" && konamistate == 8)){
         if(typeof konamiTimeOut !== "undefined"){
             window.clearTimeout(konamiTimeOut);
@@ -399,6 +425,9 @@ function onKeyDown(event) {
     }
 }
 function onKeyUp(event) {
+    if(event.key == "Control") {
+        getGesture({type: "pinchend"});
+    }
     hardware.keyboard.keysHold[event.key] = false;
 }
 function preventKeyZoomDuringLoad(event) {
@@ -406,6 +435,8 @@ function preventKeyZoomDuringLoad(event) {
         event.preventDefault();
     }
 }
+
+
 
 function onVisibilityChange() {
     client.hidden = document.visibilityState == "hidden";
@@ -574,7 +605,7 @@ function calcOptionsMenuAndBackground(state) {
         optMenu.container.element = document.querySelector("#canvas-options");
         optMenu.container.element.addEventListener("wheel", function(){
                 event.preventDefault();
-        });
+        }, { passive: false });
         if(onlineGame.enabled) {
             document.querySelector("#canvas-team").classList.add("hidden");
             document.querySelector("#canvas-chat-open").addEventListener("click", function(){
@@ -814,7 +845,7 @@ function resize() {
         onlineGame.resized = true;
     }
     client.realScale = client.touchScale = client.lastTouchScale = 1;
-    client.touchScaleX = client.touchScaleY = client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
+    client.touchScaleX = client.touchScaleY = 0;
     oldbackground = copyJSObject(background);
     extendedMeasureViewspace();
     calcOptionsMenuAndBackground("resize");
@@ -1318,31 +1349,28 @@ function drawObjects() {
     if(frameNo % 1000000 === 0){
         notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames","."),frameNo/1000000), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
     }
-    if(hardware.mouse.cursor != "none") {
-        hardware.mouse.cursor = "default";
-    }
+    hardware.mouse.cursor = "default";
     if(client.realScale > 1) {
         var oTSX = client.touchScaleX;
         var oTSY = client.touchScaleY;
-        var deltaDiv = 20;
+        var deltaDiv = 80;
+        var tolerance = client.width*client.devicePixelRatio/20;
         var deltaX = 0;
         var deltaY = 0;
-        if(hardware.keyboard.keysHold["ArrowLeft"]) {
+        if(hardware.keyboard.keysHold["ArrowLeft"] ||(hardware.mouse.moveX < tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
             deltaX += canvas.width*client.realScale/deltaDiv;
         }
-        if(hardware.keyboard.keysHold["ArrowUp"]) {
+        if(hardware.keyboard.keysHold["ArrowUp"] || (hardware.mouse.moveY < tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
             deltaY += canvas.height*client.realScale/deltaDiv;
         }
-        if(hardware.keyboard.keysHold["ArrowRight"]) {
+        if(hardware.keyboard.keysHold["ArrowRight"] || (hardware.mouse.moveX > client.width*client.devicePixelRatio - tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
             deltaX -= canvas.width*client.realScale/deltaDiv;
         }
-        if(hardware.keyboard.keysHold["ArrowDown"]) {
+        if(hardware.keyboard.keysHold["ArrowDown"] || (hardware.mouse.moveY > client.height*client.devicePixelRatio - tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
             deltaY -= canvas.height*client.realScale/deltaDiv;
         }
         if(deltaX != 0 || deltaY != 0) {
             getGesture({type: "swipe", deltaX:deltaX,deltaY:deltaY});
-            client.touchScaleXKeyFake -= (client.touchScaleX-oTSX)/client.realScale;
-            client.touchScaleYKeyFake -= (client.touchScaleY-oTSY)/client.realScale;
         }
     }
     /////TRAINS/////
@@ -2137,9 +2165,7 @@ function drawObjects() {
         var colorBorder = "rgba(255,255,255,0.7)";
         var contextClick = (hardware.mouse.rightClickEvent && Math.abs(hardware.mouse.downX-hardware.mouse.upX) < canvas.width/100 && Math.abs(hardware.mouse.downY-hardware.mouse.upY) < canvas.width/100);
         hardware.mouse.rightClickEvent = false;
-        if(hardware.mouse.cursor != "none") {
-            hardware.mouse.cursor = "default";
-        }
+        hardware.mouse.cursor = "default";
         contextForeground.save();
         contextForeground.textBaseline = "middle";
         contextForeground.translate(background.x+controlCenter.translateOffset,background.y+controlCenter.translateOffset);
@@ -2518,7 +2544,7 @@ function drawObjects() {
     }
 
     /////CURSOR/////
-    if(settings.cursorascircle && isHardwareAvailable("cursorascircle") && (hardware.mouse.isMoving || hardware.mouse.isHold) && hardware.mouse.cursor != "none") {
+    if(settings.cursorascircle && isHardwareAvailable("cursorascircle") && client.chosenInputMethod == "mouse" && (hardware.mouse.isMoving || hardware.mouse.isHold || client.realScale > 1)) {
         contextForeground.save();
         contextForeground.translate(adjustScaleX(hardware.mouse.moveX),adjustScaleY(hardware.mouse.moveY));
         contextForeground.fillStyle = hardware.mouse.cursor == "grabbing" ? "rgba(65,56,65," + (Math.random() * (0.3) + 0.6) + ")" : (hardware.mouse.cursor == "pointer" ? "rgba(99,118,140," + (Math.random() * (0.3) + 0.6) + ")" : (hardware.mouse.isHold ? "rgba(144,64,64," + (Math.random() * (0.3) + 0.6) + ")" : "rgba(255,250,240,0.5)"));
@@ -2532,7 +2558,7 @@ function drawObjects() {
         contextForeground.fill();
         contextForeground.restore();
     }
-    canvasForeground.style.cursor = isHardwareAvailable("cursorascircle") && settings.cursorascircle ? "none" : hardware.mouse.cursor;
+    canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || (settings.cursorascircle  && isHardwareAvailable("cursorascircle")) ? "none" : hardware.mouse.cursor;
     hardware.mouse.wheelScrolls = false;
 
     /////REPAINT/////
@@ -2663,30 +2689,16 @@ var debugTrainCollisions;
 
 window.onload = function() {
 
-    function chooseInputMethod(event){
-        hardware.mouse.out = false;
-        canvasForeground.removeEventListener("touchstart",chooseInputMethod);
-        canvasForeground.removeEventListener("mousemove",chooseInputMethod);
-        canvasForeground.addEventListener("touchmove", getTouchMove);
-        canvasForeground.addEventListener("touchstart", getTouchStart);
-        canvasForeground.addEventListener("touchend", getTouchEnd);
-        canvasForeground.addEventListener("touchcancel", getTouchCancel);
-        canvasForeground.addEventListener("mousemove", onMouseMove);
-        canvasForeground.addEventListener("mousedown", onMouseDown);
-        canvasForeground.addEventListener("mouseup", onMouseUp);
-        canvasForeground.addEventListener("mouseout", onMouseOut);
-        canvasForeground.addEventListener("mouseenter", onMouseEnter);
-        canvasForeground.addEventListener("wheel", onMouseWheel);
-        canvasForeground.addEventListener("contextmenu", onMouseRight);
-        document.removeEventListener("wheel", preventMouseZoomDuringLoad);
+    function addInputMethod(event){
         if(event.type == "touchstart"){
-            client.chosenInputMethod = "touch";
-            getTouchStart(event);
+            canvasForeground.removeEventListener("touchstart",addInputMethod);
+            setCurrentHardwareConfig("touch",true);
         } else {
-            client.chosenInputMethod = "mouse";
-            onMouseMove(event);
+            hardware.mouse.out = false;
+            canvasForeground.removeEventListener("mousemove",addInputMethod);
+            setCurrentHardwareConfig("mouse",true);
         }
-        setCurrentHardwareConfig("input",client.chosenInputMethod);
+        setSettingsHTML(document.querySelector("#settings-inner"),false);
     }
 
     function initialDisplay() {
@@ -3162,7 +3174,6 @@ window.onload = function() {
                 drawInterval = message.data.animateInterval;
                 client.realScale = client.touchScale = client.lastTouchScale = 1;
                 client.touchScaleX = client.touchScaleY = 0;
-                client.touchScaleXKeyFake = client.touchScaleYKeyFake = 0;
                 drawObjects();
                 var timeWait = 0.5;
                 var timeLoad = 1.5;
@@ -3183,8 +3194,20 @@ window.onload = function() {
                             }
                             setLocalAppDataCopy();
                             destroy(toHide);
+                            canvasForeground.addEventListener("touchmove", getTouchMove, { passive: false });
+                            canvasForeground.addEventListener("touchstart", getTouchStart, { passive: false });
+                            canvasForeground.addEventListener("touchend", getTouchEnd, { passive: false });
+                            canvasForeground.addEventListener("touchcancel", getTouchCancel);
+                            canvasForeground.addEventListener("mousemove", onMouseMove);
+                            canvasForeground.addEventListener("mousedown", onMouseDown, { passive: false });
+                            canvasForeground.addEventListener("mouseup", onMouseUp, { passive: false });
+                            canvasForeground.addEventListener("mouseout", onMouseOut, { passive: false });
+                            canvasForeground.addEventListener("mouseenter", onMouseEnter);
+                            canvasForeground.addEventListener("contextmenu", onMouseRight, { passive: false });
+                            canvasForeground.addEventListener("wheel", onMouseWheel, { passive: false });
                             document.addEventListener("keydown", onKeyDown);
                             document.addEventListener("keyup", onKeyUp);
+                            document.removeEventListener("wheel", preventMouseZoomDuringLoad);
                             document.removeEventListener("keydown", preventKeyZoomDuringLoad);
                             document.removeEventListener("keyup", preventKeyZoomDuringLoad);
                         }, timeLoad*900);
@@ -3339,6 +3362,7 @@ window.onload = function() {
     }
 
     settings = getSettings();
+
     canvas = document.querySelector("canvas#game-gameplay-main");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
     canvasBackground = document.querySelector("canvas#game-gameplay-bg");
@@ -3351,11 +3375,11 @@ window.onload = function() {
     contextForeground = canvasForeground.getContext("2d");
 
     hardware.lastInputMouse = hardware.lastInputTouch = 0;
-    canvasForeground.addEventListener("touchstart",chooseInputMethod);
-    canvasForeground.addEventListener("mousemove",chooseInputMethod);
+    canvasForeground.addEventListener("touchstart",addInputMethod);
+    canvasForeground.addEventListener("mousemove",addInputMethod);
     document.addEventListener("wheel", preventMouseZoomDuringLoad, { passive: false });
-    document.addEventListener("keydown", preventKeyZoomDuringLoad);
-    document.addEventListener("keyup", preventKeyZoomDuringLoad);
+    document.addEventListener("keydown", preventKeyZoomDuringLoad, { passive: false });
+    document.addEventListener("keyup", preventKeyZoomDuringLoad, { passive: false });
     document.addEventListener("visibilitychange", onVisibilityChange);
     onVisibilityChange();
 

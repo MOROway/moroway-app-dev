@@ -25,7 +25,7 @@ jobs:
           version=$(cat conf | grep "version=" | sed 's/.*=//')
           tag=v$version
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          exitcode=$(git show-ref --tags --verify --quiet -- "refs/tags/$tag" && echo 0 || echo 1)
+          exitcode=$(git show-ref --tags --verify --quiet -- "refs/tags/$tag" && echo 0 || echo $?)
           if [[ "$exitcode" == 0 ]]; then
             echo "::set-output name=create::0"
             echo "No new version"
@@ -94,8 +94,8 @@ jobs:
           fi
           msg="Auto update MOROway App to new version v$VERSION"
           git add .
-          gitdiff=$(git diff-index --quiet HEAD -- && echo 0 || echo 1)
-          if [[ "$gitdiff" == 1 ]]; then
+          exitcode=$(git diff-index --quiet HEAD -- && echo 0 || echo $?)
+          if [[ "$exitcode" == 1 ]]; then
               git commit --message "$msg"
               [[ ! -z $(git tag -l | grep -e "^$TAG$" ) ]] && git tag --delete "$TAG" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
               git tag -a -m "$changelog" "$TAG"

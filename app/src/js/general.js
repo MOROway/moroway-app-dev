@@ -411,7 +411,7 @@ function getSettings (asObject, storageArea){
     switch(storageArea) {
         default:
             dependencies = {"alwaysShowSelectedTrain": ["classicUI"]};
-            hardware = {"cursorascircle": [{"input": "mouse"}]};
+            hardware = {"cursorascircle": ["mouse"]};
             if (typeof values.showNotifications != "boolean") {
                 values.showNotifications = true;
             }
@@ -478,13 +478,9 @@ function isHardwareAvailable(a, storageArea){
     var hardware = getLastHardwareConfig();
     if(settingsComplete.hardware[a] !== null){
         settingsComplete.hardware[a].forEach(function(current){
-            Object.keys(current).forEach(function(key){
-                switch (key) {
-                case "input":
-                    if(!(hardware[key] == undefined || current[key] == hardware[key])) {
-                        isHardwareAvailable = false;
-                    }
-                    break;
+            Array(current).forEach(function(key){
+                if(!hardware[key]) {
+                    isHardwareAvailable = false;
                 }
             });
         });
@@ -560,8 +556,14 @@ function setSettingsHTML(elem, standalone, storageArea, showLang){
         storageArea = "morowayApp";
     }
     elem.classList.add("settings");
+    var rootId = "settings-list-" + storageArea;
+    var existingRoot = elem.querySelector("#" + rootId);
+    if(existingRoot != undefined) {
+        elem.removeChild(existingRoot);
+    }
     var root = document.createElement("ul");
     root.className = "settings-list";
+    root.id = rootId;
     var settings = getSettings(false, storageArea);
     for(var i = 0; i < Object.keys(settings).length; i++) {
         var opt = Object.keys(settings)[i];
@@ -622,8 +624,13 @@ function setSettingsHTML(elem, standalone, storageArea, showLang){
     }
     elem.appendChild(root);
     if(showLang) {
+        rootId = "langoption";
         root = document.createElement("div");
-        root.id = "langoption";
+        existingRoot = elem.querySelector("#" + rootId);
+        if(existingRoot != undefined) {
+            elem.removeChild(existingRoot);
+        }
+        root.id = rootId;
         child = document.createElement("div");
         child.id = "langoptioninfo";
         child.textContent = getString("optLangSelectInfo",":");
