@@ -188,8 +188,6 @@ function notInTransformerTrainSwitch(x,y) {
 
 function onMouseMove(event) {
     client.chosenInputMethod = "mouse";
-    hardware.mouse.moveX = event.clientX*client.devicePixelRatio;
-    hardware.mouse.moveY = event.clientY*client.devicePixelRatio;
     hardware.mouse.isMoving = true;
     if(typeof movingTimeOut !== "undefined"){
         window.clearTimeout(movingTimeOut);
@@ -197,9 +195,17 @@ function onMouseMove(event) {
     movingTimeOut = window.setTimeout(function(){
         hardware.mouse.isMoving = false;
     }, 5000);
-    if(client.realScale > 1 && notInTransformerInput(hardware.mouse.moveX, hardware.mouse.moveY)) {
-        hardware.mouse.isHold = false;
+    if(client.realScale > 1 && ((notInTransformerInput(event.clientX*client.devicePixelRatio,event.clientY*client.devicePixelRatio) && hardware.mouse.isHold) || hardware.mouse.isDrag)) {
+        var deltaX = -5 * (hardware.mouse.moveX - (event.clientX*client.devicePixelRatio));
+        var deltaY = -5 * (hardware.mouse.moveY - (event.clientY*client.devicePixelRatio));
+        if(Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height)/30) {
+            getGesture({type: "swipe", deltaX:deltaX/4,deltaY:deltaY/4});
+            hardware.mouse.isDrag = true;
+            hardware.mouse.isHold = false;
+        }
     }
+    hardware.mouse.moveX = event.clientX*client.devicePixelRatio;
+    hardware.mouse.moveY = event.clientY*client.devicePixelRatio;
 }
 function onMouseDown(event) {
     event.preventDefault();
@@ -216,7 +222,7 @@ function onMouseUp(event) {
     hardware.mouse.upX = event.clientX*client.devicePixelRatio;
     hardware.mouse.upY = event.clientY*client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.mouse.isHold = hardware.mouse.isDrag = hardware.mouse.rightClickHold = false;
     hardware.mouse.rightClickEvent = event.which == 1 && hardware.mouse.rightClick;
 }
 function onMouseEnter(event) {
@@ -227,7 +233,7 @@ function onMouseOut(event) {
     event.preventDefault();
     client.chosenInputMethod = null;
     hardware.mouse.out = true;
-    hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.mouse.isHold = hardware.mouse.isDrag = hardware.mouse.rightClickHold = false;
     hardware.keyboard.keysHold = [];
 }
 function onMouseWheel(event) {
@@ -257,7 +263,7 @@ function onMouseWheel(event) {
     } else {
         hardware.mouse.wheelScrolls = !hardware.mouse.rightClick;
         hardware.mouse.rightClickWheelScrolls = hardware.mouse.rightClick;
-        hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+        hardware.mouse.isHold = hardware.mouse.isDrag = hardware.mouse.rightClickHold = false;
         hardware.mouse.wheelX = event.clientX*client.devicePixelRatio;
         hardware.mouse.wheelY = event.clientY*client.devicePixelRatio;
         hardware.mouse.wheelScrollX = event.deltaX;
@@ -292,12 +298,13 @@ function getTouchMove(event) {
         var deltaY = -5 * (hardware.mouse.moveY - (event.touches[0].clientY*client.devicePixelRatio));
         if(client.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height)/30 && notInTransformerInput(event.touches[0].clientX*client.devicePixelRatio,event.touches[0].clientY*client.devicePixelRatio)) {
             getGesture({type: "swipe", deltaX:deltaX/4,deltaY:deltaY/4});
+            hardware.mouse.isDrag = true;
             hardware.mouse.isHold = false;
         }
         hardware.mouse.moveX = (event.touches[0].clientX*client.devicePixelRatio);
         hardware.mouse.moveY = (event.touches[0].clientY*client.devicePixelRatio);
     } else if (event.touches.length == 2) {
-        hardware.mouse.isHold = false;
+        hardware.mouse.isHold = hardware.mouse.isDrag = false;
         var hypot = Math.hypot( event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
         if(typeof(client.PinchOHypot) == "undefined") {
             client.PinchOHypot = hypot;
@@ -318,13 +325,22 @@ function getTouchStart(event) {
     client.chosenInputMethod = "touch";
     var xTS = (event.changedTouches[0].clientX*client.devicePixelRatio);
     var yTS = (event.changedTouches[0].clientY*client.devicePixelRatio);
-    if(event.touches.length == 1 && Math.max(hardware.mouse.moveX,xTS) < 1.1 * Math.min(hardware.mouse.moveX,xTS) && Math.max(hardware.mouse.moveY,yTS) < 1.1 * Math.min(hardware.mouse.moveY,yTS) && Date.now() - hardware.mouse.downTime < 2 * doubleClickTime && Date.now() - hardware.mouse.upTime < 2*doubleClickTime && notInTransformerTrainSwitch(xTS, yTS)) {
+    if(event.touches.length == 1 && Math.max(hardware.mouse.moveX,xTS) < 1.1 * Math.min(hardware.mouse.moveX,xTS) && Math.max(hardware.mouse.moveY,yTS) < 1.1 * Math.min(hardware.mouse.moveY,yTS) && Date.now() - hardware.mouse.downTime < doubleTouchTime && Date.now() - hardware.mouse.upTime < doubleTouchTime && notInTransformerTrainSwitch(xTS, yTS) && notInTransformerInput(xTS, yTS)) {
+        if(typeof clickTimeOut !== "undefined"){
+            window.clearTimeout(clickTimeOut);
+            clickTimeOut = null;
+        }
         client.PinchX = xTS;
         client.PinchY = yTS;
         getGesture({type: "doubletap", deltaX:client.PinchX,deltaY:client.PinchY});
-        hardware.mouse.isHold = false;
+        hardware.mouse.isHold = hardware.mouse.isDrag = false;
     } else if(event.touches.length == 3) {
+        if(typeof clickTimeOut !== "undefined"){
+            window.clearTimeout(clickTimeOut);
+            clickTimeOut = null;
+        }
         hardware.mouse.rightClickPrepare = true;
+        hardware.mouse.isHold = hardware.mouse.isDrag = false;
     } else {
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
         hardware.mouse.moveX = hardware.mouse.downX = xTS;
@@ -332,6 +348,7 @@ function getTouchStart(event) {
         if(hardware.mouse.isHoldTimeout !== undefined && hardware.mouse.isHoldTimeout !== null) {
             window.clearTimeout(hardware.mouse.isHoldTimeout);
         }
+        hardware.mouse.isDrag = false;
         hardware.mouse.isHold = !hardware.mouse.rightClick;
         hardware.mouse.rightClickHold = hardware.mouse.rightClick;
     }
@@ -343,7 +360,7 @@ function getTouchEnd(event) {
     hardware.mouse.upX = (event.changedTouches[0].clientX*client.devicePixelRatio);
     hardware.mouse.upY = (event.changedTouches[0].clientY*client.devicePixelRatio);
     hardware.mouse.upTime = Date.now();
-    hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.mouse.isHold = hardware.mouse.isDrag = hardware.mouse.rightClickHold = false;
     hardware.mouse.rightClickEvent = hardware.mouse.rightClick;
     if(hardware.mouse.rightClickPrepare != undefined && hardware.mouse.rightClickPrepare) {
         if(controlCenter.showCarCenter === null && hardware.mouse.rightClick && client.realScale == 1) {
@@ -362,7 +379,7 @@ function getTouchEnd(event) {
 }
 function getTouchCancel(event) {
     client.chosenInputMethod = "touch";
-    hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.mouse.isHold = hardware.mouse.isDrag = hardware.mouse.rightClickHold = false;
     hardware.keyboard.keysHold = [];
 }
 
@@ -440,7 +457,7 @@ function preventKeyZoomDuringLoad(event) {
 
 function onVisibilityChange() {
     client.hidden = document.visibilityState == "hidden";
-    hardware.mouse.isHold = hardware.mouse.rightClickHold = false;
+    hardware.mouse.isHold = hardware.mouse.isDrag = hardware.mouse.rightClickHold = false;
     hardware.keyboard.keysHold = [];
 }
 
@@ -960,7 +977,7 @@ function drawObjects() {
             context.restore();
             context.beginPath();
             context.rect(-currentObject.width/2, -currentObject.height/2, currentObject.width, currentObject.height);
-            if(context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+            if(context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "pointer";
             }
             if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) {
@@ -1039,7 +1056,7 @@ function drawObjects() {
         if(!onlineGame.stop) {
             context.beginPath();
             context.rect(-currentObject.width/2, -currentObject.height/2, currentObject.width, currentObject.height);
-            if(context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+            if(context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "pointer";
             }
             if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) {
@@ -1112,19 +1129,26 @@ function drawObjects() {
                 context.rotate(carWays[input1].start[currentObject.startFrame].angle);
                 context.beginPath();
                 context.rect(-currentObject.width/2, -currentObject.height/2, currentObject.width, currentObject.height);
-                if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+                if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                     hardware.mouse.cursor = "pointer";
                     if(hardware.mouse.isHold) {
-                        hardware.mouse.isHold = false;
-                        if(carParams.autoModeOff) {
-                            currentObject.move = true;
-                            currentObject.backToInit = true;
-                            notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y + optMenu.container.height);
-                        } else {
-                            carParams.autoModeRuns = true;
-                            carParams.isBackToRoot = true;
-                            notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750 ,null,  null, client.y + optMenu.container.height);
+                        if(typeof clickTimeOut !== "undefined"){
+                            window.clearTimeout(clickTimeOut);
+                            clickTimeOut = null;
                         }
+                        clickTimeOut = window.setTimeout(function(){
+                            clickTimeOut = null;
+                            hardware.mouse.isHold = false;
+                            if(carParams.autoModeOff) {
+                                currentObject.move = true;
+                                currentObject.backToInit = true;
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames",input1])), NOTIFICATION_PRIO_DEFAULT, 500 ,null,  null, client.y + optMenu.container.height);
+                            } else {
+                                carParams.autoModeRuns = true;
+                                carParams.isBackToRoot = true;
+                                notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750 ,null,  null, client.y + optMenu.container.height);
+                            }
+                        }, (hardware.lastInputTouch > hardware.lastInputMouse) ? doubleTouchWaitTime : 0);
                     }
                 }
             }
@@ -1349,24 +1373,23 @@ function drawObjects() {
     if(frameNo % 1000000 === 0){
         notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames","."),frameNo/1000000), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
     }
-    hardware.mouse.cursor = "default";
+    hardware.mouse.cursor = hardware.mouse.isDrag ? "move" : "default";
     if(client.realScale > 1) {
         var oTSX = client.touchScaleX;
         var oTSY = client.touchScaleY;
         var deltaDiv = 80;
-        var tolerance = client.width*client.devicePixelRatio/20;
         var deltaX = 0;
         var deltaY = 0;
-        if(hardware.keyboard.keysHold["ArrowLeft"] ||(hardware.mouse.moveX < tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
+        if(hardware.keyboard.keysHold["ArrowLeft"]) {
             deltaX += canvas.width*client.realScale/deltaDiv;
         }
-        if(hardware.keyboard.keysHold["ArrowUp"] || (hardware.mouse.moveY < tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
+        if(hardware.keyboard.keysHold["ArrowUp"]) {
             deltaY += canvas.height*client.realScale/deltaDiv;
         }
-        if(hardware.keyboard.keysHold["ArrowRight"] || (hardware.mouse.moveX > client.width*client.devicePixelRatio - tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
+        if(hardware.keyboard.keysHold["ArrowRight"]) {
             deltaX -= canvas.width*client.realScale/deltaDiv;
         }
-        if(hardware.keyboard.keysHold["ArrowDown"] || (hardware.mouse.moveY > client.height*client.devicePixelRatio - tolerance && hardware.mouse.isMoving && !hardware.mouse.out)) {
+        if(hardware.keyboard.keysHold["ArrowDown"]) {
             deltaY -= canvas.height*client.realScale/deltaDiv;
         }
         if(deltaX != 0 || deltaY != 0) {
@@ -1638,7 +1661,7 @@ function drawObjects() {
             context.save();
             context.beginPath();
             context.rect(classicUI.trainSwitch.selectedTrainDisplay.x,classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
-            if ((context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+            if (((context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) && !hardware.mouse.isDrag) {
                 wasInSwitchPath = true;
             }
             context.font = classicUI.trainSwitch.selectedTrainDisplay.font;
@@ -1675,7 +1698,7 @@ function drawObjects() {
         context.restore();
         context.beginPath();
         context.rect(-classicUI.trainSwitch.width/2, -classicUI.trainSwitch.height/2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
-        if (wasInSwitchPath || (context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+        if ((wasInSwitchPath || (context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) && !hardware.mouse.isDrag) {
             hardware.mouse.cursor = "pointer";
             if(typeof movingTimeOut !== "undefined"){
                 window.clearTimeout(movingTimeOut);
@@ -1722,14 +1745,21 @@ function drawObjects() {
             }
             context.beginPath();
             context.rect(-classicUI.transformer.directionInput.width/2, -classicUI.transformer.directionInput.height/2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
-            if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !trains[trainParams.selected].move) {
+            if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !trains[trainParams.selected].move && !hardware.mouse.isDrag) {
                 if(typeof movingTimeOut !== "undefined"){
                     window.clearTimeout(movingTimeOut);
                 }
                 hardware.mouse.cursor = "pointer";
                 if(hardware.mouse.isHold){
-                    hardware.mouse.isHold = false;
-                    actionSync("trains", trainParams.selected, [{"standardDirection":!trains[trainParams.selected].standardDirection}], [{getString:["appScreenObjectChangesDirection","."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
+                    if(typeof clickTimeOut !== "undefined"){
+                        window.clearTimeout(clickTimeOut);
+                        clickTimeOut = null;
+                    }
+                    clickTimeOut = window.setTimeout(function(){
+                        clickTimeOut = null;
+                        hardware.mouse.isHold = false;
+                        actionSync("trains", trainParams.selected, [{"standardDirection":!trains[trainParams.selected].standardDirection}], [{getString:["appScreenObjectChangesDirection","."]}, {getString:[["appScreenTrainNames",trainParams.selected]]}]);
+                    }, (hardware.lastInputTouch > hardware.lastInputMouse) ? doubleTouchWaitTime : 0);
                 }
             }
             context.restore();
@@ -1744,7 +1774,7 @@ function drawObjects() {
         }
         context.beginPath();
         context.rect(-classicUI.transformer.input.width/2, -classicUI.transformer.input.height/2, classicUI.transformer.input.width, classicUI.transformer.input.height);
-        if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !collisionCourse(trainParams.selected)) {
+        if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !collisionCourse(trainParams.selected) && !hardware.mouse.isDrag) {
             hardware.mouse.cursor = "pointer";
         }
         if ((context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) || (context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls)) {
@@ -1755,7 +1785,7 @@ function drawObjects() {
             }
             var x = classicUI.transformer.x+classicUI.transformer.width/2+classicUI.transformer.input.diffY*Math.sin(classicUI.transformer.angle);
             var y = classicUI.transformer.y+classicUI.transformer.height/2-classicUI.transformer.input.diffY*Math.cos(classicUI.transformer.angle);
-            if(!collisionCourse(trainParams.selected)){
+            if(!collisionCourse(trainParams.selected)) {
                 if(client.isTiny && (typeof(client.realScale) == "undefined" || client.realScale <= Math.max(1,client.realScaleMax/3))){
                     if(hardware.mouse.isHold){
                         hardware.mouse.isHold = false;
@@ -1769,7 +1799,7 @@ function drawObjects() {
                             }
                         }
                     }
-                } else if((hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY > y) && adjustScaleX(hardware.mouse.wheelX < x) )) || (!(adjustScaleY(hardware.mouse.moveY) > y && adjustScaleX(hardware.mouse.moveX) < x ))) {
+                } else if((hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY > y) && adjustScaleX(hardware.mouse.wheelX < x))) || (!(adjustScaleY(hardware.mouse.moveY) > y && adjustScaleX(hardware.mouse.moveX) < x ))) {
                     var angle;
                     if(hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY) > y && adjustScaleX(hardware.mouse.wheelX) < x)) {
                         angle = classicUI.transformer.input.angle * (hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9);
@@ -1814,7 +1844,7 @@ function drawObjects() {
                 trains[trainParams.selected].move = false;
                 hardware.mouse.isHold = false;
             }
-            if(classicUI.transformer.input.angle > 0 && classicUI.transformer.input.angle < classicUI.transformer.input.maxAngle) {
+            if(classicUI.transformer.input.angle > 0 && classicUI.transformer.input.angle < classicUI.transformer.input.maxAngle && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "grabbing";
             }
         } else {
@@ -1860,7 +1890,7 @@ function drawObjects() {
             contextForeground.save();
             contextForeground.beginPath();
             contextForeground.arc(background.x+switches[key][side].x, background.y+switches[key][side].y, classicUI.switches.radius, 0, 2*Math.PI);
-            if (!wasPointer && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) {
+            if (!wasPointer && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "pointer";
             }
             contextForeground.closePath();
@@ -1873,18 +1903,22 @@ function drawObjects() {
             contextForeground.beginPath();
             contextForeground.arc(background.x+switches[key][side].x, background.y+switches[key][side].y, classicUI.switches.radius, 0, 2*Math.PI);
             if (hardware.mouse.isHold && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !inTrain){
-                hardware.mouse.isHold = false;
-                if(onlineGame.enabled){
-                    actionSync("switches", [key,side], [{"turned":!switches[key][side].turned}], [{getString:["appScreenSwitchTurns", "."]}]);
-                } else {
-                    switches[key][side].turned = !switches[key][side].turned;
-                    switches[key][side].lastStateChange = frameNo;
-                    animateWorker.postMessage({k: "switches", switches: switches});
-                    notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height,NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
+                if(typeof clickTimeOut !== "undefined"){
+                    window.clearTimeout(clickTimeOut);
+                    clickTimeOut = null;
                 }
-                contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 255, 144,1)" : "rgba(255,0,0,1)";
-                contextForeground.closePath();
-                contextForeground.fill();
+                clickTimeOut = window.setTimeout(function(){
+                    clickTimeOut = null;
+                    hardware.mouse.isHold = false;
+                    if(onlineGame.enabled){
+                        actionSync("switches", [key,side], [{"turned":!switches[key][side].turned}], [{getString:["appScreenSwitchTurns", "."]}]);
+                    } else {
+                        switches[key][side].turned = !switches[key][side].turned;
+                        switches[key][side].lastStateChange = frameNo;
+                        animateWorker.postMessage({k: "switches", switches: switches});
+                        notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500,null, null, client.y + optMenu.container.height,NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
+                    }
+                }, (hardware.lastInputTouch > hardware.lastInputMouse) ? doubleTouchWaitTime : 0);
                 contextForeground.restore();
             } else if (!hardware.mouse.isHold && switches[key][side].lastStateChange != undefined && frameNo-switches[key][side].lastStateChange < classicUI.switches.showDuration) {
                 contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 255, 144,1)" : "rgba(255,0,0,1)";
@@ -2547,12 +2581,12 @@ function drawObjects() {
     if(settings.cursorascircle && isHardwareAvailable("cursorascircle") && client.chosenInputMethod == "mouse" && (hardware.mouse.isMoving || hardware.mouse.isHold || client.realScale > 1)) {
         contextForeground.save();
         contextForeground.translate(adjustScaleX(hardware.mouse.moveX),adjustScaleY(hardware.mouse.moveY));
-        contextForeground.fillStyle = hardware.mouse.cursor == "grabbing" ? "rgba(65,56,65," + (Math.random() * (0.3) + 0.6) + ")" : (hardware.mouse.cursor == "pointer" ? "rgba(99,118,140," + (Math.random() * (0.3) + 0.6) + ")" : (hardware.mouse.isHold ? "rgba(144,64,64," + (Math.random() * (0.3) + 0.6) + ")" : "rgba(255,250,240,0.5)"));
+        contextForeground.fillStyle = hardware.mouse.cursor == "move" ? "rgba(155,155,69," + (Math.random() * (0.3) + 0.6) + ")" : (hardware.mouse.cursor == "grabbing" ? "rgba(65,56,65," + (Math.random() * (0.3) + 0.6) + ")" : (hardware.mouse.cursor == "pointer" ? "rgba(99,118,140," + (Math.random() * (0.3) + 0.6) + ")" : (hardware.mouse.isHold ? "rgba(144,64,64," + (Math.random() * (0.3) + 0.6) + ")" : "rgba(255,250,240,0.5)")));
         var rectsize = canvas.width / 75;
         contextForeground.beginPath();
         contextForeground.arc(0,0,rectsize/2,0,2*Math.PI);
         contextForeground.fill();
-        contextForeground.fillStyle = hardware.mouse.cursor == "grabbing" ? "rgba(50,45,50,1)" : (hardware.mouse.cursor == "pointer" ? "rgba(50,63,95,1)" : (hardware.mouse.isHold ? "rgba(200,64,64,1)" : "rgba((255,250,240,0.5)"));
+        contextForeground.fillStyle = hardware.mouse.cursor == "move" ? "rgba(220,220,71,1)" : (hardware.mouse.cursor == "grabbing" ? "rgba(50,45,50,1)" : (hardware.mouse.cursor == "pointer" ? "rgba(50,63,95,1)" : (hardware.mouse.isHold ? "rgba(200,64,64,1)" : "rgba((255,250,240,0.5)")));
         contextForeground.beginPath();
         contextForeground.arc(0,0,rectsize/4,0,2*Math.PI);
         contextForeground.fill();
@@ -2639,6 +2673,8 @@ var movingTimeOut;
 var clickTimeOut;
 var longTouchTime = 500;
 var longTouchWaitTime = Math.floor(longTouchTime*0.8);
+var doubleTouchTime = 200;
+var doubleTouchWaitTime = doubleTouchTime*1.25;
 var doubleClickTime = 100;
 var doubleClickWaitTime = doubleClickTime*2;
 

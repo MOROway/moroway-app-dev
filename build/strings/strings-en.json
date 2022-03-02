@@ -265,10 +265,6 @@
 	"helpScreenLegalAppOCInsomniaPs": [
 		"The MOROway App OC variant uses the “Insomnia-PhoneGap-Plugin” by Eddy Verbruggen."
 	],
-	"helpScreenLegalAppOCNativeStorage": "cordova-plugin-nativestorage",
-	"helpScreenLegalAppOCNativeStoragePs": [
-		"The MOROway App OC variant uses the Native Storage Plugin by TheCocoaProject."
-	],
 	"helpScreenLegalAppOCSplashscreen": "cordova-plugin-splashscreen",
 	"helpScreenLegalAppOCSplashscreenPs": [
 		"The MOROway App OC variant uses the “Splashscreen Plugin“ by the Apache Software Foundation."
