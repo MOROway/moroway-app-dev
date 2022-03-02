@@ -3211,6 +3211,22 @@ window.onload = function() {
                 client.realScale = client.touchScale = client.lastTouchScale = 1;
                 client.touchScaleX = client.touchScaleY = 0;
                 drawObjects();
+                canvasForeground.addEventListener("touchmove", getTouchMove, { passive: false });
+                canvasForeground.addEventListener("touchstart", getTouchStart, { passive: false });
+                canvasForeground.addEventListener("touchend", getTouchEnd, { passive: false });
+                canvasForeground.addEventListener("touchcancel", getTouchCancel);
+                canvasForeground.addEventListener("mousemove", onMouseMove);
+                canvasForeground.addEventListener("mousedown", onMouseDown, { passive: false });
+                canvasForeground.addEventListener("mouseup", onMouseUp, { passive: false });
+                canvasForeground.addEventListener("mouseout", onMouseOut, { passive: false });
+                canvasForeground.addEventListener("mouseenter", onMouseEnter);
+                canvasForeground.addEventListener("contextmenu", onMouseRight, { passive: false });
+                canvasForeground.addEventListener("wheel", onMouseWheel, { passive: false });
+                document.addEventListener("keydown", onKeyDown);
+                document.addEventListener("keyup", onKeyUp);
+                document.removeEventListener("wheel", preventMouseZoomDuringLoad);
+                document.removeEventListener("keydown", preventKeyZoomDuringLoad);
+                document.removeEventListener("keyup", preventKeyZoomDuringLoad);
                 var timeWait = 0.5;
                 var timeLoad = 1.5;
                 window.setTimeout(function(){
@@ -3230,22 +3246,6 @@ window.onload = function() {
                             }
                             setLocalAppDataCopy();
                             destroy(toHide);
-                            canvasForeground.addEventListener("touchmove", getTouchMove, { passive: false });
-                            canvasForeground.addEventListener("touchstart", getTouchStart, { passive: false });
-                            canvasForeground.addEventListener("touchend", getTouchEnd, { passive: false });
-                            canvasForeground.addEventListener("touchcancel", getTouchCancel);
-                            canvasForeground.addEventListener("mousemove", onMouseMove);
-                            canvasForeground.addEventListener("mousedown", onMouseDown, { passive: false });
-                            canvasForeground.addEventListener("mouseup", onMouseUp, { passive: false });
-                            canvasForeground.addEventListener("mouseout", onMouseOut, { passive: false });
-                            canvasForeground.addEventListener("mouseenter", onMouseEnter);
-                            canvasForeground.addEventListener("contextmenu", onMouseRight, { passive: false });
-                            canvasForeground.addEventListener("wheel", onMouseWheel, { passive: false });
-                            document.addEventListener("keydown", onKeyDown);
-                            document.addEventListener("keyup", onKeyUp);
-                            document.removeEventListener("wheel", preventMouseZoomDuringLoad);
-                            document.removeEventListener("keydown", preventKeyZoomDuringLoad);
-                            document.removeEventListener("keyup", preventKeyZoomDuringLoad);
                         }, timeLoad*900);
                     }
                 }, timeWait*1000);

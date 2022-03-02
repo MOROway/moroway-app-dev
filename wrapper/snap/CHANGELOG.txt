@@ -50,3 +50,12 @@ Doubletap prevents normal touch action.
 
 ---
 
+
+
+7.4.4
+
+Fix multiplayer mode
+
+
+---
+
