@@ -40,3 +40,13 @@ Bugfixes.
 
 ---
 
+
+
+7.4.3
+
+Replace move background mouse gesture during zoom by hold and drag.
+Doubletap prevents normal touch action.
+
+
+---
+
