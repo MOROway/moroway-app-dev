@@ -2724,19 +2724,6 @@ var debugTrainCollisions;
 ******************************************/
 
 window.onload = function() {
-
-    function addInputMethod(event){
-        if(event.type == "touchstart"){
-            canvasForeground.removeEventListener("touchstart",addInputMethod);
-            setCurrentHardwareConfig("touch",true);
-        } else {
-            hardware.mouse.out = false;
-            canvasForeground.removeEventListener("mousemove",addInputMethod);
-            setCurrentHardwareConfig("mouse",true);
-        }
-        setSettingsHTML(document.querySelector("#settings-inner"),false);
-    }
-
     function initialDisplay() {
 
         function defineCarParams(){
@@ -3411,8 +3398,6 @@ window.onload = function() {
     contextForeground = canvasForeground.getContext("2d");
 
     hardware.lastInputMouse = hardware.lastInputTouch = 0;
-    canvasForeground.addEventListener("touchstart",addInputMethod);
-    canvasForeground.addEventListener("mousemove",addInputMethod);
     document.addEventListener("wheel", preventMouseZoomDuringLoad, { passive: false });
     document.addEventListener("keydown", preventKeyZoomDuringLoad, { passive: false });
     document.addEventListener("keyup", preventKeyZoomDuringLoad, { passive: false });

@@ -16,7 +16,7 @@ function followLink(input1, input2, input3){
         input1 = input1.length == 0 ? "./index.html" : (input1.substr(input1.length-1,1) == "/" ? input1 + "index.html" : (input1.substr(input1.length-5,5) == ".html" ? input1 : input1 + "/index.html"));
         if(queryString !== undefined) {
             followLink = false;
-            AnimationJSInterface.handleQueryString(queryString.substr(1));
+            WebJSInterface.handleQueryString(queryString.substr(1));
         }
         if(hash !== undefined) {
             input1 += hash;
@@ -37,7 +37,7 @@ function setSettingsHTMLLocal(elem, standalone, storageArea, showLang) {
             for(var i = 0; i < elems.length; i++) {
                 if(elems[i].id != "clang") {
                     elems[i].addEventListener("click", function(src){
-                        AnimationJSInterface.setLang(src.target.dataset.langCode);
+                        WebJSInterface.setLang(src.target.dataset.langCode);
                     });
                 }
             }
@@ -46,17 +46,17 @@ function setSettingsHTMLLocal(elem, standalone, storageArea, showLang) {
         for (var i = 0; i < Object.keys(settings).length; i++) {
             var a = Object.values(settings)[i];
             var b = Object.keys(settings)[i];
-            AnimationJSInterface.setSetting(storageArea, b, a);
+            WebJSInterface.setSetting(storageArea, b, a);
             if(elem.querySelector("[data-settings-id=\"" + b + "\"][data-settings-storage-area=\"" + storageArea + "\"]") !== null){
                 var leftButton = elem.querySelector("[data-settings-id=\"" + b + "\"][data-settings-storage-area=\"" + storageArea + "\"]").querySelector(".settings-opts-left-button");
                 var textButton = elem.querySelector("[data-settings-id=\"" + b + "\"][data-settings-storage-area=\"" + storageArea + "\"]").querySelector(".settings-opts-text-button");
                 leftButton.addEventListener("click", function(event){
                     var b = event.target.parentNode.parentNode.dataset.settingsId;
-                    AnimationJSInterface.setSetting(storageArea, b);
+                    WebJSInterface.setSetting(storageArea, b);
                 });
                 textButton.addEventListener("click", function(event){
                     var b = event.target.parentNode.parentNode.dataset.settingsId;
-                    AnimationJSInterface.setSetting(storageArea, b);
+                    WebJSInterface.setSetting(storageArea, b);
                 });
             }
         }
@@ -69,9 +69,9 @@ window.addEventListener("load", function(){
     }
     getServerNote(function(serverMsg){
         if(serverMsg.link != undefined && serverMsg.link != null && typeof serverMsg.link == "string") {
-            AnimationJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil, getServerRedirectLink(serverMsg.link));
+            WebJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil, getServerRedirectLink(serverMsg.link));
         } else {
-            AnimationJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil);
+            WebJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil);
         }
     });
 });

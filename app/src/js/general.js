@@ -362,34 +362,6 @@ function setLocalAppDataCopy(){
     }
 }
 
-//Current Hardware Usage & Last Hardware Usage
-function setCurrentHardwareConfig(a,b){
-    if(typeof(window.localStorage) != "undefined") {
-        var hardware = {};
-        try{
-            hardware = JSON.parse(window.localStorage.getItem("morowayAppHardwareConf") || "{}");
-        } catch(e) {
-            hardware = {};
-        }
-        if(hardware[a] == undefined || hardware[a] != b){
-            hardware[a] = b;
-            window.localStorage.setItem("morowayAppHardwareConf", JSON.stringify(hardware));
-        }
-    }
-}
-
-function getLastHardwareConfig(){
-    if(typeof(window.localStorage) != "undefined") {
-        var hardware = {};
-        try{
-            hardware = JSON.parse(window.localStorage.getItem("morowayAppHardwareConf") || "{}");
-        } catch(e) {
-            hardware = {};
-        }
-        return hardware;
-    }
-}
-
 //SETTINGS
 function getSettings (asObject, storageArea){
 
@@ -475,11 +447,10 @@ function isHardwareAvailable(a, storageArea){
     storageArea = storageArea == undefined || storageArea == null ? "morowayApp" : storageArea;
     var settingsComplete = getSettings(true, storageArea);
     var isHardwareAvailable = true;
-    var hardware = getLastHardwareConfig();
     if(settingsComplete.hardware[a] !== null){
         settingsComplete.hardware[a].forEach(function(current){
             Array(current).forEach(function(key){
-                if(!hardware[key]) {
+                if(AVAILABLE_HARDWARE.indexOf(key) == -1) {
                     isHardwareAvailable = false;
                 }
             });
@@ -702,6 +673,11 @@ const STRINGS = {{strings}};
 Object.freeze(STRINGS);
 const DEFAULT_LANG = "en";
 const CURRENT_LANG = (typeof(window.localStorage) != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string") ? (window.localStorage.getItem("morowayAppLang")) : ((typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language.substr(0,2))) ? window.navigator.language.substr(0,2) : DEFAULT_LANG);
+
+var AVAILABLE_HARDWARE = [];
+if(window.matchMedia("(pointer: fine)").matches) {
+    AVAILABLE_HARDWARE[AVAILABLE_HARDWARE.length] = "mouse";
+}
 
 //Browser Compatibility
 if(typeof Object.values == "undefined") {

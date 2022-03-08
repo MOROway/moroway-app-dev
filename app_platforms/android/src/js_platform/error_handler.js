@@ -1,1 +1,1 @@
-window.addEventListener("error", function(e) {window.setTimeout(function(){var msg = "ERROR: "; Object.keys(e).forEach(function(key){ if(typeof(e[key]) == "string" || typeof(e[key]) == "number") {msg += key + ": " + e[key] + " / ";}}); AnimationJSInterface.throwError(msg);});});
+window.addEventListener("error", function(e) {window.setTimeout(function(){var msg = "ERROR: "; Object.keys(e).forEach(function(key){ if(typeof(e[key]) == "string" || typeof(e[key]) == "number") {msg += key + ": " + e[key] + " / ";}}); WebJSInterface.throwError(msg);});});
