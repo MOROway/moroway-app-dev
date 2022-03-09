@@ -130,7 +130,7 @@ for platform in ${platforms[@]}; do
 		for clangdir in changelogs/*
 		do
 			clang=$(basename "$clangdir")
-			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]]; then
+			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep -a "{{changelog=$clang}}") ]]; then
 				changelogs=""
 				for changelogfile in "$clangdir"/*.0
 				do

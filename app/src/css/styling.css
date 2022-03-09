@@ -30,34 +30,40 @@ canvas {
     left: 0;
     top: 0;
     z-index: 3;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #snake {
     background: none;
-    animation: snake 0.4s infinite;
 }
 
 #branding img, #snake div {
     width: 20%;
     max-width: 400px;
-    position: absolute;
-    transform: translate(-50%,-50%);
-    left: 50%;
-    top: 50%;
+}
+
+#branding img {
+    height: inherit;
+    object-fit: contain;
 }
 
 #snake div {
     width: 5vw;
     height: 5vw;
+    max-width: 10vh;
+    max-height: 10vh;
     border: 3px solid rgb(0, 0, 0);
     border-radius: 50%;
     border-right-color: rgba(0, 0, 0,0);
     border-bottom-color: rgba(0, 0, 0,0.5);
     border-left-color: rgba(0, 0, 0,0.75);
     content: ' ';
+    animation: snake 0.4s infinite;
 }
 
 #percent {
