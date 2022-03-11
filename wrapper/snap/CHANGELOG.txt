@@ -59,3 +59,12 @@ Fix multiplayer mode
 
 ---
 
+
+
+7.4.7
+
+Minor UX improvements
+
+
+---
+
