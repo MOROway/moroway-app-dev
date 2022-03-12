@@ -197,6 +197,7 @@
 	"helpScreenDownloadViewSource": "Quelltext {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Beispiel-Code",
+	"helpScreenDownloadTranslationsPic": "Verfremdeter Text",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
 		"Den Quelltext dieser Anwendung finden Sie auf GitHub."

@@ -197,6 +197,7 @@
 	"helpScreenDownloadViewSource": "Source Code {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Sample code",
+	"helpScreenDownloadTranslationsPic": "alienated text",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
 		"Get the source code from GitHub."
