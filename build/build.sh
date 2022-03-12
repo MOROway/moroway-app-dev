@@ -127,10 +127,11 @@ for platform in ${platforms[@]}; do
 		done
 		strings=$(echo "$strings" | perl -0pe 's/,$/}/g')
 		perl -0pi -e "s/\{\{strings\}\}/$strings/" "$file"
+		sleep 2s
 		for clangdir in changelogs/*
 		do
 			clang=$(basename "$clangdir")
-			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep -a "{{changelog=$clang}}") ]]; then
+			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]]; then
 				changelogs=""
 				for changelogfile in "$clangdir"/*.0
 				do
