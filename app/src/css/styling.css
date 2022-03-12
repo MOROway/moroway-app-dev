@@ -396,12 +396,13 @@ canvas {
 }
 
 #setup #setup-exit {
-    display: none;
     position: fixed;
     cursor: pointer;
+    font-size: 1.5em;
+    color: rgba(150,50,50);
     z-index: 2;
-    right: 20px;
-    top: 20px;
+    right: 1.5vw;
+    top: 1.5vw;
 }
 
 #setup #setup-inner-content {
