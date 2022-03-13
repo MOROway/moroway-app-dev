@@ -1,4 +1,10 @@
 function init(){
+    document.querySelector("#backOption").addEventListener("click", function(){
+        try {
+            window.close();
+        } catch(err) {}
+        followLink("./","_self", LINK_STATE_INTERNAL_HTML);
+    });
 
     var elem = document.createElement("p");
     elem.textContent = formatJSString(getString("helpScreenGeneralWelcomeVersion", "."), APP_DATA.version.major, APP_DATA.version.minor, APP_DATA.version.patch, APP_DATA.version.date.year, (APP_DATA.version.date.month < 10 ? "0" + APP_DATA.version.date.month : APP_DATA.version.date.month), (APP_DATA.version.date.day < 10 ? "0" + APP_DATA.version.date.day : APP_DATA.version.date.day), (APP_DATA.version.beta > 0 ? "-beta" + APP_DATA.version.beta : ""));
@@ -28,8 +34,6 @@ function init(){
     document.querySelector("#download-translations").addEventListener("click", function(){followLink(getServerRedirectLink("translations"),"_blank", LINK_STATE_NORMAL);});
 
     document.querySelector("#website-link").addEventListener("click", function(){followLink(getServerRedirectLink("moroweb"),"_blank", LINK_STATE_NORMAL);});
-
-    document.querySelector("#backOption").addEventListener("click", function(){try {window.close();}catch(err) {} followLink("./","_self", LINK_STATE_INTERNAL_HTML);});
 
     var elems = document.querySelectorAll(".content");
     for (var i = 0; i < elems.length; i++) {

@@ -3144,7 +3144,10 @@ window.onload = function() {
         }
 
         animateWorker.onerror = function() {
-            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 60000, function(){followLink("error#animate", "_blank", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.y + optMenu.container.height);
+            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
+            window.setTimeout(function(){
+                followLink("error#animate", "_self", LINK_STATE_INTERNAL_HTML);
+            }, 1000);
         };
         animateWorker.onmessage = function(message) {
             if(message.data.k == "getTrainPics") {
@@ -3733,12 +3736,16 @@ window.onload = function() {
                         }
                         onlineConnection.socket = new WebSocket(host);
                         onlineConnection.socket.onopen = function () {
-                            window.addEventListener("error", function() {onlineConnection.socket.close();});
+                            window.addEventListener("error", function() {
+                                onlineConnection.socket.close();
+                            });
                             onlineConnection.send({mode:"hello", message: APP_DATA.version.major+APP_DATA.version.minor/10});
                         };
                         onlineConnection.socket.onclose = function () {
                             showNewGameLink();
-                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){
+                                followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                            }, getString("appScreenFurtherInformation"), client.height);
                         };
                         onlineConnection.socket.onmessage = function (message) {
                             var json = JSON.parse(message.data);
@@ -3779,7 +3786,9 @@ window.onload = function() {
                                     }
                                 } else {
                                     document.querySelector("#content").style.display = "none";
-                                    window.setTimeout(function(){followLink("error#tp-update", "_self", LINK_STATE_INTERNAL_HTML);},1000);
+                                    window.setTimeout(function(){
+                                        followLink("error#tp-update", "_self", LINK_STATE_INTERNAL_HTML);
+                                    }, 1000);
                                     notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.height);
                                 }
                                 break;
@@ -3793,7 +3802,9 @@ window.onload = function() {
                                     }
                                 } else {
                                     showNewGameLink();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NOTIFICATION_PRIO_HIGH, 6000, function(){
+                                        followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                    }, getString("appScreenFurtherInformation"), client.height);
                                 }
                                 break;
                             case "connect":
@@ -3813,7 +3824,9 @@ window.onload = function() {
                                     };
                                 } else {
                                     showNewGameLink();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayCreateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayCreateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){
+                                        followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                    }, getString("appScreenFurtherInformation"), client.height);
                                 }
                                 break;
                             case "join":
@@ -3823,14 +3836,18 @@ window.onload = function() {
                                         showStartGame(json.message);
                                     } else {
                                         showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-join", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){
+                                            followLink("error#tp-join", "_self", LINK_STATE_INTERNAL_HTML);
+                                        }, getString("appScreenFurtherInformation"), client.height);
                                     }
                                 } else {
                                     if(json.errorLevel === 0){
                                         showStartGame(json.message);
                                     } else {
                                         showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinTeammateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayJoinTeammateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){
+                                            followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                        }, getString("appScreenFurtherInformation"), client.height);
                                     }
                                 }
                                 break;
@@ -3863,7 +3880,9 @@ window.onload = function() {
                                     }
                                 } else {
                                     showNewGameLink();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayStartError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayStartError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){
+                                        followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                    }, getString("appScreenFurtherInformation"), client.height);
                                 }
                                 break;
                             case "action":
@@ -4044,7 +4063,9 @@ window.onload = function() {
                         };
                         onlineConnection.socket.onerror = function () {
                             showNewGameLink();
-                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "!"), NOTIFICATION_PRIO_HIGH, 6000, function(){
+                                followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                            }, getString("appScreenFurtherInformation"), client.height);
                         };
                     });
                     onlineConnection.send = (function(obj) {
@@ -4065,7 +4086,10 @@ window.onload = function() {
             }
         };
         pics[pic.id].onerror = function() {
-            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 60000, function(){followLink("error#pic", "_blank", LINK_STATE_INTERNAL_HTML);}, getString("appScreenFurtherInformation"), client.height);
+            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
+            window.setTimeout(function(){
+                followLink("error#pic", "_self", LINK_STATE_INTERNAL_HTML);
+            }, 1000);
         };
     });
 };

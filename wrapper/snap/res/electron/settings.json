@@ -3,7 +3,8 @@
         "fullscreen": true,
         "autoHideMenuBar": true,
         "webPreferences": {
-            "nativeWindowOpen": true
+            "nativeWindowOpen": true,
+            "devTools": false
         }
     }
 }
