@@ -83,12 +83,6 @@ for platform in ${platforms[@]}; do
 		[[ ! -d ../out/"$platform"/ ]] && mkdir ../out/"$platform"/
 		[[ -d "$to" ]] && rm -r "$to"
 		mkdir "$to"
-		if [[ $beta == 0 ]]; then
-			[[ -L ../out/"$platform"/current ]] && rm ../out/"$platform"/current
-			ln -s "$version$beta_identifier" ../out/"$platform"/current
-		fi
-		[[ -L ../out/"$platform"/latest ]] && rm ../out/"$platform"/latest
-		ln -s "$version$beta_identifier" ../out/"$platform"/latest
 
 		# Copy Core and Platforms
 		cp -pr "$from/"* "$to"
@@ -127,7 +121,8 @@ for platform in ${platforms[@]}; do
 		done
 		strings=$(echo "$strings" | perl -0pe 's/,$/}/g')
 		perl -0pi -e "s/\{\{strings\}\}/$strings/" "$file"
-		sleep 2s
+
+		[[ $(file -i "$file" | sed 's/.*charset=//') != utf-8 ]] && logexit 4 "setting strings internal error"
 		for clangdir in changelogs/*
 		do
 			clang=$(basename "$clangdir")
@@ -225,6 +220,14 @@ for platform in ${platforms[@]}; do
 			$(../wrapper/"$platform"/build.sh -b "$beta" -d "$debug" -o "$(realpath ../out/"$platform"/latest/)" -v "$version" -w "$(realpath .)" > /dev/null 2>&1) || logexit 1000 "platform-wrapper build"
 			log "finished platform-wrapper build"
 		fi
+
+		# Link current version
+		if [[ $beta == 0 ]]; then
+			[[ -L ../out/"$platform"/current ]] && rm ../out/"$platform"/current
+			ln -s "$version$beta_identifier" ../out/"$platform"/current
+		fi
+		[[ -L ../out/"$platform"/latest ]] && rm ../out/"$platform"/latest
+		ln -s "$version$beta_identifier" ../out/"$platform"/latest
 
 	fi
 done
