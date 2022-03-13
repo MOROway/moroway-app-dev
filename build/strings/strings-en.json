@@ -1,7 +1,7 @@
 {
 	"appScreenAMillionFrames": "{{0}} million frames shown",
 	"appScreenCarAutoModeChange": "Automatic car control {{0}}",
-	"appScreenCarAutoModeCrash": "Auto mode: car crash! Switching over to manual control… good luck!",
+	"appScreenCarAutoModeCrash": "Auto mode: car crash! Switching over to manual control. Good luck!",
 	"appScreenCarAutoModeInit": "activated",
 	"appScreenCarAutoModeParking": "Cars move back to initial position",
 	"appScreenCarAutoModePause": "paused",
@@ -44,8 +44,8 @@
 	"appScreenSaveGameError": "Error saving game",
 	"appScreenSettingsApplyAndClose": "Apply and close",
 	"appScreenSwitchTurns": "Switch turned",
-	"appScreenTeamplayChatClear": "Clear Chat",
-	"appScreenTeamplayChatClose": "Close Chat",
+	"appScreenTeamplayChatClear": "Clear chat",
+	"appScreenTeamplayChatClose": "Close chat",
 	"appScreenTeamplayChatMe": "Me",
 	"appScreenTeamplayChatNoEmojis": "Emojis might not be supported on your device.",
 	"appScreenTeamplayChatNone": "No messages yet. Write something nice…",
@@ -85,12 +85,12 @@
 	"appScreenTeamplayLeaveDialogYes": "Yes",
 	"appScreenTeamplayNoWebsocket": "Can't load multiplayer functions - please update your browser",
 	"appScreenTeamplaySetupCreateLink": "Create a new game",
-	"appScreenTeamplaySetupInit": "Enter Name",
+	"appScreenTeamplaySetupInit": "Enter name",
 	"appScreenTeamplaySetupInitButton": "Go",
 	"appScreenTeamplaySetupInitDetail": "Allowed characters: Letters and numbers.",
 	"appScreenTeamplaySetupStart": "Invite your teammate(s) using the following link",
 	"appScreenTeamplaySetupStartButton": "Copy",
-	"appScreenTeamplaySetupStartButtonError": "Error: Can't copy game link",
+	"appScreenTeamplaySetupStartButtonError": "Error: Couldn't copy game link",
 	"appScreenTeamplaySomebodyLeft": "Teammate left",
 	"appScreenTeamplayStartError": "Couldn't start game",
 	"appScreenTeamplaySyncError": "Game sync failed!",
@@ -99,7 +99,7 @@
 	"appScreenTeamplayTeammateWait": "Please wait for teammate to get ready…",
 	"appScreenTeamplayTitle": "Multiplayer",
 	"appScreenTeamplayUnknownRequest": "Server couldn't handle request",
-	"appScreenTeamplayUnsetTitle": "Single Player",
+	"appScreenTeamplayUnsetTitle": "Single-player",
 	"appScreenTeamplayUpdateError": "App update required",
 	"appScreenTeamplayUpdateNote": "App update recommended",
 	"appScreenTrainCarIcon": "🚃",
@@ -126,7 +126,7 @@
 	"errorScreenErrorAnimateGeneralPs": [
 		"An error with the animation web worker thread occurred. Either it couldn't be registered or a runtime error occurred. Is your browser up to date?"
 	],
-	"errorScreenErrorMissing": "Missing Elements",
+	"errorScreenErrorMissing": "Missing elements",
 	"errorScreenErrorMissingPics": "Images",
 	"errorScreenErrorMissingPicsPs": [
 		"You might have problems with your internet connection, firewall or media blocker.",
@@ -147,13 +147,13 @@
 		"You have to update to the newest version of MOROway App."
 	],
 	"generalBack": "Back",
-	"generalNoDOMStorageSupport": "Sorry - DOM storage not supported",
+	"generalNoDOMStorageSupport": "Sorry – DOM storage not supported",
 	"generalServerNoteButtonGo": "show me more",
 	"generalServerNoteButtonLater": "show again",
 	"generalServerNoteButtonNo": "okay",
 	"generalServerNoteInfoLater": "Only works if this message remains valid.",
 	"generalTitle": "MOROway App",
-	"generalTitleErrorScreen": "Known Issues",
+	"generalTitleErrorScreen": "Known issues",
 	"generalTitleHelpScreen": "Legal / Help",
 	"generalTitleSettingsScreen": "Settings",
 	"generalTitleWhatsNewScreen": "Changelog",
@@ -191,13 +191,13 @@
 	"helpScreenDownloadTranslations": "Translations {{0}}",
 	"helpScreenDownloadTranslationsButtonTranslations": "Weblate",
 	"helpScreenDownloadTranslationsIcon": "🌍",
+	"helpScreenDownloadTranslationsPic": "alienated text",
 	"helpScreenDownloadTranslationsPs": [
 		"Translations are handled using Weblate."
 	],
 	"helpScreenDownloadViewSource": "Source Code {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Sample code",
-	"helpScreenDownloadTranslationsPic": "alienated text",
 	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
 		"Get the source code from GitHub."
@@ -206,7 +206,7 @@
 	"helpScreenGeneralCars": "Cars {{0}}",
 	"helpScreenGeneralCarsIcon": "🚗",
 	"helpScreenGeneralCarsPs": [
-		"By touching / clicking one of the three cars left to the main station, it starts. By touching and holding / double-clicking one of them they enter automatic mode, which means they navigate automatically.",
+		"By touching / clicking one of the three cars left to the main station it starts. By touching and holding / double-clicking one of them they enter automatic mode, which means they navigate automatically.",
 		"If you haven't enabled automatic mode and operate more than one car, you risk a head-on collision. If this happens touch and hold / double-click one of the involved cars to move it back.",
 		"Touching or clicking on a stopped car's parking lot will navigate it back there.",
 		"You may access a car control center by touching with three fingers / right-clicking the background of the train control center. Alternatively you may use the options menu icon below the virtual model railroad."
@@ -224,7 +224,7 @@
 	"helpScreenGeneralTrainsIcon": "🚂",
 	"helpScreenGeneralTrainsPs": [
 		"You may operate six trains; an steam engine, two high speed trains, an railbus, an local train and an street car. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
-		"To navigate by using “Classic UI”, select a train by touching / clicking on the button on the lower-left side. Start / stop the selected train by operating the transformer.",
+		"To navigate by using “Classic UI”, select a train by touching / clicking on the button on the lower-left side. Start or stop the selected train by operating the transformer.",
 		"On larger devices you are also able to control the trains's speed using the transformer. Small devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
 		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on small devices.",
 		"You may turn some switches. Touch / click and hold the background to located the switches. Touch / click on a switch to turn it. The train takes the red or green colored way.",
@@ -312,7 +312,7 @@
 		"Visit the MOROway website…"
 	],
 	"helpScreenPrivacy": "Privacy",
-	"helpScreenPrivacyStatement": "Privacy Statement",
+	"helpScreenPrivacyStatement": "Privacy statement",
 	"helpScreenPrivacyStatementBackupLink": "Open privacy statement",
 	"helpScreenPrivacyStatementBackupLinkNotification": "Link opened",
 	"helpScreenPrivacyStatementIcon": "🦮",
@@ -328,7 +328,7 @@
 	"optInfo_morowayApp_alwaysShowSelectedTrain": "Requires “Classic UI”. Does not work on small screens.",
 	"optInfo_morowayApp_cursorascircle": "Does not work on touch screens.",
 	"optInfo_morowayApp_saveGame": "Ignored on multiplayer games.",
-	"optInfo_morowayApp_showNotifications": "Some notifications are shown even if deactivated. Does not work on small screens.",
+	"optInfo_morowayApp_showNotifications": "Some notifications are shown even if deactivated. Does not work on some display aspect ratios.",
 	"optLangSelectChange": "Preferences saved - reload app to apply",
 	"optLangSelectChangeButton": "reload",
 	"optLangSelectInfo": "Language selection (requires reload)",
