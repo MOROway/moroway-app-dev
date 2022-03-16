@@ -109,7 +109,7 @@ for platform in ${platforms[@]}; do
 		if [[ "$debug" == 1 ]]; then
 			debugBool=true;
 		fi
-		sed -i "s/{{version_major}}/$version_major/;s/{{version_minor}}/$version_minor/;s/{{version_patch}}/$version_patch/;s/{{date_year}}/"$(date "+%Y")"/;s/{{date_month}}/"$(date "+%-m")"/;s/{{date_day}}/"$(date "+%-d")"/;s/{{platform}}/$platform/;s/{{beta}}/$beta/;s/{{debug}}/$debugBool/" "$file"
+		sed -i "s/\"{{version_major}}\"/$version_major/;s/\"{{version_minor}}\"/$version_minor/;s/\"{{version_patch}}\"/$version_patch/;s/\"{{date_year}}\"/"$(date "+%Y")"/;s/\"{{date_month}}\"/"$(date "+%-m")"/;s/\"{{date_day}}\"/"$(date "+%-d")"/;s/{{platform}}/$platform/;s/\"{{beta}}\"/$beta/;s/\"{{debug}}\"/$debugBool/" "$file"
 		# General Script
 		file="$to/src/js/general.js"
 		strings="{"
@@ -120,7 +120,7 @@ for platform in ${platforms[@]}; do
 			strings="$strings$langCode:$stringsCurrent{{changelog=$langCode}}},"
 		done
 		strings=$(echo "$strings" | perl -0pe 's/,$/}/g')
-		perl -0pi -e "s/\{\{strings\}\}/$strings/" "$file"
+		perl -0pi -e "s/\"\{\{strings\}\}\"/$strings/" "$file"
 
 		[[ $(file -i "$file" | sed 's/.*charset=//') != utf-8 ]] && logexit 4 "setting strings internal error"
 		for clangdir in changelogs/*
@@ -188,23 +188,23 @@ for platform in ${platforms[@]}; do
 			if [[ -f "$file_ex" ]]; then
 				rm "$file_ex"
 			fi
-			sed -i "s/{{sw_platform}}/$platform/;s/{{sw_version}}/$version/;s/{{sw_beta}}/$beta_identifier/;s#{{sw_files}}#$sw_files_text#" "$file"
+			sed -i "s/{{sw_platform}}/$platform/;s/{{sw_version}}/$version/;s/{{sw_beta}}/$beta_identifier/;s#\"{{sw_files}}\"#$sw_files_text#" "$file"
 		fi
 		# HTML Content
 		for html_file in ${all_files[@]}; do
 			if [[ "$html_file" =~ .html$ ]]; then
 				if [[ -f "$to/manifest.webmanifest" ]]; then
-					sed -i 's/{{webmanifest}}/<link rel="manifest" href="manifest.webmanifest">/' "$to/$html_file"
+					sed -i 's/<\!--\sinsert_link_webmanifest\s-->/<link rel="manifest" href="manifest.webmanifest">/' "$to/$html_file"
 				else
-					sed -i 's/{{webmanifest}}//' "$to/$html_file";
+					sed -i 's/<\!--\sinsert_link_webmanifest\s-->//' "$to/$html_file";
 					perl -pi -e "s/^\s+\n\$//" "$to/$html_file"
 				fi
-				while [[ ! -z $(cat "$to/$html_file" | grep "{{dep_check}}" | head -1) ]]; do
-					if [[ -f "$to/"$(cat "$to/$html_file" | grep "{{dep_check}}" | head -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]];
+				while [[ ! -z $(cat "$to/$html_file" | grep "<\!-- dep_check -->" | head -1) ]]; do
+					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]];
 					then
-						perl -0pi -e "s/\{\{dep_check\}\}//"  "$to/$html_file"
+						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n/\n/"  "$to/$html_file"
 					else
-						perl -0pi -e "s/(^|[\n]).*\{\{dep_check\}\}.*\n/\n/"  "$to/$html_file"
+						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n.*\n/\n/"  "$to/$html_file"
 					fi
 				done
 			fi

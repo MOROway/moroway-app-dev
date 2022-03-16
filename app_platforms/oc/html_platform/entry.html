@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html>
-    <base href="../">
-    <meta charset="UTF-8">
+    <base href="../" />
+    <meta charset="UTF-8" />
 
     <script>
-    function localDR(){
-        window.plugins.webintent.getUri(function(url) {
-            followIntent(url);
-        }, false);
-    }
+        function localDR() {
+            window.plugins.webintent.getUri(function (url) {
+                followIntent(url);
+            }, false);
+        }
     </script>
 
     <!-- General Scripts -->
-    {{dep_check}}<script src="src/js/error_handler.js"></script>
-    {{dep_check}}<script src="src/js_platform/error_handler.js"></script>
-    {{dep_check}}<script src="src/js/appdata.js"></script>
-    {{dep_check}}<script src="src/js_platform/appdata.js"></script>
-    {{dep_check}}<script src="src/js/general.js"></script>
-    {{dep_check}}<script src="src/js_platform/general.js"></script>
+    <!-- dep_check -->
+    <script src="src/js/error_handler.js"></script>
+    <!-- dep_check -->
+    <script src="src/js_platform/error_handler.js"></script>
+    <!-- dep_check -->
+    <script src="src/js/appdata.js"></script>
+    <!-- dep_check -->
+    <script src="src/js_platform/appdata.js"></script>
+    <!-- dep_check -->
+    <script src="src/js/general.js"></script>
+    <!-- dep_check -->
+    <script src="src/js_platform/general.js"></script>
     <body></body>
 </html>

@@ -1,3 +1,3 @@
-window.addEventListener("error", function(e) {
+window.addEventListener("error", function (e) {
     WebJSInterface.throwError(e.message);
 });
