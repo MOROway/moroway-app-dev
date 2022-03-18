@@ -1,4 +1,4 @@
-window.addEventListener("error", function() {
+window.addEventListener("error", function () {
     var body = document.querySelector("body");
     body.style.background = "black";
     body.style.marginTop = "1%";

@@ -526,8 +526,9 @@ function drawOptionsMenu(state) {
         optMenu.container.width = background.width / client.devicePixelRatio;
         var innerWidth = (settings.classicUI || optMenu.floating ? 0.5 : 1) * optMenu.container.width;
         var availableHeight = optMenu.floating ? client.y : optMenu.container.height;
+        var itemDefaultSize = availableHeight * 0.5;
         if (optMenu.small && (!optMenu.floating || client.width * 0.75 >= client.height)) {
-            innerWidth /= 2.5;
+            innerWidth = (itemDefaultSize + background.width / client.devicePixelRatio / 90) * optMenu.items.length;
             optMenu.container.element.style.justifyContent = "end";
         } else {
             optMenu.container.element.style.justifyContent = "";
@@ -535,8 +536,6 @@ function drawOptionsMenu(state) {
         optMenu.container.elementInner.style.width = innerWidth + "px";
         optMenu.container.element.style.width = optMenu.container.width + "px";
         optMenu.container.elementInner.style.height = optMenu.container.element.style.height = availableHeight + "px";
-
-        var itemDefaultSize = availableHeight * 0.5;
         var itemSize = Math.min(itemDefaultSize, (itemDefaultSize * innerWidth) / (itemDefaultSize * optMenu.items.length));
 
         if (optMenu.floating) {
