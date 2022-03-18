@@ -68,3 +68,12 @@ Minor UX improvements
 
 ---
 
+
+
+7.4.8
+
+Minor UI improvements
+
+
+---
+
