@@ -6,5 +6,7 @@ window.addEventListener("load", function () {
         elemClone = elem.cloneNode(true);
     elem.parentNode.replaceChild(elemClone, elem);
     document.querySelector("#backOption").addEventListener("click", goBack);
-    document.addEventListener("backbutton", goBack, false);
 });
+function localDR() {
+    document.addEventListener("backbutton", goBack, false);
+}

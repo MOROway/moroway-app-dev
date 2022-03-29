@@ -21,7 +21,6 @@ function init_local() {
         elemClone = elem.cloneNode(true);
     elem.parentNode.replaceChild(elemClone, elem);
     document.querySelector("#backOption").addEventListener("click", goBack);
-    document.addEventListener("backbutton", goBack, false);
     document.querySelector("#legal-appoc-licenses").classList.remove("hidden");
     document.querySelector("#legal-appoc-cordova-license").addEventListener("click", function () {
         followLink("licenses_platform/cordova", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
@@ -42,4 +41,7 @@ function init_local() {
     document.querySelector("#download-sourcelink-oc").addEventListener("click", function () {
         followLink(getServerRedirectLink("source_code_appoc"), "_blank", LINK_STATE_NORMAL);
     });
+}
+function localDR() {
+    document.addEventListener("backbutton", goBack, false);
 }
