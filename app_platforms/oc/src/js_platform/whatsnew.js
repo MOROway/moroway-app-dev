@@ -1,4 +1,4 @@
-function goBack () {
+function goBack() {
     if (document.referrer === document.baseURI + "help/index.html") {
         followLink("./help", "_self", LINK_STATE_INTERNAL_HTML);
     } else {

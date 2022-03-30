@@ -1,4 +1,4 @@
-function goBack () {
+function goBack() {
     followLink("html_platform/start.html", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
 }
 function init_local() {

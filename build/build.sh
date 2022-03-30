@@ -54,6 +54,8 @@ fi
 [[ ! -d ../out ]] && mkdir ../out
 log "build started" 0
 
+[[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh > ../out/pre_build.log
+
 version="$(get_conf "version" "$debug")"
 [[ -z "$version" ]] && logexit 1 "version empty"
 version_major=$(echo "$version" | sed 's/^\([0-9]\+\)\.[0-9]\+\.[0-9]\+$/\1/')
@@ -233,3 +235,5 @@ for platform in ${platforms[@]}; do
 done
 
 [[ $valid_platform == 1 ]] && log "build succeeded" 0 || logexit 100 "invalid platform"
+
+[[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh > ../out/post_build.log
