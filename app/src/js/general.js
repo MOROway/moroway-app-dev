@@ -656,7 +656,7 @@ function updateSavedGame() {
             } else if (elem2 == old) {
                 return -1;
             } else {
-                return parseInt(elem1.replace(regexOld, "$1"), 10) < parseInt(elem2.replace(regexOld, "$1"), 10);
+                return parseInt(elem2.replace(regexOld, "$1"), 10) - parseInt(elem1.replace(regexOld, "$1"), 10);
             }
         });
         if (elemKeys.length > 0 && (elemKeys[0] == old || getVersionCode() >= parseInt(elemKeys[0].replace(regexOld, "$1"), 10))) {
