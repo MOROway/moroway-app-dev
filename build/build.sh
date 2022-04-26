@@ -234,6 +234,6 @@ for platform in ${platforms[@]}; do
 	fi
 done
 
-[[ $valid_platform == 1 ]] && log "build succeeded" 0 || logexit 100 "invalid platform"
-
 [[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh > ../out/post_build.log
+
+[[ $valid_platform == 1 ]] && log "build succeeded" 0 || logexit 100 "invalid platform"
