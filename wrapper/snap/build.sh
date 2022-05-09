@@ -25,18 +25,18 @@ cp -r "$output_dir_build" www
 
 
 # Set Changelog
-    changelog_file="CHANGELOG.txt"
-    [[ -z $(cat "$changelog_file") ]] && echo "CHANGELOG" > "$changelog_file"
-	changelog=""
-	if [[ -f "$working_dir_build/changelogs/default/$version" ]]; then
-		changelog="$changelog"$(cat "$working_dir_build/changelogs/default/$version" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
-	fi
-	if [[ -f "$working_dir_build/changelogs/default/$version-snap" ]]; then
-		changelog="$changelog"$(cat "$working_dir_build/changelogs/default/$version-snap" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
-	fi
-	if [[ ! -z "$changelog" ]] && [[ -z $(cat "$changelog_file" | grep "$version" ) ]]; then
-		printf '%s' $'\n'$'\n'"$version"$'\n'$'\n'"$changelog"$'\n'$'\n'"---"$'\n'$'\n' >> "$changelog_file"
-	fi
+changelog_file="CHANGELOG.txt"
+[[ -z $(cat "$changelog_file") ]] && echo "CHANGELOG" > "$changelog_file"
+changelog=""
+if [[ -f "$working_dir_build/changelogs/default/$version" ]]; then
+	changelog="$changelog"$(cat "$working_dir_build/changelogs/default/$version" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+fi
+if [[ -f "$working_dir_build/changelogs/default/$version-snap" ]]; then
+	changelog="$changelog"$(cat "$working_dir_build/changelogs/default/$version-snap" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+fi
+if [[ ! -z "$changelog" ]] && [[ -z $(cat "$changelog_file" | grep "$version" ) ]]; then
+	printf '%s' $'\n'$'\n'"$version"$'\n'$'\n'"$changelog"$'\n'$'\n'"---"$'\n'$'\n' >> "$changelog_file"
+fi
 
 # Set App Version
 content=$(cat config.xml | sed "s/version=\"[0-9]\+\.[0-9]\+\.[0-9]\+\"/version=\"$version\"/")

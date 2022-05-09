@@ -583,6 +583,40 @@ function drawOptionsMenu(state) {
 }
 
 function calcOptionsMenuAndBackground(state) {
+    function createTrainSound(cTrainNumber) {
+        try {
+            fetch("./assets/audio_asset_" + cTrainNumber + ".ogg")
+                .then(function (response) {
+                    return response.arrayBuffer();
+                })
+                .catch(function (error) {
+                    if (APP_DATA.debug) {
+                        console.log("Fetch-Error:", error);
+                    }
+                })
+                .then(function (response) {
+                    var audioContext = new AudioContext();
+                    audioContext.suspend();
+                    trainSound.audioContexts[cTrainNumber] = audioContext;
+                    trainSound.audioContexts[cTrainNumber].decodeAudioData(response, function (buffer) {
+                        var gainNode = trainSound.audioContexts[cTrainNumber].createGain();
+                        gainNode.gain.value = 0;
+                        gainNode.connect(trainSound.audioContexts[cTrainNumber].destination);
+                        trainSound.gainNodes[cTrainNumber] = gainNode;
+                        var source = trainSound.audioContexts[cTrainNumber].createBufferSource();
+                        source.buffer = buffer;
+                        source.loop = true;
+                        source.connect(trainSound.gainNodes[cTrainNumber]);
+                        trainSound.audios[cTrainNumber] = source;
+                        trainSound.audios[cTrainNumber].start();
+                    });
+                });
+        } catch (e) {
+            if (APP_DATA.debug) {
+                console.log(e);
+            }
+        }
+    }
     function calcBackground(simulate) {
         var additionalHeight;
         if (simulate === true) {
@@ -622,6 +656,52 @@ function calcOptionsMenuAndBackground(state) {
             },
             {passive: false}
         );
+        if (typeof fetch == "function") {
+            document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
+            document.querySelector("#canvas-sound-toggle").addEventListener("click", function () {
+                if (generalSounds.audioContext == undefined) {
+                    generalSounds.audioContext = new AudioContext();
+                    try {
+                        fetch("./assets/audio_asset_crash.ogg")
+                            .then(function (response) {
+                                return response.arrayBuffer();
+                            })
+                            .catch(function (error) {
+                                if (APP_DATA.debug) {
+                                    console.log("Fetch-Error:", error);
+                                }
+                            })
+                            .then(function (response) {
+                                generalSounds.audioContext.decodeAudioData(response, function (buffer) {
+                                    generalSounds.bufferAudioCrash = buffer;
+                                });
+                            });
+                    } catch (e) {
+                        if (APP_DATA.debug) {
+                            console.log(e);
+                        }
+                    }
+                }
+                if (trainSound.audioContexts == undefined) {
+                    trainSound.audioContexts = [];
+                    trainSound.gainNodes = [];
+                    trainSound.audios = [];
+                    for (var i = 0; i < trains.length; i++) {
+                        createTrainSound(i);
+                    }
+                }
+                trainSound.active = !trainSound.active;
+                if (trainSound.active) {
+                    document.querySelector("#canvas-sound-toggle").querySelector("i").textContent = "volume_up";
+                    document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOn"));
+                } else {
+                    document.querySelector("#canvas-sound-toggle").querySelector("i").textContent = "volume_off";
+                    document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
+                }
+            });
+        } else {
+            document.querySelector("#canvas-sound-toggle").classList.add("hidden");
+        }
         if (onlineGame.enabled) {
             document.querySelector("#canvas-team").classList.add("hidden");
             document.querySelector("#canvas-chat-open").addEventListener("click", function () {
@@ -2693,6 +2773,7 @@ var contextSemiForeground;
 var contextForeground;
 var drawInterval;
 var drawTimeout;
+var generalSounds = {};
 
 var movingTimeOut;
 var clickTimeOut;
@@ -2748,6 +2829,7 @@ var rotationPoints;
 var trains;
 var minTrainSpeed = 10;
 var trainParams;
+var trainSound = {};
 var switches = {
     inner2outer: {left: {turned: false, angles: {normal: 1.01 * Math.PI, turned: 0.941 * Math.PI}}, right: {turned: false, angles: {normal: 1.5 * Math.PI, turned: 1.56 * Math.PI}}},
     outer2inner: {left: {turned: false, angles: {normal: 0.25 * Math.PI, turned: 2.2 * Math.PI}}, right: {turned: false, angles: {normal: 0.27 * Math.PI, turned: 0.35 * Math.PI}}},
@@ -3301,7 +3383,6 @@ window.onload = function () {
                     trainPics[i].height = pics[trains[i].src].height;
                     trainPics[i].width = pics[trains[i].src].width;
                     trainPics[i].cars = [];
-
                     for (var j = 0; j < trains[i].cars.length; j++) {
                         trainPics[i].cars[j] = {};
                         trainPics[i].cars[j].height = pics[trains[i].cars[j].src].height;
@@ -3424,10 +3505,34 @@ window.onload = function () {
                             trains[i].cars[j].back.angle = car.back.angle;
                         }
                     });
+                    if (typeof trainSound.audios == "object" && typeof trainSound.audios[i] == "object" && typeof trainSound.gainNodes == "object" && typeof trainSound.gainNodes[i] == "object" && typeof trainSound.audioContexts == "object" && typeof trainSound.audioContexts[i] == "object") {
+                        if (trainSound.active) {
+                            if (train.currentSpeedInPercent == undefined) {
+                                train.currentSpeedInPercent = 0;
+                            }
+                            if (train.move && trainSound.audioContexts[i].state == "suspended") {
+                                trainSound.audioContexts[i].resume();
+                            } else if (train.move && trainSound.audioContexts[i].state == "running") {
+                                trainSound.gainNodes[i].gain.value = Math.round(Math.abs(train.accelerationSpeed) * train.currentSpeedInPercent) / 100;
+                            } else if (!train.move && trainSound.audioContexts[i].state == "running") {
+                                trainSound.audioContexts[i].suspend();
+                                trainSound.gainNodes[i].gain.value = 0;
+                            }
+                        } else if (trainSound.audioContexts[i].state == "running") {
+                            trainSound.audioContexts[i].suspend();
+                            trainSound.gainNodes[i].gain.value = 0;
+                        }
+                    }
                 });
             } else if (message.data.k == "trainCrash") {
                 actionSync("trains", message.data.i, [{move: false}, {accelerationSpeed: 0}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
                 actionSync("train-crash");
+                if (typeof generalSounds.audioContext == "object" && typeof generalSounds.bufferAudioCrash == "object" && trainSound.active) {
+                    var source = generalSounds.audioContext.createBufferSource();
+                    source.buffer = generalSounds.bufferAudioCrash;
+                    source.connect(generalSounds.audioContext.destination);
+                    source.start();
+                }
             } else if (message.data.k == "resized") {
                 resized = false;
                 if (onlineGame.enabled) {

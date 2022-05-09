@@ -354,5 +354,8 @@
 	"platformWindowsLinkError": "Error! Couldn't open link.",
 	"whatsNewScreenVersionIsNew": "New",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
-	"whatsNewScreenVersionNumberMinor": "New in version {{0}}.{{1}}"
+	"whatsNewScreenVersionNumberMinor": "New in version {{0}}.{{1}}",
+	"generalOn": "on",
+	"appScreenSound": "sound effects",
+	"appScreenSoundToggle": "{{0}} are {{1}}"
 }
