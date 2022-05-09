@@ -670,7 +670,7 @@ function drawOptionsMenu(state) {
 }
 
 function calcOptionsMenuAndBackground(state) {
-    function createAudio(buffer, volume, destinationName, destinationIndex) {
+    function createAudio(destinationName, destinationIndex, buffer, volume) {
         var gainNode = audio.context.createGain();
         gainNode.gain.value = volume;
         gainNode.connect(audio.context.destination);
@@ -695,7 +695,7 @@ function calcOptionsMenuAndBackground(state) {
                 })
                 .then(function (response) {
                     audio.context.decodeAudioData(response, function (buffer) {
-                        createAudio(buffer, 0, "train", cTrainNumber);
+                        createAudio("train", cTrainNumber, buffer, 0);
                     });
                 });
         } catch (e) {
@@ -743,7 +743,7 @@ function calcOptionsMenuAndBackground(state) {
             },
             {passive: false}
         );
-        if (typeof fetch == "function") {
+        if (typeof fetch == "function" && typeof AudioContext == "function") {
             document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
             document.querySelector("#canvas-sound-toggle").addEventListener("click", function () {
                 if (audio.context == undefined) {
@@ -766,7 +766,7 @@ function calcOptionsMenuAndBackground(state) {
                             })
                             .then(function (response) {
                                 audio.context.decodeAudioData(response, function (buffer) {
-                                    createAudio(buffer, 1, "trainCrash");
+                                    createAudio("trainCrash", null, buffer, 1);
                                 });
                             });
                     } catch (e) {
@@ -2658,7 +2658,7 @@ function drawObjects() {
                     }
                     if (newSpeed < minTrainSpeed) {
                         newSpeed = 0;
-                    } else if (newSpeed > 100) {
+                    } else if (newSpeed > 95) {
                         newSpeed = 100;
                     }
                     if (trains[cTrain].accelerationSpeed > 0 && newSpeed == 0) {
