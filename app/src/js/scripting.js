@@ -690,8 +690,8 @@ function calcOptionsMenuAndBackground(state) {
                         createTrainSound(i);
                     }
                 }
-                trainSound.active = !trainSound.active;
-                if (trainSound.active) {
+                generalSounds.active = !generalSounds.active;
+                if (generalSounds.active) {
                     document.querySelector("#canvas-sound-toggle").querySelector("i").textContent = "volume_up";
                     document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOn"));
                 } else {
@@ -2705,13 +2705,15 @@ function drawObjects() {
     if (drawTimeout !== undefined && drawTimeout !== null) {
         window.clearTimeout(drawTimeout);
     }
-    var resttime = drawInterval - (Date.now() - starttime);
-    if (resttime <= 0) {
-        window.requestAnimationFrame(drawObjects);
-    } else {
-        drawTimeout = window.setTimeout(function () {
+    if (!client.hidden) {
+        var resttime = drawInterval - (Date.now() - starttime);
+        if (resttime <= 0) {
             window.requestAnimationFrame(drawObjects);
-        }, resttime);
+        } else {
+            drawTimeout = window.setTimeout(function () {
+                window.requestAnimationFrame(drawObjects);
+            }, resttime);
+        }
     }
 }
 
@@ -3425,6 +3427,14 @@ window.onload = function () {
                 client.realScale = client.touchScale = client.lastTouchScale = 1;
                 client.touchScaleX = client.touchScaleY = 0;
                 drawObjects();
+                document.addEventListener("visibilitychange", function () {
+                    if (document.visibilityState != "hidden") {
+                        if (drawTimeout !== undefined && drawTimeout !== null) {
+                            window.clearTimeout(drawTimeout);
+                        }
+                        drawObjects();
+                    }
+                });
                 canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
                 canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
                 canvasForeground.addEventListener("touchend", getTouchEnd, {passive: false});
@@ -3506,7 +3516,7 @@ window.onload = function () {
                         }
                     });
                     if (typeof trainSound.audios == "object" && typeof trainSound.audios[i] == "object" && typeof trainSound.gainNodes == "object" && typeof trainSound.gainNodes[i] == "object" && typeof trainSound.audioContexts == "object" && typeof trainSound.audioContexts[i] == "object") {
-                        if (trainSound.active) {
+                        if (generalSounds.active && !client.hidden && !onlineGame.stop) {
                             if (train.currentSpeedInPercent == undefined) {
                                 train.currentSpeedInPercent = 0;
                             }
@@ -3527,7 +3537,7 @@ window.onload = function () {
             } else if (message.data.k == "trainCrash") {
                 actionSync("trains", message.data.i, [{move: false}, {accelerationSpeed: 0}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
                 actionSync("train-crash");
-                if (typeof generalSounds.audioContext == "object" && typeof generalSounds.bufferAudioCrash == "object" && trainSound.active) {
+                if (typeof generalSounds.audioContext == "object" && typeof generalSounds.bufferAudioCrash == "object" && generalSounds.active && !client.hidden && !onlineGame.stop) {
                     var source = generalSounds.audioContext.createBufferSource();
                     source.buffer = generalSounds.bufferAudioCrash;
                     source.connect(generalSounds.audioContext.destination);
@@ -3854,7 +3864,7 @@ window.onload = function () {
                             hideLoadingAnimation();
                             onlineGame.stop = false;
                             document.addEventListener("visibilitychange", function () {
-                                if (document.hidden) {
+                                if (document.visibilityState == "hidden") {
                                     onlineConnection.send({mode: "pause-request"});
                                 } else {
                                     onlineConnection.send({mode: "resume-request"});
@@ -4397,6 +4407,14 @@ window.onload = function () {
                         document.getElementById("setup-ball").style.top = "-1vw";
                     });
                     onlineConnection.connect(onlineConnection.serverURI);
+                } else {
+                    document.addEventListener("visibilitychange", function () {
+                        if (document.visibilityState == "hidden") {
+                            animateWorker.postMessage({k: "pause"});
+                        } else {
+                            animateWorker.postMessage({k: "resume"});
+                        }
+                    });
                 }
             }
         };
