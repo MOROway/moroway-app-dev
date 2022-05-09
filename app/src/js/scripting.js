@@ -44,6 +44,92 @@ function getFontSize(font, unit) {
     return parseInt(font.substr(0, font.length - (font.length - font.indexOf(unit))), 10);
 }
 
+function playAndPauseAudio() {
+    if (typeof audio.context == "object") {
+        var play = audio.active && !client.hidden && !onlineGame.stop;
+        if (play && audio.context.state == "suspended") {
+            audio.context.resume();
+        } else if (!play && audio.context.state == "running") {
+            audio.context.suspend();
+        }
+        return true;
+    }
+    return false;
+}
+function existsAudio(destinationName, destinationIndex) {
+    if (typeof audio.context == "object") {
+        if (typeof destinationIndex == "number") {
+            if (typeof audio.source[destinationName][destinationIndex] == "object") {
+                return true;
+            }
+        } else {
+            if (typeof audio.source[destinationName] == "object") {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+function startAudio(destinationName, destinationIndex, loop) {
+    if (typeof audio.context == "object") {
+        var source = audio.context.createBufferSource();
+        source.loop = loop;
+        if (typeof destinationIndex == "number") {
+            if (typeof audio.buffer[destinationName][destinationIndex] == "object" && typeof audio.gainNode[destinationName][destinationIndex] == "object") {
+                source.buffer = audio.buffer[destinationName][destinationIndex];
+                source.connect(audio.gainNode[destinationName][destinationIndex]);
+                audio.source[destinationName][destinationIndex] = source;
+            } else {
+                return false;
+            }
+        } else {
+            if (typeof audio.buffer[destinationName] == "object" && typeof audio.gainNode[destinationName] == "object") {
+                source.buffer = audio.buffer[destinationName];
+                source.connect(audio.gainNode[destinationName]);
+                audio.source[destinationName] = source;
+            } else {
+                return false;
+            }
+        }
+        source.start();
+        return true;
+    }
+    return false;
+}
+function setAudioVolume(destinationName, destinationIndex, volume) {
+    if (typeof audio.context == "object") {
+        var gainNode;
+        if (typeof destinationIndex == "number") {
+            gainNode = audio.gainNode[destinationName][destinationIndex];
+        } else {
+            gainNode = audio.gainNode[destinationName];
+        }
+        if (typeof gainNode == "object") {
+            gainNode.gain.value = Math.round(volume) / 100;
+            return true;
+        }
+    }
+    return false;
+}
+function stopAudio(destinationName, destinationIndex) {
+    if (typeof audio.context == "object") {
+        if (typeof destinationIndex == "number") {
+            if (typeof audio.source[destinationName][destinationIndex] == "object") {
+                audio.source[destinationName][destinationIndex].stop();
+                delete audio.source[destinationName][destinationIndex];
+                return true;
+            }
+        } else {
+            if (typeof audio.source[destinationName] == "object") {
+                audio.source[destinationName].stop();
+                delete audio.source[destinationName];
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 function showConfirmLeaveMultiplayerMode() {
     var tpLeave = document.querySelector("#tp-leave");
     if (onlineGame.enabled && tpLeave.style.display == "") {
@@ -456,6 +542,7 @@ function onVisibilityChange() {
     client.hidden = document.visibilityState == "hidden";
     hardware.mouse.isHold = hardware.mouse.isDrag = hardware.mouse.rightClickHold = false;
     hardware.keyboard.keysHold = [];
+    playAndPauseAudio();
 }
 
 /*******************************************
@@ -583,7 +670,19 @@ function drawOptionsMenu(state) {
 }
 
 function calcOptionsMenuAndBackground(state) {
-    function createTrainSound(cTrainNumber) {
+    function createAudio(buffer, volume, destinationName, destinationIndex) {
+        var gainNode = audio.context.createGain();
+        gainNode.gain.value = volume;
+        gainNode.connect(audio.context.destination);
+        if (typeof destinationIndex == "number") {
+            audio.gainNode[destinationName][destinationIndex] = gainNode;
+            audio.buffer[destinationName][destinationIndex] = buffer;
+        } else {
+            audio.gainNode[destinationName] = gainNode;
+            audio.buffer[destinationName] = buffer;
+        }
+    }
+    function createTrainAudio(cTrainNumber) {
         try {
             fetch("./assets/audio_asset_" + cTrainNumber + ".ogg")
                 .then(function (response) {
@@ -595,20 +694,8 @@ function calcOptionsMenuAndBackground(state) {
                     }
                 })
                 .then(function (response) {
-                    var audioContext = new AudioContext();
-                    audioContext.suspend();
-                    trainSound.audioContexts[cTrainNumber] = audioContext;
-                    trainSound.audioContexts[cTrainNumber].decodeAudioData(response, function (buffer) {
-                        var gainNode = trainSound.audioContexts[cTrainNumber].createGain();
-                        gainNode.gain.value = 0;
-                        gainNode.connect(trainSound.audioContexts[cTrainNumber].destination);
-                        trainSound.gainNodes[cTrainNumber] = gainNode;
-                        var source = trainSound.audioContexts[cTrainNumber].createBufferSource();
-                        source.buffer = buffer;
-                        source.loop = true;
-                        source.connect(trainSound.gainNodes[cTrainNumber]);
-                        trainSound.audios[cTrainNumber] = source;
-                        trainSound.audios[cTrainNumber].start();
+                    audio.context.decodeAudioData(response, function (buffer) {
+                        createAudio(buffer, 0, "train", cTrainNumber);
                     });
                 });
         } catch (e) {
@@ -659,8 +746,14 @@ function calcOptionsMenuAndBackground(state) {
         if (typeof fetch == "function") {
             document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
             document.querySelector("#canvas-sound-toggle").addEventListener("click", function () {
-                if (generalSounds.audioContext == undefined) {
-                    generalSounds.audioContext = new AudioContext();
+                if (audio.context == undefined) {
+                    audio.context = new AudioContext();
+                    audio.buffer = {};
+                    audio.buffer.train = [];
+                    audio.gainNode = {};
+                    audio.gainNode.train = [];
+                    audio.source = {};
+                    audio.source.train = [];
                     try {
                         fetch("./assets/audio_asset_crash.ogg")
                             .then(function (response) {
@@ -672,8 +765,8 @@ function calcOptionsMenuAndBackground(state) {
                                 }
                             })
                             .then(function (response) {
-                                generalSounds.audioContext.decodeAudioData(response, function (buffer) {
-                                    generalSounds.bufferAudioCrash = buffer;
+                                audio.context.decodeAudioData(response, function (buffer) {
+                                    createAudio(buffer, 1, "trainCrash");
                                 });
                             });
                     } catch (e) {
@@ -681,17 +774,13 @@ function calcOptionsMenuAndBackground(state) {
                             console.log(e);
                         }
                     }
-                }
-                if (trainSound.audioContexts == undefined) {
-                    trainSound.audioContexts = [];
-                    trainSound.gainNodes = [];
-                    trainSound.audios = [];
                     for (var i = 0; i < trains.length; i++) {
-                        createTrainSound(i);
+                        createTrainAudio(i);
                     }
                 }
-                generalSounds.active = !generalSounds.active;
-                if (generalSounds.active) {
+                audio.active = !audio.active;
+                playAndPauseAudio();
+                if (audio.active) {
                     document.querySelector("#canvas-sound-toggle").querySelector("i").textContent = "volume_up";
                     document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOn"));
                 } else {
@@ -2775,7 +2864,6 @@ var contextSemiForeground;
 var contextForeground;
 var drawInterval;
 var drawTimeout;
-var generalSounds = {};
 
 var movingTimeOut;
 var clickTimeOut;
@@ -2827,11 +2915,12 @@ var pics = [
 var background = {src: 9, secondLayer: 10};
 var oldbackground;
 
+var audio = {};
+
 var rotationPoints;
 var trains;
 var minTrainSpeed = 10;
 var trainParams;
-var trainSound = {};
 var switches = {
     inner2outer: {left: {turned: false, angles: {normal: 1.01 * Math.PI, turned: 0.941 * Math.PI}}, right: {turned: false, angles: {normal: 1.5 * Math.PI, turned: 1.56 * Math.PI}}},
     outer2inner: {left: {turned: false, angles: {normal: 0.25 * Math.PI, turned: 2.2 * Math.PI}}, right: {turned: false, angles: {normal: 0.27 * Math.PI, turned: 0.35 * Math.PI}}},
@@ -3515,34 +3604,25 @@ window.onload = function () {
                             trains[i].cars[j].back.angle = car.back.angle;
                         }
                     });
-                    if (typeof trainSound.audios == "object" && typeof trainSound.audios[i] == "object" && typeof trainSound.gainNodes == "object" && typeof trainSound.gainNodes[i] == "object" && typeof trainSound.audioContexts == "object" && typeof trainSound.audioContexts[i] == "object") {
-                        if (generalSounds.active && !client.hidden && !onlineGame.stop) {
-                            if (train.currentSpeedInPercent == undefined) {
-                                train.currentSpeedInPercent = 0;
-                            }
-                            if (train.move && trainSound.audioContexts[i].state == "suspended") {
-                                trainSound.audioContexts[i].resume();
-                            } else if (train.move && trainSound.audioContexts[i].state == "running") {
-                                trainSound.gainNodes[i].gain.value = Math.round(Math.abs(train.accelerationSpeed) * train.currentSpeedInPercent) / 100;
-                            } else if (!train.move && trainSound.audioContexts[i].state == "running") {
-                                trainSound.audioContexts[i].suspend();
-                                trainSound.gainNodes[i].gain.value = 0;
-                            }
-                        } else if (trainSound.audioContexts[i].state == "running") {
-                            trainSound.audioContexts[i].suspend();
-                            trainSound.gainNodes[i].gain.value = 0;
+                    if (train.move) {
+                        if (!existsAudio("train", i)) {
+                            startAudio("train", i, true);
                         }
+                        if (train.currentSpeedInPercent == undefined) {
+                            train.currentSpeedInPercent = 0;
+                        }
+                        setAudioVolume("train", i, Math.abs(train.accelerationSpeed) * train.currentSpeedInPercent);
+                    } else if (!train.move && existsAudio("train", i)) {
+                        stopAudio("train", i);
                     }
                 });
             } else if (message.data.k == "trainCrash") {
                 actionSync("trains", message.data.i, [{move: false}, {accelerationSpeed: 0}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
                 actionSync("train-crash");
-                if (typeof generalSounds.audioContext == "object" && typeof generalSounds.bufferAudioCrash == "object" && generalSounds.active && !client.hidden && !onlineGame.stop) {
-                    var source = generalSounds.audioContext.createBufferSource();
-                    source.buffer = generalSounds.bufferAudioCrash;
-                    source.connect(generalSounds.audioContext.destination);
-                    source.start();
+                if (existsAudio("trainCrash")) {
+                    stopAudio("trainCrash");
                 }
+                startAudio("trainCrash", null, false);
             } else if (message.data.k == "resized") {
                 resized = false;
                 if (onlineGame.enabled) {
@@ -4312,6 +4392,7 @@ window.onload = function () {
                                         window.clearTimeout(onlineGame.syncRequest);
                                     }
                                     onlineGame.stop = true;
+                                    playAndPauseAudio();
                                     animateWorker.postMessage({k: "pause"});
                                     notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
                                     break;
@@ -4324,6 +4405,7 @@ window.onload = function () {
                                             onlineGame.syncRequest = window.setTimeout(sendSyncRequest, onlineGame.syncInterval);
                                         }
                                         onlineGame.stop = false;
+                                        playAndPauseAudio();
                                         notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
                                         animateWorker.postMessage({k: "resume"});
                                     }
