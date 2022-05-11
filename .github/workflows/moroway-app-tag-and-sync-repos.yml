@@ -78,6 +78,9 @@ jobs:
           if [[ -f "changelogs/en/$VERSION-$PLATFORM" ]]; then
             changelog="$changelog"$(cat "changelogs/en/$VERSION-$PLATFORM" | sed 's/{{[0-9]\+}}}\s\?//g')$'\n'
           fi
+          if [[ $(cat "changelogs/meta/fixes/bool/$VERSION") == 1 ]]; then
+              changelog="$changelog"$(cat "changelogs/meta/fixes/locale/en")"."$'\n'
+          fi
           bash build.sh -p $PLATFORM || bash build.sh -p $PLATFORM || exit $?
           # Publish to platform repository
           cd ../out
