@@ -1186,12 +1186,12 @@ function drawObjects() {
                             }
                             if (!collisionCourse(input1)) {
                                 if (trains[input1].move && trains[input1].accelerationSpeed > 0) {
-                                    actionSync("trains", input1, [{accelerationSpeed: (trains[input1].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", input1]]}]);
+                                    actionSync("trains", input1, [{accelerationSpeed: (trains[input1].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", input1]]}]);
                                 } else {
                                     if (trains[input1].move) {
-                                        actionSync("trains", input1, [{accelerationSpeed: (trains[input1].accelerationSpeed *= -1)}, {speedInPercent: 50}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", input1]]}]);
+                                        actionSync("trains", input1, [{accelerationSpeed: (trains[input1].accelerationSpeed *= -1)}, {speedInPercent: 50}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", input1]]}]);
                                     } else {
-                                        actionSync("trains", input1, [{move: true}, {speedInPercent: 50}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", input1]]}]);
+                                        actionSync("trains", input1, [{move: true}, {speedInPercent: 50}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", input1]]}]);
                                     }
                                 }
                             }
@@ -1981,12 +1981,12 @@ function drawObjects() {
                     if (hardware.mouse.isHold) {
                         hardware.mouse.isHold = false;
                         if (trains[trainParams.selected].move && trains[trainParams.selected].accelerationSpeed > 0) {
-                            actionSync("trains", trainParams.selected, [{accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
+                            actionSync("trains", trainParams.selected, [{accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
                         } else {
                             if (trains[trainParams.selected].move) {
-                                actionSync("trains", trainParams.selected, [{speedInPercent: 50}, {accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
+                                actionSync("trains", trainParams.selected, [{speedInPercent: 50}, {accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
                             } else {
-                                actionSync("trains", trainParams.selected, [{speedInPercent: 50}, {move: true}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
+                                actionSync("trains", trainParams.selected, [{speedInPercent: 50}, {move: true}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
                             }
                         }
                     }
@@ -2009,19 +2009,18 @@ function drawObjects() {
                         cAngle = classicUI.transformer.input.minAngle;
                         classicUI.transformer.input.angle = (cAngle * classicUI.transformer.input.maxAngle) / 100;
                     }
-                    if (cAngle >= classicUI.transformer.input.minAngle && trains[trainParams.selected].accelerationSpeed > 0 && trains[trainParams.selected].speedInPercent != cAngle) {
-                        var accSpeed = trains[trainParams.selected].currentSpeedInPercent / cAngle;
-                        actionSync("trains", trainParams.selected, [{accelerationSpeedCustom: accSpeed}], null);
-                    }
-                    if (cAngle >= classicUI.transformer.input.minAngle) {
-                        actionSync("trains", trainParams.selected, [{speedInPercent: cAngle}], null);
-                    }
                     if (cAngle < classicUI.transformer.input.minAngle && trains[trainParams.selected].accelerationSpeed > 0) {
-                        actionSync("trains", trainParams.selected, [{accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
+                        actionSync("trains", trainParams.selected, [{accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
                     } else if (cAngle >= classicUI.transformer.input.minAngle && !trains[trainParams.selected].move) {
-                        actionSync("trains", trainParams.selected, [{move: true}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
+                        actionSync("trains", trainParams.selected, [{move: true}, {speedInPercent: cAngle}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
                     } else if (cAngle >= classicUI.transformer.input.minAngle && trains[trainParams.selected].accelerationSpeed < 0) {
-                        actionSync("trains", trainParams.selected, [{accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
+                        actionSync("trains", trainParams.selected, [{accelerationSpeed: (trains[trainParams.selected].accelerationSpeed *= -1)}, {speedInPercent: cAngle}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
+                    } else if (cAngle >= classicUI.transformer.input.minAngle) {
+                        if (trains[trainParams.selected].accelerationSpeed > 0 && trains[trainParams.selected].speedInPercent != cAngle) {
+                            var accSpeed = trains[trainParams.selected].currentSpeedInPercent / cAngle;
+                            actionSync("trains", trainParams.selected, [{accelerationSpeedCustom: accSpeed}], null);
+                        }
+                        actionSync("trains", trainParams.selected, [{speedInPercent: cAngle}], null);
                     }
                     if (cAngle == 0) {
                         hardware.mouse.isHold = false;
@@ -2662,15 +2661,17 @@ function drawObjects() {
                         newSpeed = 100;
                     }
                     if (trains[cTrain].accelerationSpeed > 0 && newSpeed == 0) {
-                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
-                    } else if (trains[cTrain].accelerationSpeed > 0) {
-                        var accSpeed = trains[cTrain].currentSpeedInPercent / newSpeed;
-                        actionSync("trains", cTrain, [{accelerationSpeedCustom: accSpeed}], null);
-                        actionSync("trains", cTrain, [{speedInPercent: newSpeed}], null);
+                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
                     } else if (!trains[cTrain].move && newSpeed > 0) {
-                        actionSync("trains", cTrain, [{move: true}, {speedInPercent: newSpeed}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
+                        actionSync("trains", cTrain, [{move: true}, {speedInPercent: newSpeed}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
                     } else if (trains[cTrain].accelerationSpeed < 0 && newSpeed > 0) {
-                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {speedInPercent: newSpeed}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
+                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {speedInPercent: newSpeed}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
+                    } else if (newSpeed > 0) {
+                        if (trains[cTrain].accelerationSpeed > 0 && trains[cTrain].speedInPercent != newSpeed) {
+                            var accSpeed = trains[cTrain].currentSpeedInPercent / newSpeed;
+                            actionSync("trains", cTrain, [{accelerationSpeedCustom: accSpeed}], null);
+                        }
+                        actionSync("trains", cTrain, [{speedInPercent: newSpeed}], null);
                     }
                     if (newSpeed > 0 && newSpeed < 100) {
                         hardware.mouse.cursor = "grabbing";
@@ -2679,11 +2680,11 @@ function drawObjects() {
                 contextForeground.strokeRect(controlCenter.maxTextWidth, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.5, maxTextHeight);
                 if (noCollisionCTrain && contextClick && hardware.mouse.upX - background.x - controlCenter.translateOffset > controlCenter.maxTextWidth * 1.5 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth * 1.75 && hardware.mouse.upY - background.y - controlCenter.translateOffset > maxTextHeight * cTrain && hardware.mouse.upY - background.y - controlCenter.translateOffset < maxTextHeight * cTrain + maxTextHeight) {
                     if (trains[cTrain].accelerationSpeed > 0) {
-                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
+                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
                     } else if (!trains[cTrain].move) {
-                        actionSync("trains", cTrain, [{move: true}, {speedInPercent: 50}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
+                        actionSync("trains", cTrain, [{move: true}, {speedInPercent: 50}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
                     } else if (trains[cTrain].accelerationSpeed < 0) {
-                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {speedInPercent: 50}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
+                        actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {speedInPercent: 50}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
                     }
                 }
                 contextForeground.save();
