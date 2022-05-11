@@ -77,3 +77,13 @@ Minor UI improvements
 
 ---
 
+
+
+7.5.0
+
+Sound effects for trains.
+Bugfixes.
+
+
+---
+

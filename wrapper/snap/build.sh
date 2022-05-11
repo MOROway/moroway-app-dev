@@ -34,6 +34,9 @@ fi
 if [[ -f "$working_dir_build/changelogs/default/$version-snap" ]]; then
 	changelog="$changelog"$(cat "$working_dir_build/changelogs/default/$version-snap" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
 fi
+if [[ $(cat "$working_dir_build/changelogs/meta/fixes/bool/$version") == 1 ]]; then
+    changelog="$changelog"$(cat "$working_dir_build/changelogs/meta/fixes/locale/default")"."$'\n'
+fi
 if [[ ! -z "$changelog" ]] && [[ -z $(cat "$changelog_file" | grep "$version" ) ]]; then
 	printf '%s' $'\n'$'\n'"$version"$'\n'$'\n'"$changelog"$'\n'$'\n'"---"$'\n'$'\n' >> "$changelog_file"
 fi

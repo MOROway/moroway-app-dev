@@ -63,6 +63,7 @@ version_minor=$(echo "$version" | sed 's/^[0-9]\+\.\([0-9]\+\)\.[0-9]\+$/\1/')
 version_patch=$(echo "$version" | sed 's/^[0-9]\+\.[0-9]\+\.\([0-9]\+\)$/\1/')
 [[ "$version_major" != $(echo "$version_major" | sed 's/[^0-9]//g') || "$version_minor" != $(echo "$version_minor" | sed 's/[^0-9]//g') || "$version_patch" != $(echo "$version_patch" | sed 's/[^0-9]//g') ]] && logexit 1 "version invalid"
 date '+%Y' > changelogs/meta/year/"$version"
+[[ ! -f changelogs/meta/fixes/bool/"$version" ]] && echo 0 > changelogs/meta/fixes/bool/"$version"
 
 beta=$( echo "$(get_conf "beta" "$debug")" | sed s/[^0-9]//g )
 [[ -z "$beta" ]] && logexit 2 "beta empty"
@@ -150,6 +151,11 @@ for platform in ${platforms[@]}; do
 							line=$(echo "$line" | sed 's/"/\\"/g')
 							changelog="$changelog"$(printf '"%s",' "$line")
 						done < "$changelogfile-$platform"
+					fi
+					if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]];
+					then
+						line=$(echo "$(cat "changelogs/meta/fixes/locale/$clang")." | sed 's/"/\\"/g')
+						changelog="$changelog"$(printf '"%s",' "$line")
 					fi
 					changelogs="$changelogs"$( echo "$changelog" | sed 's/,$/],/')
 				done
