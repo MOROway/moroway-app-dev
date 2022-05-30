@@ -87,3 +87,14 @@ Bugfixes.
 
 ---
 
+
+
+7.5.1
+
+Minor UX improvements
+Update dependencies
+Bugfixes.
+
+
+---
+

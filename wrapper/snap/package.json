@@ -6,6 +6,6 @@
     ]
   },
   "devDependencies": {
-    "cordova-electron": "^3.0.0"
+    "cordova-electron": "^3.1.0"
   }
 }
