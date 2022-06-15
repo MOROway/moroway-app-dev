@@ -126,11 +126,11 @@ function copyJSObject(obj) {
 function getQueryString(key) {
     var value = "";
     window.location.search
-        .substr(1)
+        .substring(1)
         .split("&")
         .forEach(function (part) {
-            if (part.indexOf("=") > 0 && part.substr(0, part.indexOf("=")) == key) {
-                value = part.substr(part.indexOf("=") + 1);
+            if (part.indexOf("=") > 0 && part.substring(0, part.indexOf("=")) == key) {
+                value = part.substring(part.indexOf("=") + 1);
             }
         });
     return value;
@@ -251,9 +251,9 @@ function getString(prop, punctuationMark, caseType, lang) {
     var str;
     if (Array.isArray(prop)) {
         if (prop.length == 2 && typeof prop[0] == "string" && typeof prop[1] == "number") {
-            if (typeof STRINGS[lang] != "undefined" && typeof STRINGS[lang][prop[0]] != "undefined") {
+            if (typeof STRINGS[lang] != "undefined" && typeof STRINGS[lang][prop[0]] != "undefined" && typeof STRINGS[lang][prop[0]][prop[1]] != "undefined") {
                 str = STRINGS[lang][prop[0]][prop[1]];
-            } else if (typeof STRINGS[DEFAULT_LANG] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]] != "undefined") {
+            } else if (typeof STRINGS[DEFAULT_LANG] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != "undefined") {
                 str = STRINGS[DEFAULT_LANG][prop[0]][prop[1]];
             } else {
                 return "undefined";
@@ -496,7 +496,7 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
         }
     }
 
-    function changeSetting() {
+    function changeSetting(event) {
         var settings = getSettings(false, storageArea);
         if (isSettingActive(event.target.parentNode.parentNode.dataset.settingsId, storageArea)) {
             settings[event.target.parentNode.parentNode.dataset.settingsId] = !settings[event.target.parentNode.parentNode.dataset.settingsId];
@@ -541,14 +541,14 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
             kid.textContent = "settings";
             kid.className = "settings-opts-left-button material-icons";
             kid.addEventListener("click", function (event) {
-                changeSetting();
+                changeSetting(event);
             });
             child.appendChild(kid);
             kid = document.createElement("span");
             kid.textContent = getString("optTitle_" + storageArea + "_" + opt);
             kid.className = "settings-opts-text-button";
             kid.addEventListener("click", function (event) {
-                changeSetting();
+                changeSetting(event);
             });
             child.appendChild(kid);
             optElem.appendChild(child);
@@ -720,7 +720,7 @@ const NOTIFICATION_CHANNEL_TEAMPLAY_CHAT = 3;
 const STRINGS = "{{strings}}";
 Object.freeze(STRINGS);
 const DEFAULT_LANG = "en";
-const CURRENT_LANG = typeof window.localStorage != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string" ? window.localStorage.getItem("morowayAppLang") : typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language.substr(0, 2)) ? window.navigator.language.substr(0, 2) : DEFAULT_LANG;
+const CURRENT_LANG = typeof window.localStorage != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string" ? window.localStorage.getItem("morowayAppLang") : typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language.substring(0, 2)) ? window.navigator.language.substring(0, 2) : DEFAULT_LANG;
 
 var AVAILABLE_HARDWARE = [];
 if (window.matchMedia("(pointer: fine)").matches) {

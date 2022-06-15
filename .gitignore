@@ -3,3 +3,4 @@ build/conf_local
 out
 wrapper/*
 !wrapper/snap
+.vscode

@@ -111,7 +111,8 @@
 		"🚋",
 		"🚅",
 		"🚃",
-		"🚈"
+		"🚈",
+		"🛲"
 	],
 	"appScreenTrainNames": [
 		"Dampflok",
@@ -119,7 +120,8 @@
 		"Schi-Stra-Bus",
 		"Thalys",
 		"Straßenbahn",
-		"Regionalzug"
+		"Regionalzug",
+		"Boston and Maine"
 	],
 	"appScreenTrainSelected": "{{0}} {{1}}ausgewählt",
 	"appScreenTrainSelectedAuto": "automatisch",
@@ -173,7 +175,7 @@
 	"helpScreenContactFeedbackSend": "Feedback senden",
 	"helpScreenContactFeedbackSendNotification": "Feedback-Seite geöffnet",
 	"helpScreenContactImprintTitle": "Kontaktinformationen",
-	"helpScreenDownload": "Downloads",
+	"helpScreenDownload": "Plattformen",
 	"helpScreenDownloadApps": "Apps {{0}}",
 	"helpScreenDownloadAppsAndroid": "Android",
 	"helpScreenDownloadAppsAndroidButton": "Play Store",
@@ -227,8 +229,8 @@
 	"helpScreenGeneralTrains": "Eisenbahnen {{0}}",
 	"helpScreenGeneralTrainsIcon": "🚂",
 	"helpScreenGeneralTrainsPs": [
-		"Zur Zeit lassen sich sechs Züge steuern; eine Dampflok, ein TGV Duplex, ein Schienen-Straßen-Bus, ein Thalys, ein Regionalzug und eine Straßenbahn. Das Starten bzw. Stoppen eines Zuges erfolgt durch Touch bzw. Klick auf den gewünschten Zug oder mit Hilfe der ausblendbaren klassischen Steuerelemente. Um einen Zug zu wenden, halten Sie den Zug an und touchen und halten bzw. doppelklicken Sie ihn.",
-		"Um mittels der klassischen Steuerelemente zu fahren, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im Appbildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im Appbildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
+		"Zur Zeit lassen sich sieben Züge steuern; eine Dampflok, einen TGV Duplex, einen Schienen-Straßen-Bus, einen Thalys, einen Regionalzug, eine Straßenbahn und einen amerikanischen Güterzug. Das Starten bzw. Stoppen eines Zuges erfolgt durch Touch bzw. Klick auf den gewünschten Zug oder mit Hilfe der ausblendbaren klassischen Steuerelemente. Um einen Zug zu wenden, halten Sie den Zug an und touchen und halten bzw. doppelklicken Sie ihn.",
+		"Um mittels der klassischen Steuerelemente zu fahren, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im App-Bildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im App-Bildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
 		"Wenn Sie einen größeren Bildschirm verwenden, so können Sie die Geschwindigkeit des Zuges beeinflussen, indem Sie den Regler des Transformators an die gewünschte Position ziehen, ihn an unterschiedlichen Stellen anklicken oder über ihm am Mausrad drehen. Auf kleinen Bildschirmen wird unabhängig hiervon eine mittlere Geschwindigkeit eingestellt. Sie können diese Beschränkung durch Heranzoomen des Transformators umgehen.",
 		"Um die Richtung des jeweils ausgewählten Zuges am Transformator zu ändern, klicken Sie auf das Symbol mit den gespiegelten Pfeilen unten rechts im Transformator an. Die ausgewählte Richtung wird relativ zu den unteren Gleisen hervorgehoben. Wenn der Zug nicht komplett angehalten ist, kann die Richtung nicht gewechselt werden und das Pfeilsymbol ist ausgeblichen. Auf kleineren Bildschirmen kann die Richtung hier nicht verändert werden.",
 		"Auch können Sie einige Weichen stellen. Das Stellen einer Weiche erfolgt durch Klick auf das farbige Symbol der jeweiligen Weiche. Die Position der Symbole kann durch langen Klick bzw. Touch auf den Hintergrund der Anlage ermittelt werden. Der Zug befährt immer den rot oder grün eingefärbten Weg.",

@@ -227,6 +227,7 @@ h2 {
 #langoption #clang {
     color: grey;
     border: 1px grey solid;
+    cursor: default;
 }
 
 #langoption .langvalue,
@@ -238,6 +239,7 @@ h2 {
     background: none;
     border: 1px black solid;
     border-radius: 2px;
+    cursor: pointer;
 }
 
 .settings-button {
