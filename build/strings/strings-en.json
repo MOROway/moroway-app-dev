@@ -229,7 +229,7 @@
 	"helpScreenGeneralTrains": "Trains {{0}}",
 	"helpScreenGeneralTrainsIcon": "🚂",
 	"helpScreenGeneralTrainsPs": [
-		"You may operate seven trains; a steam engine, two high speed trains, a railbus, a local train, a street car and an American freight train. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
+		"You may operate seven trains: a steam engine, two high speed trains, a railbus, a local train, a street car and an American freight train. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
 		"To navigate by using “Classic UI”, select a train by touching / clicking on the button on the lower-left side. Start or stop the selected train by operating the transformer.",
 		"On larger devices you are also able to control the trains's speed using the transformer. Small devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
 		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on small devices.",
