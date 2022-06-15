@@ -1852,6 +1852,7 @@ onmessage = function (message) {
                 trains[k].demoModeMove = true;
                 delete trains[k].circleStartPosDiv;
                 newTrains[newTrains.length] = trains[k];
+                newTrainIds[newTrainIds.length] = k;
             }
             var l;
             if (trains.length > newTrainIds.length && Math.random() > 0.6) {
@@ -1869,6 +1870,7 @@ onmessage = function (message) {
                 trains[l].demoModeMove = true;
                 delete trains[l].circleStartPosDiv;
                 newTrains[newTrains.length] = trains[l];
+                newTrainIds[newTrainIds.length] = l;
             }
             var m;
             if (trains.length > newTrainIds.length && Math.random() > 0.6 && newTrains[0].standardDirectionStartValue) {
@@ -1882,6 +1884,7 @@ onmessage = function (message) {
                 trains[m].standardDirectionStartValue = true;
                 trains[m].circleStartPosDiv = 0.8;
                 newTrains[newTrains.length] = trains[m];
+                newTrainIds[newTrainIds.length] = m;
             }
             var n;
             if (trains.length > newTrainIds.length && Math.random() > 0.4 && newTrains[0].standardDirectionStartValue) {
@@ -1895,6 +1898,7 @@ onmessage = function (message) {
                 trains[n].standardDirectionStartValue = true;
                 trains[n].circleStartPosDiv = 0.85;
                 newTrains[newTrains.length] = trains[n];
+                newTrainIds[newTrainIds.length] = n;
             }
             var o;
             if (trains.length > newTrainIds.length && Math.random() > 0.8 && newTrains[0].standardDirectionStartValue) {
@@ -1908,6 +1912,7 @@ onmessage = function (message) {
                 trains[o].standardDirectionStartValue = true;
                 trains[o].circleStartPosDiv = 1;
                 newTrains[newTrains.length] = trains[o];
+                newTrainIds[newTrainIds.length] = o;
             }
             trains = newTrains;
         }
