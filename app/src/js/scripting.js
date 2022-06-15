@@ -903,7 +903,7 @@ function calcOptionsMenuAndBackground(state) {
         optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
     }
     optMenu.floating = false;
-    if (optMenu.items.length > 0) {
+    if (optMenu.items.length > 0 && !gui.demo) {
         optMenu.small = !client.isSmall;
         optMenu.visible = true;
         optMenu.container.height = optMenu.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
