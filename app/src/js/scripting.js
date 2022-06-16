@@ -3731,7 +3731,7 @@ window.onload = function () {
                             var localAppData = getLocalAppDataCopy();
                             if (settings.classicUI && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.demo) {
                                 notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH, 3000, null, null, client.y + optMenu.container.height);
-                            } else if (localAppData !== null && (localAppData.version.major < APP_DATA.version.major || localAppData.version.minor < APP_DATA.version.minor) && typeof appUpdateNotification == "function" && !gui.demo) {
+                            } else if (localAppData !== null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor)) && typeof appUpdateNotification == "function" && !gui.demo) {
                                 appUpdateNotification();
                             } else if (typeof appReadyNotification == "function" && !gui.demo) {
                                 appReadyNotification();

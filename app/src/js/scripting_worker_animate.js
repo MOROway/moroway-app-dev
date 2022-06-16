@@ -1810,25 +1810,27 @@ var demoMode = false;
 var debug = false;
 
 onmessage = function (message) {
-    function resizeTrains(oldBackground) {
+    function resizeTrains(oldBackground, excludes) {
         for (var i = 0; i < trains.length; i++) {
-            trains[i].front.x = background.x + ((trains[i].front.x - oldBackground.x) * background.width) / oldBackground.width;
-            trains[i].back.x = background.x + ((trains[i].back.x - oldBackground.x) * background.width) / oldBackground.width;
-            trains[i].x = background.x + ((trains[i].x - oldBackground.x) * background.width) / oldBackground.width;
-            trains[i].front.y = background.y + ((trains[i].front.y - oldBackground.y) * background.height) / oldBackground.height;
-            trains[i].back.y = background.y + ((trains[i].back.y - oldBackground.y) * background.height) / oldBackground.height;
-            trains[i].y = background.y + ((trains[i].y - oldBackground.y) * background.height) / oldBackground.height;
-            trains[i].width = (trains[i].width * background.width) / oldBackground.width;
-            trains[i].height = (trains[i].height * background.height) / oldBackground.height;
-            for (var j = 0; j < trains[i].cars.length; j++) {
-                trains[i].cars[j].front.x = background.x + ((trains[i].cars[j].front.x - oldBackground.x) * background.width) / oldBackground.width;
-                trains[i].cars[j].back.x = background.x + ((trains[i].cars[j].back.x - oldBackground.x) * background.width) / oldBackground.width;
-                trains[i].cars[j].x = background.x + ((trains[i].cars[j].x - oldBackground.x) * background.width) / oldBackground.width;
-                trains[i].cars[j].front.y = background.y + ((trains[i].cars[j].front.y - oldBackground.y) * background.height) / oldBackground.height;
-                trains[i].cars[j].back.y = background.y + ((trains[i].cars[j].back.y - oldBackground.y) * background.height) / oldBackground.height;
-                trains[i].cars[j].y = background.y + ((trains[i].cars[j].y - oldBackground.y) * background.height) / oldBackground.height;
-                trains[i].cars[j].width = (trains[i].cars[j].width * background.width) / oldBackground.width;
-                trains[i].cars[j].height = (trains[i].cars[j].height * background.height) / oldBackground.height;
+            if (typeof excludes != "object" || !Array.isArray(excludes) || excludes.indexOf(i) == -1) {
+                trains[i].front.x = background.x + ((trains[i].front.x - oldBackground.x) * background.width) / oldBackground.width;
+                trains[i].back.x = background.x + ((trains[i].back.x - oldBackground.x) * background.width) / oldBackground.width;
+                trains[i].x = background.x + ((trains[i].x - oldBackground.x) * background.width) / oldBackground.width;
+                trains[i].front.y = background.y + ((trains[i].front.y - oldBackground.y) * background.height) / oldBackground.height;
+                trains[i].back.y = background.y + ((trains[i].back.y - oldBackground.y) * background.height) / oldBackground.height;
+                trains[i].y = background.y + ((trains[i].y - oldBackground.y) * background.height) / oldBackground.height;
+                trains[i].width = (trains[i].width * background.width) / oldBackground.width;
+                trains[i].height = (trains[i].height * background.height) / oldBackground.height;
+                for (var j = 0; j < trains[i].cars.length; j++) {
+                    trains[i].cars[j].front.x = background.x + ((trains[i].cars[j].front.x - oldBackground.x) * background.width) / oldBackground.width;
+                    trains[i].cars[j].back.x = background.x + ((trains[i].cars[j].back.x - oldBackground.x) * background.width) / oldBackground.width;
+                    trains[i].cars[j].x = background.x + ((trains[i].cars[j].x - oldBackground.x) * background.width) / oldBackground.width;
+                    trains[i].cars[j].front.y = background.y + ((trains[i].cars[j].front.y - oldBackground.y) * background.height) / oldBackground.height;
+                    trains[i].cars[j].back.y = background.y + ((trains[i].cars[j].back.y - oldBackground.y) * background.height) / oldBackground.height;
+                    trains[i].cars[j].y = background.y + ((trains[i].cars[j].y - oldBackground.y) * background.height) / oldBackground.height;
+                    trains[i].cars[j].width = (trains[i].cars[j].width * background.width) / oldBackground.width;
+                    trains[i].cars[j].height = (trains[i].cars[j].height * background.height) / oldBackground.height;
+                }
             }
         }
     }
@@ -1844,6 +1846,24 @@ onmessage = function (message) {
             }
         }
         return Date.now() - startTime;
+    }
+    function updateStateNegative3V8(realStandardDirection, cO) {
+        if (cO.turned) {
+            realStandardDirection = !realStandardDirection;
+        }
+        if (cO.state == -3) {
+            if (cO.x > rotationPoints.outer.altState3.right.x[2] + background.x) {
+                cO.stateLocal = 1;
+            } else if (cO.x > rotationPoints.outer.altState3.right.x[1] + background.x) {
+                cO.stateLocal = 2;
+            } else if (cO.x > rotationPoints.outer.altState3.left.x[1] + background.x) {
+                cO.stateLocal = 3;
+            } else if (cO.x > rotationPoints.outer.altState3.left.x[2] + background.x) {
+                cO.stateLocal = 4;
+            } else {
+                cO.stateLocal = 5;
+            }
+        }
     }
     if (message.data.k == "start") {
         online = message.data.online;
@@ -1968,10 +1988,12 @@ onmessage = function (message) {
             }
             /* END UPDATE: v7.4.0 */
             /* UPDATE: v8.0.0 */
+            var addedTrainIds = [];
             for (var t = 0; t < trains.length; t++) {
                 if (message.data.savedTrains[t] == undefined) {
                     placeTrainsAtInitialPositions(t);
                     message.data.savedTrains[t] = saveTrainCirclePrepare(trains[t], trains[t]);
+                    addedTrainIds[addedTrainIds.length] = t;
                 }
             }
             /* END UPDATE: v8.0.0 */
@@ -1982,7 +2004,21 @@ onmessage = function (message) {
                     trains[t].circle = rotationPoints[message.data.savedTrains[t].circleFamily][message.data.savedTrains[t].circle];
                 }
             }
-            resizeTrains(message.data.savedBg);
+            resizeTrains(message.data.savedBg, addedTrainIds);
+            /* UPDATE: v8.0.0 */
+            for (var t = 0; t < trains.length; t++) {
+                var realStandardDirection = trains[t].standardDirection;
+                for (var i = -1; i < trains[t].cars.length; i++) {
+                    if (i == -1) {
+                        updateStateNegative3V8(realStandardDirection, trains[t].back);
+                        updateStateNegative3V8(realStandardDirection, trains[t].front);
+                    } else {
+                        updateStateNegative3V8(realStandardDirection, trains[t].cars[i].back);
+                        updateStateNegative3V8(realStandardDirection, trains[t].cars[i].front);
+                    }
+                }
+            }
+            /* END UPDATE: v8.0.0 */
         } else {
             placeTrainsAtInitialPositions();
         }
