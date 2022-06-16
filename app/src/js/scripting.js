@@ -749,17 +749,20 @@ function calcOptionsMenuAndBackground(state) {
         try {
             fetch("./assets/audio_asset_" + cTrainNumber + ".ogg")
                 .then(function (response) {
-                    return response.arrayBuffer();
-                })
-                .catch(function (error) {
-                    if (APP_DATA.debug) {
-                        console.log("Fetch-Error:", error);
+                    if (response.ok) {
+                        return response.arrayBuffer();
                     }
+                    throw new Error("response not ok");
                 })
                 .then(function (response) {
                     audio.context.decodeAudioData(response, function (buffer) {
                         createAudio("train", cTrainNumber, buffer, 0);
                     });
+                })
+                .catch(function (error) {
+                    if (APP_DATA.debug) {
+                        console.log("Fetch-Error:", error);
+                    }
                 });
         } catch (e) {
             if (APP_DATA.debug) {
@@ -3785,14 +3788,14 @@ window.onload = function () {
                             trains[i].cars[j].back.angle = car.back.angle;
                         }
                     });
-                    if (train.move) {
+                    if (train.move && !train.mute) {
+                        if (!existsAudio("train", i)) {
+                            startAudio("train", i, true);
+                        }
                         if (train.currentSpeedInPercent == undefined) {
                             train.currentSpeedInPercent = 0;
                         }
                         setAudioVolume("train", i, Math.abs(train.accelerationSpeed) * train.currentSpeedInPercent);
-                    }
-                    if (train.move && !train.mute && !existsAudio("train", i)) {
-                        startAudio("train", i, true);
                     } else if (existsAudio("train", i)) {
                         stopAudio("train", i);
                     }
