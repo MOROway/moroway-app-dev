@@ -3806,7 +3806,9 @@ window.onload = function () {
                 if (existsAudio("trainCrash")) {
                     stopAudio("trainCrash");
                 }
-                startAudio("trainCrash", null, false);
+                if (audio.active) {
+                    startAudio("trainCrash", null, false);
+                }
             } else if (message.data.k == "resized") {
                 resized = false;
                 if (onlineGame.enabled) {
