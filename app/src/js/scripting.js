@@ -3065,7 +3065,8 @@ var pics = [
     {id: 28, extension: "png"},
     {id: 29, extension: "png"},
     {id: 30, extension: "png"},
-    {id: 31, extension: "png"}
+    {id: 31, extension: "png"},
+    {id: 32, extension: "png"}
 ];
 
 var background = {src: 9, secondLayer: 10};

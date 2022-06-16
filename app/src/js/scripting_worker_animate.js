@@ -1771,9 +1771,9 @@ var trains = [
     {
         src: 1,
         fac: 0.051,
-        speedFac: 1 / 500,
-        accelerationSpeedStartFac: 0.02,
-        accelerationSpeedFac: 1.008,
+        speedFac: 1 / 450,
+        accelerationSpeedStartFac: 0.03,
+        accelerationSpeedFac: 1.01,
         circle: rotationPoints.outer.narrow,
         circleFamily: rotationPoints.outer,
         circleStartPosDiv: 0.85,
@@ -1781,7 +1781,7 @@ var trains = [
         bogieDistance: 0.15,
         state: 210,
         flickerFacFront: 2.5,
-        trainSwitchSrc: 25,
+        trainSwitchSrc: 32,
         cars: [
             {src: 2, fac: 0.06, bogieDistance: 0.15},
             {src: 2, fac: 0.06, bogieDistance: 0.15},
