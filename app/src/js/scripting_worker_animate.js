@@ -19,23 +19,48 @@ function saveTheGameSend() {
     }
     postMessage({k: "save-game", saveTrains: saveTrains});
 }
-function changeCOSection(cO, isFront, input1, i, reverse) {
+function getRealStandardDirection(cO, input1, reverse) {
     if (reverse == undefined) {
         reverse = false;
     }
     var realStandardDirection = (trains[input1].standardDirection && !reverse) || (!trains[input1].standardDirection && reverse);
+    if (cO.turned) {
+        realStandardDirection = !realStandardDirection;
+    }
+    return realStandardDirection;
+}
+function getIsFirst(cO, isFront, input1, i) {
     var isFirst = isFront && i == -1;
+    if (cO.turned) {
+        isFirst = !isFront && i == trains[input1].cars.length - 1;
+    }
+    return isFirst;
+}
+function getIsLast(cO, isFront, input1, i) {
     var isLast = !isFront && i == trains[input1].cars.length - 1;
+    if (cO.turned) {
+        isLast = isFront && i == -1;
+    }
+    return isLast;
+}
+function getLastObject(cO, input1, realStandardDirection) {
     var lastObject = realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
+    if (cO.turned) {
+        lastObject = !realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
+    }
+    return lastObject;
+}
+function changeCOSection(cO, isFront, input1, i, reverse) {
     if (cO.turned == undefined) {
         cO.turned = false;
     }
-    if (cO.turned) {
-        realStandardDirection = !realStandardDirection;
-        isFirst = !isFront && i == trains[input1].cars.length - 1;
-        isLast = isFront && i == -1;
-        lastObject = !realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
+    if (trains[input1].trainTurned == undefined) {
+        trains[input1].trainTurned = false;
     }
+    var realStandardDirection = getRealStandardDirection(cO, input1, reverse);
+    var isFirst = getIsFirst(cO, isFront, input1, i);
+    var isLast = getIsLast(cO, isFront, input1, i);
+    var lastObject = getLastObject(cO, input1, realStandardDirection);
     if (realStandardDirection) {
         // Switch sections
         if (cO.state == 1 && Math.round(cO.x - background.x) >= Math.round(trains[input1].circle.x[1])) {
@@ -222,6 +247,9 @@ function changeCOSection(cO, isFront, input1, i, reverse) {
             if ((isLast && switches.outerRightSidingTurn.left.turned) || (lastObject.state > 215 && lastObject.state < 300)) {
                 cO.state = 218;
                 cO.turned = !cO.turned;
+                if (isFirst) {
+                    trains[input1].trainTurned = cO.turned;
+                }
             } else {
                 cO.state = 211;
             }
@@ -251,6 +279,9 @@ function changeCOSection(cO, isFront, input1, i, reverse) {
         } else if (cO.state == 218 && cO.x - background.x <= rotationPoints.outer.rightSiding.rejoin.x[1]) {
             cO.stateChange = true;
             cO.turned = !cO.turned;
+            if (isFirst) {
+                trains[input1].trainTurned = cO.turned;
+            }
             cO.state = 210;
         } else if (cO.state == 218 && cO.x - background.x < background.width && isLast) {
             trains[input1].mute = false;
@@ -316,16 +347,10 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         cO.y = getBezierPoints(cO.currentCurveFac, bezierPoints.y[0], bezierPoints.y[1], bezierPoints.y[2], bezierPoints.y[3]);
         cO.angle = getBezierAngle(cO.currentCurveFac, bezierPoints.x, bezierPoints.y);
     }
-    var realStandardDirection = trains[input1].standardDirection;
-    var isFirst = isFront && i == -1;
-    var isLast = !isFront && i == trains[input1].cars.length - 1;
-    var lastObject = realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
-    if (cO.turned) {
-        realStandardDirection = !realStandardDirection;
-        isFirst = !isFront && i == trains[input1].cars.length - 1;
-        isLast = isFront && i == -1;
-        lastObject = !realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
-    }
+    var realStandardDirection = getRealStandardDirection(cO, input1);
+    var isFirst = getIsFirst(cO, isFront, input1, i);
+    var isLast = getIsLast(cO, isFront, input1, i);
+    var lastObject = getLastObject(cO, input1, realStandardDirection);
     var points;
     if (cO.state == 1) {
         // Calc bogie position
@@ -1628,7 +1653,7 @@ function animateObjects() {
         trains[i].crash = false;
         for (var j = 0; j < trains.length; j++) {
             if (i != j) {
-                if (trainCollisions[i][j] >= trainParams.innerCollisionFac || trainCollisions[i][j] > trainCollisions[j][i] || (trains[i].endOfTrack && trains[i].endOfTrackStandardDirection == ((trains[i].standardDirection && !trains[i].front.turned) || (!trains[i].standardDirection && trains[i].front.turned)))) {
+                if (trainCollisions[i][j] >= trainParams.innerCollisionFac || trainCollisions[i][j] > trainCollisions[j][i] || (trains[i].endOfTrack && trains[i].endOfTrackStandardDirection == ((trains[i].standardDirection && !trains[i].trainTurned) || (!trains[i].standardDirection && trains[i].trainTurned)))) {
                     trains[i].crash = true;
                     if (trains[i].move) {
                         trains[i].move = false;
