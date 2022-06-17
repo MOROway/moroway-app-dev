@@ -27,6 +27,9 @@ function changeCOSection(cO, isFront, input1, i, reverse) {
     var isFirst = isFront && i == -1;
     var isLast = !isFront && i == trains[input1].cars.length - 1;
     var lastObject = realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
+    if (cO.turned == undefined) {
+        cO.turned = false;
+    }
     if (cO.turned) {
         realStandardDirection = !realStandardDirection;
         isFirst = !isFront && i == trains[input1].cars.length - 1;
@@ -314,11 +317,15 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         cO.angle = getBezierAngle(cO.currentCurveFac, bezierPoints.x, bezierPoints.y);
     }
     var realStandardDirection = trains[input1].standardDirection;
-    if (cO.turned) {
-        realStandardDirection = !realStandardDirection;
-    }
     var isFirst = isFront && i == -1;
     var isLast = !isFront && i == trains[input1].cars.length - 1;
+    var lastObject = realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
+    if (cO.turned) {
+        realStandardDirection = !realStandardDirection;
+        isFirst = !isFront && i == trains[input1].cars.length - 1;
+        isLast = isFront && i == -1;
+        lastObject = !realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
+    }
     var points;
     if (cO.state == 1) {
         // Calc bogie position
@@ -519,10 +526,9 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             cO.currentCurveFac = getBezierFac(cO.currentCurveFac, 1000, 2100, cO, points, 0.005);
             cO.stateChangeLocal = false;
         }
-        var lastObj = trains[input1].cars.length == 0 ? trains[input1] : trains[input1].cars[trains[input1].cars.length - 1];
         setCOPosBezier(points, !realStandardDirection, rotationPoints.inner.sidings.first.bezierLength);
-        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && !switches.sidings2.left.turned) || ((isFront || i != trains[input1].cars.length - 1) && lastObj.back.state >= 120))) {
-            cO.state = isLast ? (switches.sidings3.left.turned ? 120 : 130) : lastObj.back.state >= 130 ? 130 : 120;
+        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && !switches.sidings2.left.turned) || (!isLast && lastObject.state >= 120))) {
+            cO.state = isLast ? (switches.sidings3.left.turned ? 120 : 130) : lastObject.state >= 130 ? 130 : 120;
             cO.stateChangeLocal = true;
         }
     } else if (cO.state == 111) {
@@ -561,11 +567,10 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             cO.stateChangeLocal = false;
         }
         setCOPosBezier(points, !realStandardDirection, rotationPoints.inner.sidings.second.bezierLength);
-        var lastObj = trains[input1].cars.length == 0 ? trains[input1] : trains[input1].cars[trains[input1].cars.length - 1];
-        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || ((isFront || i != trains[input1].cars.length - 1) && lastObj.back.state < 120))) {
+        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || (!isLast && lastObject.state < 120))) {
             cO.state = 110;
             cO.stateChangeLocal = true;
-        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && !switches.sidings3.left.turned) || ((isFront || i != trains[input1].cars.length - 1) && lastObj.back.state >= 130))) {
+        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && !switches.sidings3.left.turned) || (!isLast && lastObject.state >= 130))) {
             cO.state = 130;
             cO.stateChangeLocal = true;
         }
@@ -604,12 +609,11 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             cO.currentCurveFac = getBezierFac(cO.currentCurveFac, 1000, 2100, cO, points, 0.005);
             cO.stateChangeLocal = false;
         }
-        var lastObj = trains[input1].cars.length == 0 ? trains[input1] : trains[input1].cars[trains[input1].cars.length - 1];
         setCOPosBezier(points, !realStandardDirection, rotationPoints.inner.sidings.third.bezierLength);
-        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || ((isFront || i != trains[input1].cars.length - 1) && lastObj.back.state < 120))) {
+        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || (!isLast && lastObject.state < 120))) {
             cO.state = 110;
             cO.stateChangeLocal = true;
-        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && switches.sidings3.left.turned) || ((isFront || i != trains[input1].cars.length - 1) && lastObj.back.state < 130))) {
+        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && switches.sidings3.left.turned) || (!isLast && lastObject.state < 130))) {
             cO.state = 120;
             cO.stateChangeLocal = true;
         }
@@ -1624,7 +1628,7 @@ function animateObjects() {
         trains[i].crash = false;
         for (var j = 0; j < trains.length; j++) {
             if (i != j) {
-                if (trainCollisions[i][j] >= trainParams.innerCollisionFac || trainCollisions[i][j] > trainCollisions[j][i] || (trains[i].endOfTrack && trains[i].endOfTrackStandardDirection == trains[i].standardDirection)) {
+                if (trainCollisions[i][j] >= trainParams.innerCollisionFac || trainCollisions[i][j] > trainCollisions[j][i] || (trains[i].endOfTrack && trains[i].endOfTrackStandardDirection == ((trains[i].standardDirection && !trains[i].front.turned) || (!trains[i].standardDirection && trains[i].front.turned)))) {
                     trains[i].crash = true;
                     if (trains[i].move) {
                         trains[i].move = false;
