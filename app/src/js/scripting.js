@@ -697,6 +697,7 @@ function drawInfoOverlayMenu(state) {
         var element = document.createElement("button");
         element.className = "canvas-info-button";
         element.textContent = infoOverlayMenu.items[i];
+        element.title = getString(["appScreenGraphicalInfoList", i]);
         element.onclick = function (event) {
             if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
                 window.clearTimeout(infoOverlayMenu.textTimeout);
