@@ -703,21 +703,25 @@ function drawInfoOverlayMenu(state) {
             if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
                 window.clearTimeout(infoOverlayMenu.textTimeout);
             }
-            infoOverlayMenu.focus = event.target.textContent;
             var overlayText = document.querySelector("#info-overlay-text");
             overlayText.style = "";
-            overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
-            overlayText.style.display = "flex";
-            while (overlayText.offsetWidth < overlayText.scrollWidth) {
-                var fontSize = window.getComputedStyle(overlayText).getPropertyValue("font-size");
-                overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
-            }
-            var overlayTextHeight = overlayText.offsetHeight;
-            overlayText.style.height = Math.max(client.y, overlayTextHeight) + "px";
-            infoOverlayMenu.textTimeout = window.setTimeout(function () {
-                overlayText.style = "";
+            if (infoOverlayMenu.focus == event.target.textContent) {
                 delete infoOverlayMenu.focus;
-            }, 4000);
+            } else {
+                infoOverlayMenu.focus = event.target.textContent;
+                overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
+                overlayText.style.display = "flex";
+                while (overlayText.offsetWidth < overlayText.scrollWidth) {
+                    var fontSize = window.getComputedStyle(overlayText).getPropertyValue("font-size");
+                    overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
+                }
+                var overlayTextHeight = overlayText.offsetHeight;
+                overlayText.style.height = Math.max(client.y, overlayTextHeight) + "px";
+                infoOverlayMenu.textTimeout = window.setTimeout(function () {
+                    overlayText.style = "";
+                    delete infoOverlayMenu.focus;
+                }, 4000);
+            }
         };
         document.querySelector("#canvas-info-inner").appendChild(element);
     }
