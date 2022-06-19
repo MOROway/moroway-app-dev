@@ -161,6 +161,7 @@
 		"You have to update to the newest version of MOROway App."
 	],
 	"generalBack": "Back",
+	"generalClose": "close",
 	"generalNoDOMStorageSupport": "Sorry – DOM storage not supported",
 	"generalOff": "off",
 	"generalOn": "on",
