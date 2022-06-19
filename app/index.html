@@ -118,6 +118,9 @@
                             <button id="canvas-help" class="canvas-options-button" data-stringid-title="generalTitleHelpScreen">
                                 <i class="material-icons">help</i>
                             </button>
+                            <button id="canvas-info-toggle" class="canvas-options-button" data-stringid-title="appScreenGraphicalInfo">
+                                <i class="material-icons">info</i>
+                            </button>
                             <button id="canvas-control-center" class="canvas-options-button" data-stringid-title="appScreenControlCenterTitle">
                                 <i class="material-icons">train</i>
                             </button>
@@ -132,9 +135,17 @@
                             </button>
                         </div>
                     </div>
+                    <div id="canvas-info">
+                        <div id="canvas-info-inner">
+                            <button id="canvas-info-exit" class="canvas-info-button" data-stringid-title="generalClose">
+                                <i class="material-icons">close</i>
+                            </button>
+                        </div>
+                    </div>
                     <canvas id="game-gameplay-main" data-stringid-content="appScreenNoCanvas">JavaScript required</canvas>
                     <canvas id="game-gameplay-sfg" data-stringid-content="appScreenNoCanvas">JavaScript required</canvas>
                     <canvas id="game-gameplay-fg" data-stringid-content="appScreenNoCanvas">JavaScript required</canvas>
+                    <div id="info-overlay-text"></div>
                 </div>
             </div>
         </main>

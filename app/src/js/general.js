@@ -613,7 +613,7 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
                         ".notify",
                         getString("optLangSelectChange", "!", "upper", val),
                         NOTIFICATION_PRIO_HIGH,
-                        5000,
+                        10000,
                         function () {
                             window.location.reload();
                         },

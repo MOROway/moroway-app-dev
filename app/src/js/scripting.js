@@ -669,7 +669,99 @@ function drawBackground() {
         contextSemiForeground.putImageData(imgData, 0, 0);
     }
 }
-
+function drawInfoOverlayMenu(state) {
+    if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
+        window.clearTimeout(infoOverlayMenu.textTimeout);
+        document.querySelector("#info-overlay-text").style = "";
+    }
+    infoOverlayMenu.items = [1, 2];
+    if (settings.burnTheTaxOffice) {
+        infoOverlayMenu.items[infoOverlayMenu.items.length] = 3;
+    }
+    if (settings.classicUI) {
+        infoOverlayMenu.items[infoOverlayMenu.items.length] = 4;
+    }
+    if (settings.classicUI && classicUI.trainSwitch.selectedTrainDisplay.visible) {
+        infoOverlayMenu.items[infoOverlayMenu.items.length] = 5;
+    }
+    if (settings.classicUI) {
+        infoOverlayMenu.items[infoOverlayMenu.items.length] = 6;
+    }
+    if (settings.classicUI && (!client.isTiny || !(typeof client.realScale == "undefined" || client.realScale <= Math.max(1, client.realScaleMax / 3)))) {
+        infoOverlayMenu.items[infoOverlayMenu.items.length] = 7;
+    }
+    infoOverlayMenu.items[infoOverlayMenu.items.length] = 8;
+    var infoExit = document.querySelector("#canvas-info-exit");
+    document.querySelector("#canvas-info-inner").innerHTML = "";
+    for (var i = 0; i < infoOverlayMenu.items.length; i++) {
+        var element = document.createElement("button");
+        element.className = "canvas-info-button";
+        element.textContent = infoOverlayMenu.items[i];
+        element.onclick = function (event) {
+            if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
+                window.clearTimeout(infoOverlayMenu.textTimeout);
+            }
+            var overlayText = document.querySelector("#info-overlay-text");
+            overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
+            overlayText.style = "";
+            overlayText.style.display = "flex";
+            while (overlayText.offsetWidth < overlayText.scrollWidth) {
+                var fontSize = window.getComputedStyle(overlayText).getPropertyValue("font-size");
+                overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
+            }
+            var cssHeight = window.getComputedStyle(overlayText).getPropertyValue("height");
+            var cssHeight = cssHeight.substring(0, cssHeight.length - 2);
+            overlayText.style.height = Math.max(client.y, cssHeight) + "px";
+            infoOverlayMenu.textTimeout = window.setTimeout(function () {
+                overlayText.style.display = "";
+            }, 2000);
+        };
+        document.querySelector("#canvas-info-inner").appendChild(element);
+    }
+    document.querySelector("#canvas-info-inner").appendChild(infoExit);
+    infoOverlayMenu.items = document.querySelectorAll("#canvas-info-inner > *:not(.hidden)");
+    if (infoOverlayMenu.items.length > 0 && !gui.demo) {
+        infoOverlayMenu.container.width = optMenu.container.width;
+        infoOverlayMenu.container.element.style.justifyContent = optMenu.container.element.style.justifyContent;
+        infoOverlayMenu.container.elementInner.style.width = optMenu.container.elementInner.style.width;
+        infoOverlayMenu.container.elementInner.style.height = optMenu.container.elementInner.style.height;
+        infoOverlayMenu.container.element.style.width = optMenu.container.element.style.width;
+        infoOverlayMenu.container.element.style.height = optMenu.container.element.style.height;
+        infoOverlayMenu.container.element.style.top = optMenu.container.element.style.top;
+        infoOverlayMenu.container.element.style.left = optMenu.container.element.style.left;
+        infoOverlayMenu.container.element.style.background = optMenu.container.element.style.background;
+        switch (state) {
+            case "hide-outer":
+                infoOverlayMenu.container.element.style.display = "none";
+            case "hide":
+                infoOverlayMenu.visible = false;
+                infoOverlayMenu.container.elementInner.style.display = "";
+                break;
+            case "show":
+                optMenu.visible = true;
+                infoOverlayMenu.container.elementInner.style.display = "inline-flex";
+                infoOverlayMenu.container.element.style.display = "";
+                break;
+            case "invisible-outer":
+                infoOverlayMenu.container.element.style.visibility = "hidden";
+            case "invisible":
+                infoOverlayMenu.visible = false;
+                infoOverlayMenu.container.elementInner.style.visibility = "hidden";
+                break;
+            case "visible":
+                infoOverlayMenu.visible = true;
+                infoOverlayMenu.container.element.style.visibility = infoOverlayMenu.container.elementInner.style.visibility = "";
+                break;
+        }
+        var newWidth = optMenu.items[0].style.width.substring(0, optMenu.items[0].style.width.length - 2);
+        if (infoOverlayMenu.items.length > optMenu.items.length) {
+            newWidth *= optMenu.items.length / infoOverlayMenu.items.length;
+        }
+        for (var i = 0; i < infoOverlayMenu.items.length; i++) {
+            infoOverlayMenu.items[i].style.width = infoOverlayMenu.items[i].style.height = infoOverlayMenu.items[i].style.fontSize = infoOverlayMenu.items[i].style.lineHeight = newWidth + "px";
+        }
+    }
+}
 function drawOptionsMenu(state) {
     optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
     if (optMenu.items.length > 0 && !gui.demo) {
@@ -732,7 +824,7 @@ function drawOptionsMenu(state) {
     }
 }
 
-function calcOptionsMenuAndBackground(state) {
+function calcMenusAndBackground(state) {
     function createAudio(destinationName, destinationIndex, buffer, volume) {
         var gainNode = audio.context.createGain();
         gainNode.gain.value = volume;
@@ -810,6 +902,16 @@ function calcOptionsMenuAndBackground(state) {
         optMenu.container.elementInner = document.querySelector("#canvas-options-inner");
         optMenu.container.element = document.querySelector("#canvas-options");
         optMenu.container.element.addEventListener(
+            "wheel",
+            function (event) {
+                event.preventDefault();
+            },
+            {passive: false}
+        );
+        infoOverlayMenu.container = {};
+        infoOverlayMenu.container.elementInner = document.querySelector("#canvas-info-inner");
+        infoOverlayMenu.container.element = document.querySelector("#canvas-info");
+        infoOverlayMenu.container.element.addEventListener(
             "wheel",
             function (event) {
                 event.preventDefault();
@@ -895,6 +997,16 @@ function calcOptionsMenuAndBackground(state) {
         document.querySelector("#canvas-help").addEventListener("click", function () {
             followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);
         });
+        document.querySelector("#canvas-info-toggle").addEventListener("click", function () {
+            gui.infoOverlay = true;
+            drawOptionsMenu("invisible");
+            drawInfoOverlayMenu("show");
+        });
+        document.querySelector("#canvas-info-exit").addEventListener("click", function () {
+            gui.infoOverlay = false;
+            drawOptionsMenu("visible");
+            drawInfoOverlayMenu("hide-outer");
+        });
         document.querySelector("#canvas-control-center").addEventListener("click", function () {
             gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = false;
@@ -924,6 +1036,8 @@ function calcOptionsMenuAndBackground(state) {
         optMenu.visible = false;
         optMenu.container.height = 0;
     }
+    infoOverlayMenu.visible = false;
+    infoOverlayMenu.container.height = optMenu.container.height;
     if (typeof calcOptionsMenuLocal == "function") {
         calcOptionsMenuLocal(state);
     }
@@ -1032,7 +1146,7 @@ function calcControlCenter() {
         controlCenter.fontSizes.trainSizes.trainNamesLength = [];
     }
     contextForeground.save();
-    controlCenter.fontSizes.closeTextHeight = Math.min(controlCenter.maxTextWidth / 12, getFontSize(measureFontSize(getString("appScreenControlCenterClose", null, "upper"), controlCenter.fontFamily, controlCenter.maxTextWidth / 12, controlCenter.maxTextHeight, 5, 1.2), "px"));
+    controlCenter.fontSizes.closeTextHeight = Math.min(controlCenter.maxTextWidth / 12, getFontSize(measureFontSize(getString("generalClose", null, "upper"), controlCenter.fontFamily, controlCenter.maxTextWidth / 12, controlCenter.maxTextHeight, 5, 1.2), "px"));
     controlCenter.fontSizes.trainSizes.speedTextHeight = Math.min((0.5 * controlCenter.maxTextHeight) / trains.length, getFontSize(measureFontSize(getString("appScreenControlCenterSpeedOff"), controlCenter.fontFamily, (0.5 * (controlCenter.maxTextWidth * 0.5)) / getString("appScreenControlCenterSpeedOff").length, 0.5 * (controlCenter.maxTextWidth * 0.5), 5, 1.2), "px"));
     var cText;
     for (var cTrain = 0; cTrain < trains.length; cTrain++) {
@@ -1116,7 +1230,7 @@ function resize() {
     client.touchScaleX = client.touchScaleY = 0;
     oldBackground = copyJSObject(background);
     extendedMeasureViewspace();
-    calcOptionsMenuAndBackground("resize");
+    calcMenusAndBackground("resize");
 
     animateWorker.postMessage({k: "resize", background: background, oldBackground: oldBackground});
 
@@ -1155,6 +1269,7 @@ function resize() {
     calcClassicUIElements();
     calcControlCenter();
     drawOptionsMenu("resize");
+    drawInfoOverlayMenu("resize");
 }
 
 /******************************************
@@ -1225,6 +1340,24 @@ function drawObjects() {
                 drawImage(pics[currentObject.src], -currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             }
             context.restore();
+            if (gui.infoOverlay && i == -1) {
+                contextForeground.save();
+                contextForeground.translate(currentObject.x, currentObject.y);
+                var textWidth = background.width / 100;
+                contextForeground.beginPath();
+                contextForeground.fillStyle = "#42bb20";
+                contextForeground.strokeStyle = "darkgreen";
+                contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+                contextForeground.fill();
+                contextForeground.stroke();
+                contextForeground.font = measureFontSize("1", "monospace", 100, textWidth, 5, textWidth / 10);
+                var fontSize = getFontSize(contextForeground.font, "px");
+                contextForeground.fillStyle = "black";
+                contextForeground.textAlign = "center";
+                contextForeground.textBaseline = "middle";
+                contextForeground.fillText("1", 0, (fontSize - textWidth * 1.1) / 2);
+                contextForeground.restore();
+            }
             context.beginPath();
             context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
@@ -1500,6 +1633,24 @@ function drawObjects() {
         } else {
             context.restore();
         }
+        if (gui.infoOverlay) {
+            contextForeground.save();
+            contextForeground.translate(background.x + currentObject.x, background.y + currentObject.y);
+            var textWidth = background.width / 200;
+            contextForeground.beginPath();
+            contextForeground.fillStyle = "#42bb20";
+            contextForeground.strokeStyle = "darkgreen";
+            contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+            contextForeground.fill();
+            contextForeground.stroke();
+            contextForeground.font = measureFontSize("2", "monospace", 100, textWidth, 5, textWidth / 10);
+            var fontSize = getFontSize(contextForeground.font, "px");
+            contextForeground.fillStyle = "black";
+            contextForeground.textAlign = "center";
+            contextForeground.textBaseline = "middle";
+            contextForeground.fillText("2", 0, (fontSize - textWidth * 1.1) / 2);
+            contextForeground.restore();
+        }
     }
 
     function carCollisionCourse(input1, sendNotification, fixFac) {
@@ -1625,6 +1776,9 @@ function drawObjects() {
         drawBackground();
         if (client.realScale != 1) {
             drawOptionsMenu("hide-outer");
+            drawInfoOverlayMenu("hide-outer");
+        } else if (gui.infoOverlay) {
+            drawInfoOverlayMenu("show");
         } else {
             drawOptionsMenu("show");
         }
@@ -1873,6 +2027,23 @@ function drawObjects() {
         contextForeground.save();
         contextForeground.translate(background.x, background.y);
         contextForeground.translate(background.width / 7.4 - background.width * 0.07, background.height / 3.1 - background.height * 0.06);
+        if (gui.infoOverlay) {
+            contextForeground.save();
+            var textWidth = background.width / 100;
+            contextForeground.beginPath();
+            contextForeground.fillStyle = "#bbbb20";
+            contextForeground.strokeStyle = "orange";
+            contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+            contextForeground.fill();
+            contextForeground.stroke();
+            contextForeground.font = measureFontSize("3", "monospace", 100, textWidth, 5, textWidth / 10);
+            var fontSize = getFontSize(contextForeground.font, "px");
+            contextForeground.fillStyle = "black";
+            contextForeground.textAlign = "center";
+            contextForeground.textBaseline = "middle";
+            contextForeground.fillText("3", 0, (fontSize - textWidth * 1.1) / 2);
+            contextForeground.restore();
+        }
         //Smoke and Fire
         for (var i = 0; i < taxOffice.params.number; i++) {
             if (frameNo % taxOffice.params.frameNo === 0) {
@@ -1982,6 +2153,24 @@ function drawObjects() {
             contextForeground.translate(classicUI.trainSwitch.selectedTrainDisplay.x + classicUI.trainSwitch.selectedTrainDisplay.width / 2, 0);
             contextForeground.textBaseline = "middle";
             contextForeground.fillText(getString(["appScreenTrainNames", trainParams.selected]), -contextForeground.measureText(getString(["appScreenTrainNames", trainParams.selected])).width / 2, classicUI.trainSwitch.selectedTrainDisplay.y + classicUI.trainSwitch.selectedTrainDisplay.height / 2);
+            if (gui.infoOverlay) {
+                contextForeground.save();
+                contextForeground.translate(classicUI.trainSwitch.selectedTrainDisplay.width / 2, classicUI.trainSwitch.selectedTrainDisplay.y);
+                var textWidth = background.width / (optMenu.small ? 100 : 50);
+                contextForeground.beginPath();
+                contextForeground.fillStyle = "#dfbbff";
+                contextForeground.strokeStyle = "darkblue";
+                contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+                contextForeground.fill();
+                contextForeground.stroke();
+                contextForeground.font = measureFontSize("5", "monospace", 100, textWidth, 5, textWidth / 10);
+                var fontSize = getFontSize(contextForeground.font, "px");
+                contextForeground.fillStyle = "black";
+                contextForeground.textAlign = "center";
+                contextForeground.textBaseline = "middle";
+                contextForeground.fillText("5", 0, (fontSize - textWidth * 1.1) / 2);
+                contextForeground.restore();
+            }
             contextForeground.restore();
         }
         contextForeground.save();
@@ -2005,6 +2194,25 @@ function drawObjects() {
             drawImage(pics[trains[trainParams.selected].trainSwitchSrc], -classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height, contextForeground);
         }
         contextForeground.restore();
+        if (gui.infoOverlay) {
+            contextForeground.save();
+            contextForeground.translate(classicUI.trainSwitch.width * 0.25, -classicUI.trainSwitch.height * 0.25);
+            contextForeground.rotate(-classicUI.trainSwitch.angle);
+            var textWidth = background.width / (optMenu.small ? 100 : 50);
+            contextForeground.beginPath();
+            contextForeground.fillStyle = "#dfbbff";
+            contextForeground.strokeStyle = "darkblue";
+            contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+            contextForeground.fill();
+            contextForeground.stroke();
+            contextForeground.font = measureFontSize("4", "monospace", 100, textWidth, 5, textWidth / 10);
+            var fontSize = getFontSize(contextForeground.font, "px");
+            contextForeground.fillStyle = "black";
+            contextForeground.textAlign = "center";
+            contextForeground.textBaseline = "middle";
+            contextForeground.fillText("4", 0, (fontSize - textWidth * 1.1) / 2);
+            contextForeground.restore();
+        }
         contextForeground.beginPath();
         contextForeground.rect(-classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
         if ((wasInSwitchPath || (contextForeground.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) && !hardware.mouse.isDrag) {
@@ -2034,6 +2242,7 @@ function drawObjects() {
         contextForeground.save();
         contextForeground.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
         contextForeground.rotate(classicUI.transformer.angle);
+
         drawImage(pics[classicUI.transformer.src], -classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height, contextForeground);
         if (!collisionCourse(trainParams.selected)) {
             drawImage(pics[classicUI.transformer.readySrc], -classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height, contextForeground);
@@ -2051,6 +2260,26 @@ function drawObjects() {
                 drawImage(pics[classicUI.transformer.directionInput.srcStandardDirection], -classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height, contextForeground);
             } else {
                 drawImage(pics[classicUI.transformer.directionInput.srcNotStandardDirection], -classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height, contextForeground);
+            }
+            if (gui.infoOverlay) {
+                contextForeground.save();
+                contextForeground.translate(-classicUI.transformer.directionInput.width, -classicUI.transformer.directionInput.height);
+                contextForeground.rotate(-classicUI.transformer.angle);
+                contextForeground.rotate(-classicUI.transformer.directionInput.angle);
+                var textWidth = background.width / (optMenu.small ? 100 : 50);
+                contextForeground.beginPath();
+                contextForeground.fillStyle = "#dfbbff";
+                contextForeground.strokeStyle = "darkblue";
+                contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+                contextForeground.fill();
+                contextForeground.stroke();
+                contextForeground.font = measureFontSize("7", "monospace", 100, textWidth, 5, textWidth / 10);
+                var fontSize = getFontSize(contextForeground.font, "px");
+                contextForeground.fillStyle = "black";
+                contextForeground.textAlign = "center";
+                contextForeground.textBaseline = "middle";
+                contextForeground.fillText("7", 0, (fontSize - textWidth * 1.1) / 2);
+                contextForeground.restore();
             }
             contextForeground.beginPath();
             contextForeground.rect(-classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
@@ -2080,6 +2309,25 @@ function drawObjects() {
         contextForeground.translate(0, -classicUI.transformer.input.diffY);
         contextForeground.rotate(classicUI.transformer.input.angle);
         drawImage(pics[classicUI.transformer.input.src], -classicUI.transformer.input.width / 2, -classicUI.transformer.input.height / 2, classicUI.transformer.input.width, classicUI.transformer.input.height, contextForeground);
+        if (gui.infoOverlay) {
+            contextForeground.save();
+            contextForeground.rotate(-classicUI.transformer.angle);
+            contextForeground.rotate(-classicUI.transformer.input.angle);
+            var textWidth = background.width / (optMenu.small ? 100 : 50);
+            contextForeground.beginPath();
+            contextForeground.fillStyle = "#dfbbff";
+            contextForeground.strokeStyle = "darkblue";
+            contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+            contextForeground.fill();
+            contextForeground.stroke();
+            contextForeground.font = measureFontSize("6", "monospace", 100, textWidth, 5, textWidth / 10);
+            var fontSize = getFontSize(contextForeground.font, "px");
+            contextForeground.fillStyle = "black";
+            contextForeground.textAlign = "center";
+            contextForeground.textBaseline = "middle";
+            contextForeground.fillText("6", 0, (fontSize - textWidth * 1.1) / 2);
+            contextForeground.restore();
+        }
         if (debug.active && debug.paint) {
             contextForeground.fillRect(-classicUI.transformer.input.width / 2, classicUI.transformer.input.height / 2, 6, 6);
             contextForeground.fillRect(-3, -3, 6, 6);
@@ -2285,6 +2533,24 @@ function drawObjects() {
                     contextForeground.restore();
                 }
             } else {
+                if (gui.infoOverlay) {
+                    contextForeground.save();
+                    var textWidth = background.width / 100;
+                    contextForeground.translate(background.x + switches[key][side].x, background.y + switches[key][side].y);
+                    contextForeground.beginPath();
+                    contextForeground.fillStyle = "#bb4220";
+                    contextForeground.strokeStyle = "darkred";
+                    contextForeground.arc(0, 0, textWidth * 1.1, 0, 2 * Math.PI);
+                    contextForeground.fill();
+                    contextForeground.stroke();
+                    contextForeground.font = measureFontSize("8", "monospace", 100, textWidth, 5, textWidth / 10);
+                    var fontSize = getFontSize(contextForeground.font, "px");
+                    contextForeground.fillStyle = "black";
+                    contextForeground.textAlign = "center";
+                    contextForeground.textBaseline = "middle";
+                    contextForeground.fillText("8", 0, (fontSize - textWidth * 1.1) / 2);
+                    contextForeground.restore();
+                }
                 contextForeground.closePath();
                 contextForeground.restore();
             }
@@ -2571,7 +2837,7 @@ function drawObjects() {
         contextForeground.translate(controlCenter.maxTextWidth / 16, controlCenter.maxTextHeight / 2);
         contextForeground.rotate(-Math.PI / 2);
         contextForeground.font = controlCenter.fontSizes.closeTextHeight + "px " + controlCenter.fontFamily;
-        contextForeground.fillText(getString("appScreenControlCenterClose", null, "upper"), -controlCenter.maxTextHeight / 2 + (controlCenter.maxTextHeight / 2 - contextForeground.measureText(getString("appScreenControlCenterClose", null, "upper")).width / 2), controlCenter.fontSizes.closeTextHeight / 6);
+        contextForeground.fillText(getString("generalClose", null, "upper"), -controlCenter.maxTextHeight / 2 + (controlCenter.maxTextHeight / 2 - contextForeground.measureText(getString("generalClose", null, "upper")).width / 2), controlCenter.fontSizes.closeTextHeight / 6);
         contextForeground.restore();
         if (contextClick && hardware.mouse.upX - background.x - controlCenter.translateOffset > 0 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth / 8 && hardware.mouse.upY - background.y - controlCenter.translateOffset > 0 && hardware.mouse.upY - background.y - controlCenter.translateOffset < controlCenter.maxTextHeight * trains.length) {
             gui.controlCenter = false;
@@ -3201,6 +3467,7 @@ var controlCenter = {showCarCenter: false, fontFamily: "sans-serif", mouse: {}};
 var hardware = {mouse: {moveX: 0, moveY: 0, downX: 0, downY: 0, downTime: 0, upX: 0, upY: 0, upTime: 0, isMoving: false, isHold: false, cursor: "default"}, keyboard: {keysHold: []}};
 var client = {devicePixelRatio: 1, realScaleMax: 6, realScaleMin: 1.2};
 var optMenu = {};
+var infoOverlayMenu = {};
 
 var onlineGame = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {t: ["src", "trainSwitchSrc", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], tc: ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"]}, chatSticker: 7, resized: false};
 var onlineConnection = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
@@ -3580,7 +3847,7 @@ window.onload = function () {
         }
 
         context.clearRect(0, 0, canvas.width, canvas.height);
-        calcOptionsMenuAndBackground("load");
+        calcMenusAndBackground("load");
 
         //Cars
         if (defineCarParams()) {
@@ -4478,8 +4745,9 @@ window.onload = function () {
                                                 var parent = document.querySelector("#game");
                                                 var elem = parent.querySelector("#game-gameplay");
                                                 resetForElem(parent, elem);
-                                                calcOptionsMenuAndBackground("resize");
+                                                calcMenusAndBackground("resize");
                                                 drawOptionsMenu("resize");
+                                                drawInfoOverlayMenu("resize");
                                                 break;
                                         }
                                     } else {
