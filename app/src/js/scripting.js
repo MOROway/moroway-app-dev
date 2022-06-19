@@ -1235,13 +1235,15 @@ function drawObjects() {
                 if (hardware.lastInputTouch < hardware.lastInputMouse) {
                     hardware.mouse.isHold = false;
                 }
-                if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && context.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime) || (hardware.lastInputTouch > hardware.lastInputMouse && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && context.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
                     if (typeof clickTimeOut !== "undefined") {
                         window.clearTimeout(clickTimeOut);
                         clickTimeOut = null;
                     }
                     if (hardware.lastInputTouch > hardware.lastInputMouse) {
                         hardware.mouse.isHold = false;
+                    } else {
+                        hardware.mouse.lastClickDoubleClick = true;
                     }
                     if (trains[input1].accelerationSpeed <= 0 && Math.abs(trains[input1].accelerationSpeed) < 0.2) {
                         actionSync("trains", input1, [{accelerationSpeed: 0}, {move: false}, {lastDirectionChange: frameNo}, {standardDirection: !trains[input1].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", input1]]}]);
@@ -1316,13 +1318,15 @@ function drawObjects() {
                 if (hardware.lastInputTouch < hardware.lastInputMouse) {
                     hardware.mouse.isHold = false;
                 }
-                if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && context.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime) || (hardware.lastInputTouch > hardware.lastInputMouse && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && context.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
                     if (typeof clickTimeOut !== "undefined") {
                         window.clearTimeout(clickTimeOut);
                         clickTimeOut = null;
                     }
                     if (hardware.lastInputTouch > hardware.lastInputMouse) {
                         hardware.mouse.isHold = false;
+                    } else {
+                        hardware.mouse.lastClickDoubleClick = true;
                     }
                     if (carParams.init) {
                         carParams.init = false;
@@ -1612,6 +1616,8 @@ function drawObjects() {
 
     /////GENERAL/////
     var startTime = Date.now();
+    var lastClickDoubleClick = hardware.mouse.lastClickDoubleClick;
+    var wasHold = hardware.mouse.isHold;
     if (client.realScale != client.oldRealScale || client.touchScaleX != client.oldTouchScaleX || client.touchScaleY != client.oldTouchScaleY) {
         client.oldRealScale = client.realScale;
         client.oldTouchScaleX = client.touchScaleX;
@@ -2946,6 +2952,10 @@ function drawObjects() {
     }
     canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || (settings.cursorascircle && isHardwareAvailable("cursorascircle")) || gui.demo ? "none" : hardware.mouse.cursor;
     hardware.mouse.wheelScrolls = false;
+
+    if (lastClickDoubleClick == hardware.mouse.lastClickDoubleClick && wasHold) {
+        hardware.mouse.lastClickDoubleClick = false;
+    }
 
     /////REPAINT/////
     if (drawTimeout !== undefined && drawTimeout !== null) {
