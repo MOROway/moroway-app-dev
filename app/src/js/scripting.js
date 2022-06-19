@@ -672,6 +672,7 @@ function drawBackground() {
 function drawInfoOverlayMenu(state) {
     if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
         window.clearTimeout(infoOverlayMenu.textTimeout);
+        delete infoOverlayMenu.focus;
         document.querySelector("#info-overlay-text").style = "";
     }
     infoOverlayMenu.items = [1, 2];
@@ -702,20 +703,21 @@ function drawInfoOverlayMenu(state) {
             if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
                 window.clearTimeout(infoOverlayMenu.textTimeout);
             }
+            infoOverlayMenu.focus = event.target.textContent;
             var overlayText = document.querySelector("#info-overlay-text");
-            overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
             overlayText.style = "";
+            overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
             overlayText.style.display = "flex";
             while (overlayText.offsetWidth < overlayText.scrollWidth) {
                 var fontSize = window.getComputedStyle(overlayText).getPropertyValue("font-size");
                 overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
             }
-            var cssHeight = window.getComputedStyle(overlayText).getPropertyValue("height");
-            var cssHeight = cssHeight.substring(0, cssHeight.length - 2);
-            overlayText.style.height = Math.max(client.y, cssHeight) + "px";
+            var overlayTextHeight = overlayText.offsetHeight;
+            overlayText.style.height = Math.max(client.y, overlayTextHeight) + "px";
             infoOverlayMenu.textTimeout = window.setTimeout(function () {
-                overlayText.style.display = "";
-            }, 2000);
+                overlayText.style = "";
+                delete infoOverlayMenu.focus;
+            }, 4000);
         };
         document.querySelector("#canvas-info-inner").appendChild(element);
     }
@@ -1341,7 +1343,7 @@ function drawObjects() {
                 drawImage(pics[currentObject.src], -currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             }
             context.restore();
-            if (gui.infoOverlay && i == -1) {
+            if (gui.infoOverlay && i == -1 && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 1)) {
                 contextForeground.save();
                 contextForeground.translate(currentObject.x, currentObject.y);
                 var textWidth = background.width / 100;
@@ -1634,7 +1636,7 @@ function drawObjects() {
         } else {
             context.restore();
         }
-        if (gui.infoOverlay) {
+        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 2)) {
             contextForeground.save();
             contextForeground.translate(background.x + currentObject.x, background.y + currentObject.y);
             var textWidth = background.width / 200;
@@ -2028,7 +2030,7 @@ function drawObjects() {
         contextForeground.save();
         contextForeground.translate(background.x, background.y);
         contextForeground.translate(background.width / 7.4 - background.width * 0.07, background.height / 3.1 - background.height * 0.06);
-        if (gui.infoOverlay) {
+        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 3)) {
             contextForeground.save();
             var textWidth = background.width / 100;
             contextForeground.beginPath();
@@ -2154,7 +2156,7 @@ function drawObjects() {
             contextForeground.translate(classicUI.trainSwitch.selectedTrainDisplay.x + classicUI.trainSwitch.selectedTrainDisplay.width / 2, 0);
             contextForeground.textBaseline = "middle";
             contextForeground.fillText(getString(["appScreenTrainNames", trainParams.selected]), -contextForeground.measureText(getString(["appScreenTrainNames", trainParams.selected])).width / 2, classicUI.trainSwitch.selectedTrainDisplay.y + classicUI.trainSwitch.selectedTrainDisplay.height / 2);
-            if (gui.infoOverlay) {
+            if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 5)) {
                 contextForeground.save();
                 contextForeground.translate(classicUI.trainSwitch.selectedTrainDisplay.width / 2, classicUI.trainSwitch.selectedTrainDisplay.y);
                 var textWidth = background.width / (optMenu.small ? 100 : 50);
@@ -2195,7 +2197,7 @@ function drawObjects() {
             drawImage(pics[trains[trainParams.selected].trainSwitchSrc], -classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height, contextForeground);
         }
         contextForeground.restore();
-        if (gui.infoOverlay) {
+        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 4)) {
             contextForeground.save();
             contextForeground.translate(classicUI.trainSwitch.width * 0.25, -classicUI.trainSwitch.height * 0.25);
             contextForeground.rotate(-classicUI.trainSwitch.angle);
@@ -2262,7 +2264,7 @@ function drawObjects() {
             } else {
                 drawImage(pics[classicUI.transformer.directionInput.srcNotStandardDirection], -classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height, contextForeground);
             }
-            if (gui.infoOverlay) {
+            if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 7)) {
                 contextForeground.save();
                 contextForeground.translate(-classicUI.transformer.directionInput.width, -classicUI.transformer.directionInput.height);
                 contextForeground.rotate(-classicUI.transformer.angle);
@@ -2310,8 +2312,11 @@ function drawObjects() {
         contextForeground.translate(0, -classicUI.transformer.input.diffY);
         contextForeground.rotate(classicUI.transformer.input.angle);
         drawImage(pics[classicUI.transformer.input.src], -classicUI.transformer.input.width / 2, -classicUI.transformer.input.height / 2, classicUI.transformer.input.width, classicUI.transformer.input.height, contextForeground);
-        if (gui.infoOverlay) {
+        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 6)) {
             contextForeground.save();
+            if (collisionCourse(trainParams.selected)) {
+                contextForeground.globalAlpha = 0.5;
+            }
             contextForeground.rotate(-classicUI.transformer.angle);
             contextForeground.rotate(-classicUI.transformer.input.angle);
             var textWidth = background.width / (optMenu.small ? 100 : 50);
@@ -2534,7 +2539,7 @@ function drawObjects() {
                     contextForeground.restore();
                 }
             } else {
-                if (gui.infoOverlay) {
+                if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 8)) {
                     contextForeground.save();
                     var textWidth = background.width / 100;
                     contextForeground.translate(background.x + switches[key][side].x, background.y + switches[key][side].y);
