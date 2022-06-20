@@ -736,9 +736,8 @@ function drawInfoOverlayMenu(state) {
                     overlayText.style = "";
                     delete infoOverlayMenu.focus;
                 }, 4000);
-                infoOverlayMenu.scaleFac = 1;
                 infoOverlayMenu.scaleInterval = window.setInterval(function () {
-                    var scaleGrow = 1.0015;
+                    var scaleGrow = 1.002;
                     if (infoOverlayMenu.scaleFacGrow) {
                         infoOverlayMenu.scaleFac *= scaleGrow;
                     } else {
@@ -746,7 +745,7 @@ function drawInfoOverlayMenu(state) {
                     }
                     if (infoOverlayMenu.scaleFac < 1) {
                         infoOverlayMenu.scaleFacGrow = true;
-                    } else if (infoOverlayMenu.scaleFac > 1.05) {
+                    } else if (infoOverlayMenu.scaleFac > 1.075) {
                         infoOverlayMenu.scaleFacGrow = false;
                     }
                 }, drawInterval);
