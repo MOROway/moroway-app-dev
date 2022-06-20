@@ -2321,7 +2321,7 @@ function drawObjects() {
                 contextForeground.translate(-classicUI.transformer.directionInput.width, -classicUI.transformer.directionInput.height);
                 contextForeground.rotate(-classicUI.transformer.angle);
                 contextForeground.rotate(-classicUI.transformer.directionInput.angle);
-                var textWidth = background.width / (optMenu.small ? 100 : 50);
+                var textWidth = background.width / (optMenu.small ? 125 : 75);
                 contextForeground.beginPath();
                 contextForeground.fillStyle = "#dfbbff";
                 contextForeground.strokeStyle = "darkblue";
