@@ -228,7 +228,7 @@ canvas {
 #chat #chat-msg-send-text {
     border: 1px solid black;
     border-radius: 6px;
-    padding: 7px;
+    padding: 9px;
     margin: 3px;
 }
 #settings .nav-button,

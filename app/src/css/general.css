@@ -176,12 +176,17 @@ h2 {
 
 .settings-list {
     list-style-type: none;
-    margin: 16px 0px;
     padding: 0;
 }
 
 .settings-list > li {
-    margin: 20px 0px;
+    padding: 10px 0px;
+}
+.settings-list > li:first-of-type {
+    padding-top: 0px;
+}
+.settings-list > li:last-of-type {
+    padding-bottom: 0px;
 }
 
 .settings-opts-wrapper {
@@ -191,7 +196,6 @@ h2 {
     align-items: center;
     overflow: hidden;
 }
-
 .settings-opts-left-button {
     padding: 1px;
     margin: 10px;
@@ -204,19 +208,21 @@ h2 {
 }
 
 .settings-hints-wrapper {
-    color: rgba(0, 0, 0, 0.54);
-    margin-top: 2px;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 2px;
     margin-left: 16px;
     font-size: 90%;
 }
-
 .settings-hints-wrapper > * {
-    padding-top: 2px;
+    margin: 2px 0;
+}
+.settings-hints-wrapper > i {
+    color: rgba(0, 0, 0, 0.56);
 }
 
 #langoption {
-    margin-top: 44px;
-    margin-bottom: 44px;
+    margin-top: 24px;
+    margin-bottom: 24px;
 }
 
 #langoption #langoptioninfo {
