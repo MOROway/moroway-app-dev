@@ -34,7 +34,7 @@
 		"Zugauswahl",
 		"Ausgewählter Zug",
 		"Transformator",
-		"Zugrichtungswechsel",
+		"Wechsel der Zug-Fahrtrichtung",
 		"Weichen"
 	],
 	"appScreenHasLoaded": "Anwendung geladen",
