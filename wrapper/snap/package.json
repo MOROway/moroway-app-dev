@@ -1,11 +1,16 @@
 {
-  "cordova": {
-    "plugins": {},
-    "platforms": [
-      "electron"
-    ]
-  },
-  "devDependencies": {
-    "cordova-electron": "^3.1.0"
-  }
+    "cordova": {
+        "plugins": {},
+        "platforms": [
+            "electron"
+        ]
+    },
+    "devDependencies": {
+        "cordova-electron": "^3.1.0"
+    },
+    "overrides": {
+        "cordova-electron": {
+            "electron": "~19.0.0"
+        }
+    }
 }

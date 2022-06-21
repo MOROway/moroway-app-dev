@@ -673,7 +673,7 @@ function drawInfoOverlayMenu(state) {
     if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
         window.clearTimeout(infoOverlayMenu.textTimeout);
         delete infoOverlayMenu.focus;
-        document.querySelector("#info-overlay-text").style = "";
+        infoOverlayMenu.overlayText.style.display = infoOverlayMenu.overlayText.style.fontSize = infoOverlayMenu.overlayText.style.height = "";
     }
     if (infoOverlayMenu.scaleInterval != undefined && infoOverlayMenu.scaleInterval != null) {
         window.clearInterval(infoOverlayMenu.scaleInterval);
@@ -713,27 +713,26 @@ function drawInfoOverlayMenu(state) {
             }
             infoOverlayMenu.scaleFac = 1;
             infoOverlayMenu.scaleFacGrow = true;
-            var overlayText = document.querySelector("#info-overlay-text");
-            overlayText.style = "";
+            infoOverlayMenu.overlayText.style.display = infoOverlayMenu.overlayText.style.fontSize = infoOverlayMenu.overlayText.style.height = "";
             if (infoOverlayMenu.focus == event.target.textContent) {
                 delete infoOverlayMenu.focus;
             } else {
                 infoOverlayMenu.focus = event.target.textContent;
-                overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
-                overlayText.style.display = "flex";
-                while (overlayText.offsetWidth < overlayText.scrollWidth) {
-                    var fontSize = window.getComputedStyle(overlayText).getPropertyValue("font-size");
-                    overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
+                infoOverlayMenu.overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
+                infoOverlayMenu.overlayText.style.display = "flex";
+                while (infoOverlayMenu.overlayText.offsetWidth < infoOverlayMenu.overlayText.scrollWidth) {
+                    var fontSize = window.getComputedStyle(infoOverlayMenu.overlayText).getPropertyValue("font-size");
+                    infoOverlayMenu.overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
                 }
-                var overlayTextHeight = overlayText.offsetHeight;
-                overlayText.style.height = Math.max(client.y, overlayTextHeight) + "px";
+                var overlayTextHeight = infoOverlayMenu.overlayText.offsetHeight;
+                infoOverlayMenu.overlayText.style.height = Math.max(client.y, overlayTextHeight) + "px";
                 infoOverlayMenu.textTimeout = window.setTimeout(function () {
                     if (infoOverlayMenu.scaleInterval != undefined && infoOverlayMenu.scaleInterval != null) {
                         window.clearInterval(infoOverlayMenu.scaleInterval);
                     }
                     infoOverlayMenu.scaleFac = 1;
                     infoOverlayMenu.scaleFacGrow = true;
-                    overlayText.style = "";
+                    infoOverlayMenu.overlayText.style.display = infoOverlayMenu.overlayText.style.fontSize = infoOverlayMenu.overlayText.style.height = "";
                     delete infoOverlayMenu.focus;
                 }, 4000);
                 infoOverlayMenu.scaleInterval = window.setInterval(function () {
@@ -1073,6 +1072,7 @@ function calcMenusAndBackground(state) {
     }
     infoOverlayMenu.visible = false;
     infoOverlayMenu.container.height = optMenu.container.height;
+    infoOverlayMenu.overlayText = document.querySelector("#info-overlay-text");
     if (typeof calcOptionsMenuLocal == "function") {
         calcOptionsMenuLocal(state);
     }

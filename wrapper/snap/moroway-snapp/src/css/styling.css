@@ -102,7 +102,8 @@ canvas {
     text-shadow: -1px 1px 5px rgb(48, 48, 48), 1px 1px 5px rgb(48, 48, 48), 1px -1px 5px rgb(48, 48, 48), -1px -1px 5px rgb(48, 48, 48);
 }
 
-#canvas-options {
+#canvas-options,
+#canvas-info {
     display: flex;
     position: absolute;
     background: black;
@@ -110,14 +111,16 @@ canvas {
     align-items: center;
 }
 
-#canvas-options-inner {
+#canvas-options-inner,
+#canvas-info-inner {
     z-index: 1;
     display: none;
     justify-content: center;
     align-items: center;
 }
 
-.canvas-options-button {
+.canvas-options-button,
+.canvas-info-button {
     display: inline-flex;
     padding: 0px;
     margin: auto;
@@ -126,6 +129,23 @@ canvas {
     cursor: pointer;
     color: rgb(210, 120, 27);
     background: transparent;
+}
+
+#info-overlay-text {
+    z-index: 1;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    overflow-y: auto;
+    white-space: nowrap;
+    left: 0;
+    top: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6));
+    border-bottom: 2px solid rgba(210, 120, 27, 0.3);
+    color: rgb(210, 120, 27);
+    font-size: 4em;
 }
 
 .tp-notify {

@@ -661,9 +661,11 @@ function updateSavedGame() {
         });
         if (elemKeys.length > 0 && (elemKeys[0] == old || getVersionCode() >= parseInt(elemKeys[0].replace(regexOld, "$1"), 10))) {
             var newVal = window.localStorage.getItem(elemKeys[0]);
-            elemKeys.forEach(function (key) {
-                window.localStorage.removeItem(key);
-            });
+            if (APP_DATA.version.beta == 0) {
+                elemKeys.forEach(function (key) {
+                    window.localStorage.removeItem(key);
+                });
+            }
             window.localStorage.setItem(newItem, newVal);
         }
     }
@@ -677,11 +679,13 @@ function updateSavedGame() {
         updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Switches$/, "morowayAppSavedGameSwitches", "morowayAppSavedGame_v-" + getVersionCode() + "_Switches");
         updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Cars$/, "morowayAppSavedCars", "morowayAppSavedGame_v-" + getVersionCode() + "_Cars");
         updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_CarParams$/, "morowayAppSavedCarParams", "morowayAppSavedGame_v-" + getVersionCode() + "_CarParams");
-        savedGameKeys.forEach(function (key) {
-            if (key == "morowayAppSavedWithVersion") {
-                window.localStorage.removeItem(key);
-            }
-        });
+        if (APP_DATA.version.beta == 0) {
+            savedGameKeys.forEach(function (key) {
+                if (key == "morowayAppSavedWithVersion") {
+                    window.localStorage.removeItem(key);
+                }
+            });
+        }
     }
 }
 function removeSavedGame() {

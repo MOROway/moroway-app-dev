@@ -1,25 +1,22 @@
 #!/bin/bash
 
-function log () {
+function log() {
 	echo "$1"
-	[[ "$2" == 0 ]] && printf '%s\n' "$1 $( date -R )" >> ../out/build_logs || printf '\t%s\n' "$1 $( date -R )" >> ../out/build_logs
+	[[ "$2" == 0 ]] && printf '%s\n' "$1 $(date -R)" >>../out/build_logs || printf '\t%s\n' "$1 $(date -R)" >>../out/build_logs
 }
 
-function logexit () {
+function logexit() {
 	log "build failed $1 $2" 0
 	exit $1
 }
 
-function loop_files () {
+function loop_files() {
 	files=("$1"/*)
-	for file in "${files[@]}"
-	do
-		if [[ -f "$file" ]]
-		then
+	for file in "${files[@]}"; do
+		if [[ -f "$file" ]]; then
 			echo $(echo "$file" | sed "s#$2/##")
-		elif [[ -d "$file" ]]
-		then
-			echo $( loop_files "$file" "$2")
+		elif [[ -d "$file" ]]; then
+			echo $(loop_files "$file" "$2")
 		fi
 	done
 }
@@ -33,18 +30,18 @@ function get_conf() {
 	if [[ "$2" == 1 ]] && [[ ! -z $(echo "$conf" | grep -e "^debug:$1=") ]]; then
 		pattern="^debug:$1="
 	fi
-	echo $( echo "$conf" | grep -e "$pattern" | tail -1 | sed s/[^=]*=// )
+	echo $(echo "$conf" | grep -e "$pattern" | tail -1 | sed s/[^=]*=//)
 }
 
-dir=$( dirname "$0" )
+dir=$(dirname "$0")
 cd "$dir" || logexit 3 "set working dir failed"
 
 platforms=$(ls "../app_platforms")
 while getopts :d:p: opts; do
-   case $opts in
-	   d) d=$OPTARG;;
-	   p) p=$OPTARG;;
-   esac
+	case $opts in
+	d) d=$OPTARG ;;
+	p) p=$OPTARG ;;
+	esac
 done
 debug=0
 if [[ "$d" == 1 ]]; then
@@ -54,7 +51,7 @@ fi
 [[ ! -d ../out ]] && mkdir ../out
 log "build started" 0
 
-[[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh > ../out/pre_build.log
+[[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh >../out/pre_build.log
 
 version="$(get_conf "version" "$debug")"
 [[ -z "$version" ]] && logexit 1 "version empty"
@@ -62,18 +59,18 @@ version_major=$(echo "$version" | sed 's/^\([0-9]\+\)\.[0-9]\+\.[0-9]\+$/\1/')
 version_minor=$(echo "$version" | sed 's/^[0-9]\+\.\([0-9]\+\)\.[0-9]\+$/\1/')
 version_patch=$(echo "$version" | sed 's/^[0-9]\+\.[0-9]\+\.\([0-9]\+\)$/\1/')
 [[ "$version_major" != $(echo "$version_major" | sed 's/[^0-9]//g') || "$version_minor" != $(echo "$version_minor" | sed 's/[^0-9]//g') || "$version_patch" != $(echo "$version_patch" | sed 's/[^0-9]//g') ]] && logexit 1 "version invalid"
-date '+%Y' > changelogs/meta/year/"$version"
-[[ ! -f changelogs/meta/fixes/bool/"$version" ]] && echo 0 > changelogs/meta/fixes/bool/"$version"
+date '+%Y' >changelogs/meta/year/"$version"
+[[ ! -f changelogs/meta/fixes/bool/"$version" ]] && echo 0 >changelogs/meta/fixes/bool/"$version"
 
-beta=$( echo "$(get_conf "beta" "$debug")" | sed s/[^0-9]//g )
+beta=$(echo "$(get_conf "beta" "$debug")" | sed s/[^0-9]//g)
 [[ -z "$beta" ]] && logexit 2 "beta empty"
 beta_identifier=""
-if (( $beta > 0 )); then
+if (($beta > 0)); then
 	beta_identifier="-beta-$beta"
 fi
 
-sharelink=$( echo "$(get_conf "sharelink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g' )
-serverlink=$( echo "$(get_conf "serverlink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g' )
+sharelink=$(echo "$(get_conf "sharelink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g')
+serverlink=$(echo "$(get_conf "serverlink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g')
 
 valid_platform=0
 for platform in ${platforms[@]}; do
@@ -101,23 +98,22 @@ for platform in ${platforms[@]}; do
 					line=$(echo "$line" | sed 's/^[./]\+//g')
 					rm -r "$to/"$line
 				fi
-			done < "$file"
+			done <"$file"
 			rm "$file"
 		fi
 
 		# Modify Content
 		# App Data
 		file="$to/src/js/appdata.js"
-		debugBool=false;
+		debugBool=false
 		if [[ "$debug" == 1 ]]; then
-			debugBool=true;
+			debugBool=true
 		fi
 		sed -i "s/\"{{version_major}}\"/$version_major/;s/\"{{version_minor}}\"/$version_minor/;s/\"{{version_patch}}\"/$version_patch/;s/\"{{date_year}}\"/"$(date "+%Y")"/;s/\"{{date_month}}\"/"$(date "+%-m")"/;s/\"{{date_day}}\"/"$(date "+%-d")"/;s/{{platform}}/$platform/;s/\"{{beta}}\"/$beta/;s/\"{{debug}}\"/$debugBool/" "$file"
 		# General Script
 		file="$to/src/js/general.js"
 		strings="{"
-		for clang in strings/strings-*.json
-		do
+		for clang in strings/strings-*.json; do
 			langCode=$(echo "$clang" | sed 's/[^-]*-\([^.]*\).*/\1/')
 			stringsCurrent=$(cat "$clang" | sed 's/\\/\\\\/g' | sed 's!/!\\/!g' | perl -0pe 's/(\n|\s|\t)*([^\n]*)\n/\2/g' | perl -0pe 's/\n*}$/,/g')
 			strings="$strings$langCode:$stringsCurrent{{changelog=$langCode}}},"
@@ -126,13 +122,11 @@ for platform in ${platforms[@]}; do
 		perl -0pi -e "s/\"\{\{strings\}\}\"/$strings/" "$file"
 
 		[[ $(file -i "$file" | sed 's/.*charset=//') != utf-8 ]] && logexit 4 "setting strings internal error"
-		for clangdir in changelogs/*
-		do
+		for clangdir in changelogs/*; do
 			clang=$(basename "$clangdir")
 			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]]; then
 				changelogs=""
-				for changelogfile in "$clangdir"/*.0
-				do
+				for changelogfile in "$clangdir"/*.0; do
 					cv=$(basename "$changelogfile")
 					cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
 					cvMi=$(echo "$cv" | sed 's/^[0-9]\+\.\([0-9]\+\)\.0$/\1/')
@@ -144,22 +138,20 @@ for platform in ${platforms[@]}; do
 					while read -r line; do
 						line=$(echo "$line" | sed 's/"/\\"/g')
 						changelog="$changelog"$(printf '"%s",' "$line")
-					done < "$changelogfile"
-					if [[ -f "$changelogfile-$platform" ]];
-					then
+					done <"$changelogfile"
+					if [[ -f "$changelogfile-$platform" ]]; then
 						while read -r line; do
 							line=$(echo "$line" | sed 's/"/\\"/g')
 							changelog="$changelog"$(printf '"%s",' "$line")
-						done < "$changelogfile-$platform"
+						done <"$changelogfile-$platform"
 					fi
-					if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]];
-					then
+					if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]]; then
 						line=$(echo "$(cat "changelogs/meta/fixes/locale/$clang")." | sed 's/"/\\"/g')
 						changelog="$changelog"$(printf '"%s",' "$line")
 					fi
-					changelogs="$changelogs"$( echo "$changelog" | sed 's/,$/],/')
+					changelogs="$changelogs"$(echo "$changelog" | sed 's/,$/],/')
 				done
-				changelogs=$( echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g' | perl -0pe 's/,$//g')
+				changelogs=$(echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g' | perl -0pe 's/,$//g')
 				sed -i "s/{{changelog=$clang}}/$changelogs/" "$file"
 			fi
 		done
@@ -174,7 +166,7 @@ for platform in ${platforms[@]}; do
 		shareserver=$(echo "$sharelink" | sed "s!\(.*:/\{2\}[^/]*\).*!\1/!")
 		sed -i "s/{{changelog=[^}]*}}//g;s!{{sharelink}}!$sharelink!;s!{{shareserver}}!$shareserver!;s!{{serverlink}}!$serverlink!;s/{{hypertextprotocol}}/$hypertextprotocol/;s/{{websocketprotocol}}/$websocketprotocol/" "$file"
 		# Service Worker
-		all_files=$( loop_files "$to" "$to" )
+		all_files=$(loop_files "$to" "$to")
 		file="$to/sw.js"
 		if [[ -f "$file" ]]; then
 			file_ex="$to/sw_excludes"
@@ -186,7 +178,7 @@ for platform in ${platforms[@]}; do
 						if [[ "$sw_file" =~ $line ]]; then
 							use=0
 						fi
-					done < "$file_ex"
+					done <"$file_ex"
 				fi
 				if [[ $use == 1 ]] && [[ $sw_file != "index.html" ]]; then
 					sw_files_text="$sw_files_text'$sw_file',"
@@ -204,22 +196,21 @@ for platform in ${platforms[@]}; do
 				if [[ -f "$to/manifest.webmanifest" ]]; then
 					sed -i 's/<\!--\sinsert_link_webmanifest\s-->/<link rel="manifest" href="manifest.webmanifest">/' "$to/$html_file"
 				else
-					sed -i 's/<\!--\sinsert_link_webmanifest\s-->//' "$to/$html_file";
+					sed -i 's/<\!--\sinsert_link_webmanifest\s-->//' "$to/$html_file"
 					perl -pi -e "s/^\s+\n\$//" "$to/$html_file"
 				fi
 				while [[ ! -z $(cat "$to/$html_file" | grep "<\!-- dep_check -->" | head -1) ]]; do
-					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]];
-					then
-						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n/\n/"  "$to/$html_file"
+					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
+						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n/\n/" "$to/$html_file"
 					else
-						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n.*\n/\n/"  "$to/$html_file"
+						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n.*\n/\n/" "$to/$html_file"
 					fi
 				done
 			fi
 		done
 
 		# Add read me
-		printf '%s\n\n' "# MOROway App" "The MOROway App is a virtual model railroad." "LICENSES ARE EXPLAINED IN THE '[ABOUT](./ABOUT)' FILE." "This is a ready-to-use MOROway App version generated by MOROway App [build tools](https://github.com/MOROway/moroway-app-dev)." > "$to"/README.md
+		printf '%s\n\n' "# MOROway App" "The MOROway App is a virtual model railroad." "LICENSES ARE EXPLAINED IN THE '[ABOUT](./ABOUT)' FILE." "This is a ready-to-use MOROway App version generated by MOROway App [build tools](https://github.com/MOROway/moroway-app-dev)." >"$to"/README.md
 
 		# Link current version
 		if [[ $beta == 0 ]]; then
@@ -230,16 +221,15 @@ for platform in ${platforms[@]}; do
 		ln -s "$version$beta_identifier" ../out/"$platform"/latest
 
 		# Platform specific build files
-		if [[ -f ../wrapper/"$platform"/build.sh ]];
-		then
+		if [[ -f ../wrapper/"$platform"/build.sh ]]; then
 			log "start platform-wrapper build"
-			$(../wrapper/"$platform"/build.sh -b "$beta" -d "$debug" -o "$(realpath ../out/"$platform"/latest/)" -v "$version" -w "$(realpath .)" > /dev/null 2>&1) || logexit 1000 "platform-wrapper build"
+			$(../wrapper/"$platform"/build.sh -b "$beta" -d "$debug" -l "$serverlink" -o "$(realpath ../out/"$platform"/latest/)" -s "$sharelink" -v "$version" -w "$(realpath .)" >/dev/null 2>&1) || logexit 1000 "platform-wrapper build"
 			log "finished platform-wrapper build"
 		fi
 
 	fi
 done
 
-[[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh > ../out/post_build.log
+[[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh >../out/post_build.log
 
 [[ $valid_platform == 1 ]] && log "build succeeded" 0 || logexit 100 "invalid platform"

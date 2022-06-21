@@ -199,7 +199,7 @@
                         </div>
                         <div class="card-content">
                             <p>
-                                <img style="width: 100%" src="assets/helpasset1_bug_report.png" data-stringid-alt="helpScreenContactFeedbackBugs" />
+                                <img class="decorative-image" src="assets/helpasset1_bug_report.png" data-stringid-alt="helpScreenContactFeedbackBugs" />
                             </p>
                             <div class="content" data-stringid-content="helpScreenContactFeedbackPs"></div>
                             <div id="contact-imprint"><button id="contact-imprintlink" data-stringid-content="helpScreenContactBackupLink"></button></div>
@@ -240,7 +240,7 @@
                             <h2 data-stringid-content="helpScreenDownloadViewSource" data-stringid-content-arg1="helpScreenDownloadViewSourceIcon" data-stringid-content-argisstringref1="1"></h2>
                         </div>
                         <p>
-                            <img style="width: 100%" src="assets/helpasset3_source.png" data-stringid-alt="helpScreenDownloadViewSourceCodePic" />
+                            <img class="decorative-image" src="assets/helpasset3_source.png" data-stringid-alt="helpScreenDownloadViewSourceCodePic" />
                         </p>
                         <div class="card-content">
                             <div class="content" data-stringid-content="helpScreenDownloadViewSourcePs"></div>
@@ -253,7 +253,7 @@
                             <h2 data-stringid-content="helpScreenDownloadTranslations" data-stringid-content-arg1="helpScreenDownloadTranslationsIcon" data-stringid-content-argisstringref1="1"></h2>
                         </div>
                         <p>
-                            <img style="width: 100%" src="assets/helpasset4_translate.jpg" data-stringid-alt="helpScreenDownloadTranslationsPic" />
+                            <img class="decorative-image" src="assets/helpasset4_translate.jpg" data-stringid-alt="helpScreenDownloadTranslationsPic" />
                         </p>
                         <div class="card-content">
                             <div class="content" data-stringid-content="helpScreenDownloadTranslationsPs"></div>
@@ -294,12 +294,10 @@
             <button></button>
         </div>
 
-        <!-- load strings -->
-        <script>
-            init();
-            if (typeof init_local == "function") {
-                init_local();
-            }
-        </script>
+        <!-- initialize -->
+        <!-- dep_check -->
+        <script src="src/js/init.js"></script>
+        <!-- dep_check -->
+        <script src="src/js_platform/init.js"></script>
     </body>
 </html>
