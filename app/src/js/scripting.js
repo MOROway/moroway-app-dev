@@ -796,9 +796,6 @@ function drawInfoOverlayMenu(state) {
         for (var i = 0; i < infoOverlayMenu.items.length; i++) {
             infoOverlayMenu.items[i].style.width = infoOverlayMenu.items[i].style.height = infoOverlayMenu.items[i].style.fontSize = infoOverlayMenu.items[i].style.lineHeight = newWidth + "px";
         }
-    } else {
-        infoOverlayMenu.container.element.style.display = "none";
-        infoOverlayMenu.visible = false;
     }
 }
 function drawOptionsMenu(state) {
@@ -856,9 +853,6 @@ function drawOptionsMenu(state) {
         for (var i = 0; i < optMenu.items.length; i++) {
             optMenu.items[i].style.width = optMenu.items[i].style.height = optMenu.items[i].querySelector("i").style.fontSize = optMenu.items[i].querySelector("i").style.lineHeight = itemSize + "px";
         }
-    } else {
-        optMenu.container.element.style.display = "none";
-        optMenu.visible = false;
     }
 }
 
@@ -937,6 +931,11 @@ function calcMenusAndBackground(state) {
     if (document.querySelector("#canvas-info-toggle") != null) {
         if (settings.reduceOptMenu && settings.reduceOptMenuHideGraphicalInfoToggle) {
             document.querySelector("#canvas-info-toggle").classList.add("settings-hidden");
+            if (gui.infoOverlay) {
+                gui.infoOverlay = false;
+                drawOptionsMenu("visible");
+                drawInfoOverlayMenu("hide-outer");
+            }
         } else {
             document.querySelector("#canvas-info-toggle").classList.remove("settings-hidden");
         }
@@ -1105,14 +1104,19 @@ function calcMenusAndBackground(state) {
             optMenu.visible = false;
             optMenu.container.height = 0;
         }
+        optMenu.container.element.style.display = "";
     } else {
         optMenu.small = true;
         optMenu.visible = false;
         optMenu.container.height = 0;
+        optMenu.container.element.style.display = "none";
     }
+
     infoOverlayMenu.visible = false;
     infoOverlayMenu.container.height = optMenu.container.height;
     infoOverlayMenu.overlayText = document.querySelector("#info-overlay-text");
+    infoOverlayMenu.container.element.style.display = optMenu.container.element.style.display;
+
     calcBackground();
 }
 
