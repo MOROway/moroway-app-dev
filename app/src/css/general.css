@@ -181,6 +181,8 @@ h2 {
 
 .settings-list > li {
     padding: 10px 0px;
+    transition: opacity 0.2s;
+    overflow: hidden;
 }
 .settings-list > li:first-of-type {
     padding-top: 0px;

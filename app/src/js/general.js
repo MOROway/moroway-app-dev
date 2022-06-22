@@ -384,7 +384,7 @@ function getSettings(asObject, storageArea) {
     var dependencies, hardware;
     switch (storageArea) {
         default:
-            dependencies = {alwaysShowSelectedTrain: ["classicUI"]};
+            dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"]};
             hardware = {cursorascircle: ["mouse"]};
             if (typeof values.showNotifications != "boolean") {
                 values.showNotifications = true;
@@ -403,6 +403,21 @@ function getSettings(asObject, storageArea) {
             }
             if (typeof values.saveGame != "boolean") {
                 values.saveGame = true;
+            }
+            if (typeof values.reduceOptMenu != "boolean") {
+                values.reduceOptMenu = false;
+            }
+            if (typeof values.reduceOptMenuHideGraphicalInfoToggle != "boolean") {
+                values.reduceOptMenuHideGraphicalInfoToggle = false;
+            }
+            if (typeof values.reduceOptMenuHideTrainControlCenter != "boolean") {
+                values.reduceOptMenuHideTrainControlCenter = false;
+            }
+            if (typeof values.reduceOptMenuHideCarControlCenter != "boolean") {
+                values.reduceOptMenuHideCarControlCenter = false;
+            }
+            if (typeof values.reduceOptMenuHideAudioToggle != "boolean") {
+                values.reduceOptMenuHideAudioToggle = false;
             }
     }
     Object.keys(values).forEach(function (value) {
@@ -463,8 +478,6 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
             var elem = document.querySelector("[data-settings-id='" + b + "'][data-settings-storage-area='" + storageArea + "']");
             if (elem !== null) {
                 var leftButton = document.querySelector("[data-settings-id='" + b + "'][data-settings-storage-area='" + storageArea + "']").querySelector(".settings-opts-left-button");
-                var textButton = document.querySelector("[data-settings-id='" + b + "'][data-settings-storage-area='" + storageArea + "']").querySelector(".settings-opts-text-button");
-
                 if (a) {
                     leftButton.style.backgroundColor = "black";
                     leftButton.style.transform = "rotate(360deg)";
@@ -473,9 +486,17 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
                     leftButton.style.transform = "rotate(0deg)";
                 }
                 if (isSettingActive(b, storageArea) && isHardwareAvailable(b, storageArea)) {
-                    elem.style.setProperty("display", "block");
+                    elem.style.setProperty("max-height", "");
+                    elem.style.setProperty("margin", "");
+                    elem.style.setProperty("border", "");
+                    elem.style.setProperty("padding", "");
+                    elem.style.setProperty("opacity", "");
                 } else {
-                    elem.style.setProperty("display", "none");
+                    elem.style.setProperty("max-height", "0");
+                    elem.style.setProperty("margin", "0");
+                    elem.style.setProperty("border", "0");
+                    elem.style.setProperty("padding", "0");
+                    elem.style.setProperty("opacity", "0.5");
                 }
             }
         }
@@ -493,13 +514,27 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
             } else {
                 btnSaveGameDeleteGame.style.display = "inline";
             }
+            var reduceOptMenuHideItems = document.querySelectorAll(".reduce-opt-menu-hide-item");
+            for (var i = 0; i < reduceOptMenuHideItems.length; i++) {
+                if (!settings.reduceOptMenu) {
+                    reduceOptMenuHideItems[i].style.display = "";
+                } else {
+                    reduceOptMenuHideItems[i].style.display = "inline";
+                    reduceOptMenuHideItems[i].style.textDecoration = "";
+                    reduceOptMenuHideItems[i].textContent = getString("optButton_morowayApp_" + reduceOptMenuHideItems[i].dataset.settingsId);
+                    if (settings[reduceOptMenuHideItems[i].dataset.settingsId]) {
+                        reduceOptMenuHideItems[i].style.textDecoration = "line-through";
+                    }
+                }
+            }
         }
     }
 
-    function changeSetting(event) {
+    function changeSetting(event, idOnElement) {
         var settings = getSettings(false, storageArea);
-        if (isSettingActive(event.target.parentNode.parentNode.dataset.settingsId, storageArea)) {
-            settings[event.target.parentNode.parentNode.dataset.settingsId] = !settings[event.target.parentNode.parentNode.dataset.settingsId];
+        var id = idOnElement ? event.target.dataset.settingsId : event.target.parentNode.parentNode.dataset.settingsId;
+        if (isSettingActive(id, storageArea)) {
+            settings[id] = !settings[id];
             setSettings(settings, false, storageArea);
             displaySettingsOpts();
             displaySettingsButtons();
@@ -582,6 +617,20 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
                 });
                 child.appendChild(kid);
                 optElem.appendChild(child);
+            } else if (storageArea == "morowayApp" && opt == "reduceOptMenu") {
+                child = document.createElement("div");
+                child.className = "settings-buttons-wrapper";
+                var kidNames = ["reduceOptMenuHideGraphicalInfoToggle", "reduceOptMenuHideTrainControlCenter", "reduceOptMenuHideCarControlCenter", "reduceOptMenuHideAudioToggle"];
+                kidNames.forEach(function (kidName) {
+                    kid = document.createElement("button");
+                    kid.className = "settings-button reduce-opt-menu-hide-item";
+                    kid.dataset.settingsId = kidName;
+                    kid.addEventListener("click", function (event) {
+                        changeSetting(event, true);
+                    });
+                    child.appendChild(kid);
+                });
+                optElem.appendChild(child);
             }
             root.appendChild(optElem);
         }
@@ -638,11 +687,12 @@ function getVersionCode() {
 }
 
 function isGameSaved() {
-    Object.keys(window.localStorage).forEach(function (key) {
-        if (key.indexOf("morowayAppSaved") === 0) {
+    var keys = Object.keys(window.localStorage);
+    for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf("morowayAppSaved") === 0) {
             return true;
         }
-    });
+    }
     return false;
 }
 function updateSavedGame() {
