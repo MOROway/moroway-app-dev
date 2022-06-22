@@ -1095,6 +1095,7 @@ function calcMenusAndBackground(state) {
         optMenu.small = !client.isSmall;
         optMenu.visible = true;
         optMenu.container.height = optMenu.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
+        optMenu.container.element.style.display = "";
         calcBackground(true);
         if (optMenu.small && client.y >= optMenu.container.height) {
             optMenu.floating = true;
@@ -1103,8 +1104,8 @@ function calcMenusAndBackground(state) {
             optMenu.small = true;
             optMenu.visible = false;
             optMenu.container.height = 0;
+            optMenu.container.element.style.display = "none";
         }
-        optMenu.container.element.style.display = "";
     } else {
         optMenu.small = true;
         optMenu.visible = false;
