@@ -263,7 +263,9 @@
 	],
 	"helpScreenLegalAppAndroidIcon": "📱",
 	"helpScreenLegalAppAndroidPicasso": "com.squareup.picasso",
-	"helpScreenLegalAppAndroidPicassoPs": "MOROway App for Android uses com.squareup.picasso.",
+	"helpScreenLegalAppAndroidPicassoPs": [
+		"MOROway App for Android uses com.squareup.picasso."
+	],
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [
