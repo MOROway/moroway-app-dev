@@ -68,10 +68,22 @@ window.addEventListener("load", function () {
         elems[i].style.display = "none";
     }
     getServerNote(function (serverMsg) {
+        var link = null;
         if (serverMsg.link != undefined && serverMsg.link != null && typeof serverMsg.link == "string") {
-            WebJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil, getServerRedirectLink(serverMsg.link));
-        } else {
-            WebJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil);
+            link = getServerRedirectLink(serverMsg.link);
         }
+        var image = null;
+        var imageLink = null;
+        if (serverMsg.imageSrc != undefined && typeof serverMsg.imageSrc == "string") {
+            image = serverMsg.imageSrc;
+            if (serverMsg.imageLink != undefined && serverMsg.imageLink != null && typeof serverMsg.imageLink == "string") {
+                imageLink = getServerRedirectLink(serverMsg.imageLink);
+            }
+        }
+        var backgroundImage = null;
+        if (serverMsg.backgroundImageSrc != undefined && typeof serverMsg.backgroundImageSrc == "string") {
+            backgroundImage = serverMsg.backgroundImageSrc;
+        }
+        WebJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil, link, image, imageLink, backgroundImage);
     });
 });

@@ -221,11 +221,15 @@ canvas {
     padding-bottom: 100px;
 }
 #settings .nav-wrapper {
-    margin: 10px;
     position: fixed;
-    bottom: 2%;
-    right: 2%;
+    bottom: 0;
+    right: 0;
+    padding: 10px 0px;
     background: floralwhite;
+    border-top: 2px solid rgb(48, 48, 48);
+    width: inherit;
+    display: flex;
+    justify-content: center;
 }
 #chat .nav-wrapper {
     min-height: 40px;

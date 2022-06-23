@@ -698,7 +698,9 @@ function drawInfoOverlayMenu(state) {
     }
     infoOverlayMenu.items[infoOverlayMenu.items.length] = 8;
     var infoExit = document.querySelector("#canvas-info-exit");
-    document.querySelector("#canvas-info-inner").innerHTML = "";
+    if (infoOverlayMenu.container.elementInner != null) {
+        infoOverlayMenu.container.elementInner.innerHTML = "";
+    }
     for (var i = 0; i < infoOverlayMenu.items.length; i++) {
         var element = document.createElement("button");
         element.className = "canvas-info-button";
@@ -750,11 +752,11 @@ function drawInfoOverlayMenu(state) {
                 }, drawInterval);
             }
         };
-        document.querySelector("#canvas-info-inner").appendChild(element);
+        infoOverlayMenu.container.elementInner.appendChild(element);
     }
-    document.querySelector("#canvas-info-inner").appendChild(infoExit);
-    infoOverlayMenu.items = document.querySelectorAll("#canvas-info-inner > *:not(.hidden)");
-    if (infoOverlayMenu.items.length > 0 && !gui.demo) {
+    infoOverlayMenu.container.elementInner.appendChild(infoExit);
+    infoOverlayMenu.items = infoOverlayMenu.container.elementInner.querySelectorAll("*:not(.hidden)");
+    if (optMenu.items.length > 0 && infoOverlayMenu.items.length > 0 && !gui.demo) {
         infoOverlayMenu.container.width = optMenu.container.width;
         infoOverlayMenu.container.element.style.justifyContent = optMenu.container.element.style.justifyContent;
         infoOverlayMenu.container.elementInner.style.width = optMenu.container.elementInner.style.width;
@@ -768,22 +770,18 @@ function drawInfoOverlayMenu(state) {
             case "hide-outer":
                 infoOverlayMenu.container.element.style.display = "none";
             case "hide":
-                infoOverlayMenu.visible = false;
                 infoOverlayMenu.container.elementInner.style.display = "";
                 break;
             case "show":
-                optMenu.visible = true;
                 infoOverlayMenu.container.elementInner.style.display = "inline-flex";
                 infoOverlayMenu.container.element.style.display = "";
                 break;
             case "invisible-outer":
                 infoOverlayMenu.container.element.style.visibility = "hidden";
             case "invisible":
-                infoOverlayMenu.visible = false;
                 infoOverlayMenu.container.elementInner.style.visibility = "hidden";
                 break;
             case "visible":
-                infoOverlayMenu.visible = true;
                 infoOverlayMenu.container.element.style.visibility = infoOverlayMenu.container.elementInner.style.visibility = "";
                 break;
         }
@@ -797,7 +795,7 @@ function drawInfoOverlayMenu(state) {
     }
 }
 function drawOptionsMenu(state) {
-    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
+    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden)");
     if (optMenu.items.length > 0 && !gui.demo) {
         optMenu.container.width = background.width / client.devicePixelRatio;
         var innerWidth = (settings.classicUI || optMenu.floating ? 0.5 : 1) * optMenu.container.width;
@@ -850,10 +848,6 @@ function drawOptionsMenu(state) {
 
         for (var i = 0; i < optMenu.items.length; i++) {
             optMenu.items[i].style.width = optMenu.items[i].style.height = optMenu.items[i].querySelector("i").style.fontSize = optMenu.items[i].querySelector("i").style.lineHeight = itemSize + "px";
-        }
-
-        if (typeof drawOptionsMenuLocal == "function") {
-            drawOptionsMenuLocal(state);
         }
     }
 }
@@ -930,7 +924,44 @@ function calcMenusAndBackground(state) {
             drawBackground();
         }
     }
-    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
+    if (document.querySelector("#canvas-info-toggle") != null) {
+        if (settings.reduceOptMenu && settings.reduceOptMenuHideGraphicalInfoToggle) {
+            document.querySelector("#canvas-info-toggle").classList.add("settings-hidden");
+            if (gui.infoOverlay) {
+                gui.infoOverlay = false;
+                drawOptionsMenu("visible");
+                drawInfoOverlayMenu("hide-outer");
+            }
+        } else {
+            document.querySelector("#canvas-info-toggle").classList.remove("settings-hidden");
+        }
+    }
+    if (document.querySelector("#canvas-control-center") != null) {
+        if (settings.reduceOptMenu && settings.reduceOptMenuHideTrainControlCenter) {
+            document.querySelector("#canvas-control-center").classList.add("settings-hidden");
+        } else {
+            document.querySelector("#canvas-control-center").classList.remove("settings-hidden");
+        }
+    }
+    if (document.querySelector("#canvas-car-control-center") != null) {
+        if (settings.reduceOptMenu && settings.reduceOptMenuHideCarControlCenter) {
+            document.querySelector("#canvas-car-control-center").classList.add("settings-hidden");
+        } else {
+            document.querySelector("#canvas-car-control-center").classList.remove("settings-hidden");
+        }
+    }
+    if (document.querySelector("#canvas-sound-toggle") != null) {
+        if (settings.reduceOptMenu && settings.reduceOptMenuHideAudioToggle) {
+            document.querySelector("#canvas-sound-toggle").classList.add("settings-hidden");
+            audio.active = false;
+            playAndPauseAudio();
+            document.querySelector("#canvas-sound-toggle").querySelector("i").textContent = "volume_off";
+            document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
+        } else {
+            document.querySelector("#canvas-sound-toggle").classList.remove("settings-hidden");
+        }
+    }
+    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden)");
     if (state == "load") {
         optMenu.container = {};
         optMenu.container.elementInner = document.querySelector("#canvas-options-inner");
@@ -1024,7 +1055,9 @@ function calcMenusAndBackground(state) {
                 settingsElem.scrollTo(0, 0);
             }
             settingsElem.style.display = "";
+            calcMenusAndBackground("resize");
             calcClassicUIElements();
+            drawOptionsMenu("resize");
             drawOptionsMenu("visible");
             resize();
         };
@@ -1049,13 +1082,16 @@ function calcMenusAndBackground(state) {
             gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = true;
         });
-        optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden)");
+    }
+    if (typeof calcOptionsMenuLocal == "function") {
+        calcOptionsMenuLocal(state);
     }
     optMenu.floating = false;
     if (optMenu.items.length > 0 && !gui.demo) {
         optMenu.small = !client.isSmall;
         optMenu.visible = true;
         optMenu.container.height = optMenu.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
+        optMenu.container.element.style.display = "";
         calcBackground(true);
         if (optMenu.small && client.y >= optMenu.container.height) {
             optMenu.floating = true;
@@ -1064,18 +1100,19 @@ function calcMenusAndBackground(state) {
             optMenu.small = true;
             optMenu.visible = false;
             optMenu.container.height = 0;
+            optMenu.container.element.style.display = "none";
         }
     } else {
         optMenu.small = true;
         optMenu.visible = false;
         optMenu.container.height = 0;
+        optMenu.container.element.style.display = "none";
     }
-    infoOverlayMenu.visible = false;
+
     infoOverlayMenu.container.height = optMenu.container.height;
     infoOverlayMenu.overlayText = document.querySelector("#info-overlay-text");
-    if (typeof calcOptionsMenuLocal == "function") {
-        calcOptionsMenuLocal(state);
-    }
+    infoOverlayMenu.container.element.style.display = optMenu.container.element.style.display;
+
     calcBackground();
 }
 

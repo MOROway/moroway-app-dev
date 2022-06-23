@@ -25,6 +25,10 @@ canvas {
     -webkit-tap-highlight-color: transparent;
 }
 
+.settings-hidden {
+    display: none !important;
+}
+
 #branding,
 #snake {
     position: fixed;
@@ -213,12 +217,19 @@ canvas {
 .settings {
     background: transparent;
 }
-.settings-inner {
-    margin-bottom: 4%;
+#settings-inner {
+    padding-bottom: 100px;
 }
 #settings .nav-wrapper {
-    margin: 10px;
-    padding-bottom: 100px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 10px 0px;
+    background: floralwhite;
+    border-top: 2px solid rgb(48, 48, 48);
+    width: inherit;
+    display: flex;
+    justify-content: center;
 }
 #chat .nav-wrapper {
     min-height: 40px;
@@ -228,7 +239,7 @@ canvas {
 #chat #chat-msg-send-text {
     border: 1px solid black;
     border-radius: 6px;
-    padding: 7px;
+    padding: 9px;
     margin: 3px;
 }
 #settings .nav-button,

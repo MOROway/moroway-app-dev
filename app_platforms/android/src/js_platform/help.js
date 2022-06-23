@@ -15,6 +15,14 @@ function init_local() {
         }
     });
 
+    document.querySelector("#legal-appandroid-licenses").classList.remove("hidden");
+    document.querySelector("#legal-appandroid-android-x-webkit-license").addEventListener("click", function () {
+        followLink("licenses_platform/androidx.webkit.txt", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
+    });
+    document.querySelector("#legal-appandroid-picasso-license").addEventListener("click", function () {
+        followLink("licenses_platform/com.squareup.picasso.txt", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
+    });
+
     document.querySelector("#privacy-statement-link").addEventListener("click", function () {
         notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight);
         followLink(getServerHTMLLink("privacy"), "_blank", LINK_STATE_NORMAL);

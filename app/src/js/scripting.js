@@ -770,22 +770,18 @@ function drawInfoOverlayMenu(state) {
             case "hide-outer":
                 infoOverlayMenu.container.element.style.display = "none";
             case "hide":
-                infoOverlayMenu.visible = false;
                 infoOverlayMenu.container.elementInner.style.display = "";
                 break;
             case "show":
-                infoOverlayMenu.visible = true;
                 infoOverlayMenu.container.elementInner.style.display = "inline-flex";
                 infoOverlayMenu.container.element.style.display = "";
                 break;
             case "invisible-outer":
                 infoOverlayMenu.container.element.style.visibility = "hidden";
             case "invisible":
-                infoOverlayMenu.visible = false;
                 infoOverlayMenu.container.elementInner.style.visibility = "hidden";
                 break;
             case "visible":
-                infoOverlayMenu.visible = true;
                 infoOverlayMenu.container.element.style.visibility = infoOverlayMenu.container.elementInner.style.visibility = "";
                 break;
         }
@@ -1113,7 +1109,6 @@ function calcMenusAndBackground(state) {
         optMenu.container.element.style.display = "none";
     }
 
-    infoOverlayMenu.visible = false;
     infoOverlayMenu.container.height = optMenu.container.height;
     infoOverlayMenu.overlayText = document.querySelector("#info-overlay-text");
     infoOverlayMenu.container.element.style.display = optMenu.container.element.style.display;
