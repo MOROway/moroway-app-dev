@@ -256,6 +256,14 @@
 	],
 	"helpScreenGeneralWelcomeVersion": "Current version: {{0}}.{{1}}.{{2}}{{6}} ({{3}}-{{4}}-{{5}})",
 	"helpScreenLegal": "Licenses",
+	"helpScreenLegalAppAndroid": "MOROway App for Android {{0}}",
+	"helpScreenLegalAppAndroidAndroidXWebkit": "androidx.webkit",
+	"helpScreenLegalAppAndroidAndroidXWebkitPs": [
+		"MOROway App for Android uses androidx.webkit."
+	],
+	"helpScreenLegalAppAndroidIcon": "📱",
+	"helpScreenLegalAppAndroidPicasso": "com.squareup.picasso",
+	"helpScreenLegalAppAndroidPicassoPs": "MOROway App for Android uses com.squareup.picasso.",
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [
