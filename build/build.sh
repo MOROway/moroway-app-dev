@@ -163,7 +163,7 @@ for platform in ${platforms[@]}; do
 		if [[ "$debug" == 1 ]]; then
 			websocketprotocol=ws
 		fi
-		shareserver=$(echo "$sharelink" | sed "s!\(.*:/\{2\}[^/]*\).*!\1/!")
+		shareserver=$(echo "$sharelink" | sed "s!.*:/\{2\}\([^/]*\).*!\1!")
 		sed -i "s/{{changelog=[^}]*}}//g;s!{{sharelink}}!$sharelink!;s!{{shareserver}}!$shareserver!;s!{{serverlink}}!$serverlink!;s/{{hypertextprotocol}}/$hypertextprotocol/;s/{{websocketprotocol}}/$websocketprotocol/" "$file"
 		# Service Worker
 		all_files=$(loop_files "$to" "$to")
