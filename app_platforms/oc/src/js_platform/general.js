@@ -30,7 +30,7 @@ function followLink(input1, input2, input3) {
 function followIntent(url) {
     var redirect = "./";
     if (url !== null) {
-        url = url.replace(/[a-z]*:[/][/]/, "");
+        url = url.replace(/^[a-z]*:[/][/]/, "");
     }
     var server = getShareLinkServerName() + "/";
     if (url !== null && url.indexOf(server) === 0) {

@@ -1854,9 +1854,10 @@ function drawObjects() {
         client.oldTouchScaleX = client.touchScaleX;
         client.oldTouchScaleY = client.touchScaleY;
         drawBackground();
-        if (client.realScale != 1) {
-            drawOptionsMenu("hide-outer");
+        if (client.realScale != 1 && gui.infoOverlay) {
             drawInfoOverlayMenu("hide-outer");
+        } else if (client.realScale != 1) {
+            drawOptionsMenu("hide-outer");
         } else if (gui.infoOverlay) {
             drawInfoOverlayMenu("show");
         } else {
