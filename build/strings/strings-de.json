@@ -35,7 +35,10 @@
 		"Ausgewählter Zug",
 		"Transformator",
 		"Wechsel der Zug-Fahrtrichtung",
-		"Weichen"
+		"Weichen",
+		"Zuggeschwindigkeit",
+		"Zug losfahren / anhalten",
+		"Wechsel der Zug-Fahrtrichtung"
 	],
 	"appScreenHasLoaded": "Anwendung geladen",
 	"appScreenHasUpdated": "Neue Version",
