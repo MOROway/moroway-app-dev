@@ -35,7 +35,10 @@
 		"Selected train",
 		"Transformer",
 		"Change train direction",
-		"Switches"
+		"Switches",
+		"Train speed",
+		"Start / stop train",
+		"Change train direction"
 	],
 	"appScreenHasLoaded": "App ready",
 	"appScreenHasUpdated": "New version",
