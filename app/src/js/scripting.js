@@ -414,6 +414,9 @@ function onMouseRight(event) {
         controlCenter.mouse.clickEvent = false;
         controlCenter.mouse.wheelScrolls = false;
     }
+    if (gui.infoOverlay) {
+        drawInfoOverlayMenu("resize");
+    }
 }
 function preventMouseZoomDuringLoad(event) {
     event.preventDefault();
@@ -498,6 +501,9 @@ function getTouchEnd(event) {
                 notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height, false);
             }
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
+        }
+        if (gui.infoOverlay) {
+            drawInfoOverlayMenu("resize");
         }
     }
 }
@@ -722,19 +728,22 @@ function drawInfoOverlayMenu(state) {
     if (settings.burnTheTaxOffice) {
         menus.infoOverlay.items[menus.infoOverlay.items.length] = 3;
     }
-    if (settings.classicUI) {
+    if (settings.classicUI && !gui.controlCenter) {
         menus.infoOverlay.items[menus.infoOverlay.items.length] = 4;
-    }
-    if (settings.classicUI && classicUI.trainSwitch.selectedTrainDisplay.visible) {
-        menus.infoOverlay.items[menus.infoOverlay.items.length] = 5;
-    }
-    if (settings.classicUI) {
+        if (classicUI.trainSwitch.selectedTrainDisplay.visible) {
+            menus.infoOverlay.items[menus.infoOverlay.items.length] = 5;
+        }
         menus.infoOverlay.items[menus.infoOverlay.items.length] = 6;
-    }
-    if (settings.classicUI && (!client.isTiny || !(typeof client.realScale == "undefined" || client.realScale <= Math.max(1, client.realScaleMax / 3)))) {
-        menus.infoOverlay.items[menus.infoOverlay.items.length] = 7;
+        if (classicUI.transformer.directionInput.visible) {
+            menus.infoOverlay.items[menus.infoOverlay.items.length] = 7;
+        }
     }
     menus.infoOverlay.items[menus.infoOverlay.items.length] = 8;
+    if (gui.controlCenter && !controlCenter.showCarCenter) {
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 9;
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 10;
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 11;
+    }
     var infoExit = document.querySelector("#canvas-info-exit");
     if (menus.infoOverlay.container.elementInner != null) {
         menus.infoOverlay.container.elementInner.innerHTML = "";
@@ -743,7 +752,8 @@ function drawInfoOverlayMenu(state) {
         var element = document.createElement("button");
         element.className = "canvas-info-button";
         element.textContent = menus.infoOverlay.items[i];
-        element.title = getString(["appScreenGraphicalInfoList", i]);
+        element.title = getString(["appScreenGraphicalInfoList", menus.infoOverlay.items[i] - 1]);
+        console.log(menus.infoOverlay.items[i] - 1);
         element.onclick = function (event) {
             if (menus.infoOverlay.textTimeout != undefined && menus.infoOverlay.textTimeout != null) {
                 window.clearTimeout(menus.infoOverlay.textTimeout);
@@ -1022,10 +1032,16 @@ function calcMenusAndBackground(state) {
         document.querySelector("#canvas-control-center").addEventListener("click", function () {
             gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = false;
+            if (gui.infoOverlay) {
+                drawInfoOverlayMenu("resize");
+            }
         });
         document.querySelector("#canvas-car-control-center").addEventListener("click", function () {
             gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = true;
+            if (gui.infoOverlay) {
+                drawInfoOverlayMenu("resize");
+            }
         });
     }
     if (typeof calcOptionsMenuLocal == "function") {
@@ -2207,7 +2223,7 @@ function drawObjects() {
                 var textWidth = background.width / (menus.small ? 100 : 50);
                 contextForeground.beginPath();
                 contextForeground.fillStyle = "#dfbbff";
-                contextForeground.strokeStyle = "darkblue";
+                contextForeground.strokeStyle = "violet";
                 contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
                 contextForeground.fill();
                 contextForeground.stroke();
@@ -2253,7 +2269,7 @@ function drawObjects() {
             var textWidth = background.width / (menus.small ? 100 : 50);
             contextForeground.beginPath();
             contextForeground.fillStyle = "#dfbbff";
-            contextForeground.strokeStyle = "darkblue";
+            contextForeground.strokeStyle = "violet";
             contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
             contextForeground.fill();
             contextForeground.stroke();
@@ -2307,6 +2323,7 @@ function drawObjects() {
             drawImage(pics[classicUI.transformer.onSrc], -classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height, contextForeground);
         }
         if (!client.isTiny || !(typeof client.realScale == "undefined" || client.realScale <= Math.max(1, client.realScaleMax / 3))) {
+            classicUI.transformer.directionInput.visible = true;
             contextForeground.save();
             contextForeground.translate(classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
             if (trains[trainParams.selected].move) {
@@ -2325,7 +2342,7 @@ function drawObjects() {
                 var textWidth = background.width / (menus.small ? 125 : 75);
                 contextForeground.beginPath();
                 contextForeground.fillStyle = "#dfbbff";
-                contextForeground.strokeStyle = "darkblue";
+                contextForeground.strokeStyle = "violet";
                 contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
                 contextForeground.fill();
                 contextForeground.stroke();
@@ -2364,6 +2381,8 @@ function drawObjects() {
                 }
             }
             contextForeground.restore();
+        } else {
+            classicUI.transformer.directionInput.visible = false;
         }
         contextForeground.save();
         contextForeground.translate(0, -classicUI.transformer.input.diffY);
@@ -2379,7 +2398,7 @@ function drawObjects() {
             var textWidth = background.width / (menus.small ? 100 : 50);
             contextForeground.beginPath();
             contextForeground.fillStyle = "#dfbbff";
-            contextForeground.strokeStyle = "darkblue";
+            contextForeground.strokeStyle = "violet";
             contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
             contextForeground.fill();
             contextForeground.stroke();
@@ -2913,6 +2932,9 @@ function drawObjects() {
         if (contextClick && hardware.mouse.upX - background.x - controlCenter.translateOffset > 0 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth / 8 && hardware.mouse.upY - background.y - controlCenter.translateOffset > 0 && hardware.mouse.upY - background.y - controlCenter.translateOffset < controlCenter.maxTextHeight * trains.length) {
             gui.controlCenter = false;
             controlCenter.mouse.wheelScrolls = false;
+            if (gui.infoOverlay) {
+                drawInfoOverlayMenu("resize");
+            }
         }
         /////CONTROL CENTER/Cars/////
         if (controlCenter.showCarCenter) {
@@ -3176,6 +3198,28 @@ function drawObjects() {
                     }
                 }
                 contextForeground.strokeRect(controlCenter.maxTextWidth, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.5, maxTextHeight);
+                if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 9)) {
+                    contextForeground.save();
+                    var textWidth = background.width / 100;
+                    contextForeground.translate(controlCenter.maxTextWidth + textWidth * 1.5, maxTextHeight * cTrain + textWidth * 1.5);
+                    contextForeground.beginPath();
+                    contextForeground.fillStyle = "#dfbbff";
+                    contextForeground.strokeStyle = "violet";
+                    contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
+                    contextForeground.fill();
+                    contextForeground.stroke();
+                    contextForeground.font = measureFontSize("9", "monospace", 100, textWidth, 5, textWidth / 10);
+                    contextForeground.fillStyle = "black";
+                    contextForeground.textAlign = "center";
+                    contextForeground.textBaseline = "middle";
+                    var metrics = contextForeground.measureText("9");
+                    if (metrics.actualBoundingBoxAscent != undefined && metrics.actualBoundingBoxDescent != undefined) {
+                        contextForeground.fillText("9", 0, (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2);
+                    } else {
+                        contextForeground.fillText("9", 0, 0);
+                    }
+                    contextForeground.restore();
+                }
                 if (noCollisionCTrain && contextClick && hardware.mouse.upX - background.x - controlCenter.translateOffset > controlCenter.maxTextWidth * 1.5 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth * 1.75 && hardware.mouse.upY - background.y - controlCenter.translateOffset > maxTextHeight * cTrain && hardware.mouse.upY - background.y - controlCenter.translateOffset < maxTextHeight * cTrain + maxTextHeight) {
                     if (trains[cTrain].accelerationSpeed > 0) {
                         actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
@@ -3201,6 +3245,28 @@ function drawObjects() {
                 contextForeground.stroke();
                 contextForeground.restore();
                 contextForeground.strokeRect(controlCenter.maxTextWidth * 1.5, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.25, maxTextHeight);
+                if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 10)) {
+                    contextForeground.save();
+                    var textWidth = background.width / 100;
+                    contextForeground.translate(controlCenter.maxTextWidth * 1.5 + textWidth * 1.5, maxTextHeight * cTrain + textWidth * 1.5);
+                    contextForeground.beginPath();
+                    contextForeground.fillStyle = "#dfbbff";
+                    contextForeground.strokeStyle = "violet";
+                    contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
+                    contextForeground.fill();
+                    contextForeground.stroke();
+                    contextForeground.font = measureFontSize("10", "monospace", 100, textWidth, 5, textWidth / 10);
+                    contextForeground.fillStyle = "black";
+                    contextForeground.textAlign = "center";
+                    contextForeground.textBaseline = "middle";
+                    var metrics = contextForeground.measureText("10");
+                    if (metrics.actualBoundingBoxAscent != undefined && metrics.actualBoundingBoxDescent != undefined) {
+                        contextForeground.fillText("10", 0, (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2);
+                    } else {
+                        contextForeground.fillText("10", 0, 0);
+                    }
+                    contextForeground.restore();
+                }
                 if (contextClick && !trains[cTrain].move && hardware.mouse.upX - background.x - controlCenter.translateOffset > controlCenter.maxTextWidth * 1.7 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth * 2 && hardware.mouse.upY - background.y - controlCenter.translateOffset > maxTextHeight * cTrain && hardware.mouse.upY - background.y - controlCenter.translateOffset < maxTextHeight * cTrain + maxTextHeight) {
                     actionSync("trains", cTrain, [{standardDirection: !trains[cTrain].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
                 }
@@ -3231,6 +3297,28 @@ function drawObjects() {
                 contextForeground.fill();
                 contextForeground.restore();
                 contextForeground.strokeRect(controlCenter.maxTextWidth * 1.75, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.25, maxTextHeight);
+                if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 11)) {
+                    contextForeground.save();
+                    var textWidth = background.width / 100;
+                    contextForeground.translate(controlCenter.maxTextWidth * 1.75 + textWidth * 1.5, maxTextHeight * cTrain + textWidth * 1.5);
+                    contextForeground.beginPath();
+                    contextForeground.fillStyle = "#dfbbff";
+                    contextForeground.strokeStyle = "violet";
+                    contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
+                    contextForeground.fill();
+                    contextForeground.stroke();
+                    contextForeground.font = measureFontSize("11", "monospace", 100, textWidth, 5, textWidth / 10);
+                    contextForeground.fillStyle = "black";
+                    contextForeground.textAlign = "center";
+                    contextForeground.textBaseline = "middle";
+                    var metrics = contextForeground.measureText("11");
+                    if (metrics.actualBoundingBoxAscent != undefined && metrics.actualBoundingBoxDescent != undefined) {
+                        contextForeground.fillText("11", 0, (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2);
+                    } else {
+                        contextForeground.fillText("11", 0, 0);
+                    }
+                    contextForeground.restore();
+                }
             }
         }
         contextForeground.restore();
