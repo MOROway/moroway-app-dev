@@ -415,7 +415,7 @@ function onMouseRight(event) {
         controlCenter.mouse.wheelScrolls = false;
     }
     if (gui.infoOverlay) {
-        drawInfoOverlayMenu("resize");
+        drawInfoOverlayMenu("items-change");
     }
 }
 function preventMouseZoomDuringLoad(event) {
@@ -503,7 +503,7 @@ function getTouchEnd(event) {
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         }
         if (gui.infoOverlay) {
-            drawInfoOverlayMenu("resize");
+            drawInfoOverlayMenu("items-change");
         }
     }
 }
@@ -753,7 +753,6 @@ function drawInfoOverlayMenu(state) {
         element.className = "canvas-info-button";
         element.textContent = menus.infoOverlay.items[i];
         element.title = getString(["appScreenGraphicalInfoList", menus.infoOverlay.items[i] - 1]);
-        console.log(menus.infoOverlay.items[i] - 1);
         element.onclick = function (event) {
             if (menus.infoOverlay.textTimeout != undefined && menus.infoOverlay.textTimeout != null) {
                 window.clearTimeout(menus.infoOverlay.textTimeout);
@@ -1033,14 +1032,14 @@ function calcMenusAndBackground(state) {
             gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = false;
             if (gui.infoOverlay) {
-                drawInfoOverlayMenu("resize");
+                drawInfoOverlayMenu("items-change");
             }
         });
         document.querySelector("#canvas-car-control-center").addEventListener("click", function () {
             gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = true;
             if (gui.infoOverlay) {
-                drawInfoOverlayMenu("resize");
+                drawInfoOverlayMenu("items-change");
             }
         });
     }
@@ -2933,7 +2932,7 @@ function drawObjects() {
             gui.controlCenter = false;
             controlCenter.mouse.wheelScrolls = false;
             if (gui.infoOverlay) {
-                drawInfoOverlayMenu("resize");
+                drawInfoOverlayMenu("items-change");
             }
         }
         /////CONTROL CENTER/Cars/////
