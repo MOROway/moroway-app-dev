@@ -971,6 +971,26 @@ function calcMenusAndBackground(state) {
                             console.log(e);
                         }
                     }
+                    try {
+                        fetch("./assets/audio_asset_switch.ogg")
+                            .then(function (response) {
+                                return response.arrayBuffer();
+                            })
+                            .catch(function (error) {
+                                if (APP_DATA.debug) {
+                                    console.log("Fetch-Error:", error);
+                                }
+                            })
+                            .then(function (response) {
+                                audio.context.decodeAudioData(response, function (buffer) {
+                                    createAudio("switch", null, buffer, 1);
+                                });
+                            });
+                    } catch (e) {
+                        if (APP_DATA.debug) {
+                            console.log(e);
+                        }
+                    }
                     for (var i = 0; i < trains.length; i++) {
                         createTrainAudio(i);
                     }
@@ -2564,6 +2584,12 @@ function drawObjects() {
                             switches[key][side].lastStateChange = frameNo;
                             animateWorker.postMessage({k: "switches", switches: switches});
                             notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
+                        }
+                        if (existsAudio("switch")) {
+                            stopAudio("switch");
+                        }
+                        if (audio.active) {
+                            startAudio("switch", null, false);
                         }
                     },
                     hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
