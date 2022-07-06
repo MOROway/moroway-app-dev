@@ -1343,7 +1343,7 @@ function defineTrainParams() {
     rotationPoints.outer.rightSiding = {};
     rotationPoints.outer.rightSiding.enter = {x: [], y: []};
     rotationPoints.outer.rightSiding.enter.x[0] = rotationPoints.outer.altState3.right.x[1];
-    rotationPoints.outer.rightSiding.enter.x[1] = rotationPoints.outer.rightSiding.enter.x[0] + background.width * 0.17;
+    rotationPoints.outer.rightSiding.enter.x[1] = rotationPoints.outer.rightSiding.enter.x[0] + background.width * 0.18;
     rotationPoints.outer.rightSiding.enter.y[0] = rotationPoints.outer.altState3.right.y[1];
     rotationPoints.outer.rightSiding.enter.y[1] = rotationPoints.outer.rightSiding.enter.y[0] + background.height * 0.0073;
 
@@ -1353,11 +1353,11 @@ function defineTrainParams() {
     rotationPoints.outer.rightSiding.curve = {x: [], y: []};
     rotationPoints.outer.rightSiding.curve.x[0] = rotationPoints.outer.rightSiding.enter.x[1];
     rotationPoints.outer.rightSiding.curve.x[1] = 0.89 * background.width;
-    rotationPoints.outer.rightSiding.curve.x[2] = 0.965 * background.width;
-    rotationPoints.outer.rightSiding.curve.x[3] = rotationPoints.outer.rightSiding.curve.x[0] + 0.147 * background.width;
+    rotationPoints.outer.rightSiding.curve.x[2] = 0.967 * background.width;
+    rotationPoints.outer.rightSiding.curve.x[3] = rotationPoints.outer.rightSiding.curve.x[0] + 0.137 * background.width;
     rotationPoints.outer.rightSiding.curve.y[0] = rotationPoints.outer.rightSiding.enter.y[1];
-    rotationPoints.outer.rightSiding.curve.y[1] = rotationPoints.outer.rightSiding.curve.y[0] + 0.015 * background.height;
-    rotationPoints.outer.rightSiding.curve.y[2] = rotationPoints.outer.rightSiding.curve.y[0] - 0.1 * background.height;
+    rotationPoints.outer.rightSiding.curve.y[1] = rotationPoints.outer.rightSiding.curve.y[0] + 0.005 * background.height;
+    rotationPoints.outer.rightSiding.curve.y[2] = rotationPoints.outer.rightSiding.curve.y[0] - 0.11 * background.height;
     rotationPoints.outer.rightSiding.curve.y[3] = rotationPoints.outer.rightSiding.curve.y[0] - 0.39 * background.height;
     bezierPoints = {x: [rotationPoints.outer.rightSiding.curve.x[0], rotationPoints.outer.rightSiding.curve.x[1], rotationPoints.outer.rightSiding.curve.x[2], rotationPoints.outer.rightSiding.curve.x[3]], y: [rotationPoints.outer.rightSiding.curve.y[0], rotationPoints.outer.rightSiding.curve.y[1], rotationPoints.outer.rightSiding.curve.y[2], rotationPoints.outer.rightSiding.curve.y[3]]};
     rotationPoints.outer.rightSiding.curve.bezierLength = getBezierLength(bezierPoints, repNo);
