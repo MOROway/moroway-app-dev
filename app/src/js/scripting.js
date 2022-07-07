@@ -4253,7 +4253,7 @@ window.onload = function () {
                             trains[i].cars[j].back.angle = car.back.angle;
                         }
                     });
-                    if (train.move && !train.mute) {
+                    if (train.move && !train.mute && audio.active) {
                         if (!existsAudio("train", i)) {
                             startAudio("train", i, true);
                         }
