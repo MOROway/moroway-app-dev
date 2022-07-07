@@ -872,7 +872,7 @@ function calcMenusAndBackground(state) {
             background.x = canvasBackground.width / 2 - background.width / 2;
             background.y = 0;
         }
-        if ((APP_DATA.debug || debug.active) && debug.showHidden) {
+        if (APP_DATA.debug && debug.showHidden) {
             background.x = 0;
             background.y = canvasBackground.height - background.height;
             background.width /= 2;
@@ -1623,14 +1623,14 @@ function drawObjects() {
             }
             context.closePath();
             context.restore();
-            if (debug.active && debug.paint) {
+            if (APP_DATA.debug && debug.paint) {
                 context.save();
                 context.translate(background.x + currentObject.x, background.y + currentObject.y);
                 context.rotate(currentObject.displayAngle);
                 context.strokeRect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
                 context.restore();
             }
-            if (debug.active && debug.paint && !carParams.autoModeRuns) {
+            if (APP_DATA.debug && debug.paint && !carParams.autoModeRuns) {
                 context.save();
                 context.beginPath();
                 context.strokeStyle = "rgb(" + Math.floor((input1 / carWays.length) * 255) + ",0,0)";
@@ -1752,7 +1752,7 @@ function drawObjects() {
         var y1 = currentObject.y + (fac * Math.cos(Math.PI / 2 - currentObject.displayAngle) * currentObject.width) / 2 - (Math.sin(-Math.PI / 2 - currentObject.displayAngle) * currentObject.height) / 2;
         var y2 = currentObject.y + (fac * Math.cos(Math.PI / 2 - currentObject.displayAngle) * currentObject.width) / 2 + (Math.sin(-Math.PI / 2 - currentObject.displayAngle) * currentObject.height) / 2;
         var y3 = currentObject.y + (fac * Math.cos(Math.PI / 2 - currentObject.displayAngle) * currentObject.width) / 2;
-        if (debug.active && debug.paint) {
+        if (APP_DATA.debug && debug.paint) {
             context.save();
             context.setTransform(client.realScale, 0, 0, client.realScale, (-(client.realScale - 1) * canvas.width) / 2 + client.touchScaleX, (-(client.realScale - 1) * canvas.height) / 2 + client.touchScaleY);
             context.fillRect(background.x + x1 - 3, background.y + y1 - 3, 6, 6);
@@ -1946,7 +1946,7 @@ function drawObjects() {
             points.x[i] = [];
             points.y[i] = [];
             points.angle[i] = [];
-            if (debug.active && debug.paint) {
+            if (APP_DATA.debug && debug.paint) {
                 context.save();
                 context.beginPath();
                 context.strokeStyle = "rgb(" + Math.floor((i / carWays.length) * 255) + ",0,0)";
@@ -1958,7 +1958,7 @@ function drawObjects() {
                     points.x[i][countJ] = carWays[i][cCars[i].cType][counter].x;
                     points.y[i][countJ] = carWays[i][cCars[i].cType][counter].y;
                     points.angle[i][countJ] = carWays[i][cCars[i].cType][counter].angle;
-                    if (debug.active && debug.paint) {
+                    if (APP_DATA.debug && debug.paint) {
                         context.lineTo(background.x + points.x[i][countJ], background.y + points.y[i][countJ]);
                     }
                     countJ++;
@@ -1974,7 +1974,7 @@ function drawObjects() {
                     points.x[i][countJ] = carWays[i][cCars[i].cType][counter].x;
                     points.y[i][countJ] = carWays[i][cCars[i].cType][counter].y;
                     points.angle[i][countJ] = carWays[i][cCars[i].cType][counter].angle;
-                    if (debug.active && debug.paint) {
+                    if (APP_DATA.debug && debug.paint) {
                         context.lineTo(background.x + points.x[i][countJ], background.y + points.y[i][countJ]);
                     }
                     countJ++;
@@ -1985,7 +1985,7 @@ function drawObjects() {
                     counter = counter + cAbstrNo > carWays[i][cCars[i].cType].length - 1 ? counter + cAbstrNo - (carWays[i][cCars[i].cType].length - 1) : counter + cAbstrNo;
                 }
             }
-            if (debug.active && debug.paint) {
+            if (APP_DATA.debug && debug.paint) {
                 context.stroke();
                 context.restore();
             }
@@ -2433,7 +2433,7 @@ function drawObjects() {
             }
             contextForeground.restore();
         }
-        if (debug.active && debug.paint) {
+        if (APP_DATA.debug && debug.paint) {
             contextForeground.fillRect(-classicUI.transformer.input.width / 2, classicUI.transformer.input.height / 2, 6, 6);
             contextForeground.fillRect(-3, -3, 6, 6);
         }
@@ -2515,7 +2515,7 @@ function drawObjects() {
             contextForeground.restore();
             contextForeground.restore();
         }
-        if (debug.active && debug.paint) {
+        if (APP_DATA.debug && debug.paint) {
             contextForeground.save();
             var x = classicUI.transformer.x + classicUI.transformer.width / 2 + classicUI.transformer.input.diffY * Math.sin(classicUI.transformer.angle);
             var y = classicUI.transformer.y + classicUI.transformer.height / 2 - classicUI.transformer.input.diffY * Math.cos(classicUI.transformer.angle);
@@ -2633,7 +2633,7 @@ function drawObjects() {
                 contextForeground.fill();
                 contextForeground.restore();
                 contextForeground.restore();
-                if (debug.active && debug.paint) {
+                if (APP_DATA.debug && debug.paint) {
                     contextForeground.save();
                     contextForeground.beginPath();
                     contextForeground.lineWidth = 1;
@@ -2673,7 +2673,7 @@ function drawObjects() {
     });
 
     /////DEBUG/////
-    if (debug.active && debug.paint) {
+    if (APP_DATA.debug && debug.paint && debug.trainReady) {
         context.save();
         context.setTransform(client.realScale, 0, 0, client.realScale, (-(client.realScale - 1) * canvas.width) / 2 + client.touchScaleX, (-(client.realScale - 1) * canvas.height) / 2 + client.touchScaleY);
         debug.drawPoints.forEach(function (point) {
@@ -3663,7 +3663,7 @@ var onlineConnection = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
 var resizeTimeout;
 var resized = false;
 
-var debug = {active: false, drawPoints: [], drawPointsCrash: [], paint: true};
+var debug = {paint: true};
 
 /*******************************************
  *         Window Event Listeners          *
@@ -4214,7 +4214,7 @@ window.onload = function () {
                 message.data.trains.forEach(function (train, i) {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
-                    if (debug.active) {
+                    if (APP_DATA.debug) {
                         trains[i].front.x = train.front.x;
                         trains[i].front.y = train.front.y;
                         trains[i].front.angle = train.front.angle;
@@ -4244,7 +4244,7 @@ window.onload = function () {
                         trains[i].cars[j].displayAngle = car.displayAngle;
                         trains[i].cars[j].assetFlip = car.assetFlip;
                         trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
-                        if (debug.active) {
+                        if (APP_DATA.debug) {
                             trains[i].cars[j].front.x = car.front.x;
                             trains[i].cars[j].front.y = car.front.y;
                             trains[i].cars[j].front.angle = car.front.angle;
@@ -4284,7 +4284,7 @@ window.onload = function () {
                         onlineGame.resized = false;
                     }, 3000);
                 }
-                if (debug.active || APP_DATA.debug) {
+                if (APP_DATA.debug) {
                     animateWorker.postMessage({k: "debug"});
                 }
             } else if (message.data.k == "switches") {
@@ -4312,7 +4312,7 @@ window.onload = function () {
                             }
                             window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
                         } catch (e) {
-                            if (debug.active) {
+                            if (APP_DATA.debug) {
                                 console.log(e.name + "/" + e.message);
                             }
                             notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + menus.outerContainer.height);
@@ -4326,15 +4326,14 @@ window.onload = function () {
                 rotationPoints = message.data.rotationPoints;
                 switchesBeforeFac = message.data.switchesBeforeFac;
                 switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
-                if (!debug.active) {
-                    console.log(message.data.animateInterval);
+                if (!debug.trainReady) {
+                    console.log("Animate Interval:", message.data.animateInterval);
                 }
-                console.log(message.data.trains);
-                debug.active = true;
+                console.log("Trains: ", message.data.trains);
             } else if (message.data.k == "debugDrawPoints") {
                 debug.drawPoints = message.data.p;
                 debug.drawPointsCrash = message.data.pC;
-                debug.trainCollisions = message.data.tC;
+                debug.trainReady = true;
             }
         };
         if (settings.saveGame && !onlineGame.enabled && !gui.demo && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains") != null && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches") != null && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg") != null) {
@@ -4776,7 +4775,7 @@ window.onload = function () {
                         };
                         onlineConnection.socket.onmessage = function (message) {
                             var json = JSON.parse(message.data);
-                            if (debug.active) {
+                            if (APP_DATA.debug) {
                                 console.log(json);
                             }
                             switch (json.mode) {
