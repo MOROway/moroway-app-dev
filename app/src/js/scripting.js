@@ -4333,6 +4333,7 @@ window.onload = function () {
             } else if (message.data.k == "debugDrawPoints") {
                 debug.drawPoints = message.data.p;
                 debug.drawPointsCrash = message.data.pC;
+                debug.trainCollisions = message.data.tC;
                 debug.trainReady = true;
             }
         };
