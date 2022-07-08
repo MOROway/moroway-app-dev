@@ -2385,18 +2385,8 @@ function drawObjects() {
                 }
                 hardware.mouse.cursor = "pointer";
                 if (hardware.mouse.isHold) {
-                    if (typeof clickTimeOut !== "undefined") {
-                        window.clearTimeout(clickTimeOut);
-                        clickTimeOut = null;
-                    }
-                    clickTimeOut = window.setTimeout(
-                        function () {
-                            clickTimeOut = null;
-                            hardware.mouse.isHold = false;
-                            actionSync("trains", trainParams.selected, [{standardDirection: !trains[trainParams.selected].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
-                        },
-                        hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
-                    );
+                    hardware.mouse.isHold = false;
+                    actionSync("trains", trainParams.selected, [{standardDirection: !trains[trainParams.selected].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
                 }
             }
             contextForeground.restore();
@@ -3484,12 +3474,12 @@ var drawTimeout;
 
 var movingTimeOut;
 var clickTimeOut;
-var longTouchTime = 500;
-var longTouchWaitTime = Math.floor(longTouchTime * 0.8);
-var doubleTouchTime = 200;
-var doubleTouchWaitTime = doubleTouchTime * 1.25;
-var doubleClickTime = 100;
-var doubleClickWaitTime = doubleClickTime * 2;
+var longTouchTime = 350;
+var longTouchWaitTime = longTouchTime + 50;
+var doubleTouchTime = 250;
+var doubleTouchWaitTime = doubleTouchTime + 50;
+var doubleClickTime = 200;
+var doubleClickWaitTime = doubleClickTime + 50;
 
 var konamiState = 0;
 var konamiTimeOut;
