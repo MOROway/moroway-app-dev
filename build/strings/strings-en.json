@@ -283,10 +283,6 @@
 	"helpScreenLegalAppOCInsomniaPs": [
 		"The MOROway App OC variant uses the “Insomnia-PhoneGap-Plugin” by Eddy Verbruggen."
 	],
-	"helpScreenLegalAppOCSplashscreen": "cordova-plugin-splashscreen",
-	"helpScreenLegalAppOCSplashscreenPs": [
-		"The MOROway App OC variant uses the “Splashscreen Plugin“ by the Apache Software Foundation."
-	],
 	"helpScreenLegalAppOCWebintent": "cordova-webintent",
 	"helpScreenLegalAppOCWebintentPs": [
 		"The MOROway App OC variant uses the “WebIntent Android Plugin for Cordova” by Boris Smus and contributors."
