@@ -1063,9 +1063,6 @@ function calcMenusAndBackground(state) {
             }
         });
     }
-    if (typeof calcOptionsMenuLocal == "function") {
-        calcOptionsMenuLocal(state);
-    }
     menus.floating = false;
     menus.options.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden)");
     if (menus.options.items.length > 0 && !gui.demo) {
@@ -1095,7 +1092,7 @@ function calcMenusAndBackground(state) {
     if (menus.small && (!menus.floating || client.width * 0.75 >= client.height)) {
         menus.innerWidthRelativeToItemLength = true;
         menus.innerWidth = menus.itemDefaultSize + background.width / client.devicePixelRatio / 90;
-        menus.outerContainer.element.style.justifyContent = "end";
+        menus.outerContainer.element.style.justifyContent = "flex-end";
     } else {
         menus.outerContainer.element.style.justifyContent = "";
     }
@@ -1109,6 +1106,9 @@ function calcMenusAndBackground(state) {
         menus.outerContainer.element.style.background = "";
     }
     menus.outerContainer.element.style.left = client.x + "px";
+    if (typeof afterCalcOptionsMenuLocal == "function") {
+        afterCalcOptionsMenuLocal(state);
+    }
     if (state == "resize" && gui.infoOverlay) {
         drawInfoOverlayMenu(state);
     } else if (state == "resize") {

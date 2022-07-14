@@ -39,6 +39,13 @@ h2 {
     display: none !important;
 }
 
+#error-element {
+    text-align: center;
+    color: #ff0033;
+    font-size: 3em;
+    line-height: 4em;
+}
+
 /* Info Cards */
 .card-container {
     display: flex;

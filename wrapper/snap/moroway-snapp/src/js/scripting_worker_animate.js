@@ -1343,7 +1343,7 @@ function defineTrainParams() {
     rotationPoints.outer.rightSiding = {};
     rotationPoints.outer.rightSiding.enter = {x: [], y: []};
     rotationPoints.outer.rightSiding.enter.x[0] = rotationPoints.outer.altState3.right.x[1];
-    rotationPoints.outer.rightSiding.enter.x[1] = rotationPoints.outer.rightSiding.enter.x[0] + background.width * 0.17;
+    rotationPoints.outer.rightSiding.enter.x[1] = rotationPoints.outer.rightSiding.enter.x[0] + background.width * 0.18;
     rotationPoints.outer.rightSiding.enter.y[0] = rotationPoints.outer.altState3.right.y[1];
     rotationPoints.outer.rightSiding.enter.y[1] = rotationPoints.outer.rightSiding.enter.y[0] + background.height * 0.0073;
 
@@ -1353,11 +1353,11 @@ function defineTrainParams() {
     rotationPoints.outer.rightSiding.curve = {x: [], y: []};
     rotationPoints.outer.rightSiding.curve.x[0] = rotationPoints.outer.rightSiding.enter.x[1];
     rotationPoints.outer.rightSiding.curve.x[1] = 0.89 * background.width;
-    rotationPoints.outer.rightSiding.curve.x[2] = 0.965 * background.width;
-    rotationPoints.outer.rightSiding.curve.x[3] = rotationPoints.outer.rightSiding.curve.x[0] + 0.147 * background.width;
+    rotationPoints.outer.rightSiding.curve.x[2] = 0.967 * background.width;
+    rotationPoints.outer.rightSiding.curve.x[3] = rotationPoints.outer.rightSiding.curve.x[0] + 0.137 * background.width;
     rotationPoints.outer.rightSiding.curve.y[0] = rotationPoints.outer.rightSiding.enter.y[1];
-    rotationPoints.outer.rightSiding.curve.y[1] = rotationPoints.outer.rightSiding.curve.y[0] + 0.015 * background.height;
-    rotationPoints.outer.rightSiding.curve.y[2] = rotationPoints.outer.rightSiding.curve.y[0] - 0.1 * background.height;
+    rotationPoints.outer.rightSiding.curve.y[1] = rotationPoints.outer.rightSiding.curve.y[0] + 0.005 * background.height;
+    rotationPoints.outer.rightSiding.curve.y[2] = rotationPoints.outer.rightSiding.curve.y[0] - 0.11 * background.height;
     rotationPoints.outer.rightSiding.curve.y[3] = rotationPoints.outer.rightSiding.curve.y[0] - 0.39 * background.height;
     bezierPoints = {x: [rotationPoints.outer.rightSiding.curve.x[0], rotationPoints.outer.rightSiding.curve.x[1], rotationPoints.outer.rightSiding.curve.x[2], rotationPoints.outer.rightSiding.curve.x[3]], y: [rotationPoints.outer.rightSiding.curve.y[0], rotationPoints.outer.rightSiding.curve.y[1], rotationPoints.outer.rightSiding.curve.y[2], rotationPoints.outer.rightSiding.curve.y[3]]};
     rotationPoints.outer.rightSiding.curve.bezierLength = getBezierLength(bezierPoints, repNo);
@@ -1798,24 +1798,25 @@ var trains = [
         ]
     },
     {
-        src: 1,
-        fac: 0.051,
-        speedFac: 1 / 450,
-        accelerationSpeedStartFac: 0.03,
-        accelerationSpeedFac: 1.01,
+        src: 33,
+        fac: 0.074,
+        speedFac: 1 / 475,
+        accelerationSpeedStartFac: 0.026,
+        accelerationSpeedFac: 1.009,
         circle: rotationPoints.outer.narrow,
         circleFamily: rotationPoints.outer,
         circleStartPosDiv: 0.85,
         standardDirectionStartValue: true,
-        bogieDistance: 0.15,
+        bogieDistance: 0.16,
         state: 210,
-        flickerFacFront: 2.5,
+        margin: 35,
+        flickerFacFront: 2.1,
         trainSwitchSrc: 32,
         cars: [
-            {src: 2, fac: 0.06, bogieDistance: 0.15},
-            {src: 2, fac: 0.06, bogieDistance: 0.15},
-            {src: 2, fac: 0.06, bogieDistance: 0.15},
-            {src: 3, fac: 0.044, bogieDistance: 0.15}
+            {src: 34, fac: 0.054, bogieDistance: 0.15},
+            {src: 35, fac: 0.054, bogieDistance: 0.15},
+            {src: 36, fac: 0.064, bogieDistance: 0.15},
+            {src: 37, fac: 0.045, bogieDistance: 0.15}
         ]
     }
 ];

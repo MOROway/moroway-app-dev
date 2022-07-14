@@ -1,4 +1,4 @@
-function calcOptionsMenuLocal(state) {
+function afterCalcOptionsMenuLocal(state) {
     if (state == "load") {
         if (!onlineGame.enabled) {
             showServerNote();

@@ -1,6 +1,5 @@
 window.addEventListener("error", function () {
     var body = document.querySelector("body");
-    body.style.background = "black";
-    body.style.marginTop = "1%";
-    body.innerHTML = '<div style="text-align:center; background: red; color: white; font-size: 3em; line-height: 4em;">FATAL ERROR</div>';
+    body.style.background = "#110022";
+    body.innerHTML = '<div id="error-element">FATAL ERROR</div>';
 });

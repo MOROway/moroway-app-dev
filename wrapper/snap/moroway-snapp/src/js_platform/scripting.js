@@ -1,15 +1,15 @@
-function calcOptionsMenuLocal(state) {
+function afterCalcOptionsMenuLocal(state) {
     if (state == "load") {
         if (!onlineGame.enabled) {
             showServerNote();
         }
         setSettingsHTML(document.querySelector("#settings-inner"), false);
-        exitItem = optMenu.items[0].cloneNode(true);
+        exitItem = menus.options.items[0].cloneNode(true);
         exitItem.id = "canvas-platform-exit";
         exitItem.title = getString("platformSnapAppExit");
         exitItem.querySelector("i").textContent = "close";
         exitItem.addEventListener("click", _exitApp.exec);
-        optMenu.container.elementInner.appendChild(exitItem);
+        menus.options.container.elementInner.appendChild(exitItem);
     }
 }
 
@@ -23,7 +23,7 @@ function appReadyNotification() {
             followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);
         },
         getString("generalTitleHelpScreen", "", "upper"),
-        client.y + optMenu.container.height
+        client.y + menus.outerContainer.height
     );
 }
 
@@ -37,6 +37,6 @@ function appUpdateNotification() {
             followLink("whatsnew/#newest", "_blank", LINK_STATE_INTERNAL_HTML);
         },
         "Mehr Informationen",
-        client.y + optMenu.container.height
+        client.y + menus.outerContainer.height
     );
 }

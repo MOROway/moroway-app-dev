@@ -405,14 +405,17 @@ function onMouseRight(event) {
     client.chosenInputMethod = "mouse";
     if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && client.realScale == 1) {
         controlCenter.showCarCenter = true;
-        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + optMenu.container.height, false);
+        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height, false);
     } else {
         gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && client.realScale == 1;
         if (gui.controlCenter) {
-            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + optMenu.container.height, false);
+            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height, false);
         }
         controlCenter.mouse.clickEvent = false;
         controlCenter.mouse.wheelScrolls = false;
+    }
+    if (gui.infoOverlay) {
+        drawInfoOverlayMenu("items-change");
     }
 }
 function preventMouseZoomDuringLoad(event) {
@@ -490,14 +493,17 @@ function getTouchEnd(event) {
     if (controlCenter.mouse.prepare) {
         if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && client.realScale == 1) {
             controlCenter.showCarCenter = true;
-            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + optMenu.container.height, false);
+            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height, false);
             controlCenter.mouse.prepare = false;
         } else {
             gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && client.realScale == 1;
             if (gui.controlCenter) {
-                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + optMenu.container.height, false);
+                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height, false);
             }
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
+        }
+        if (gui.infoOverlay) {
+            drawInfoOverlayMenu("items-change");
         }
     }
 }
@@ -614,8 +620,8 @@ function drawBackground() {
             var picWidth = (fillWidth * pic.width) / width;
             var picHeight = (fillHeight * pic.height) / height;
             drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
-            posY += background.y + background.height + optMenu.container.height * client.devicePixelRatio;
-            picPosY += ((background.y + background.height + optMenu.container.height * client.devicePixelRatio) * pic.height) / height;
+            posY += background.y + background.height + menus.outerContainer.height * client.devicePixelRatio;
+            picPosY += ((background.y + background.height + menus.outerContainer.height * client.devicePixelRatio) * pic.height) / height;
             drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
             posX = 0;
             posY = 0;
@@ -643,7 +649,7 @@ function drawBackground() {
         contextSemiForeground.fillRect(0, 0, background.x, canvas.height);
         contextSemiForeground.fillRect(0, 0, canvas.width, background.y);
         contextSemiForeground.fillRect(background.x + background.width, 0, background.x, canvas.height);
-        contextSemiForeground.fillRect(0, background.y + background.height + optMenu.container.height * client.devicePixelRatio, canvas.width, background.y);
+        contextSemiForeground.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvas.width, background.y);
         contextSemiForeground.restore();
     }
 
@@ -669,186 +675,142 @@ function drawBackground() {
         contextSemiForeground.putImageData(imgData, 0, 0);
     }
 }
+function drawMenuIcons(menu, state) {
+    var innerWidth = menus.innerWidth;
+    if (menus.innerWidthRelativeToItemLength) {
+        innerWidth *= menu.items.length;
+        if (innerWidth > menus.outerContainer.width) {
+            innerWidth = menus.outerContainer.width;
+        }
+    }
+    menu.container.elementInner.style.width = innerWidth + "px";
+    menu.container.elementInner.style.height = menus.outerContainer.element.style.height;
+    switch (state) {
+        case "hide-outer":
+            menus.outerContainer.element.style.display = "none";
+        case "hide":
+            menu.container.elementInner.style.display = "";
+            break;
+        case "show":
+            menu.container.elementInner.style.display = "inline-flex";
+            menus.outerContainer.element.style.display = "";
+            break;
+        case "invisible-outer":
+            menus.outerContainer.element.style.visibility = "hidden";
+        case "invisible":
+            menu.container.elementInner.style.visibility = "hidden";
+            break;
+        case "visible":
+            menus.outerContainer.element.style.visibility = menu.container.elementInner.style.visibility = "";
+            break;
+    }
+    var itemSize = Math.min(menus.itemDefaultSize, (menus.itemDefaultSize * innerWidth) / (menus.itemDefaultSize * menu.items.length));
+    if (menus.floating) {
+        itemSize = Math.min(itemSize, Math.max(itemSize / 2, 30));
+    }
+    for (var i = 0; i < menu.items.length; i++) {
+        var textItem = menu.items[i].querySelector("i") == undefined ? menu.items[i] : menu.items[i].querySelector("i");
+        menu.items[i].style.width = menu.items[i].style.height = textItem.style.fontSize = textItem.style.lineHeight = itemSize + "px";
+    }
+}
 function drawInfoOverlayMenu(state) {
-    if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
-        window.clearTimeout(infoOverlayMenu.textTimeout);
-        delete infoOverlayMenu.focus;
-        infoOverlayMenu.overlayText.style.display = infoOverlayMenu.overlayText.style.fontSize = infoOverlayMenu.overlayText.style.height = "";
+    if (menus.infoOverlay.textTimeout != undefined && menus.infoOverlay.textTimeout != null) {
+        window.clearTimeout(menus.infoOverlay.textTimeout);
+        delete menus.infoOverlay.focus;
+        menus.infoOverlay.overlayText.style.display = menus.infoOverlay.overlayText.style.fontSize = menus.infoOverlay.overlayText.style.height = "";
     }
-    if (infoOverlayMenu.scaleInterval != undefined && infoOverlayMenu.scaleInterval != null) {
-        window.clearInterval(infoOverlayMenu.scaleInterval);
+    if (menus.infoOverlay.scaleInterval != undefined && menus.infoOverlay.scaleInterval != null) {
+        window.clearInterval(menus.infoOverlay.scaleInterval);
     }
-    infoOverlayMenu.scaleFac = 1;
-    infoOverlayMenu.scaleFacGrow = true;
-    infoOverlayMenu.items = [1, 2];
+    menus.infoOverlay.scaleFac = 1;
+    menus.infoOverlay.scaleFacGrow = true;
+    menus.infoOverlay.items = [1, 2];
     if (settings.burnTheTaxOffice) {
-        infoOverlayMenu.items[infoOverlayMenu.items.length] = 3;
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 3;
     }
-    if (settings.classicUI) {
-        infoOverlayMenu.items[infoOverlayMenu.items.length] = 4;
+    if (settings.classicUI && !gui.controlCenter) {
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 4;
+        if (classicUI.trainSwitch.selectedTrainDisplay.visible) {
+            menus.infoOverlay.items[menus.infoOverlay.items.length] = 5;
+        }
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 6;
+        if (classicUI.transformer.directionInput.visible) {
+            menus.infoOverlay.items[menus.infoOverlay.items.length] = 7;
+        }
     }
-    if (settings.classicUI && classicUI.trainSwitch.selectedTrainDisplay.visible) {
-        infoOverlayMenu.items[infoOverlayMenu.items.length] = 5;
+    menus.infoOverlay.items[menus.infoOverlay.items.length] = 8;
+    if (gui.controlCenter && !controlCenter.showCarCenter) {
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 9;
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 10;
+        menus.infoOverlay.items[menus.infoOverlay.items.length] = 11;
     }
-    if (settings.classicUI) {
-        infoOverlayMenu.items[infoOverlayMenu.items.length] = 6;
-    }
-    if (settings.classicUI && (!client.isTiny || !(typeof client.realScale == "undefined" || client.realScale <= Math.max(1, client.realScaleMax / 3)))) {
-        infoOverlayMenu.items[infoOverlayMenu.items.length] = 7;
-    }
-    infoOverlayMenu.items[infoOverlayMenu.items.length] = 8;
     var infoExit = document.querySelector("#canvas-info-exit");
-    if (infoOverlayMenu.container.elementInner != null) {
-        infoOverlayMenu.container.elementInner.innerHTML = "";
+    if (menus.infoOverlay.container.elementInner != null) {
+        menus.infoOverlay.container.elementInner.innerHTML = "";
     }
-    for (var i = 0; i < infoOverlayMenu.items.length; i++) {
+    for (var i = 0; i < menus.infoOverlay.items.length; i++) {
         var element = document.createElement("button");
         element.className = "canvas-info-button";
-        element.textContent = infoOverlayMenu.items[i];
-        element.title = getString(["appScreenGraphicalInfoList", i]);
+        element.textContent = menus.infoOverlay.items[i];
+        element.title = getString(["appScreenGraphicalInfoList", menus.infoOverlay.items[i] - 1]);
         element.onclick = function (event) {
-            if (infoOverlayMenu.textTimeout != undefined && infoOverlayMenu.textTimeout != null) {
-                window.clearTimeout(infoOverlayMenu.textTimeout);
+            if (menus.infoOverlay.textTimeout != undefined && menus.infoOverlay.textTimeout != null) {
+                window.clearTimeout(menus.infoOverlay.textTimeout);
             }
-            if (infoOverlayMenu.scaleInterval != undefined && infoOverlayMenu.scaleInterval != null) {
-                window.clearInterval(infoOverlayMenu.scaleInterval);
+            if (menus.infoOverlay.scaleInterval != undefined && menus.infoOverlay.scaleInterval != null) {
+                window.clearInterval(menus.infoOverlay.scaleInterval);
             }
-            infoOverlayMenu.scaleFac = 1;
-            infoOverlayMenu.scaleFacGrow = true;
-            infoOverlayMenu.overlayText.style.display = infoOverlayMenu.overlayText.style.fontSize = infoOverlayMenu.overlayText.style.height = "";
-            if (infoOverlayMenu.focus == event.target.textContent) {
-                delete infoOverlayMenu.focus;
+            menus.infoOverlay.scaleFac = 1;
+            menus.infoOverlay.scaleFacGrow = true;
+            menus.infoOverlay.overlayText.style.display = menus.infoOverlay.overlayText.style.fontSize = menus.infoOverlay.overlayText.style.height = "";
+            if (menus.infoOverlay.focus == event.target.textContent) {
+                delete menus.infoOverlay.focus;
             } else {
-                infoOverlayMenu.focus = event.target.textContent;
-                infoOverlayMenu.overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
-                infoOverlayMenu.overlayText.style.display = "flex";
-                while (infoOverlayMenu.overlayText.offsetWidth < infoOverlayMenu.overlayText.scrollWidth) {
-                    var fontSize = window.getComputedStyle(infoOverlayMenu.overlayText).getPropertyValue("font-size");
-                    infoOverlayMenu.overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
+                menus.infoOverlay.focus = event.target.textContent;
+                menus.infoOverlay.overlayText.textContent = getString(["appScreenGraphicalInfoList", event.target.textContent - 1]);
+                menus.infoOverlay.overlayText.style.display = "flex";
+                while (menus.infoOverlay.overlayText.offsetWidth < menus.infoOverlay.overlayText.scrollWidth) {
+                    var fontSize = window.getComputedStyle(menus.infoOverlay.overlayText).getPropertyValue("font-size");
+                    menus.infoOverlay.overlayText.style.fontSize = fontSize.substring(0, fontSize.length - 2) * 0.9 + "px";
                 }
-                var overlayTextHeight = infoOverlayMenu.overlayText.offsetHeight;
-                infoOverlayMenu.overlayText.style.height = Math.max(client.y, overlayTextHeight) + "px";
-                infoOverlayMenu.textTimeout = window.setTimeout(function () {
-                    if (infoOverlayMenu.scaleInterval != undefined && infoOverlayMenu.scaleInterval != null) {
-                        window.clearInterval(infoOverlayMenu.scaleInterval);
+                var overlayTextHeight = menus.infoOverlay.overlayText.offsetHeight;
+                menus.infoOverlay.overlayText.style.height = Math.max(client.y, overlayTextHeight) + "px";
+                menus.infoOverlay.textTimeout = window.setTimeout(function () {
+                    if (menus.infoOverlay.scaleInterval != undefined && menus.infoOverlay.scaleInterval != null) {
+                        window.clearInterval(menus.infoOverlay.scaleInterval);
                     }
-                    infoOverlayMenu.scaleFac = 1;
-                    infoOverlayMenu.scaleFacGrow = true;
-                    infoOverlayMenu.overlayText.style.display = infoOverlayMenu.overlayText.style.fontSize = infoOverlayMenu.overlayText.style.height = "";
-                    delete infoOverlayMenu.focus;
+                    menus.infoOverlay.scaleFac = 1;
+                    menus.infoOverlay.scaleFacGrow = true;
+                    menus.infoOverlay.overlayText.style.display = menus.infoOverlay.overlayText.style.fontSize = menus.infoOverlay.overlayText.style.height = "";
+                    delete menus.infoOverlay.focus;
                 }, 4000);
-                infoOverlayMenu.scaleInterval = window.setInterval(function () {
+                menus.infoOverlay.scaleInterval = window.setInterval(function () {
                     var scaleGrow = 1.002;
-                    if (infoOverlayMenu.scaleFacGrow) {
-                        infoOverlayMenu.scaleFac *= scaleGrow;
+                    if (menus.infoOverlay.scaleFacGrow) {
+                        menus.infoOverlay.scaleFac *= scaleGrow;
                     } else {
-                        infoOverlayMenu.scaleFac /= scaleGrow;
+                        menus.infoOverlay.scaleFac /= scaleGrow;
                     }
-                    if (infoOverlayMenu.scaleFac < 1) {
-                        infoOverlayMenu.scaleFacGrow = true;
-                    } else if (infoOverlayMenu.scaleFac > 1.075) {
-                        infoOverlayMenu.scaleFacGrow = false;
+                    if (menus.infoOverlay.scaleFac < 1) {
+                        menus.infoOverlay.scaleFacGrow = true;
+                    } else if (menus.infoOverlay.scaleFac > 1.075) {
+                        menus.infoOverlay.scaleFacGrow = false;
                     }
                 }, drawInterval);
             }
         };
-        infoOverlayMenu.container.elementInner.appendChild(element);
+        menus.infoOverlay.container.elementInner.appendChild(element);
     }
-    infoOverlayMenu.container.elementInner.appendChild(infoExit);
-    infoOverlayMenu.items = infoOverlayMenu.container.elementInner.querySelectorAll("*:not(.hidden)");
-    if (optMenu.items.length > 0 && infoOverlayMenu.items.length > 0 && !gui.demo) {
-        infoOverlayMenu.container.width = optMenu.container.width;
-        infoOverlayMenu.container.element.style.justifyContent = optMenu.container.element.style.justifyContent;
-        infoOverlayMenu.container.elementInner.style.width = optMenu.container.elementInner.style.width;
-        infoOverlayMenu.container.elementInner.style.height = optMenu.container.elementInner.style.height;
-        infoOverlayMenu.container.element.style.width = optMenu.container.element.style.width;
-        infoOverlayMenu.container.element.style.height = optMenu.container.element.style.height;
-        infoOverlayMenu.container.element.style.top = optMenu.container.element.style.top;
-        infoOverlayMenu.container.element.style.left = optMenu.container.element.style.left;
-        infoOverlayMenu.container.element.style.background = optMenu.container.element.style.background;
-        switch (state) {
-            case "hide-outer":
-                infoOverlayMenu.container.element.style.display = "none";
-            case "hide":
-                infoOverlayMenu.container.elementInner.style.display = "";
-                break;
-            case "show":
-                infoOverlayMenu.container.elementInner.style.display = "inline-flex";
-                infoOverlayMenu.container.element.style.display = "";
-                break;
-            case "invisible-outer":
-                infoOverlayMenu.container.element.style.visibility = "hidden";
-            case "invisible":
-                infoOverlayMenu.container.elementInner.style.visibility = "hidden";
-                break;
-            case "visible":
-                infoOverlayMenu.container.element.style.visibility = infoOverlayMenu.container.elementInner.style.visibility = "";
-                break;
-        }
-        var newWidth = optMenu.items[0].style.width.substring(0, optMenu.items[0].style.width.length - 2);
-        if (infoOverlayMenu.items.length > optMenu.items.length) {
-            newWidth *= optMenu.items.length / infoOverlayMenu.items.length;
-        }
-        for (var i = 0; i < infoOverlayMenu.items.length; i++) {
-            infoOverlayMenu.items[i].style.width = infoOverlayMenu.items[i].style.height = infoOverlayMenu.items[i].style.fontSize = infoOverlayMenu.items[i].style.lineHeight = newWidth + "px";
-        }
+    menus.infoOverlay.container.elementInner.appendChild(infoExit);
+    menus.infoOverlay.items = menus.infoOverlay.container.elementInner.querySelectorAll("*:not(.hidden)");
+    if (menus.options.items.length > 0 && menus.infoOverlay.items.length > 0 && !gui.demo) {
+        drawMenuIcons(menus.infoOverlay, state);
     }
 }
 function drawOptionsMenu(state) {
-    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden)");
-    if (optMenu.items.length > 0 && !gui.demo) {
-        optMenu.container.width = background.width / client.devicePixelRatio;
-        var innerWidth = (settings.classicUI || optMenu.floating ? 0.5 : 1) * optMenu.container.width;
-        var availableHeight = optMenu.floating ? client.y : optMenu.container.height;
-        var itemDefaultSize = availableHeight * 0.5;
-        if (optMenu.small && (!optMenu.floating || client.width * 0.75 >= client.height)) {
-            innerWidth = (itemDefaultSize + background.width / client.devicePixelRatio / 90) * optMenu.items.length;
-            optMenu.container.element.style.justifyContent = "end";
-        } else {
-            optMenu.container.element.style.justifyContent = "";
-        }
-        optMenu.container.elementInner.style.width = innerWidth + "px";
-        optMenu.container.element.style.width = optMenu.container.width + "px";
-        optMenu.container.elementInner.style.height = optMenu.container.element.style.height = availableHeight + "px";
-        var itemSize = Math.min(itemDefaultSize, (itemDefaultSize * innerWidth) / (itemDefaultSize * optMenu.items.length));
-
-        if (optMenu.floating) {
-            itemSize = Math.min(itemSize, Math.max(itemSize / 2, 30));
-            optMenu.container.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
-            optMenu.container.element.style.background = "transparent";
-        } else {
-            optMenu.container.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
-            optMenu.container.element.style.background = "";
-        }
-        optMenu.container.element.style.left = client.x + "px";
-
-        switch (state) {
-            case "hide-outer":
-                optMenu.container.element.style.display = "none";
-            case "hide":
-                optMenu.visible = false;
-                optMenu.container.elementInner.style.display = "";
-                break;
-            case "show":
-                optMenu.visible = true;
-                optMenu.container.elementInner.style.display = "inline-flex";
-                optMenu.container.element.style.display = "";
-                break;
-            case "invisible-outer":
-                optMenu.container.element.style.visibility = "hidden";
-            case "invisible":
-                optMenu.visible = false;
-                optMenu.container.elementInner.style.visibility = "hidden";
-                break;
-            case "visible":
-                optMenu.visible = true;
-                optMenu.container.element.style.visibility = optMenu.container.elementInner.style.visibility = "";
-                break;
-        }
-
-        for (var i = 0; i < optMenu.items.length; i++) {
-            optMenu.items[i].style.width = optMenu.items[i].style.height = optMenu.items[i].querySelector("i").style.fontSize = optMenu.items[i].querySelector("i").style.lineHeight = itemSize + "px";
-        }
+    menus.options.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden)");
+    if (menus.options.items.length > 0 && !gui.demo) {
+        drawMenuIcons(menus.options, state);
     }
 }
 
@@ -896,7 +858,7 @@ function calcMenusAndBackground(state) {
             additionalHeight = 0;
         } else {
             simulate = false;
-            additionalHeight = optMenu.container.height * client.devicePixelRatio;
+            additionalHeight = menus.outerContainer.height * client.devicePixelRatio;
         }
 
         if (canvasBackground.width / canvasBackground.height / ((canvasBackground.height - additionalHeight) / canvasBackground.height) < pics[background.src].width / pics[background.src].height) {
@@ -910,7 +872,7 @@ function calcMenusAndBackground(state) {
             background.x = canvasBackground.width / 2 - background.width / 2;
             background.y = 0;
         }
-        if ((APP_DATA.debug || debug.active) && debug.showHidden) {
+        if (APP_DATA.debug && debug.showHidden) {
             background.x = 0;
             background.y = canvasBackground.height - background.height;
             background.width /= 2;
@@ -929,8 +891,8 @@ function calcMenusAndBackground(state) {
             document.querySelector("#canvas-info-toggle").classList.add("settings-hidden");
             if (gui.infoOverlay) {
                 gui.infoOverlay = false;
-                drawOptionsMenu("visible");
-                drawInfoOverlayMenu("hide-outer");
+                drawOptionsMenu("show");
+                drawInfoOverlayMenu("hide");
             }
         } else {
             document.querySelector("#canvas-info-toggle").classList.remove("settings-hidden");
@@ -961,28 +923,23 @@ function calcMenusAndBackground(state) {
             document.querySelector("#canvas-sound-toggle").classList.remove("settings-hidden");
         }
     }
-    optMenu.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden)");
     if (state == "load") {
-        optMenu.container = {};
-        optMenu.container.elementInner = document.querySelector("#canvas-options-inner");
-        optMenu.container.element = document.querySelector("#canvas-options");
-        optMenu.container.element.addEventListener(
+        menus.outerContainer = {};
+        menus.outerContainer.element = document.querySelector("#canvas-menus");
+        menus.outerContainer.element.addEventListener(
             "wheel",
             function (event) {
                 event.preventDefault();
             },
             {passive: false}
         );
-        infoOverlayMenu.container = {};
-        infoOverlayMenu.container.elementInner = document.querySelector("#canvas-info-inner");
-        infoOverlayMenu.container.element = document.querySelector("#canvas-info");
-        infoOverlayMenu.container.element.addEventListener(
-            "wheel",
-            function (event) {
-                event.preventDefault();
-            },
-            {passive: false}
-        );
+        menus.options = {};
+        menus.options.container = {};
+        menus.options.container.elementInner = document.querySelector("#canvas-options-inner");
+        menus.infoOverlay = {};
+        menus.infoOverlay.container = {};
+        menus.infoOverlay.container.elementInner = document.querySelector("#canvas-info-inner");
+        menus.infoOverlay.overlayText = document.querySelector("#info-overlay-text");
         if (typeof fetch == "function" && typeof AudioContext == "function") {
             document.querySelector("#canvas-sound-toggle").title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
             document.querySelector("#canvas-sound-toggle").addEventListener("click", function () {
@@ -1007,6 +964,26 @@ function calcMenusAndBackground(state) {
                             .then(function (response) {
                                 audio.context.decodeAudioData(response, function (buffer) {
                                     createAudio("trainCrash", null, buffer, 1);
+                                });
+                            });
+                    } catch (e) {
+                        if (APP_DATA.debug) {
+                            console.log(e);
+                        }
+                    }
+                    try {
+                        fetch("./assets/audio_asset_switch.ogg")
+                            .then(function (response) {
+                                return response.arrayBuffer();
+                            })
+                            .catch(function (error) {
+                                if (APP_DATA.debug) {
+                                    console.log("Fetch-Error:", error);
+                                }
+                            })
+                            .then(function (response) {
+                                audio.context.decodeAudioData(response, function (buffer) {
+                                    createAudio("switch", null, buffer, 1);
                                 });
                             });
                     } catch (e) {
@@ -1055,65 +1032,88 @@ function calcMenusAndBackground(state) {
                 settingsElem.scrollTo(0, 0);
             }
             settingsElem.style.display = "";
-            calcMenusAndBackground("resize");
-            calcClassicUIElements();
-            drawOptionsMenu("resize");
-            drawOptionsMenu("visible");
             resize();
+            drawOptionsMenu("visible");
         };
         document.querySelector("#canvas-help").addEventListener("click", function () {
             followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);
         });
         document.querySelector("#canvas-info-toggle").addEventListener("click", function () {
             gui.infoOverlay = true;
-            drawOptionsMenu("invisible");
+            drawOptionsMenu("hide");
             drawInfoOverlayMenu("show");
         });
         document.querySelector("#canvas-info-exit").addEventListener("click", function () {
             gui.infoOverlay = false;
-            drawOptionsMenu("visible");
-            drawInfoOverlayMenu("hide-outer");
+            drawOptionsMenu("show");
+            drawInfoOverlayMenu("hide");
         });
         document.querySelector("#canvas-control-center").addEventListener("click", function () {
             gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = false;
+            if (gui.infoOverlay) {
+                drawInfoOverlayMenu("items-change");
+            }
         });
         document.querySelector("#canvas-car-control-center").addEventListener("click", function () {
             gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay;
             controlCenter.showCarCenter = true;
+            if (gui.infoOverlay) {
+                drawInfoOverlayMenu("items-change");
+            }
         });
     }
-    if (typeof calcOptionsMenuLocal == "function") {
-        calcOptionsMenuLocal(state);
-    }
-    optMenu.floating = false;
-    if (optMenu.items.length > 0 && !gui.demo) {
-        optMenu.small = !client.isSmall;
-        optMenu.visible = true;
-        optMenu.container.height = optMenu.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
-        optMenu.container.element.style.display = "";
+    menus.floating = false;
+    menus.options.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden)");
+    if (menus.options.items.length > 0 && !gui.demo) {
+        menus.small = !client.isSmall;
+        menus.outerContainer.height = menus.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
+        menus.outerContainer.element.style.display = "";
         calcBackground(true);
-        if (optMenu.small && client.y >= optMenu.container.height) {
-            optMenu.floating = true;
-            optMenu.container.height = 0;
-        } else if (optMenu.container.height >= client.height / 2) {
-            optMenu.small = true;
-            optMenu.visible = false;
-            optMenu.container.height = 0;
-            optMenu.container.element.style.display = "none";
+        if (menus.small && client.y >= menus.outerContainer.height) {
+            menus.floating = true;
+            menus.outerContainer.height = 0;
+        } else if (menus.outerContainer.height >= client.height / 2) {
+            menus.small = true;
+            menus.outerContainer.height = 0;
+            menus.outerContainer.element.style.display = "none";
         }
     } else {
-        optMenu.small = true;
-        optMenu.visible = false;
-        optMenu.container.height = 0;
-        optMenu.container.element.style.display = "none";
+        menus.small = true;
+        menus.outerContainer.height = 0;
+        menus.outerContainer.element.style.display = "none";
     }
-
-    infoOverlayMenu.container.height = optMenu.container.height;
-    infoOverlayMenu.overlayText = document.querySelector("#info-overlay-text");
-    infoOverlayMenu.container.element.style.display = optMenu.container.element.style.display;
-
     calcBackground();
+    menus.outerContainer.width = background.width / client.devicePixelRatio;
+    menus.innerWidthRelativeToItemLength = false;
+    menus.innerWidth = (settings.classicUI || menus.floating ? 0.5 : 1) * menus.outerContainer.width;
+    var availableHeight = menus.floating ? client.y : menus.outerContainer.height;
+    menus.itemDefaultSize = availableHeight * 0.5;
+    if (menus.small && (!menus.floating || client.width * 0.75 >= client.height)) {
+        menus.innerWidthRelativeToItemLength = true;
+        menus.innerWidth = menus.itemDefaultSize + background.width / client.devicePixelRatio / 90;
+        menus.outerContainer.element.style.justifyContent = "flex-end";
+    } else {
+        menus.outerContainer.element.style.justifyContent = "";
+    }
+    menus.outerContainer.element.style.width = menus.outerContainer.width + "px";
+    menus.outerContainer.element.style.height = availableHeight + "px";
+    if (menus.floating) {
+        menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
+        menus.outerContainer.element.style.background = "transparent";
+    } else {
+        menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
+        menus.outerContainer.element.style.background = "";
+    }
+    menus.outerContainer.element.style.left = client.x + "px";
+    if (typeof afterCalcOptionsMenuLocal == "function") {
+        afterCalcOptionsMenuLocal(state);
+    }
+    if (state == "resize" && gui.infoOverlay) {
+        drawInfoOverlayMenu(state);
+    } else if (state == "resize") {
+        drawOptionsMenu(state);
+    }
 }
 
 function calcClassicUIElements() {
@@ -1123,18 +1123,18 @@ function calcClassicUIElements() {
     function realHeight(angle, width, height) {
         return Math.abs(Math.sin(angle)) * width + Math.abs(Math.cos(angle)) * height;
     }
-    var fac = optMenu.small ? 0.042 : 0.059;
+    var fac = menus.small ? 0.042 : 0.059;
     classicUI.trainSwitch.width = fac * background.width;
     classicUI.trainSwitch.height = fac * (pics[classicUI.trainSwitch.src].height * (background.width / pics[classicUI.trainSwitch.src].width));
-    if (optMenu.small) {
+    if (menus.small) {
         fac = 0.07;
         classicUI.transformer.width = fac * background.width;
         classicUI.transformer.height = fac * (pics[classicUI.transformer.src].height * (background.width / pics[classicUI.transformer.src].width));
     } else {
-        classicUI.transformer.height = Math.max(3 * optMenu.container.height * client.devicePixelRatio, background.height / 5);
+        classicUI.transformer.height = Math.max(3 * menus.outerContainer.height * client.devicePixelRatio, background.height / 5);
         classicUI.transformer.width = (classicUI.transformer.height / pics[classicUI.transformer.src].height) * pics[classicUI.transformer.src].width;
         var i = 0;
-        while (i < 100 && (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - optMenu.container.height * client.devicePixelRatio > background.height / 5 || realWidth(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) > background.width / 5)) {
+        while (i < 100 && (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - menus.outerContainer.height * client.devicePixelRatio > background.height / 5 || realWidth(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) > background.width / 5)) {
             classicUI.transformer.height *= 0.9;
             classicUI.transformer.width = (classicUI.transformer.height / pics[classicUI.transformer.src].height) * pics[classicUI.transformer.src].width;
             i++;
@@ -1145,7 +1145,7 @@ function calcClassicUIElements() {
     fac = 0.17;
     classicUI.transformer.directionInput.width = fac * classicUI.transformer.width;
     classicUI.transformer.directionInput.height = fac * (pics[classicUI.transformer.directionInput.srcStandardDirection].height * (classicUI.transformer.width / pics[classicUI.transformer.directionInput.srcStandardDirection].width));
-    if (optMenu.small) {
+    if (menus.small) {
         classicUI.trainSwitch.angle = 0;
         classicUI.trainSwitch.x = background.x + background.width / 99;
         classicUI.trainSwitch.y = background.y + background.height / 1.175;
@@ -1156,7 +1156,7 @@ function calcClassicUIElements() {
         classicUI.trainSwitch.x = background.x + (realWidth(classicUI.trainSwitch.angle, classicUI.trainSwitch.width, classicUI.trainSwitch.height) - classicUI.trainSwitch.width) / 2;
         classicUI.trainSwitch.y = background.y + background.height / 1.1;
         classicUI.transformer.x = background.x + background.width - classicUI.transformer.width - (realWidth(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - classicUI.transformer.width) / 2;
-        classicUI.transformer.y = background.y + background.height + optMenu.container.height * client.devicePixelRatio - classicUI.transformer.height - (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - classicUI.transformer.height) / 2;
+        classicUI.transformer.y = background.y + background.height + menus.outerContainer.height * client.devicePixelRatio - classicUI.transformer.height - (realHeight(classicUI.transformer.angle, classicUI.transformer.width, classicUI.transformer.height) - classicUI.transformer.height) / 2;
         if (classicUI.transformer.y > background.y + background.height) {
             classicUI.transformer.y = background.y + background.height;
         }
@@ -1174,17 +1174,17 @@ function calcClassicUIElements() {
     classicUI.trainSwitch.selectedTrainDisplay.fontFamily = "sans-serif";
     var heightMultiply = 1.6;
     var widthMultiply = 1.2;
-    var wantedWidth = ((optMenu.small ? 0.35 : 0.9) * background.width) / 4 / widthMultiply;
+    var wantedWidth = ((menus.small ? 0.35 : 0.9) * background.width) / 4 / widthMultiply;
     var tempFont = measureFontSize(getString(["appScreenTrainNames", longestName]), classicUI.trainSwitch.selectedTrainDisplay.fontFamily, wantedWidth / getString(["appScreenTrainNames", longestName]).length, wantedWidth, 3, background.width * 0.004);
-    var tempFontSize = optMenu.small ? getFontSize(tempFont, "px") : Math.min((0.9 * optMenu.container.height * client.devicePixelRatio) / heightMultiply, getFontSize(tempFont, "px"));
+    var tempFontSize = menus.small ? getFontSize(tempFont, "px") : Math.min((0.9 * menus.outerContainer.height * client.devicePixelRatio) / heightMultiply, getFontSize(tempFont, "px"));
     classicUI.trainSwitch.selectedTrainDisplay.visible = settings.alwaysShowSelectedTrain && tempFontSize >= 7;
     classicUI.trainSwitch.selectedTrainDisplay.font = tempFontSize + "px " + classicUI.trainSwitch.selectedTrainDisplay.fontFamily;
     context.font = classicUI.trainSwitch.selectedTrainDisplay.font;
     classicUI.trainSwitch.selectedTrainDisplay.width = widthMultiply * context.measureText(getString(["appScreenTrainNames", longestName])).width;
     classicUI.trainSwitch.selectedTrainDisplay.height = heightMultiply * getFontSize(classicUI.trainSwitch.selectedTrainDisplay.font, "px");
-    classicUI.trainSwitch.selectedTrainDisplay.x = (optMenu.small ? classicUI.trainSwitch.width : 0) + classicUI.trainSwitch.x;
-    classicUI.trainSwitch.selectedTrainDisplay.y = optMenu.small ? classicUI.trainSwitch.y + classicUI.trainSwitch.height - classicUI.trainSwitch.selectedTrainDisplay.height * 1.3 : background.y + background.height + (optMenu.container.height * client.devicePixelRatio - classicUI.trainSwitch.selectedTrainDisplay.height) / 2;
-    if (!optMenu.small && classicUI.trainSwitch.selectedTrainDisplay.visible) {
+    classicUI.trainSwitch.selectedTrainDisplay.x = (menus.small ? classicUI.trainSwitch.width : 0) + classicUI.trainSwitch.x;
+    classicUI.trainSwitch.selectedTrainDisplay.y = menus.small ? classicUI.trainSwitch.y + classicUI.trainSwitch.height - classicUI.trainSwitch.selectedTrainDisplay.height * 1.3 : background.y + background.height + (menus.outerContainer.height * client.devicePixelRatio - classicUI.trainSwitch.selectedTrainDisplay.height) / 2;
+    if (!menus.small && classicUI.trainSwitch.selectedTrainDisplay.visible) {
         classicUI.trainSwitch.y = classicUI.trainSwitch.selectedTrainDisplay.y - classicUI.trainSwitch.height * 0.9;
         var i = 0;
         while (i < 100 && classicUI.trainSwitch.height - (classicUI.trainSwitch.height - (background.y + background.height - classicUI.trainSwitch.y)) < background.height / 8) {
@@ -1193,7 +1193,7 @@ function calcClassicUIElements() {
             classicUI.trainSwitch.y = classicUI.trainSwitch.selectedTrainDisplay.y - classicUI.trainSwitch.height * 0.9;
             i++;
         }
-    } else if (!optMenu.small) {
+    } else if (!menus.small) {
         classicUI.trainSwitch.height = classicUI.transformer.height;
         classicUI.trainSwitch.width = pics[classicUI.trainSwitch.src].width * (classicUI.trainSwitch.height / pics[classicUI.trainSwitch.src].height);
         classicUI.trainSwitch.y = classicUI.transformer.y;
@@ -1340,8 +1340,6 @@ function resize() {
 
     calcClassicUIElements();
     calcControlCenter();
-    drawOptionsMenu("resize");
-    drawInfoOverlayMenu("resize");
 }
 
 /******************************************
@@ -1412,14 +1410,14 @@ function drawObjects() {
                 drawImage(pics[currentObject.src], -currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             }
             context.restore();
-            if (gui.infoOverlay && i == -1 && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 1)) {
+            if (gui.infoOverlay && i == -1 && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 1)) {
                 contextForeground.save();
                 contextForeground.translate(currentObject.x, currentObject.y);
                 var textWidth = background.width / 100;
                 contextForeground.beginPath();
                 contextForeground.fillStyle = "#42bb20";
                 contextForeground.strokeStyle = "darkgreen";
-                contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+                contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
                 contextForeground.fill();
                 contextForeground.stroke();
                 contextForeground.font = measureFontSize("1", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -1542,13 +1540,13 @@ function drawObjects() {
                         carParams.autoModeOff = false;
                         carParams.autoModeRuns = true;
                         carParams.autoModeInit = true;
-                        notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                        notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                     } else if (carParams.autoModeOff && !currentObject.move && currentObject.backwardsState === 0) {
                         currentObject.lastDirectionChange = frameNo;
                         currentObject.backwardsState = 1;
                         currentObject.backToInit = false;
                         currentObject.move = !carCollisionCourse(input1, false);
-                        notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + optMenu.container.height);
+                        notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height);
                     }
                 } else {
                     if (typeof clickTimeOut !== "undefined") {
@@ -1563,23 +1561,23 @@ function drawObjects() {
                             }
                             if (!carCollisionCourse(input1, false)) {
                                 if (carParams.autoModeRuns) {
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                     carParams.autoModeRuns = false;
                                 } else if (carParams.init || carParams.autoModeOff) {
                                     currentObject.parking = false;
                                     if (currentObject.move) {
                                         currentObject.move = false;
-                                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                     } else {
                                         currentObject.move = !carCollisionCourse(input1, false);
-                                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                     }
                                     currentObject.backwardsState = 0;
                                     currentObject.backToInit = false;
                                     carParams.init = false;
                                     carParams.autoModeOff = true;
                                 } else {
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                     carParams.autoModeRuns = true;
                                     carParams.autoModeInit = true;
                                 }
@@ -1611,11 +1609,11 @@ function drawObjects() {
                                 if (carParams.autoModeOff) {
                                     currentObject.move = true;
                                     currentObject.backToInit = true;
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", input1])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                 } else {
                                     carParams.autoModeRuns = true;
                                     carParams.isBackToRoot = true;
-                                    notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height);
                                 }
                             },
                             hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
@@ -1625,14 +1623,14 @@ function drawObjects() {
             }
             context.closePath();
             context.restore();
-            if (debug.active && debug.paint) {
+            if (APP_DATA.debug && debug.paint) {
                 context.save();
                 context.translate(background.x + currentObject.x, background.y + currentObject.y);
                 context.rotate(currentObject.displayAngle);
                 context.strokeRect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
                 context.restore();
             }
-            if (debug.active && debug.paint && !carParams.autoModeRuns) {
+            if (APP_DATA.debug && debug.paint && !carParams.autoModeRuns) {
                 context.save();
                 context.beginPath();
                 context.strokeStyle = "rgb(" + Math.floor((input1 / carWays.length) * 255) + ",0,0)";
@@ -1709,14 +1707,14 @@ function drawObjects() {
         } else {
             context.restore();
         }
-        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 2)) {
+        if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 2)) {
             contextForeground.save();
             contextForeground.translate(background.x + currentObject.x, background.y + currentObject.y);
             var textWidth = background.width / 200;
             contextForeground.beginPath();
             contextForeground.fillStyle = "#42bb20";
             contextForeground.strokeStyle = "darkgreen";
-            contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+            contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
             contextForeground.fill();
             contextForeground.stroke();
             contextForeground.font = measureFontSize("2", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -1754,7 +1752,7 @@ function drawObjects() {
         var y1 = currentObject.y + (fac * Math.cos(Math.PI / 2 - currentObject.displayAngle) * currentObject.width) / 2 - (Math.sin(-Math.PI / 2 - currentObject.displayAngle) * currentObject.height) / 2;
         var y2 = currentObject.y + (fac * Math.cos(Math.PI / 2 - currentObject.displayAngle) * currentObject.width) / 2 + (Math.sin(-Math.PI / 2 - currentObject.displayAngle) * currentObject.height) / 2;
         var y3 = currentObject.y + (fac * Math.cos(Math.PI / 2 - currentObject.displayAngle) * currentObject.width) / 2;
-        if (debug.active && debug.paint) {
+        if (APP_DATA.debug && debug.paint) {
             context.save();
             context.setTransform(client.realScale, 0, 0, client.realScale, (-(client.realScale - 1) * canvas.width) / 2 + client.touchScaleX, (-(client.realScale - 1) * canvas.height) / 2 + client.touchScaleY);
             context.fillRect(background.x + x1 - 3, background.y + y1 - 3, 6, 6);
@@ -1772,7 +1770,7 @@ function drawObjects() {
                 context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
                 if (context.isPointInPath(x1, y1) || context.isPointInPath(x2, y2) || context.isPointInPath(x3, y3)) {
                     if (sendNotification && cars[input1].move) {
-                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames", input1]), getString(["appScreenCarNames", i])), NOTIFICATION_PRIO_DEFAULT, 2000, null, null, client.y + optMenu.container.height);
+                        notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames", input1]), getString(["appScreenCarNames", i])), NOTIFICATION_PRIO_DEFAULT, 2000, null, null, client.y + menus.outerContainer.height);
                     }
                     collision = true;
                     cars[input1].move = cars[input1].backToInit = false;
@@ -1854,9 +1852,10 @@ function drawObjects() {
         client.oldTouchScaleX = client.touchScaleX;
         client.oldTouchScaleY = client.touchScaleY;
         drawBackground();
-        if (client.realScale != 1) {
-            drawOptionsMenu("hide-outer");
+        if (client.realScale != 1 && gui.infoOverlay) {
             drawInfoOverlayMenu("hide-outer");
+        } else if (client.realScale != 1) {
+            drawOptionsMenu("hide-outer");
         } else if (gui.infoOverlay) {
             drawInfoOverlayMenu("show");
         } else {
@@ -1869,7 +1868,7 @@ function drawObjects() {
     contextForeground.setTransform(client.realScale, 0, 0, client.realScale, (-(client.realScale - 1) * canvasForeground.width) / 2 + client.touchScaleX, (-(client.realScale - 1) * canvasForeground.height) / 2 + client.touchScaleY);
     frameNo++;
     if (frameNo % 1000000 === 0) {
-        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
     }
     hardware.mouse.cursor = hardware.mouse.isDrag ? "move" : "default";
     if (client.realScale > 1) {
@@ -1947,7 +1946,7 @@ function drawObjects() {
             points.x[i] = [];
             points.y[i] = [];
             points.angle[i] = [];
-            if (debug.active && debug.paint) {
+            if (APP_DATA.debug && debug.paint) {
                 context.save();
                 context.beginPath();
                 context.strokeStyle = "rgb(" + Math.floor((i / carWays.length) * 255) + ",0,0)";
@@ -1959,7 +1958,7 @@ function drawObjects() {
                     points.x[i][countJ] = carWays[i][cCars[i].cType][counter].x;
                     points.y[i][countJ] = carWays[i][cCars[i].cType][counter].y;
                     points.angle[i][countJ] = carWays[i][cCars[i].cType][counter].angle;
-                    if (debug.active && debug.paint) {
+                    if (APP_DATA.debug && debug.paint) {
                         context.lineTo(background.x + points.x[i][countJ], background.y + points.y[i][countJ]);
                     }
                     countJ++;
@@ -1975,7 +1974,7 @@ function drawObjects() {
                     points.x[i][countJ] = carWays[i][cCars[i].cType][counter].x;
                     points.y[i][countJ] = carWays[i][cCars[i].cType][counter].y;
                     points.angle[i][countJ] = carWays[i][cCars[i].cType][counter].angle;
-                    if (debug.active && debug.paint) {
+                    if (APP_DATA.debug && debug.paint) {
                         context.lineTo(background.x + points.x[i][countJ], background.y + points.y[i][countJ]);
                     }
                     countJ++;
@@ -1986,7 +1985,7 @@ function drawObjects() {
                     counter = counter + cAbstrNo > carWays[i][cCars[i].cType].length - 1 ? counter + cAbstrNo - (carWays[i][cCars[i].cType].length - 1) : counter + cAbstrNo;
                 }
             }
-            if (debug.active && debug.paint) {
+            if (APP_DATA.debug && debug.paint) {
                 context.stroke();
                 context.restore();
             }
@@ -2107,13 +2106,13 @@ function drawObjects() {
         contextForeground.save();
         contextForeground.translate(background.x, background.y);
         contextForeground.translate(background.width / 7.4 - background.width * 0.07, background.height / 3.1 - background.height * 0.06);
-        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 3)) {
+        if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 3)) {
             contextForeground.save();
             var textWidth = background.width / 100;
             contextForeground.beginPath();
             contextForeground.fillStyle = "#bbbb20";
             contextForeground.strokeStyle = "orange";
-            contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+            contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
             contextForeground.fill();
             contextForeground.stroke();
             contextForeground.font = measureFontSize("3", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -2237,14 +2236,14 @@ function drawObjects() {
             contextForeground.translate(classicUI.trainSwitch.selectedTrainDisplay.x + classicUI.trainSwitch.selectedTrainDisplay.width / 2, 0);
             contextForeground.textBaseline = "middle";
             contextForeground.fillText(getString(["appScreenTrainNames", trainParams.selected]), -contextForeground.measureText(getString(["appScreenTrainNames", trainParams.selected])).width / 2, classicUI.trainSwitch.selectedTrainDisplay.y + classicUI.trainSwitch.selectedTrainDisplay.height / 2);
-            if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 5)) {
+            if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 5)) {
                 contextForeground.save();
                 contextForeground.translate(classicUI.trainSwitch.selectedTrainDisplay.width / 2, classicUI.trainSwitch.selectedTrainDisplay.y);
-                var textWidth = background.width / (optMenu.small ? 100 : 50);
+                var textWidth = background.width / (menus.small ? 100 : 50);
                 contextForeground.beginPath();
                 contextForeground.fillStyle = "#dfbbff";
-                contextForeground.strokeStyle = "darkblue";
-                contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+                contextForeground.strokeStyle = "violet";
+                contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
                 contextForeground.fill();
                 contextForeground.stroke();
                 contextForeground.font = measureFontSize("5", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -2282,15 +2281,15 @@ function drawObjects() {
             drawImage(pics[trains[trainParams.selected].trainSwitchSrc], -classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height, contextForeground);
         }
         contextForeground.restore();
-        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 4)) {
+        if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 4)) {
             contextForeground.save();
             contextForeground.translate(classicUI.trainSwitch.width * 0.25, -classicUI.trainSwitch.height * 0.25);
             contextForeground.rotate(-classicUI.trainSwitch.angle);
-            var textWidth = background.width / (optMenu.small ? 100 : 50);
+            var textWidth = background.width / (menus.small ? 100 : 50);
             contextForeground.beginPath();
             contextForeground.fillStyle = "#dfbbff";
-            contextForeground.strokeStyle = "darkblue";
-            contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+            contextForeground.strokeStyle = "violet";
+            contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
             contextForeground.fill();
             contextForeground.stroke();
             contextForeground.font = measureFontSize("4", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -2343,6 +2342,7 @@ function drawObjects() {
             drawImage(pics[classicUI.transformer.onSrc], -classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height, contextForeground);
         }
         if (!client.isTiny || !(typeof client.realScale == "undefined" || client.realScale <= Math.max(1, client.realScaleMax / 3))) {
+            classicUI.transformer.directionInput.visible = true;
             contextForeground.save();
             contextForeground.translate(classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
             if (trains[trainParams.selected].move) {
@@ -2353,16 +2353,16 @@ function drawObjects() {
             } else {
                 drawImage(pics[classicUI.transformer.directionInput.srcNotStandardDirection], -classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height, contextForeground);
             }
-            if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 7)) {
+            if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 7)) {
                 contextForeground.save();
                 contextForeground.translate(-classicUI.transformer.directionInput.width, -classicUI.transformer.directionInput.height);
                 contextForeground.rotate(-classicUI.transformer.angle);
                 contextForeground.rotate(-classicUI.transformer.directionInput.angle);
-                var textWidth = background.width / (optMenu.small ? 125 : 75);
+                var textWidth = background.width / (menus.small ? 125 : 75);
                 contextForeground.beginPath();
                 contextForeground.fillStyle = "#dfbbff";
-                contextForeground.strokeStyle = "darkblue";
-                contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+                contextForeground.strokeStyle = "violet";
+                contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
                 contextForeground.fill();
                 contextForeground.stroke();
                 contextForeground.font = measureFontSize("7", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -2385,38 +2385,30 @@ function drawObjects() {
                 }
                 hardware.mouse.cursor = "pointer";
                 if (hardware.mouse.isHold) {
-                    if (typeof clickTimeOut !== "undefined") {
-                        window.clearTimeout(clickTimeOut);
-                        clickTimeOut = null;
-                    }
-                    clickTimeOut = window.setTimeout(
-                        function () {
-                            clickTimeOut = null;
-                            hardware.mouse.isHold = false;
-                            actionSync("trains", trainParams.selected, [{standardDirection: !trains[trainParams.selected].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
-                        },
-                        hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
-                    );
+                    hardware.mouse.isHold = false;
+                    actionSync("trains", trainParams.selected, [{standardDirection: !trains[trainParams.selected].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", trainParams.selected]]}]);
                 }
             }
             contextForeground.restore();
+        } else {
+            classicUI.transformer.directionInput.visible = false;
         }
         contextForeground.save();
         contextForeground.translate(0, -classicUI.transformer.input.diffY);
         contextForeground.rotate(classicUI.transformer.input.angle);
         drawImage(pics[classicUI.transformer.input.src], -classicUI.transformer.input.width / 2, -classicUI.transformer.input.height / 2, classicUI.transformer.input.width, classicUI.transformer.input.height, contextForeground);
-        if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 6)) {
+        if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 6)) {
             contextForeground.save();
             if (collisionCourse(trainParams.selected)) {
                 contextForeground.globalAlpha = 0.5;
             }
             contextForeground.rotate(-classicUI.transformer.angle);
             contextForeground.rotate(-classicUI.transformer.input.angle);
-            var textWidth = background.width / (optMenu.small ? 100 : 50);
+            var textWidth = background.width / (menus.small ? 100 : 50);
             contextForeground.beginPath();
             contextForeground.fillStyle = "#dfbbff";
-            contextForeground.strokeStyle = "darkblue";
-            contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+            contextForeground.strokeStyle = "violet";
+            contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
             contextForeground.fill();
             contextForeground.stroke();
             contextForeground.font = measureFontSize("6", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -2431,7 +2423,7 @@ function drawObjects() {
             }
             contextForeground.restore();
         }
-        if (debug.active && debug.paint) {
+        if (APP_DATA.debug && debug.paint) {
             contextForeground.fillRect(-classicUI.transformer.input.width / 2, classicUI.transformer.input.height / 2, 6, 6);
             contextForeground.fillRect(-3, -3, 6, 6);
         }
@@ -2513,7 +2505,7 @@ function drawObjects() {
             contextForeground.restore();
             contextForeground.restore();
         }
-        if (debug.active && debug.paint) {
+        if (APP_DATA.debug && debug.paint) {
             contextForeground.save();
             var x = classicUI.transformer.x + classicUI.transformer.width / 2 + classicUI.transformer.input.diffY * Math.sin(classicUI.transformer.angle);
             var y = classicUI.transformer.y + classicUI.transformer.height / 2 - classicUI.transformer.input.diffY * Math.cos(classicUI.transformer.angle);
@@ -2581,7 +2573,13 @@ function drawObjects() {
                             switches[key][side].turned = !switches[key][side].turned;
                             switches[key][side].lastStateChange = frameNo;
                             animateWorker.postMessage({k: "switches", switches: switches});
-                            notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height, NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
+                            notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
+                        }
+                        if (existsAudio("switch")) {
+                            stopAudio("switch");
+                        }
+                        if (audio.active) {
+                            startAudio("switch", null, false);
                         }
                     },
                     hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
@@ -2625,7 +2623,7 @@ function drawObjects() {
                 contextForeground.fill();
                 contextForeground.restore();
                 contextForeground.restore();
-                if (debug.active && debug.paint) {
+                if (APP_DATA.debug && debug.paint) {
                     contextForeground.save();
                     contextForeground.beginPath();
                     contextForeground.lineWidth = 1;
@@ -2636,14 +2634,14 @@ function drawObjects() {
                     contextForeground.restore();
                 }
             } else {
-                if (gui.infoOverlay && (infoOverlayMenu.focus == undefined || infoOverlayMenu.focus == 8)) {
+                if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 8)) {
                     contextForeground.save();
                     var textWidth = background.width / 100;
                     contextForeground.translate(background.x + switches[key][side].x, background.y + switches[key][side].y);
                     contextForeground.beginPath();
                     contextForeground.fillStyle = "#bb4220";
                     contextForeground.strokeStyle = "darkred";
-                    contextForeground.arc(0, 0, textWidth * 1.1 * infoOverlayMenu.scaleFac, 0, 2 * Math.PI);
+                    contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
                     contextForeground.fill();
                     contextForeground.stroke();
                     contextForeground.font = measureFontSize("8", "monospace", 100, textWidth, 5, textWidth / 10);
@@ -2665,7 +2663,7 @@ function drawObjects() {
     });
 
     /////DEBUG/////
-    if (debug.active && debug.paint) {
+    if (APP_DATA.debug && debug.paint && debug.trainReady) {
         context.save();
         context.setTransform(client.realScale, 0, 0, client.realScale, (-(client.realScale - 1) * canvas.width) / 2 + client.touchScaleX, (-(client.realScale - 1) * canvas.height) / 2 + client.touchScaleY);
         debug.drawPoints.forEach(function (point) {
@@ -2949,6 +2947,9 @@ function drawObjects() {
         if (contextClick && hardware.mouse.upX - background.x - controlCenter.translateOffset > 0 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth / 8 && hardware.mouse.upY - background.y - controlCenter.translateOffset > 0 && hardware.mouse.upY - background.y - controlCenter.translateOffset < controlCenter.maxTextHeight * trains.length) {
             gui.controlCenter = false;
             controlCenter.mouse.wheelScrolls = false;
+            if (gui.infoOverlay) {
+                drawInfoOverlayMenu("items-change");
+            }
         }
         /////CONTROL CENTER/Cars/////
         if (controlCenter.showCarCenter) {
@@ -2977,7 +2978,7 @@ function drawObjects() {
                             carParams.autoModeOff = false;
                             carParams.autoModeRuns = true;
                             carParams.autoModeInit = true;
-                            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                         } else if (contextClick) {
                             cars[cCar].move = !carCollisionCourse(cCar, false);
                             cars[cCar].parking = false;
@@ -2985,7 +2986,7 @@ function drawObjects() {
                             cars[cCar].backToInit = false;
                             carParams.init = false;
                             carParams.autoModeOff = true;
-                            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                         }
                     }
                 }
@@ -3026,10 +3027,10 @@ function drawObjects() {
                                 cars[cCar].backToInit = false;
                                 if (cars[cCar].move) {
                                     cars[cCar].move = false;
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                 } else {
                                     cars[cCar].move = noCollisionCCar;
-                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                 }
                             }
                         }
@@ -3061,7 +3062,7 @@ function drawObjects() {
                                 cars[cCar].backwardsState = 1;
                                 cars[cCar].backToInit = false;
                                 cars[cCar].move = !carCollisionCourse(cCar, false);
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + optMenu.container.height);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height);
                             }
                         }
                     }
@@ -3098,7 +3099,7 @@ function drawObjects() {
                             if (contextClick) {
                                 cars[cCar].move = true;
                                 cars[cCar].backToInit = true;
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", cCar])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                             }
                         }
                     }
@@ -3126,10 +3127,10 @@ function drawObjects() {
                         if (cCar == 0) {
                             hardware.mouse.cursor = "pointer";
                             if (contextClick && carParams.autoModeRuns) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                 carParams.autoModeRuns = false;
                             } else if (contextClick) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + optMenu.container.height);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
                                 carParams.autoModeRuns = true;
                                 carParams.autoModeInit = true;
                             }
@@ -3139,7 +3140,7 @@ function drawObjects() {
                                 if (contextClick) {
                                     carParams.autoModeRuns = true;
                                     carParams.isBackToRoot = true;
-                                    notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height);
                                 }
                             }
                         }
@@ -3212,6 +3213,28 @@ function drawObjects() {
                     }
                 }
                 contextForeground.strokeRect(controlCenter.maxTextWidth, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.5, maxTextHeight);
+                if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 9)) {
+                    contextForeground.save();
+                    var textWidth = background.width / 100;
+                    contextForeground.translate(controlCenter.maxTextWidth + textWidth * 1.5, maxTextHeight * cTrain + textWidth * 1.5);
+                    contextForeground.beginPath();
+                    contextForeground.fillStyle = "#dfbbff";
+                    contextForeground.strokeStyle = "violet";
+                    contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
+                    contextForeground.fill();
+                    contextForeground.stroke();
+                    contextForeground.font = measureFontSize("9", "monospace", 100, textWidth, 5, textWidth / 10);
+                    contextForeground.fillStyle = "black";
+                    contextForeground.textAlign = "center";
+                    contextForeground.textBaseline = "middle";
+                    var metrics = contextForeground.measureText("9");
+                    if (metrics.actualBoundingBoxAscent != undefined && metrics.actualBoundingBoxDescent != undefined) {
+                        contextForeground.fillText("9", 0, (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2);
+                    } else {
+                        contextForeground.fillText("9", 0, 0);
+                    }
+                    contextForeground.restore();
+                }
                 if (noCollisionCTrain && contextClick && hardware.mouse.upX - background.x - controlCenter.translateOffset > controlCenter.maxTextWidth * 1.5 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth * 1.75 && hardware.mouse.upY - background.y - controlCenter.translateOffset > maxTextHeight * cTrain && hardware.mouse.upY - background.y - controlCenter.translateOffset < maxTextHeight * cTrain + maxTextHeight) {
                     if (trains[cTrain].accelerationSpeed > 0) {
                         actionSync("trains", cTrain, [{accelerationSpeed: (trains[cTrain].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
@@ -3237,6 +3260,28 @@ function drawObjects() {
                 contextForeground.stroke();
                 contextForeground.restore();
                 contextForeground.strokeRect(controlCenter.maxTextWidth * 1.5, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.25, maxTextHeight);
+                if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 10)) {
+                    contextForeground.save();
+                    var textWidth = background.width / 100;
+                    contextForeground.translate(controlCenter.maxTextWidth * 1.5 + textWidth * 1.5, maxTextHeight * cTrain + textWidth * 1.5);
+                    contextForeground.beginPath();
+                    contextForeground.fillStyle = "#dfbbff";
+                    contextForeground.strokeStyle = "violet";
+                    contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
+                    contextForeground.fill();
+                    contextForeground.stroke();
+                    contextForeground.font = measureFontSize("10", "monospace", 100, textWidth, 5, textWidth / 10);
+                    contextForeground.fillStyle = "black";
+                    contextForeground.textAlign = "center";
+                    contextForeground.textBaseline = "middle";
+                    var metrics = contextForeground.measureText("10");
+                    if (metrics.actualBoundingBoxAscent != undefined && metrics.actualBoundingBoxDescent != undefined) {
+                        contextForeground.fillText("10", 0, (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2);
+                    } else {
+                        contextForeground.fillText("10", 0, 0);
+                    }
+                    contextForeground.restore();
+                }
                 if (contextClick && !trains[cTrain].move && hardware.mouse.upX - background.x - controlCenter.translateOffset > controlCenter.maxTextWidth * 1.7 && hardware.mouse.upX - background.x - controlCenter.translateOffset < controlCenter.maxTextWidth * 2 && hardware.mouse.upY - background.y - controlCenter.translateOffset > maxTextHeight * cTrain && hardware.mouse.upY - background.y - controlCenter.translateOffset < maxTextHeight * cTrain + maxTextHeight) {
                     actionSync("trains", cTrain, [{standardDirection: !trains[cTrain].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", cTrain]]}], true);
                 }
@@ -3267,6 +3312,28 @@ function drawObjects() {
                 contextForeground.fill();
                 contextForeground.restore();
                 contextForeground.strokeRect(controlCenter.maxTextWidth * 1.75, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.25, maxTextHeight);
+                if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 11)) {
+                    contextForeground.save();
+                    var textWidth = background.width / 100;
+                    contextForeground.translate(controlCenter.maxTextWidth * 1.75 + textWidth * 1.5, maxTextHeight * cTrain + textWidth * 1.5);
+                    contextForeground.beginPath();
+                    contextForeground.fillStyle = "#dfbbff";
+                    contextForeground.strokeStyle = "violet";
+                    contextForeground.arc(0, 0, textWidth * 1.1 * menus.infoOverlay.scaleFac, 0, 2 * Math.PI);
+                    contextForeground.fill();
+                    contextForeground.stroke();
+                    contextForeground.font = measureFontSize("11", "monospace", 100, textWidth, 5, textWidth / 10);
+                    contextForeground.fillStyle = "black";
+                    contextForeground.textAlign = "center";
+                    contextForeground.textBaseline = "middle";
+                    var metrics = contextForeground.measureText("11");
+                    if (metrics.actualBoundingBoxAscent != undefined && metrics.actualBoundingBoxDescent != undefined) {
+                        contextForeground.fillText("11", 0, (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2);
+                    } else {
+                        contextForeground.fillText("11", 0, 0);
+                    }
+                    contextForeground.restore();
+                }
             }
         }
         contextForeground.restore();
@@ -3304,7 +3371,7 @@ function drawObjects() {
         context.fillRect(0, 0, background.x, canvas.height);
         context.fillRect(0, 0, canvas.width, background.y);
         context.fillRect(background.x + background.width, 0, background.x, canvas.height);
-        context.fillRect(0, background.y + background.height + optMenu.container.height * client.devicePixelRatio, canvas.width, background.y);
+        context.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvas.width, background.y);
         context.restore();
     }
 
@@ -3361,7 +3428,7 @@ function actionSync(objectName, index, params, notification, notificationOnlyFor
                         notifyArr.push(getString.apply(null, elem.getString));
                     });
                     var notifyStr = formatJSString.apply(null, notifyArr);
-                    notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + optMenu.container.height);
+                    notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + menus.outerContainer.height);
                 }
                 break;
         }
@@ -3407,12 +3474,12 @@ var drawTimeout;
 
 var movingTimeOut;
 var clickTimeOut;
-var longTouchTime = 500;
-var longTouchWaitTime = Math.floor(longTouchTime * 0.8);
-var doubleTouchTime = 200;
-var doubleTouchWaitTime = doubleTouchTime * 1.25;
-var doubleClickTime = 100;
-var doubleClickWaitTime = doubleClickTime * 2;
+var longTouchTime = 350;
+var longTouchWaitTime = longTouchTime + 50;
+var doubleTouchTime = 250;
+var doubleTouchWaitTime = doubleTouchTime + 50;
+var doubleClickTime = 200;
+var doubleClickWaitTime = doubleClickTime + 50;
 
 var konamiState = 0;
 var konamiTimeOut;
@@ -3452,7 +3519,12 @@ var pics = [
     {id: 29, extension: "png"},
     {id: 30, extension: "png"},
     {id: 31, extension: "png"},
-    {id: 32, extension: "png"}
+    {id: 32, extension: "png"},
+    {id: 33, extension: "png"},
+    {id: 34, extension: "png"},
+    {id: 35, extension: "png"},
+    {id: 36, extension: "png"},
+    {id: 37, extension: "png"}
 ];
 
 var background = {src: 9, secondLayer: 10};
@@ -3473,7 +3545,7 @@ var switches = {
     sidings2: {left: {turned: false, angles: {normal: 1.65 * Math.PI, turned: 1.72 * Math.PI}}},
     sidings3: {left: {turned: false, angles: {normal: 1.65 * Math.PI, turned: 1.73 * Math.PI}}},
     outerRightSiding: {left: {turned: false, angles: {normal: 1.71 * Math.PI, turned: 1.76 * Math.PI}}},
-    outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.73 * Math.PI, turned: 1.76 * Math.PI}}}
+    outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.7 * Math.PI, turned: 1.75 * Math.PI}}}
 };
 var switchesBeforeFac, switchesBeforeAddSidings;
 
@@ -3573,8 +3645,7 @@ var controlCenter = {showCarCenter: false, fontFamily: "sans-serif", mouse: {}};
 
 var hardware = {mouse: {moveX: 0, moveY: 0, downX: 0, downY: 0, downTime: 0, upX: 0, upY: 0, upTime: 0, isMoving: false, isHold: false, cursor: "default"}, keyboard: {keysHold: []}};
 var client = {devicePixelRatio: 1, realScaleMax: 6, realScaleMin: 1.2};
-var optMenu = {};
-var infoOverlayMenu = {};
+var menus = {};
 
 var onlineGame = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {t: ["src", "trainSwitchSrc", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], tc: ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"]}, chatSticker: 7, resized: false};
 var onlineConnection = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
@@ -3582,7 +3653,7 @@ var onlineConnection = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
 var resizeTimeout;
 var resized = false;
 
-var debug = {active: false, drawPoints: [], drawPointsCrash: [], paint: true};
+var debug = {paint: true};
 
 /*******************************************
  *         Window Event Listeners          *
@@ -4118,7 +4189,7 @@ window.onload = function () {
                         window.setTimeout(function () {
                             var localAppData = getLocalAppDataCopy();
                             if (settings.classicUI && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.demo) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH, 3000, null, null, client.y + optMenu.container.height);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH, 3000, null, null, client.y + menus.outerContainer.height);
                             } else if (localAppData !== null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor)) && typeof appUpdateNotification == "function" && !gui.demo) {
                                 appUpdateNotification();
                             } else if (typeof appReadyNotification == "function" && !gui.demo) {
@@ -4133,7 +4204,7 @@ window.onload = function () {
                 message.data.trains.forEach(function (train, i) {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
-                    if (debug.active) {
+                    if (APP_DATA.debug) {
                         trains[i].front.x = train.front.x;
                         trains[i].front.y = train.front.y;
                         trains[i].front.angle = train.front.angle;
@@ -4163,7 +4234,7 @@ window.onload = function () {
                         trains[i].cars[j].displayAngle = car.displayAngle;
                         trains[i].cars[j].assetFlip = car.assetFlip;
                         trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
-                        if (debug.active) {
+                        if (APP_DATA.debug) {
                             trains[i].cars[j].front.x = car.front.x;
                             trains[i].cars[j].front.y = car.front.y;
                             trains[i].cars[j].front.angle = car.front.angle;
@@ -4172,7 +4243,7 @@ window.onload = function () {
                             trains[i].cars[j].back.angle = car.back.angle;
                         }
                     });
-                    if (train.move && !train.mute) {
+                    if (train.move && !train.mute && audio.active) {
                         if (!existsAudio("train", i)) {
                             startAudio("train", i, true);
                         }
@@ -4203,7 +4274,7 @@ window.onload = function () {
                         onlineGame.resized = false;
                     }, 3000);
                 }
-                if (debug.active || APP_DATA.debug) {
+                if (APP_DATA.debug) {
                     animateWorker.postMessage({k: "debug"});
                 }
             } else if (message.data.k == "switches") {
@@ -4231,10 +4302,10 @@ window.onload = function () {
                             }
                             window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
                         } catch (e) {
-                            if (debug.active) {
+                            if (APP_DATA.debug) {
                                 console.log(e.name + "/" + e.message);
                             }
-                            notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + optMenu.container.height);
+                            notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + menus.outerContainer.height);
                         }
                     } else if (!settings.saveGame) {
                         removeSavedGame();
@@ -4245,15 +4316,15 @@ window.onload = function () {
                 rotationPoints = message.data.rotationPoints;
                 switchesBeforeFac = message.data.switchesBeforeFac;
                 switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
-                if (!debug.active) {
-                    console.log(message.data.animateInterval);
+                if (!debug.trainReady) {
+                    console.log("Animate Interval:", message.data.animateInterval);
                 }
-                console.log(message.data.trains);
-                debug.active = true;
+                console.log("Trains: ", message.data.trains);
             } else if (message.data.k == "debugDrawPoints") {
                 debug.drawPoints = message.data.p;
                 debug.drawPointsCrash = message.data.pC;
                 debug.trainCollisions = message.data.tC;
+                debug.trainReady = true;
             }
         };
         if (settings.saveGame && !onlineGame.enabled && !gui.demo && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains") != null && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches") != null && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg") != null) {
@@ -4342,7 +4413,7 @@ window.onload = function () {
             onlineGame.enabled = true;
         } else {
             onlineGame.enabled = false;
-            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + optMenu.container.height);
+            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
         }
     } else {
         onlineGame.enabled = false;
@@ -4475,7 +4546,7 @@ window.onload = function () {
                                 }
                             }
                             if (!smileySupport) {
-                                notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + optMenu.container.height);
+                                notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
                             }
                         });
                     }
@@ -4695,7 +4766,7 @@ window.onload = function () {
                         };
                         onlineConnection.socket.onmessage = function (message) {
                             var json = JSON.parse(message.data);
-                            if (debug.active) {
+                            if (APP_DATA.debug) {
                                 console.log(json);
                             }
                             switch (json.mode) {
@@ -4853,8 +4924,6 @@ window.onload = function () {
                                                 var elem = parent.querySelector("#game-gameplay");
                                                 resetForElem(parent, elem);
                                                 calcMenusAndBackground("resize");
-                                                drawOptionsMenu("resize");
-                                                drawInfoOverlayMenu("resize");
                                                 break;
                                         }
                                     } else {
@@ -4889,7 +4958,7 @@ window.onload = function () {
                                             notifyStr = json.sessionName + ": " + notifyStr;
                                         }
                                         if (onlineGame.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
-                                            notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + optMenu.container.height);
+                                            notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + menus.outerContainer.height);
                                         }
                                     }
                                     switch (input.objectName) {
@@ -4965,7 +5034,7 @@ window.onload = function () {
                                 case "sync-done":
                                     onlineGame.syncing = false;
                                     if (json.message == "sync-cancel") {
-                                        notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                     }
                                     if (!onlineGame.stop) {
                                         if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
@@ -4984,7 +5053,7 @@ window.onload = function () {
                                     onlineGame.stop = true;
                                     playAndPauseAudio();
                                     animateWorker.postMessage({k: "pause"});
-                                    notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                     break;
                                 case "resume":
                                     if (onlineGame.stop) {
@@ -4996,7 +5065,7 @@ window.onload = function () {
                                         }
                                         onlineGame.stop = false;
                                         playAndPauseAudio();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                         animateWorker.postMessage({k: "resume"});
                                     }
                                     break;
@@ -5005,7 +5074,7 @@ window.onload = function () {
                                         showNewGameLink();
                                         notify("#canvas-notifier", getString("appScreenTeamplayTeammateLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.height);
                                     } else {
-                                        notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplaySomebodyLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + optMenu.container.height);
+                                        notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplaySomebodyLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                     }
                                     break;
                                 case "chat-msg":
@@ -5046,7 +5115,7 @@ window.onload = function () {
                                     chat.resizeChat();
                                     break;
                                 case "unknown":
-                                    notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NOTIFICATION_PRIO_HIGH, 2000, null, null, client.y + optMenu.container.height);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NOTIFICATION_PRIO_HIGH, 2000, null, null, client.y + menus.outerContainer.height);
                                     break;
                             }
                         };
