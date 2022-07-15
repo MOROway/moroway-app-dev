@@ -8,7 +8,7 @@ const APP_DATA = {
         date: {
             year: 2022,
             month: 7,
-            day: 14
+            day: 15
         }
     },
     platform: "snap",

@@ -40,10 +40,21 @@ h2 {
 }
 
 #error-element {
+    margin-top: 1em;
     text-align: center;
+}
+#error-element > * {
+    line-height: 1.75em;
+}
+#error-element-heading {
     color: #ff0033;
     font-size: 3em;
-    line-height: 4em;
+}
+#error-element-message {
+    color: #ff77dd;
+}
+#error-element-action {
+    color: #ffccee;
 }
 
 /* Info Cards */
