@@ -17,12 +17,12 @@ This repository provides the build tools for MOROway App. The code here is used 
 [![Snap Store](https://img.shields.io/badge/snap-Snap%20Store-303030?labelColor=d2781b)](https://snapcraft.io/moroway-app)
 
 - The "web"-platform is the main platform and can be used with any modern web browser. The ready-to-use code for the "web"-platform can be found [here](https://github.com/MOROway/moroway-app).<sup>[1](#morowayrepoautoupdate)</sup>
-- The "windows"-platform provides the PWA available at Microsoft Store.
+- The "windows"-platform provides the PWA available at Microsoft Store (packaged by [PWABuilder](https://www.pwabuilder.com/)).
 - The "android"-platform is used within the Java Wrapper App available at Google Play Store. The wrapper app is not open-source.
 - The "oc"-platform is used within the Apache Cordova Android Wrapper App available at F-Droid. The wrapper app can be found [here](https://github.com/MOROway/moroway-app-oc). This wrapper app contains a [already built version](https://github.com/MOROway/moroway-app-oc/tree/master/moroway-app-oc) of the "oc"-platform.
 - The "snap"-platform is used within the Apache Cordova Electron Wrapper App available at Ubuntu&apos;s Snap Store. The wrapper app can be found [here](./wrapper/snap). This wrapper app contains a [already built version](./wrapper/snap/www) of the "snap"-platform.
 
-<a name="morowayrepoautoupdate">&#91;1&#93;</a> Auto updated by a [Github Action](https://github.com/MOROway/moroway-app-dev/actions). This action uses code derived from the [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository/) Github Action (License: MIT, by Carles Pina Estany). Also the action action-create-tag by rickstaa is used.
+<a name="morowayrepoautoupdate">&#91;1&#93;</a> Auto updated by a [Github Action](https://github.com/MOROway/moroway-app-dev/actions/workflows/moroway-app-tag-and-sync-repos.yml). This action uses code derived from the action [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository/) (License: MIT, by Carles Pina Estany). Furthermore the action [action-create-tag](https://github.com/rickstaa/action-create-tag) is used (License: MIT, by rickstaa).
 
 ## Weblate
 
