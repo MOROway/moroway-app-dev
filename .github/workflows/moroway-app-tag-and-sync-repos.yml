@@ -1,107 +1,107 @@
 name: MOROway App Tag and Sync Repositories
 on:
-  push:
-    branches: [ main ]
+    push:
+        branches: [main]
 jobs:
-  tag:
-    runs-on: ubuntu-latest
-    outputs:
-      create: ${{ steps.prepare.outputs.create }}
-      tag: ${{ steps.prepare.outputs.tag }}
-      version: ${{ steps.prepare.outputs.version }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Prepare
-        id: prepare
-        shell: bash
-        run: |
-          cd build
-          beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
-          if [[ -z "$beta" ]] || [[ "$beta" != 0 ]]; then
-            echo "::set-output name=create::0"
-            echo "No release version"
-            exit
-          fi
-          version=$(cat conf | grep "version=" | sed 's/.*=//')
-          tag=v$version
-          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          exitcode=$(git show-ref --tags --verify --quiet -- "refs/tags/$tag" && echo 0 || echo $?)
-          if [[ "$exitcode" == 0 ]]; then
-            echo "::set-output name=create::0"
-            echo "No new version"
-            exit
-          fi
-          echo "::set-output name=create::1"
-          echo "::set-output name=tag::$tag"
-          echo "::set-output name=version::$version"
-      - if: steps.prepare.outputs.create == '1'
-        name: Tag
-        uses: rickstaa/action-create-tag@v1
-        with:
-          tag: ${{ steps.prepare.outputs.tag }}
-  sync:
-    runs-on: ubuntu-latest
-    needs: tag
-    if: needs.tag.outputs.create == '1'
-    strategy:
-      matrix:
-        platform: [web]
-        include:
-          - platform: web
-            repo: moroway-app
-            branch: master
-            subdir: .
-            redirectdocs: 1
-    steps:
-      - uses: actions/checkout@v2
-        # The following step contains code from https://github.com/cpina/github-action-push-to-another-repository/  (MIT License, by cpina)
-      - name: Build moroway-app and publish to platform repository
-        shell: bash
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-          GIT_USER: jonathanherrmannengel
-          GIT_MAIL: 38504994+jonathanherrmannengel@users.noreply.github.com
-          PLATFORM: ${{ matrix.platform }}
-          REPO: ${{ matrix.repo }}
-          REPO_BRANCH: ${{ matrix.branch }}
-          REPO_DIR: ${{ matrix.subdir }}
-          REDIRECT_DOCS: ${{ matrix.redirectdocs }}
-          TAG: ${{ needs.tag.outputs.tag }}
-          VERSION: ${{ needs.tag.outputs.version }}
-        run: |
-          # Build moroway-app
-          cd build
-          changelog="$VERSION"$'\n'
-          if [[ -f "changelogs/en/$VERSION" ]]; then
-            changelog="$changelog"$(cat "changelogs/en/$VERSION" | sed 's/{{[0-9]\+}}}\s\?//g')$'\n'
-          fi
-          if [[ -f "changelogs/en/$VERSION-$PLATFORM" ]]; then
-            changelog="$changelog"$(cat "changelogs/en/$VERSION-$PLATFORM" | sed 's/{{[0-9]\+}}}\s\?//g')$'\n'
-          fi
-          if [[ $(cat "changelogs/meta/fixes/bool/$VERSION") == 1 ]]; then
-              changelog="$changelog"$(cat "changelogs/meta/fixes/locale/en")"."$'\n'
-          fi
-          bash build.sh -p $PLATFORM || bash build.sh -p $PLATFORM || exit $?
-          # Publish to platform repository
-          cd ../out
-          git config --global user.email "$GIT_MAIL"
-          git config --global user.name "$GIT_USER"
-          git clone --single-branch --branch "$REPO_BRANCH" "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "publish-$PLATFORM"
-          [[ ! -z $(echo "$REPO_DIR" | grep "\.\." ) ]] && exit 2
-          rm -r publish-$PLATFORM/$REPO_DIR/*
-          cp -r $PLATFORM/latest/* publish-$PLATFORM/$REPO_DIR
-          cd publish-$PLATFORM/
-          if [[ $REDIRECT_DOCS == 1 ]]; then
-            mkdir docs
-            echo '<!DOCTYPE html><title>Redirect to "MOROway App"-GitHub-Page</title><meta http-equiv="refresh" content="0; URL=../moroway-app-dev">' > docs/index.html
-          fi
-          msg="Auto update MOROway App to new version v$VERSION"
-          git add .
-          exitcode=$(git diff-index --quiet HEAD -- && echo 0 || echo $?)
-          if [[ "$exitcode" == 1 ]]; then
-              git commit --message "$msg"
-              [[ ! -z $(git tag -l | grep -e "^$TAG$" ) ]] && git tag --delete "$TAG" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
-              git tag -a -m "$changelog" "$TAG"
-              git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
-              git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git"
-          fi
+    tag:
+        runs-on: ubuntu-latest
+        outputs:
+            create: ${{ steps.prepare.outputs.create }}
+            tag: ${{ steps.prepare.outputs.tag }}
+            version: ${{ steps.prepare.outputs.version }}
+        steps:
+            - uses: actions/checkout@v2
+            - name: Prepare
+              id: prepare
+              shell: bash
+              run: |
+                  cd build
+                  beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
+                  if [[ -z "$beta" ]] || [[ "$beta" != 0 ]]; then
+                    echo "::set-output name=create::0"
+                    echo "No release version"
+                    exit
+                  fi
+                  version=$(cat conf | grep "version=" | sed 's/.*=//')
+                  tag=v$version
+                  git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+                  exitcode=$(git show-ref --tags --verify --quiet -- "refs/tags/$tag" && echo 0 || echo $?)
+                  if [[ "$exitcode" == 0 ]]; then
+                    echo "::set-output name=create::0"
+                    echo "No new version"
+                    exit
+                  fi
+                  echo "::set-output name=create::1"
+                  echo "::set-output name=tag::$tag"
+                  echo "::set-output name=version::$version"
+            - if: steps.prepare.outputs.create == '1'
+              name: Tag
+              uses: rickstaa/action-create-tag@v1
+              with:
+                  tag: ${{ steps.prepare.outputs.tag }}
+    sync:
+        runs-on: ubuntu-latest
+        needs: tag
+        if: needs.tag.outputs.create == '1'
+        strategy:
+            matrix:
+                platform: [web]
+                include:
+                    - platform: web
+                      repo: moroway-app
+                      branch: master
+                      subdir: .
+                      redirectdocs: 1
+        steps:
+            - uses: actions/checkout@v2
+              # The following step contains code from https://github.com/cpina/github-action-push-to-another-repository/  (MIT License, by cpina)
+            - name: Build moroway-app and publish to platform repository
+              shell: bash
+              env:
+                  API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+                  GIT_USER: jonathanherrmannengel
+                  GIT_MAIL: 38504994+jonathanherrmannengel@users.noreply.github.com
+                  PLATFORM: ${{ matrix.platform }}
+                  REPO: ${{ matrix.repo }}
+                  REPO_BRANCH: ${{ matrix.branch }}
+                  REPO_DIR: ${{ matrix.subdir }}
+                  REDIRECT_DOCS: ${{ matrix.redirectdocs }}
+                  TAG: ${{ needs.tag.outputs.tag }}
+                  VERSION: ${{ needs.tag.outputs.version }}
+              run: |
+                  # Build moroway-app
+                  cd build
+                  changelog="$VERSION"$'\n'
+                  if [[ -f "changelogs/en/$VERSION" ]]; then
+                    changelog="$changelog"$(cat "changelogs/en/$VERSION" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+                  fi
+                  if [[ -f "changelogs/en/$VERSION-$PLATFORM" ]]; then
+                    changelog="$changelog"$(cat "changelogs/en/$VERSION-$PLATFORM" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+                  fi
+                  if [[ $(cat "changelogs/meta/fixes/bool/$VERSION") == 1 ]]; then
+                      changelog="$changelog"$(cat "changelogs/meta/fixes/locale/en")"."$'\n'
+                  fi
+                  bash build.sh -p $PLATFORM || bash build.sh -p $PLATFORM || exit $?
+                  # Publish to platform repository
+                  cd ../out
+                  git config --global user.email "$GIT_MAIL"
+                  git config --global user.name "$GIT_USER"
+                  git clone --single-branch --branch "$REPO_BRANCH" "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "publish-$PLATFORM"
+                  [[ ! -z $(echo "$REPO_DIR" | grep "\.\." ) ]] && exit 2
+                  rm -r publish-$PLATFORM/$REPO_DIR/*
+                  cp -r $PLATFORM/latest/* publish-$PLATFORM/$REPO_DIR
+                  cd publish-$PLATFORM/
+                  if [[ $REDIRECT_DOCS == 1 ]]; then
+                    mkdir docs
+                    echo '<!DOCTYPE html><title>Redirect to "MOROway App"-GitHub-Page</title><meta http-equiv="refresh" content="0; URL=../moroway-app-dev">' > docs/index.html
+                  fi
+                  msg="Auto update MOROway App to new version v$VERSION"
+                  git add .
+                  exitcode=$(git diff-index --quiet HEAD -- && echo 0 || echo $?)
+                  if [[ "$exitcode" == 1 ]]; then
+                      git commit --message "$msg"
+                      [[ ! -z $(git tag -l | grep -e "^$TAG$" ) ]] && git tag --delete "$TAG" && git push --delete "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
+                      git tag -a -m "$changelog" "$TAG"
+                      git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
+                      git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git"
+                  fi

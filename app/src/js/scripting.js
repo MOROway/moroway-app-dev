@@ -4157,6 +4157,11 @@ window.onload = function () {
                         }
                         window.location.reload();
                     }, 90000);
+                    document.addEventListener("keyup", function (event) {
+                        if (event.key == "Escape") {
+                            followLink("?", "_self", LINK_STATE_INTERNAL_HTML);
+                        }
+                    });
                 } else {
                     canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
                     canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
@@ -4340,7 +4345,7 @@ window.onload = function () {
                     if (key == "inner2outer" || key == "outer2inner") {
                         switches[key][side].turned = false;
                     } else {
-                        switches[key][side].turned = Math.random() > 0.6;
+                        switches[key][side].turned = Math.random() > 0.4;
                     }
                 });
             });

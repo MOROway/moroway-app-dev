@@ -1,6 +1,6 @@
 function afterCalcOptionsMenuLocal(state) {
     if (state == "load") {
-        if (!onlineGame.enabled) {
+        if (!onlineGame.enabled && !gui.demo) {
             showServerNote();
         }
         setSettingsHTML(document.querySelector("#settings-inner"), false);
