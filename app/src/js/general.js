@@ -377,7 +377,7 @@ function getSettings(storageArea) {
         } catch (e) {}
     }
 
-    var dependencies, hardware, platformExclude;
+    var dependencies, hardware, platforms;
     switch (storageArea) {
         default:
             dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"]};
