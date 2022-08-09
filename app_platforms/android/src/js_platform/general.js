@@ -42,21 +42,20 @@ function setSettingsHTMLLocal(elem, standalone, storageArea, showLang) {
                 }
             }
         }
-        var settings = getSettings(false, storageArea);
+        var settings = getSettings(storageArea).values;
         for (var i = 0; i < Object.keys(settings).length; i++) {
-            var a = Object.values(settings)[i];
             var b = Object.keys(settings)[i];
-            WebJSInterface.setSetting(storageArea, b, a);
+            WebJSInterface.setSetting(storageArea, b, getSetting(Object.keys(settings)[i], storageArea));
             if (elem.querySelector('[data-settings-id="' + b + '"][data-settings-storage-area="' + storageArea + '"]') !== null) {
                 var leftButton = elem.querySelector('[data-settings-id="' + b + '"][data-settings-storage-area="' + storageArea + '"]').querySelector(".settings-opts-left-button");
                 var textButton = elem.querySelector('[data-settings-id="' + b + '"][data-settings-storage-area="' + storageArea + '"]').querySelector(".settings-opts-text-button");
                 leftButton.addEventListener("click", function (event) {
                     var b = event.target.parentNode.parentNode.dataset.settingsId;
-                    WebJSInterface.setSetting(storageArea, b);
+                    WebJSInterface.setSetting(storageArea, b, getSetting(Object.keys(settings)[i], storageArea));
                 });
                 textButton.addEventListener("click", function (event) {
                     var b = event.target.parentNode.parentNode.dataset.settingsId;
-                    WebJSInterface.setSetting(storageArea, b);
+                    WebJSInterface.setSetting(storageArea, b, getSetting(Object.keys(settings)[i], storageArea));
                 });
             }
         }
