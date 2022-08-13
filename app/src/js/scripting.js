@@ -4224,17 +4224,19 @@ window.onload = function () {
                             window.sessionStorage.setItem("demoCarParams", JSON.stringify(carParams));
                             window.sessionStorage.setItem("demoBg", JSON.stringify(background));
                         }
-                        window.location.reload();
+                        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
                     }, 90000);
-                    document.addEventListener("keyup", function (event) {
-                        if (event.key == "Escape") {
-                            switchMode();
-                        }
-                    });
-                    document.addEventListener("touchstart", demoMode.leaveTimeoutStart, {passive: false});
-                    document.addEventListener("touchend", demoMode.leaveTimeoutEnd, {passive: false});
-                    document.addEventListener("mousedown", demoMode.leaveTimeoutStart, {passive: false});
-                    document.addEventListener("mouseup", demoMode.leaveTimeoutEnd, {passive: false});
+                    if (!demoMode.standalone) {
+                        document.addEventListener("keyup", function (event) {
+                            if (event.key == "Escape") {
+                                switchMode();
+                            }
+                        });
+                        document.addEventListener("touchstart", demoMode.leaveTimeoutStart, {passive: false});
+                        document.addEventListener("touchend", demoMode.leaveTimeoutEnd, {passive: false});
+                        document.addEventListener("mousedown", demoMode.leaveTimeoutStart, {passive: false});
+                        document.addEventListener("mouseup", demoMode.leaveTimeoutEnd, {passive: false});
+                    }
                 } else {
                     canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
                     canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
@@ -4459,6 +4461,18 @@ window.onload = function () {
         }, 10);
     }
 
+    function keepScreenAlive() {
+        if (document.visibilityState == "visible") {
+            try {
+                navigator.wakeLock.request("screen");
+            } catch (error) {
+                if (APP_DATA.debug) {
+                    console.log("Wake-Lock-Error:", error);
+                }
+            }
+        }
+    }
+
     canvas = document.querySelector("canvas#game-gameplay-main");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
     canvasBackground = document.querySelector("canvas#game-gameplay-bg");
@@ -4477,10 +4491,13 @@ window.onload = function () {
     document.addEventListener("visibilitychange", onVisibilityChange);
     onVisibilityChange();
 
-    gui.demo = getQueryString("mode") == "demo" || (getSetting("startDemoMode") && getQueryString("mode") == "");
+    gui.demo = getQueryString("mode") == "demo" || getQueryString("mode") == "demoStandalone" || (getSetting("startDemoMode") && getQueryString("mode") == "");
     if (gui.demo) {
         document.body.style.cursor = "none";
         var loadingAnimElemChangingFilter = loadingImageAnimation();
+        keepScreenAlive();
+        document.addEventListener("visibilitychange", keepScreenAlive);
+        demoMode.standalone = getQueryString("mode") == "demoStandalone";
     }
     if (getQueryString("mode") == "multiplay") {
         if ("WebSocket" in window) {
@@ -4495,6 +4512,8 @@ window.onload = function () {
 
     if (onlineGame.enabled) {
         var loadingAnimElemChangingFilter = loadingImageAnimation();
+        keepScreenAlive();
+        document.addEventListener("visibilitychange", keepScreenAlive);
     } else {
         var elements = document.querySelectorAll("#content > *:not(#game), #game > *:not(#game-gameplay)");
         for (var i = 0; i < elements.length; i++) {

@@ -367,69 +367,35 @@ function setLocalAppDataCopy() {
 }
 
 //SETTINGS
-function getSettings(storageArea) {
-    storageArea = storageArea == undefined || storageArea == null ? "morowayApp" : storageArea;
-
+function getSettings() {
     var values = {};
     if (typeof window.localStorage != "undefined") {
         try {
-            values = JSON.parse(window.localStorage.getItem(storageArea) || "{}");
+            values = JSON.parse(window.localStorage.getItem(SETTINGS_NAME) || "{}");
         } catch (e) {}
     }
 
-    var dependencies, hardware, platforms;
-    switch (storageArea) {
-        default:
-            dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"]};
-            hardware = {cursorascircle: ["mouse"]};
-            platforms = {startDemoMode: ["snap", "windows"]};
-            if (typeof values.showNotifications != "boolean") {
-                values.showNotifications = true;
-            }
-            if (typeof values.classicUI != "boolean") {
-                values.classicUI = true;
-            }
-            if (typeof values.alwaysShowSelectedTrain != "boolean") {
-                values.alwaysShowSelectedTrain = true;
-            }
-            if (typeof values.cursorascircle != "boolean") {
-                values.cursorascircle = true;
-            }
-            if (typeof values.burnTheTaxOffice != "boolean") {
-                values.burnTheTaxOffice = true;
-            }
-            if (typeof values.saveGame != "boolean") {
-                values.saveGame = true;
-            }
-            if (typeof values.reduceOptMenu != "boolean") {
-                values.reduceOptMenu = false;
-            }
-            if (typeof values.reduceOptMenuHideGraphicalInfoToggle != "boolean") {
-                values.reduceOptMenuHideGraphicalInfoToggle = false;
-            }
-            if (typeof values.reduceOptMenuHideTrainControlCenter != "boolean") {
-                values.reduceOptMenuHideTrainControlCenter = false;
-            }
-            if (typeof values.reduceOptMenuHideCarControlCenter != "boolean") {
-                values.reduceOptMenuHideCarControlCenter = false;
-            }
-            if (typeof values.reduceOptMenuHideAudioToggle != "boolean") {
-                values.reduceOptMenuHideAudioToggle = false;
-            }
-            if (typeof values.reduceOptMenuHideDemoMode != "boolean") {
-                values.reduceOptMenuHideDemoMode = false;
-            }
-            if (typeof values.startDemoMode != "boolean") {
-                values.startDemoMode = false;
-            }
-    }
+    var defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false};
+    var dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"]};
+    var hardware = {cursorascircle: ["mouse"]};
+    var platforms = {startDemoMode: ["snap", "windows"]};
+
+    Object.keys(defaults).forEach(function (key) {
+        if (typeof values[key] !== "boolean") {
+            values[key] = defaults[key];
+        }
+    });
+    Object.keys(values).forEach(function (key) {
+        if (typeof defaults[key] !== "boolean") {
+            delete values[key];
+        }
+    });
 
     return {values: values, dependencies: dependencies, hardware: hardware, platforms: platforms};
 }
 
-function isSettingActive(a, storageArea) {
-    storageArea = storageArea == undefined || storageArea == null ? "morowayApp" : storageArea;
-    var settingsComplete = getSettings(storageArea);
+function isSettingActive(a) {
+    var settingsComplete = getSettings();
     var isSettingActive = true;
     if (settingsComplete.dependencies[a] != null) {
         settingsComplete.dependencies[a].forEach(function (key) {
@@ -441,9 +407,8 @@ function isSettingActive(a, storageArea) {
     return isSettingActive;
 }
 
-function isHardwareAvailable(a, storageArea) {
-    storageArea = storageArea == undefined || storageArea == null ? "morowayApp" : storageArea;
-    var settingsComplete = getSettings(storageArea);
+function isHardwareAvailable(a) {
+    var settingsComplete = getSettings();
     var isHardwareAvailable = true;
     if (settingsComplete.hardware[a] != null) {
         settingsComplete.hardware[a].forEach(function (current) {
@@ -457,9 +422,8 @@ function isHardwareAvailable(a, storageArea) {
     return isHardwareAvailable;
 }
 
-function isInPlatformList(a, storageArea) {
-    storageArea = storageArea == undefined || storageArea == null ? "morowayApp" : storageArea;
-    var settingsComplete = getSettings(storageArea);
+function isInPlatformList(a) {
+    var settingsComplete = getSettings();
     var isInPlatformList = true;
     if (settingsComplete.platforms[a] != null) {
         isInPlatformList = settingsComplete.platforms[a].indexOf(APP_DATA.platform) > -1;
@@ -467,73 +431,70 @@ function isInPlatformList(a, storageArea) {
     return isInPlatformList;
 }
 
-function setSettingsHTML(elem, standalone, storageArea, showLang) {
+function setSettingsHTML(elem, standalone) {
     function displaySettingsOpts() {
-        var settings = getSettings(storageArea).values;
+        var settings = getSettings().values;
         for (var i = 0; i < Object.keys(settings).length; i++) {
-            var a = Object.values(settings)[i];
-            var b = Object.keys(settings)[i];
-            var elem = document.querySelector("[data-settings-id='" + b + "'][data-settings-storage-area='" + storageArea + "']");
-            if (elem !== null) {
-                var leftButton = document.querySelector("[data-settings-id='" + b + "'][data-settings-storage-area='" + storageArea + "']").querySelector(".settings-opts-left-button");
-                if (a) {
+            var settingId = Object.keys(settings)[i];
+            var settingElem = document.querySelector("li[data-settings-id='" + settingId + "']");
+            if (settingElem !== null) {
+                var leftButton = settingElem.querySelector(".settings-opts-left-button");
+                if (Object.values(settings)[i]) {
                     leftButton.style.backgroundColor = "black";
                     leftButton.style.transform = "rotate(360deg)";
                 } else {
                     leftButton.style.backgroundColor = "";
                     leftButton.style.transform = "rotate(0deg)";
                 }
-                if (isSettingActive(b, storageArea) && isHardwareAvailable(b, storageArea) && isInPlatformList(b, storageArea)) {
-                    elem.style.setProperty("max-height", "");
-                    elem.style.setProperty("margin", "");
-                    elem.style.setProperty("border", "");
-                    elem.style.setProperty("padding", "");
-                    elem.style.setProperty("opacity", "");
+                if (isSettingActive(settingId) && isHardwareAvailable(settingId) && isInPlatformList(settingId)) {
+                    settingElem.style.setProperty("max-height", "");
+                    settingElem.style.setProperty("margin", "");
+                    settingElem.style.setProperty("border", "");
+                    settingElem.style.setProperty("padding", "");
+                    settingElem.style.setProperty("opacity", "");
                 } else {
-                    elem.style.setProperty("max-height", "0");
-                    elem.style.setProperty("margin", "0");
-                    elem.style.setProperty("border", "0");
-                    elem.style.setProperty("padding", "0");
-                    elem.style.setProperty("opacity", "0.5");
+                    settingElem.style.setProperty("max-height", "0");
+                    settingElem.style.setProperty("margin", "0");
+                    settingElem.style.setProperty("border", "0");
+                    settingElem.style.setProperty("padding", "0");
+                    settingElem.style.setProperty("opacity", "0.5");
                 }
             }
         }
     }
 
     function displaySettingsButtons() {
-        if (storageArea == "morowayApp") {
-            var settings = getSettings(storageArea).values;
-            var btnSaveGameDeleteGame = document.querySelector("#saveGameDeleteGame");
-            if (btnSaveGameDeleteGame == undefined || btnSaveGameDeleteGame == null) {
-                return false;
-            }
-            if (settings.saveGame || !isGameSaved() || !standalone) {
-                btnSaveGameDeleteGame.style.display = "";
+        var settings = getSettings().values;
+        var btnSaveGameDeleteGame = document.querySelector("#saveGameDeleteGame");
+        if (btnSaveGameDeleteGame == undefined || btnSaveGameDeleteGame == null) {
+            return false;
+        }
+        if (settings.saveGame || !isGameSaved() || !standalone) {
+            btnSaveGameDeleteGame.style.display = "";
+        } else {
+            btnSaveGameDeleteGame.style.display = "inline";
+        }
+        var reduceOptMenuHideItems = document.querySelectorAll(".reduce-opt-menu-hide-item");
+        for (var i = 0; i < reduceOptMenuHideItems.length; i++) {
+            if (!settings.reduceOptMenu) {
+                reduceOptMenuHideItems[i].style.display = "";
             } else {
-                btnSaveGameDeleteGame.style.display = "inline";
-            }
-            var reduceOptMenuHideItems = document.querySelectorAll(".reduce-opt-menu-hide-item");
-            for (var i = 0; i < reduceOptMenuHideItems.length; i++) {
-                if (!settings.reduceOptMenu) {
-                    reduceOptMenuHideItems[i].style.display = "";
-                } else {
-                    reduceOptMenuHideItems[i].style.display = "inline";
-                    reduceOptMenuHideItems[i].style.textDecoration = "";
-                    reduceOptMenuHideItems[i].textContent = getString("optButton_morowayApp_" + reduceOptMenuHideItems[i].dataset.settingsId);
-                    if (settings[reduceOptMenuHideItems[i].dataset.settingsId]) {
-                        reduceOptMenuHideItems[i].style.textDecoration = "line-through";
-                    }
+                reduceOptMenuHideItems[i].style.display = "inline";
+                reduceOptMenuHideItems[i].style.textDecoration = "";
+                reduceOptMenuHideItems[i].textContent = getString("optButton_morowayApp_" + reduceOptMenuHideItems[i].dataset.settingsId);
+                if (settings[reduceOptMenuHideItems[i].dataset.settingsId]) {
+                    reduceOptMenuHideItems[i].style.textDecoration = "line-through";
                 }
             }
         }
     }
 
-    function changeSetting(event, storageArea, idOnElement) {
-        var settings = getSettings(storageArea).values;
+    function changeSetting(event, idOnElement) {
+        var settings = getSettings().values;
         var id = idOnElement ? event.target.dataset.settingsId : event.target.parentNode.parentNode.dataset.settingsId;
-        if (isSettingActive(id, storageArea) && isHardwareAvailable(id, storageArea) && isInPlatformList(id, storageArea)) {
+        if (isSettingActive(id) && isHardwareAvailable(id) && isInPlatformList(id)) {
             settings[id] = !settings[id];
-            window.localStorage.setItem(storageArea, JSON.stringify(settings));
+            window.localStorage.setItem(SETTINGS_NAME, JSON.stringify(settings));
             displaySettingsOpts();
             displaySettingsButtons();
             notify(".notify", getString("optApply", "."), NOTIFICATION_PRIO_LOW, 900, null, null, window.innerHeight);
@@ -546,14 +507,8 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
     if (standalone == undefined || standalone == null) {
         standalone = true;
     }
-    if (showLang == undefined || showLang == null) {
-        showLang = true;
-    }
-    if (storageArea == undefined || storageArea == null) {
-        storageArea = "morowayApp";
-    }
     elem.classList.add("settings");
-    var rootId = "settings-list-" + storageArea;
+    var rootId = "settings-list-" + SETTINGS_NAME;
     var existingRoot = elem.querySelector("#" + rootId);
     if (existingRoot != undefined) {
         elem.removeChild(existingRoot);
@@ -561,48 +516,47 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
     var root = document.createElement("ul");
     root.className = "settings-list";
     root.id = rootId;
-    var settings = getSettings(storageArea).values;
+    var settings = getSettings().values;
     for (var i = 0; i < Object.keys(settings).length; i++) {
         var opt = Object.keys(settings)[i];
-        if (getString("optTitle_" + storageArea + "_" + opt) != "undefined") {
+        if (getString("optTitle_" + SETTINGS_NAME + "_" + opt) != "undefined") {
             var optElem = document.createElement("li");
             optElem.dataset.settingsId = opt;
-            optElem.dataset.settingsStorageArea = storageArea;
             var child = document.createElement("div");
             child.className = "settings-opts-wrapper";
             var kid = document.createElement("i");
             kid.textContent = "settings";
             kid.className = "settings-opts-left-button material-icons";
             kid.addEventListener("click", function (event) {
-                changeSetting(event, storageArea);
+                changeSetting(event);
             });
             child.appendChild(kid);
             kid = document.createElement("span");
-            kid.textContent = getString("optTitle_" + storageArea + "_" + opt);
+            kid.textContent = getString("optTitle_" + SETTINGS_NAME + "_" + opt);
             kid.className = "settings-opts-text-button";
             kid.addEventListener("click", function (event) {
-                changeSetting(event, storageArea);
+                changeSetting(event);
             });
             child.appendChild(kid);
             optElem.appendChild(child);
             child = document.createElement("div");
             child.className = "settings-hints-wrapper";
-            if (getString("optDesc_" + storageArea + "_" + opt) != "undefined") {
+            if (getString("optDesc_" + SETTINGS_NAME + "_" + opt) != "undefined") {
                 kid = document.createElement("span");
-                kid.textContent = getString("optDesc_" + storageArea + "_" + opt);
+                kid.textContent = getString("optDesc_" + SETTINGS_NAME + "_" + opt);
                 child.appendChild(kid);
             }
-            if (getString("optDesc_" + storageArea + "_" + opt) != "undefined" && getString("optInfo_" + storageArea + "_" + opt) != "undefined") {
+            if (getString("optDesc_" + SETTINGS_NAME + "_" + opt) != "undefined" && getString("optInfo_" + SETTINGS_NAME + "_" + opt) != "undefined") {
                 kid = document.createElement("br");
                 child.appendChild(kid);
             }
-            if (getString("optInfo_" + storageArea + "_" + opt) != "undefined") {
+            if (getString("optInfo_" + SETTINGS_NAME + "_" + opt) != "undefined") {
                 kid = document.createElement("i");
-                kid.textContent = getString("optInfo_" + storageArea + "_" + opt);
+                kid.textContent = getString("optInfo_" + SETTINGS_NAME + "_" + opt);
                 child.appendChild(kid);
             }
             optElem.appendChild(child);
-            if (storageArea == "morowayApp" && opt == "saveGame") {
+            if (opt == "saveGame") {
                 child = document.createElement("div");
                 child.className = "settings-buttons-wrapper";
                 kid = document.createElement("button");
@@ -615,7 +569,7 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
                 });
                 child.appendChild(kid);
                 optElem.appendChild(child);
-            } else if (storageArea == "morowayApp" && opt == "reduceOptMenu") {
+            } else if (opt == "reduceOptMenu") {
                 child = document.createElement("div");
                 child.className = "settings-buttons-wrapper";
                 var kidNames = ["reduceOptMenuHideGraphicalInfoToggle", "reduceOptMenuHideTrainControlCenter", "reduceOptMenuHideCarControlCenter", "reduceOptMenuHideAudioToggle", "reduceOptMenuHideDemoMode"];
@@ -624,7 +578,7 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
                     kid.className = "settings-button reduce-opt-menu-hide-item";
                     kid.dataset.settingsId = kidName;
                     kid.addEventListener("click", function (event) {
-                        changeSetting(event, storageArea, true);
+                        changeSetting(event, true);
                     });
                     child.appendChild(kid);
                 });
@@ -634,56 +588,53 @@ function setSettingsHTML(elem, standalone, storageArea, showLang) {
         }
     }
     elem.appendChild(root);
-    if (showLang) {
-        rootId = "langoption";
-        root = document.createElement("div");
-        existingRoot = elem.querySelector("#" + rootId);
-        if (existingRoot != undefined) {
-            elem.removeChild(existingRoot);
-        }
-        root.id = rootId;
-        child = document.createElement("div");
-        child.id = "langoptioninfo";
-        child.textContent = getString("optLangSelectInfo", ":");
-        root.appendChild(child);
-        Object.keys(STRINGS).forEach(function (val) {
-            child = document.createElement("button");
-            child.className = "langvalue";
-            child.textContent = getString("langName", "", "", val);
-            child.dataset.langCode = val;
-            if (val == CURRENT_LANG) {
-                child.id = "clang";
-            } else {
-                child.addEventListener("click", function () {
-                    setCurrentLang(val);
-                    notify(
-                        ".notify",
-                        getString("optLangSelectChange", "!", "upper", val),
-                        NOTIFICATION_PRIO_HIGH,
-                        10000,
-                        function () {
-                            window.location.reload();
-                        },
-                        getString("optLangSelectChangeButton", "", "upper", val)
-                    );
-                });
-            }
-            root.appendChild(child);
-        });
-        elem.appendChild(root);
+    rootId = "langoption";
+    root = document.createElement("div");
+    existingRoot = elem.querySelector("#" + rootId);
+    if (existingRoot != undefined) {
+        elem.removeChild(existingRoot);
     }
+    root.id = rootId;
+    child = document.createElement("div");
+    child.id = "langoptioninfo";
+    child.textContent = getString("optLangSelectInfo", ":");
+    root.appendChild(child);
+    Object.keys(STRINGS).forEach(function (val) {
+        child = document.createElement("button");
+        child.className = "langvalue";
+        child.textContent = getString("langName", "", "", val);
+        child.dataset.langCode = val;
+        if (val == CURRENT_LANG) {
+            child.id = "clang";
+        } else {
+            child.addEventListener("click", function () {
+                setCurrentLang(val);
+                notify(
+                    ".notify",
+                    getString("optLangSelectChange", "!", "upper", val),
+                    NOTIFICATION_PRIO_HIGH,
+                    10000,
+                    function () {
+                        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
+                    },
+                    getString("optLangSelectChangeButton", "", "upper", val)
+                );
+            });
+        }
+        root.appendChild(child);
+    });
+    elem.appendChild(root);
     displaySettingsOpts();
     displaySettingsButtons();
     if (typeof setSettingsHTMLLocal == "function") {
-        setSettingsHTMLLocal(elem, standalone, storageArea, showLang);
+        setSettingsHTMLLocal(elem, standalone);
     }
 }
-function getSetting(key, storageArea) {
+function getSetting(key) {
     if (!key) {
         return false;
     }
-    storageArea = storageArea == undefined || storageArea == null ? "morowayApp" : storageArea;
-    return getSettings(storageArea).values[key] && isSettingActive(key, storageArea) && isHardwareAvailable(key, storageArea) && isInPlatformList(key, storageArea);
+    return getSettings().values[key] && isSettingActive() && isHardwareAvailable() && isInPlatformList();
 }
 
 //SAVED GAME
@@ -781,6 +732,7 @@ Object.freeze(STRINGS);
 const DEFAULT_LANG = "en";
 const CURRENT_LANG = typeof window.localStorage != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string" ? window.localStorage.getItem("morowayAppLang") : typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language.substring(0, 2)) ? window.navigator.language.substring(0, 2) : DEFAULT_LANG;
 
+var SETTINGS_NAME = "morowayApp";
 var AVAILABLE_HARDWARE = [];
 if (window.matchMedia("(pointer: fine)").matches) {
     AVAILABLE_HARDWARE[AVAILABLE_HARDWARE.length] = "mouse";
