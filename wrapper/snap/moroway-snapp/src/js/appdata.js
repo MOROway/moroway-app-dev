@@ -4,11 +4,11 @@ const APP_DATA = {
         major: 8,
         minor: 1,
         patch: 0,
-        beta: 2,
+        beta: 0,
         date: {
             year: 2022,
             month: 8,
-            day: 11
+            day: 24
         }
     },
     platform: "snap",
