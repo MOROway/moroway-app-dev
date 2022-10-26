@@ -634,7 +634,7 @@ function getSetting(key) {
     if (!key) {
         return false;
     }
-    return getSettings().values[key] && isSettingActive() && isHardwareAvailable() && isInPlatformList();
+    return getSettings().values[key] && isSettingActive(key) && isHardwareAvailable(key) && isInPlatformList(key);
 }
 
 //SAVED GAME
