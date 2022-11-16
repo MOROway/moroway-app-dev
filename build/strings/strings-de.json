@@ -123,7 +123,7 @@
 	"appScreenTextCommandsCarsModeManual": "manuell",
 	"appScreenTextCommandsCarsModeStop": "Parkend (nicht gesetzt)",
 	"appScreenTextCommandsCarsName": "Auto",
-	"appScreenTextCommandsGeneralCommands": "{{0}}-Kommandos: {{1}}",
+	"appScreenTextCommandsGeneralCommands": "{{0}}Kommandos: {{1}}",
 	"appScreenTextCommandsGeneralFailure": "Fehlschlag",
 	"appScreenTextCommandsGeneralSuccess": "Erfolg",
 	"appScreenTextCommandsGeneralUsage": "Nutzung: {{0}}",
