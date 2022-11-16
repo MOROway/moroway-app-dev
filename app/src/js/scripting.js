@@ -544,7 +544,7 @@ function onKeyDown(event) {
     if (event.key == "Tab" || event.key == "Enter") {
         event.preventDefault();
     }
-    if (event.key == "/") {
+    if (event.key == "/" && event.target == document.body) {
         event.preventDefault();
         if (!gui.textControl) {
             gui.textControl = true;
