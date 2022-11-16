@@ -5,12 +5,12 @@
             "electron"
         ]
     },
-    "devDependencies": {
-        "cordova-electron": "^3.1.0"
-    },
     "overrides": {
         "cordova-electron": {
-            "electron": "~19.0.0"
+            "electron": "~21.0.0"
         }
+    },
+    "devDependencies": {
+        "cordova-electron": "^3.1.0"
     }
 }

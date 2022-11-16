@@ -4,7 +4,8 @@
         "autoHideMenuBar": true,
         "webPreferences": {
             "nativeWindowOpen": true,
-            "devTools": false
+            "devTools": false,
+            "sandbox": false
         }
     }
 }
