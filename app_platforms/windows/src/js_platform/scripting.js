@@ -16,7 +16,7 @@ function appUpdateNotification() {
         function () {
             followLink("whatsnew/#newest", "_blank", LINK_STATE_INTERNAL_HTML);
         },
-        "Mehr Informationen",
+        getString("appScreenFurtherInformation", "", "upper"),
         client.y + menus.outerContainer.height
     );
 }
