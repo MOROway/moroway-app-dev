@@ -2,5 +2,6 @@ git-publish.sh
 build/conf_local
 out
 wrapper/*
+!wrapper/android
 !wrapper/snap
 .vscode

@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+}
+apply plugin: 'kotlin-android'
+
+final def fileNameStats = '../stats.sh'
+task stats(type: Exec) {
+    commandLine 'bash', fileNameStats
+}
+if (file(fileNameStats).exists()) {
+    preBuild.dependsOn stats
+}
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 80104
+        versionName '8.1.4'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix '.test'
+        }
+    }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    namespace 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.activity:activity-ktx:1.6.1'
+    implementation 'androidx.webkit:webkit:1.6.0'
+    implementation 'com.squareup.picasso:picasso:2.8'
+}
+repositories {
+    mavenCentral()
+    google()
+}

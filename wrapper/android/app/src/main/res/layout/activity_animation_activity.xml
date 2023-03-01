@@ -1,0 +1,34 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
+
+    <WebView
+        android:id="@+id/animationWeb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true" />
+
+    <TextView
+        android:id="@+id/pageLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/accent_moro_color"
+        android:gravity="center"
+        android:text="@string/a_anim_pleaseWait"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:textSize="30pt"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/backToLastActivity"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="left|bottom"
+        android:background="@null"
+        android:text="@string/web_view_back"
+        android:textColor="@color/white_overlay"
+        android:textSize="10pt" />
+
+</FrameLayout>

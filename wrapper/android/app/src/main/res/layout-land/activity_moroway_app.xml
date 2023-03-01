@@ -1,0 +1,73 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/screen1pic1" />
+
+    <LinearLayout
+        android:id="@+id/homescreenbuttons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <Button
+            android:id="@+id/moreButton"
+            style="@android:style/ButtonBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="15dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="@string/title_activity_optionen"
+            android:textColor="@color/accent_moro_color" />
+
+        <Button
+            android:id="@+id/animationButton"
+            style="@android:style/ButtonBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="2"
+            android:background="@null"
+            android:gravity="center"
+            android:scaleType="center"
+            android:text="@string/a_home_animation_button"
+            android:textColor="@color/accent_moro_color" />
+
+        <Button
+            android:id="@+id/aboutButton"
+            style="@android:style/ButtonBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="@string/title_activity_help"
+            android:textColor="@color/accent_moro_color" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/homescreenbuttons"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:text="@string/app_name_long"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ff505050" />
+
+
+</RelativeLayout>

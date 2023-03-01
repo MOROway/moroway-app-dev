@@ -1,0 +1,139 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/title_activity_settings_advanced"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/a_settings_advanced_orientation_home"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white"
+                android:textStyle="italic" />
+
+            <RadioGroup
+                android:id="@+id/startState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <RadioButton
+                    android:id="@+id/startStateAuto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/radio_button"
+                    android:padding="10dp"
+                    android:text="@string/a_settings_advanced_orientation_state_auto"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/startStatePortrait"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/radio_button"
+                    android:padding="10dp"
+                    android:text="@string/a_settings_advanced_orientation_state_portrait"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/startStateLandscape"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/radio_button"
+                    android:padding="10dp"
+                    android:text="@string/a_settings_advanced_orientation_state_landscape"
+                    android:textColor="@color/white" />
+
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/a_settings_advanced_orientation_other"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white"
+                android:textStyle="italic" />
+
+            <RadioGroup
+                android:id="@+id/otherState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <RadioButton
+                    android:id="@+id/otherStateAuto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/radio_button"
+                    android:padding="10dp"
+                    android:text="@string/a_settings_advanced_orientation_state_auto"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/otherStatePortrait"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/radio_button"
+                    android:padding="10dp"
+                    android:text="@string/a_settings_advanced_orientation_state_portrait"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/otherStateLandscape"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/radio_button"
+                    android:padding="10dp"
+                    android:text="@string/a_settings_advanced_orientation_state_landscape"
+                    android:textColor="@color/white" />
+
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/setVersionNote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:button="@drawable/checkbox"
+                android:padding="10dp"
+                android:text="@string/a_settings_advanced_versionnote"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

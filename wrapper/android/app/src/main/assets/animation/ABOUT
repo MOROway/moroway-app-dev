@@ -1,0 +1,15 @@
+﻿Copyright (c) 2016-2022 Jonathan Herrmann-Engel.
+
+All MOROway App files are subject to the "Apache License Version 2.0" (file: 'LICENSE.txt').
+
+In addition all MOROway App media files like images are also subject to the "Creative Commons Attribution 4.0 International" License (file: 'LICENSE_ASSETS.txt').
+For these media files you may choose between these two licenses.
+
+For included open source files (e.g. [App-Root]/src/lib/) the copyright and license files are located in the specific directory.
+
+The following media files are CC0-licensed files taken from freesound.org:
+[App-Root]/assets/audio_asset_0.ogg (https://freesound.org/people/steaq/sounds/594215/)
+[App-Root]/assets/audio_asset_2.ogg (https://freesound.org/people/BeeProductive/sounds/430025/, modified)
+[App-Root]/assets/audio_asset_4.ogg (https://freesound.org/people/bretbernhoft/sounds/131174/, modified)
+[App-Root]/assets/audio_asset_5.ogg (https://freesound.org/people/C-V/sounds/528427/, modified)
+[App-Root]/assets/audio_asset_crash.ogg (https://freesound.org/people/ludvique/sounds/71853/, modified)

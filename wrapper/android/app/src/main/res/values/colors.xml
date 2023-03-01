@@ -1,0 +1,18 @@
+<resources>
+
+    <color name="white_clean">#ffffff</color>
+    <color name="white_overlay">#cccfcfcf</color>
+    <color name="white">#cfcfcf</color>
+    <color name="background_moro_color">#303030</color>
+    <color name="accent_moro_color">#0c0c0c</color>
+    <color name="highlight_overlay">#ccd2781b</color>
+    <color name="highlight">#d2781b</color>
+
+    <color name="options_home">#ff1efff8</color>
+    <color name="options_animation">#88dd00</color>
+    <color name="options_animation_teamplay">#fdaa0E</color>
+    <color name="options_animation_demo">#caff00</color>
+    <color name="options_help">#D02090</color>
+    <color name="options_anim_settings">#ffefc893</color>
+    <color name="options_settings">#ffff0709</color>
+</resources>

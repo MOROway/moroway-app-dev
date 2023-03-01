@@ -1,0 +1,97 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/optionsLayoutRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@drawable/screen3pic1">
+
+            <Button
+                android:id="@+id/homeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:background="@null"
+                android:text="@string/a_opt_start"
+                android:textColor="@color/options_home"
+                android:textSize="32sp" />
+
+            <Button
+                android:id="@+id/animationButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/homeButton"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:background="@null"
+                android:text="@string/a_opt_singleplay"
+                android:textColor="@color/options_animation"
+                android:textSize="40sp" />
+
+            <Button
+                android:id="@+id/animationTeamplayButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/animationButton"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:background="@null"
+                android:text="@string/a_opt_teamplay"
+                android:textColor="@color/options_animation_teamplay"
+                android:textSize="36sp" />
+
+            <Button
+                android:id="@+id/animationDemoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/animationTeamplayButton"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:background="@null"
+                android:text="@string/a_opt_demo"
+                android:textColor="@color/options_animation_demo"
+                android:textSize="36sp" />
+
+            <Button
+                android:id="@+id/helpButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/animationDemoButton"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:background="@null"
+                android:text="@string/title_activity_help"
+                android:textColor="@color/options_help"
+                android:textSize="34sp" />
+
+            <Button
+                android:id="@+id/animSettingsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/helpButton"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:background="@null"
+                android:text="@string/title_activity_settings_basic"
+                android:textColor="@color/options_anim_settings"
+                android:textSize="32sp" />
+
+            <Button
+                android:id="@+id/settingsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/animSettingsButton"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:background="@null"
+                android:text="@string/title_activity_settings_advanced"
+                android:textColor="@color/options_settings"
+                android:textSize="30sp" />
+
+</RelativeLayout>

@@ -1,0 +1,621 @@
+@keyframes snake {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+body {
+    margin: 0%;
+    overflow: hidden;
+    color: white;
+    background: black;
+}
+
+canvas {
+    margin: 0%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.settings-hidden {
+    display: none !important;
+}
+
+#branding,
+#snake {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#snake {
+    background: none;
+}
+
+#branding img,
+#snake div {
+    width: 20%;
+    max-width: 400px;
+}
+
+#branding img {
+    height: inherit;
+    object-fit: contain;
+}
+
+#snake div {
+    width: 5vw;
+    height: 5vw;
+    max-width: 10vh;
+    max-height: 10vh;
+    border: 3px solid rgb(0, 0, 0);
+    border-radius: 50%;
+    border-right-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0.5);
+    border-left-color: rgba(0, 0, 0, 0.75);
+    content: " ";
+    animation: snake 0.4s infinite;
+}
+
+#percent {
+    position: fixed;
+    display: none;
+    left: 0;
+    bottom: 0;
+    z-index: 3;
+    width: 100vw;
+}
+
+#percent #percent-progress {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    content: " ";
+    background: rgb(207, 207, 207);
+    width: 100vw;
+    height: 50px;
+    left: -100%;
+    transition: left 0.2s;
+}
+
+#percent #percent-text {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    text-align: right;
+    font-size: 30px;
+    height: 50px;
+    line-height: 50px;
+    padding-right: 30px;
+    color: rgb(207, 207, 207);
+    text-shadow: -1px 1px 5px rgb(48, 48, 48), 1px 1px 5px rgb(48, 48, 48), 1px -1px 5px rgb(48, 48, 48), -1px -1px 5px rgb(48, 48, 48);
+}
+
+#canvas-menus {
+    display: flex;
+    position: absolute;
+    background: black;
+    justify-content: center;
+    align-items: center;
+}
+
+#canvas-options-inner,
+#canvas-info-inner {
+    z-index: 1;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.canvas-options-button,
+.canvas-info-button {
+    display: inline-flex;
+    padding: 0px;
+    margin: auto;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgb(210, 120, 27);
+    background: transparent;
+}
+
+#info-overlay-text {
+    z-index: 1;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    overflow-y: auto;
+    white-space: nowrap;
+    left: 0;
+    top: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6));
+    border-bottom: 2px solid rgba(210, 120, 27, 0.3);
+    color: rgb(210, 120, 27);
+    font-size: 4em;
+}
+
+.tp-notify {
+    padding: 10px;
+    border: 2px solid rgb(210, 120, 27);
+    border-radius: 30px;
+    margin: 0;
+    z-index: 101;
+    position: fixed;
+    background: rgb(48, 48, 48);
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: 2vh;
+    max-width: 50vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    visibility: hidden;
+    font-size: 95%;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tp-notify span {
+    padding-right: 0px;
+    white-space: nowrap;
+}
+
+#settings,
+#chat {
+    text-align: left;
+    display: none;
+    position: fixed;
+    background: floralWhite;
+    color: black;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: stretch;
+    width: 450px;
+    max-width: calc(100vw - 5px);
+    border-left: 5px solid black;
+    z-index: 2;
+    overflow-y: auto;
+}
+#chat > * {
+    position: fixed;
+    max-height: 100%;
+    max-height: calc(100% - 50px);
+    width: inherit;
+    max-width: inherit;
+    right: inherit;
+    background: inherit;
+    overflow-y: auto;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+#chat #chat-inner {
+    top: 0;
+}
+#chat #chat-controls {
+    bottom: 0;
+}
+.settings {
+    background: transparent;
+}
+#settings-inner {
+    padding-bottom: 100px;
+}
+#settings .nav-wrapper {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 10px 0px;
+    background: floralwhite;
+    border-top: 2px solid rgb(48, 48, 48);
+    width: inherit;
+    display: flex;
+    justify-content: center;
+}
+#chat .nav-wrapper {
+    min-height: 40px;
+}
+#settings .nav-button,
+#chat .nav-button,
+#chat #chat-msg-send-text {
+    border: 1px solid black;
+    border-radius: 6px;
+    padding: 9px;
+    margin: 3px;
+}
+#settings .nav-button,
+#chat .nav-button {
+    font-weight: bold;
+    text-transform: uppercase;
+    background: transparent;
+    cursor: pointer;
+}
+#chat #chat-no-messages {
+    font-style: italic;
+    margin: 20px;
+}
+#chat .chat-inner-container {
+    margin: 20px 10px;
+    word-break: break-word;
+    border-bottom: 1px solid black;
+}
+#chat .chat-inner-container img {
+    margin: 10px;
+}
+#chat .chat-inner-container img.train-sticker {
+    border-radius: 30%;
+}
+#chat .chat-inner-container img.sticker {
+    max-width: 50px;
+}
+#chat #chat-scroll-to-bottom {
+    position: fixed;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    right: 50px;
+    font-size: 24px;
+    background: floralWhite;
+    border: 0.5px solid black;
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 30px;
+}
+#chat .chat-msg-send-container {
+    margin: 5px;
+    padding: 5px;
+    border: 2px solid black;
+}
+#chat .chat-msg-send-container > div {
+    border-bottom: 0.2px solid black;
+}
+#chat .chat-msg-send-container-title {
+    text-transform: uppercase;
+    font-size: 0.9em;
+    font-weight: 1000;
+    user-select: none;
+}
+#chat .chat-send-toggle {
+    cursor: pointer;
+}
+#chat .chat-msg-send-container-subtitle {
+    font-size: 0.8em;
+    user-select: none;
+}
+#chat .chat-send-inner {
+    display: none;
+}
+#chat #chat-msg-smileys button {
+    background: rgba(0, 0, 0, 0.35) !important;
+}
+#chat #chat-msg-trains img {
+    border: 2px solid black;
+    width: 55px;
+    height: 55px;
+    margin: 5px;
+    border-radius: 25%;
+    user-select: none;
+}
+#chat #chat-msg-stickers img {
+    width: 45px;
+    height: 45px;
+    padding: 5px;
+    border-radius: 5px;
+    user-select: none;
+}
+#chat #chat-msg-send-inner {
+    display: block;
+}
+#chat #chat-msg-send-inner div,
+#chat #chat-nav-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+#chat #chat-msg-send-text,
+#chat #chat-nav-buttons .nav-button {
+    flex-grow: 1;
+}
+
+#content > * {
+    display: none;
+}
+
+#content button {
+    vertical-align: middle;
+}
+
+#content a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#setup {
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+#setup button {
+    padding: 8px;
+    margin: 5px;
+    font-size: inherit;
+    border: none;
+    background: inherit;
+    color: inherit;
+}
+
+#setup #setup-colorframe {
+    height: calc(100vh - 2vw);
+    width: 98vw;
+    position: fixed;
+    border-style: solid;
+    border-width: 1vw;
+    border-image: linear-gradient(0deg, rgba(139, 0, 0, 0) 0%, rgba(139, 0, 0, 0.1) 5%, rgba(139, 0, 0, 0.7) 50%, rgba(139, 0, 0, 0.4) 95%, rgba(139, 0, 0, 0.5) 100%) 1 1;
+}
+
+#setup #setup-colorbottom {
+    z-index: 2;
+    height: 20vh;
+    transition: 2s;
+    width: 200vw;
+    position: fixed;
+    bottom: 0;
+    transform: translate(-25%, 50%);
+    background-image: radial-gradient(ellipse at 50% 60%, rgba(139, 0, 0, 0.7) 10%, rgba(139, 0, 0, 0.3) 40%, rgba(139, 0, 0, 0) 70%);
+    cursor: none;
+}
+
+#setup #setup-colorbottom:hover {
+    height: 40vh;
+}
+
+#setup #setup-ball {
+    position: fixed;
+    width: calc(3vw + 10px);
+    height: calc(3vw + 10px);
+    top: -1vw;
+    left: -1vw;
+    border-radius: calc(1.5vw + 5px);
+    animation-name: setup-ball;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes setup-ball {
+    0% {
+        background: rgba(139, 0, 0, 0.3);
+    }
+    40% {
+        background: rgba(139, 0, 0, 0.2);
+    }
+    60% {
+        background: rgba(139, 0, 0, 0.1);
+    }
+    80% {
+        background: rgba(139, 0, 0, 0.2);
+    }
+}
+
+#setup #setup-ballin {
+    width: calc(1.5vw + 5px);
+    height: calc(1.5vw + 5px);
+    border-radius: calc(0.75vw + 2.5px);
+    animation-name: ballin;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    transform: translate(50%, 50%);
+}
+
+@keyframes ballin {
+    0% {
+        background: rgba(139, 0, 0, 0.7);
+    }
+    20% {
+        background: rgba(139, 0, 0, 0.5);
+    }
+    40% {
+        background: rgba(139, 0, 0, 0.2);
+    }
+    60% {
+        background: rgba(139, 0, 0, 0.3);
+    }
+    80% {
+        background: rgba(139, 0, 0, 0.5);
+    }
+}
+
+#setup #setup-exit {
+    position: fixed;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: rgba(150, 50, 50);
+    z-index: 2;
+    right: 1.5vw;
+    top: 1.5vw;
+}
+
+#setup #setup-inner-content {
+    z-index: 1;
+    position: fixed;
+    width: 96vw;
+    height: calc(100vh - 4vw);
+    top: 1vw;
+    left: 1vw;
+    padding: 1vw;
+    font-size: 150%;
+    overflow: auto;
+}
+
+#setup #setup-inner-content,
+#setup #setup-inner-content > * {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+#setup #setup-inner-content,
+#setup #setup-inner-content * {
+    cursor: none;
+}
+
+#setup #setup-inner-content > * {
+    text-align: center;
+    color: floralWhite;
+    line-height: 2em;
+}
+
+#setup #setup-inner-content #setup-init #setup-init-detail {
+    font-size: 70%;
+    font-style: italic;
+}
+
+#setup #setup-inner-content #setup-init #setup-init-name {
+    background: inherit;
+    font-family: monospace;
+    font-size: 105%;
+    color: inherit;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 10px;
+    border: 3px solid floralWhite;
+}
+
+#setup #setup-inner-content #setup-init #setup-init-name:focus {
+    border-color: rgb(139, 0, 0);
+}
+
+#setup #setup-inner-content #setup-start #setup-start-gamelink::selection {
+    color: floralWhite;
+    background: #444;
+}
+
+#setup #setup-inner-content #setup-start #setup-start-button {
+    padding: 5px;
+    font-size: inherit;
+    border: none;
+    background: inherit;
+    color: inherit;
+}
+
+#setup #setup-inner-content #setup-start #setup-start-button:hover {
+    color: rgb(139, 0, 0);
+}
+
+#game,
+#game #game-start {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+#game #game-start,
+#game #game-wait {
+    width: 100vw;
+    height: 100vh;
+}
+
+#game #game-start #game-start-text {
+    font-style: italic;
+}
+
+#game #game-start #game-start-button {
+    padding: 5px;
+    font-size: 120%;
+    border: none;
+    background: inherit;
+    color: inherit;
+}
+
+#game #game-start #game-start-button:hover {
+    color: rgb(139, 0, 0);
+}
+
+#confirm-dialog {
+    display: none;
+    border-radius: 50px;
+    color: floralWhite;
+    background: #444;
+    z-index: 102;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+}
+
+#confirm-dialog-title {
+    padding-bottom: 20px;
+    font-size: 1.5em;
+}
+#confirm-dialog-text {
+    border-top: 2px solid rgb(210, 120, 27);
+    padding: 20px 0;
+}
+#confirm-dialog-buttons-wrapper {
+    display: flex;
+}
+#confirm-dialog button {
+    flex-grow: 1;
+    border: 2px solid rgb(210, 120, 27);
+    border-radius: 20px;
+    color: inherit;
+    background: inherit;
+    padding: 5px;
+    margin: 5px 20px;
+    text-transform: uppercase;
+}
+
+#text-control {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    z-index: 1;
+    width: 100%;
+    padding-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-family: monospace;
+}
+#text-control > * {
+    margin: 10px;
+}
+#text-control #text-control-output {
+    font-weight: bold;
+}
+#text-control #text-control-input input {
+    color: rgb(210, 120, 27);
+    background: transparent;
+    border: 1px solid rgb(210, 120, 27);
+    padding: 5px;
+}
+#text-control #text-control-input input:focus-within {
+    outline-color: rgb(255, 120, 27);
+    outline-style: solid;
+    outline-offset: 2px;
+}

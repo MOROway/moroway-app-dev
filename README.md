@@ -18,7 +18,7 @@ This repository provides the build tools for MOROway App. The code here is used 
 
 - The "web"-platform is the main platform and can be used with any modern web browser. The ready-to-use code for the "web"-platform can be found [here](https://github.com/MOROway/moroway-app).<sup>[1](#morowayrepoautoupdate)</sup>
 - The "windows"-platform provides the PWA available at Microsoft Store (packaged by [PWABuilder](https://www.pwabuilder.com/)).
-- The "android"-platform is used within the Java Wrapper App available at Google Play Store. The wrapper app is not open-source.
+- The "android"-platform is used within the Android Wrapper App available at Google Play Store. The wrapper app can be found [here](./wrapper/android). This wrapper app contains a [already built version](./wrapper/android/app/src/main/assets/animation) of the "android"-platform.
 - The "oc"-platform is used within the Apache Cordova Android Wrapper App available at F-Droid. The wrapper app can be found [here](https://github.com/MOROway/moroway-app-oc). This wrapper app contains a [already built version](https://github.com/MOROway/moroway-app-oc/tree/master/moroway-app-oc) of the "oc"-platform.
 - The "snap"-platform is used within the Apache Cordova Electron Wrapper App available at Ubuntu&apos;s Snap Store. The wrapper app can be found [here](./wrapper/snap). This wrapper app contains a [already built version](./wrapper/snap/www) of the "snap"-platform.
 
@@ -59,6 +59,6 @@ MOROway App uses Weblate for translations.
   - out/&#91;PLATFORM&#93;/latest = last build (release or beta)
   - out/&#91;PLATFORM&#93;/current = last release build
 - wrapper = platform wrapper apps
-  - android: not open source
+  - android: [here](./wrapper/android)
   - oc: [Extra repository](https://github.com/MOROway/moroway-app-oc)
   - snap: [here](./wrapper/snap)

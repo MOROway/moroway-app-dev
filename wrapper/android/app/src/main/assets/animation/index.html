@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="./"/>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+          name="viewport"/>
+    <meta content="#000" name="theme-color"/>
+    <title data-stringid-content="generalTitle"></title>
+    <link href="favicon.ico" rel="icon" sizes="32x32" type="image/x-icon"/>
+
+    <!-- Open Source Libraries And Fonts -->
+    <!-- Fonts -->
+    <link href="src/lib/open_fonts/google/MaterialIcons/font.css" rel="stylesheet" type="text/css"/>
+    <link href="src/lib/open_fonts/google/Roboto/font.css" rel="stylesheet" type="text/css"/>
+
+    <!-- General Scripts -->
+    <script src="src/js/error_handler.js"></script>
+    <script src="src/js_platform/error_handler.js"></script>
+    <script src="src/js/appdata.js"></script>
+    <script src="src/js/general.js"></script>
+    <script src="src/js_platform/general.js"></script>
+    <!-- Animation Scripts -->
+    <script src="src/js/scripting.js"></script>
+    <script src="src/js_platform/scripting.js"></script>
+
+    <!-- General Styles -->
+    <link href="src/css/general.css" rel="stylesheet" type="text/css"/>
+    <!-- Animation Styles -->
+    <link href="src/css/styling.css" rel="stylesheet" type="text/css"/>
+    <link href="src/css_platform/styling.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+<!-- Server side notifications -->
+<div id="server-note">
+    <div id="server-note-main">
+        <div id="server-note-title"></div>
+        <div id="server-note-inner">
+            <div id="server-note-text"></div>
+            <div id="server-note-img"><img/></div>
+            <div id="server-note-later">
+                <input id="server-note-later-box" type="checkbox"/>
+                <label data-stringid-content="generalServerNoteButtonLater"
+                       for="server-note-later-box"></label>
+            </div>
+            <div data-stringid-content="generalServerNoteInfoLater"
+                 id="server-note-later-info"></div>
+            <div id="server-note-buttons">
+                <div data-stringid-content="generalServerNoteButtonGo"
+                     data-stringid-content-case="upper"
+                     id="server-note-button-go"></div>
+                <div data-stringid-content="generalServerNoteButtonNo"
+                     data-stringid-content-case="upper"
+                     id="server-note-button-no"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main id="content">
+    <!-- tags for ready app -->
+    <div id="setup">
+        <div id="setup-colorframe"></div>
+        <div id="setup-inner-content">
+            <div id="setup-init">
+                <span data-stringid-content="appScreenTeamplaySetupInit"
+                      data-stringid-content-punctuation=":"
+                      id="setup-init-info"></span>
+                <span data-stringid-content="appScreenTeamplaySetupInitDetail"
+                      id="setup-init-detail"></span>
+                <input autocomplete="off" id="setup-init-name" type="text"/>
+                <button data-stringid-content="appScreenTeamplaySetupInitButton"
+                        data-stringid-content-case="upper"
+                        data-stringid-content-punctuation="!"
+                        id="setup-init-button"></button>
+            </div>
+            <div id="setup-create">
+                <button data-stringid-content="appScreenTeamplaySetupCreateLink"
+                        id="setup-create-link"></button>
+                <button data-stringid-content="appScreenTeamplayUnsetTitle"
+                        id="setup-create-escape"></button>
+            </div>
+            <div id="setup-start">
+                <span data-stringid-content="appScreenTeamplaySetupStart"
+                      data-stringid-content-punctuation=":"
+                      id="setup-start-message"></span>
+                <span id="setup-start-gamelink"></span>
+                <button data-stringid-content="appScreenTeamplaySetupStartButton"
+                        data-stringid-content-case="upper"
+                        id="setup-start-button"></button>
+            </div>
+        </div>
+        <div id="setup-colorbottom"></div>
+        <div id="setup-ball">
+            <div id="setup-ballin"></div>
+        </div>
+        <div data-stringid-title="appScreenTeamplayUnsetTitle" id="setup-exit">
+            <div class="material-icons">close</div>
+        </div>
+    </div>
+    <div id="game">
+        <div id="game-start">
+            <div data-stringid-content="appScreenTeamplayGameStart" id="game-start-text"></div>
+            <div data-stringid-content="appScreenTeamplayGameStartButton"
+                 id="game-start-button"></div>
+        </div>
+        <div id="game-wait">
+            <div data-stringid-content="appScreenTeamplayTeammateWait" id="game-wait-text"></div>
+        </div>
+        <div id="game-gameplay">
+            <canvas data-stringid-content="appScreenNoCanvas" id="game-gameplay-gesture">JavaScript
+                required
+            </canvas>
+            <canvas data-stringid-content="appScreenNoCanvas" id="game-gameplay-bg">JavaScript
+                required
+            </canvas>
+            <div id="canvas-menus">
+                <div id="canvas-options-inner">
+                    <button class="canvas-options-button"
+                            data-stringid-title="appScreenTeamplayTitle"
+                            id="canvas-team">
+                        <i class="material-icons">people</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="appScreenTeamplayUnsetTitle"
+                            id="canvas-single">
+                        <i class="material-icons">person</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="generalTitleSettingsScreen"
+                            id="canvas-settings">
+                        <i class="material-icons">settings</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="generalTitleHelpScreen"
+                            id="canvas-help">
+                        <i class="material-icons">help</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="appScreenGraphicalInfo"
+                            id="canvas-info-toggle">
+                        <i class="material-icons">info</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="appScreenControlCenterTitle"
+                            id="canvas-control-center">
+                        <i class="material-icons">train</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="appScreenCarControlCenterTitle"
+                            id="canvas-car-control-center">
+                        <i class="material-icons">directions_car</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="appScreenTeamplayChatTitle"
+                            id="canvas-chat-open">
+                        <i class="material-icons">chat</i>
+                    </button>
+                    <button class="canvas-options-button" data-stringid-title="appScreenSound"
+                            id="canvas-sound-toggle">
+                        <i class="material-icons">volume_off</i>
+                    </button>
+                    <button class="canvas-options-button"
+                            data-stringid-title="appScreenDemoModeTitle"
+                            id="canvas-demo-mode">
+                        <i class="material-icons">visibility</i>
+                    </button>
+                </div>
+                <div id="canvas-info-inner">
+                    <button class="canvas-info-button" data-stringid-title="generalClose"
+                            id="canvas-info-exit">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+            </div>
+            <canvas data-stringid-content="appScreenNoCanvas" id="game-gameplay-main">JavaScript
+                required
+            </canvas>
+            <canvas data-stringid-content="appScreenNoCanvas" id="game-gameplay-sfg">JavaScript
+                required
+            </canvas>
+            <canvas data-stringid-content="appScreenNoCanvas" id="game-gameplay-fg">JavaScript
+                required
+            </canvas>
+            <div id="info-overlay-text"></div>
+
+            <!-- text control -->
+            <div id="text-control">
+                <div id="text-control-output"></div>
+                <div id="text-control-input">
+                    <input placeholder="/" type="text"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- loading animation -->
+<div id="branding"><img alt="" src="assets/asset_background_train.png"/></div>
+<div id="snake">
+    <div></div>
+</div>
+<div id="percent">
+    <div id="percent-progress"></div>
+    <div id="percent-text">0%</div>
+</div>
+
+<!-- notify -->
+<div class="notify" id="canvas-notifier">
+    <span></span>
+    <button></button>
+</div>
+<div class="notify tp-notify" id="tp-chat-notifier">
+    <span></span>
+    <button></button>
+</div>
+
+<!-- settings -->
+<div id="settings">
+    <div id="settings-inner"></div>
+    <div class="nav-wrapper">
+        <button class="nav-button" data-stringid-content="generalClose"
+                id="settings-apply"></button>
+    </div>
+</div>
+
+<!-- chat -->
+<div id="chat">
+    <div id="chat-inner">
+        <p data-stringid-content="appScreenTeamplayChatNone" id="chat-no-messages"></p>
+        <div id="chat-inner-messages"></div>
+        <div id="chat-scroll-to-bottom"><i class="material-icons">arrow_downward</i></div>
+    </div>
+    <div id="chat-controls">
+        <div id="chat-send">
+            <div class="chat-msg-send-container" id="chat-msg-reactions">
+                <div class="chat-send-toggle chat-msg-send-container-title"
+                     data-stringid-content="appScreenTeamplayChatSendReaction"
+                     id="chat-msg-reactions-toggle"></div>
+                <div class="chat-send-inner" id="chat-msg-reactions-inner">
+                    <div id="chat-msg-smileys">
+                        <div class="chat-msg-send-container-title chat-msg-send-container-subtitle"
+                             data-stringid-content="appScreenTeamplayChatSendReactionSmiley"></div>
+                        <div id="chat-msg-smileys-inner">
+                            <button class="nav-button"
+                                    data-stringid-content="appScreenTeamplayChatSendReactionSmileyThumbsUp"></button>
+                            <button class="nav-button"
+                                    data-stringid-content="appScreenTeamplayChatSendReactionSmileyThumbsDown"></button>
+                            <button class="nav-button"
+                                    data-stringid-content="appScreenTeamplayChatSendReactionSmileySmile"></button>
+                            <button class="nav-button"
+                                    data-stringid-content="appScreenTeamplayChatSendReactionSmileyUnhappy"></button>
+                            <button class="nav-button"
+                                    data-stringid-content="appScreenTeamplayChatSendReactionSmileyLaugh"></button>
+                            <button class="nav-button"
+                                    data-stringid-content="appScreenTeamplayChatSendReactionSmileyHeart"></button>
+                        </div>
+                    </div>
+                    <div id="chat-msg-stickers">
+                        <div class="chat-msg-send-container-title chat-msg-send-container-subtitle"
+                             data-stringid-content="appScreenTeamplayChatSendReactionSticker"></div>
+                        <div id="chat-msg-stickers-inner"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-msg-send-container" id="chat-msg-actions">
+                <div class="chat-send-toggle chat-msg-send-container-title"
+                     data-stringid-content="appScreenTeamplayChatSendAction"
+                     id="chat-msg-actions-toggle"></div>
+                <div class="chat-send-inner" id="chat-msg-actions-inner">
+                    <div id="chat-msg-trains">
+                        <div id="chat-msg-trains-inner"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-msg-send-container" id="chat-msg-send">
+                <div class="chat-send-toggle chat-msg-send-container-title"
+                     data-stringid-content="appScreenTeamplayChatSendTitle"
+                     id="chat-msg-send-toggle"></div>
+                <div class="chat-send-inner" id="chat-msg-send-inner">
+                    <div>
+                        <input autocomplete="off" id="chat-msg-send-text" maxlength="500"
+                               type="text"/>
+                        <button class="nav-button" data-stringid-content="appScreenTeamplayChatSend"
+                                id="chat-msg-send-button"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nav-wrapper" id="chat-nav">
+            <div id="chat-nav-buttons">
+                <button class="nav-button" data-stringid-content="appScreenTeamplayChatClose"
+                        id="chat-close"></button>
+                <button class="nav-button" data-stringid-content="appScreenTeamplayChatClear"
+                        id="chat-clear"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- confirm dialog -->
+<div id="confirm-dialog">
+    <div id="confirm-dialog-title"></div>
+    <div id="confirm-dialog-text"></div>
+    <div id="confirm-dialog-buttons-wrapper">
+        <button data-stringid-content="generalYes" id="confirm-dialog-yes"></button>
+        <button data-stringid-content="generalNo" id="confirm-dialog-no"></button>
+    </div>
+</div>
+
+<!-- initialize -->
+<script src="src/js/init.js"></script>
+</body>
+</html>
