@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- General -->
     <string name="app_name" translatable="false">MOROway</string>
     <string name="app_name_long" translatable="false">MOROway App</string>
-    <string name="web_view_back" translatable="false">&#11013;</string>
-
+    <string name="web_view_back" translatable="false">⬅</string>
     <!-- Titles (General) -->
     <string name="title_activity_optionen">Options</string>
     <string name="title_activity_animation">Animation</string>
@@ -15,21 +13,17 @@
     <string name="title_activity_jserror">JavaScript Error</string>
     <string name="title_activity_gimmick1">Hedgie and Snail</string>
     <string name="title_activity_gimmick2">Turtle</string>
-
     <!-- Activity: Home -->
-    <string name="a_home_iHB" translatable="false">&#8656;</string>
-    <string name="a_home_iHF" translatable="false">&#8658;</string>
+    <string name="a_home_iHB" translatable="false">⇐</string>
+    <string name="a_home_iHF" translatable="false">⇒</string>
     <string name="a_home_animation_button">Play</string>
-
     <!-- Activity: Animation -->
-    <string name="a_anim_pleaseWait">please wait</string>
-
+    <string name="a_anim_pleaseWait">please wait …</string>
     <!-- Activity: MenuActivity -->
     <string name="a_opt_start">Home</string>
     <string name="a_opt_singleplay">Play</string>
     <string name="a_opt_teamplay">Multiplayer</string>
     <string name="a_opt_demo">Demo mode</string>
-
     <!-- Activity: SettingsActivity -->
     <string name="a_settings_advanced_orientation_home">Orientation: home activity</string>
     <string name="a_settings_advanced_orientation_other">Orientation: other activities</string>
@@ -37,19 +31,15 @@
     <string name="a_settings_advanced_orientation_state_portrait">PORTRAIT</string>
     <string name="a_settings_advanced_orientation_state_landscape">LANDSCAPE</string>
     <string name="a_settings_advanced_versionnote">Show version note again</string>
-
     <!--Activity: JS Error -->
     <string name="a_jserror_text">We are very sorry, but a fatal JavaScript error occurred. This application is based on a progressive web app, which uses newer web standards. These web page based files are displayed using the Android WebView component. Please try to update this component using the Play Store by clicking the Button below.</string>
     <string name="a_jserror_button">Open Play Store</string>
     <string name="a_jserror_text2">If the update did not solve the problem please send a feedback including the information below (you may copy it from here and paste it to the feedback form)</string>
     <string name="a_jserror_button2">Open Feedback</string>
-
     <!-- Activity: Gimmick 1 -->
-    <string name="a_g1_again">Play Again&#8230;</string>
-
+    <string name="a_g1_again">Play Again…</string>
     <!-- Activity: Gimmick 2 -->
     <string name="a_g2_turned">Our turtle became sea sick!</string>
-
     <!-- Dialog: Update -->
     <string name="d_update_text">New features:\n\n%1$s</string>
     <string name="d_update_changelog">Improved in-app navigation and UX.\nBugfixes.</string>
@@ -58,12 +48,10 @@
     <string name="d_server_msg_show_again">Show again</string>
     <string name="d_server_msg_show_again_info">Only works if this message remains valid.</string>
     <string name="d_server_msg_link">Learn more</string>
-
     <!-- Dialog: Confirm Back -->
     <string name="d_confirmback_text_online">Using the "Back"-Button will terminate this online game! To navigate your phone e.g. to share the game link use the "Home"-Button. The online game will now stay active for some time.</string>
     <string name="d_confirmback_text_offline">Exit Game?</string>
     <string name="d_confirmback_title">"Back"-Button Confirmation</string>
     <string name="d_confirmback_ok">Exit</string>
     <string name="d_confirmback_cancel">Stay</string>
-
 </resources>

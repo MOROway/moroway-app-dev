@@ -9,7 +9,7 @@
     <string name="title_activity_help">Hilfe/Credits</string>
     <string name="title_activity_jserror">JavaScript-Fehler</string>
     <string name="a_home_animation_button">Spielen</string>
-    <string name="a_anim_pleaseWait">bitte warten &#8230;</string>
+    <string name="a_anim_pleaseWait">bitte warten …</string>
     <string name="a_opt_start">Start</string>
     <string name="a_opt_singleplay">Spielen</string>
     <string name="a_opt_teamplay">Mehrspielermodus</string>
@@ -24,7 +24,7 @@
     <string name="a_jserror_button">Zum Play Store</string>
     <string name="a_jserror_text2">Wenn das Update nicht weitergeholfen hat, senden Sie uns bitte ein Feedback inklusive der unten angezeigten Informationen (welche sie hier kopieren und im Feedbackformular einfügen können)</string>
     <string name="a_jserror_button2">Open Feedback</string>
-    <string name="a_g1_again">Nochmal&#8230;</string>
+    <string name="a_g1_again">Nochmal…</string>
     <string name="a_g2_turned">Gedreht - Wie die Welt, so auch der Bildschirm!</string>
     <string name="d_update_title">Neue Funktionen (%1$s)</string>
     <string name="d_update_text">%1$s\n\nWeiterhin viel Fahrspaß zu haben wünscht MOROway!</string>
