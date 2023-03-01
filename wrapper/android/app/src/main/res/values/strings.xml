@@ -54,4 +54,5 @@
     <string name="d_confirmback_title">"Back"-Button Confirmation</string>
     <string name="d_confirmback_ok">Exit</string>
     <string name="d_confirmback_cancel">Stay</string>
+    <string name="testtesttest">just a test</string>
 </resources>
