@@ -9,7 +9,7 @@
     <string name="title_activity_help">Hilfe/Credits</string>
     <string name="title_activity_jserror">JavaScript-Fehler</string>
     <string name="a_home_animation_button">Spielen</string>
-    <string name="a_anim_pleaseWait">bitte warten …</string>
+    <string name="a_anim_pleaseWait">bitte warten…</string>
     <string name="a_opt_start">Start</string>
     <string name="a_opt_singleplay">Spielen</string>
     <string name="a_opt_teamplay">Mehrspielermodus</string>
