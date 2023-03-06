@@ -345,6 +345,20 @@ function setCurrentLang(lang) {
         window.localStorage.setItem("morowayAppLang", lang);
     }
 }
+
+function getCurrentLang() {
+    if (typeof window.localStorage != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string") {
+        return window.localStorage.getItem("morowayAppLang");
+    }
+    if (typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language)) {
+        return window.navigator.language;
+    }
+    if (typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language.substring(0, 2))) {
+        return window.navigator.language.substring(0, 2);
+    }
+    return DEFAULT_LANG;
+}
+
 //LOCAL APP DATA COPY
 function getLocalAppDataCopy() {
     var localAppDataCopy = {};
@@ -732,7 +746,7 @@ const NOTIFICATION_CHANNEL_TEAMPLAY_CHAT = 3;
 const STRINGS = "{{strings}}";
 Object.freeze(STRINGS);
 const DEFAULT_LANG = "en";
-const CURRENT_LANG = typeof window.localStorage != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string" ? window.localStorage.getItem("morowayAppLang") : typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language.substring(0, 2)) ? window.navigator.language.substring(0, 2) : DEFAULT_LANG;
+const CURRENT_LANG = getCurrentLang();
 
 var SETTINGS_NAME = "morowayApp";
 var AVAILABLE_HARDWARE = [];
