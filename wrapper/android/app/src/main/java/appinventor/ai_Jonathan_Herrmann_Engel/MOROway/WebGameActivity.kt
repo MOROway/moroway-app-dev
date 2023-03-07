@@ -20,7 +20,7 @@ import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityAnimat
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogBackConfirmBinding
 
 class WebGameActivity : MOROwayActivity() {
-    private var binding: ActivityAnimationActivityBinding? = null
+    private lateinit var binding: ActivityAnimationActivityBinding
     private var isOnlineGame = false
     private var isDemoGame = false
     private var location = ""
@@ -30,13 +30,13 @@ class WebGameActivity : MOROwayActivity() {
         binding = ActivityAnimationActivityBinding.inflate(
             layoutInflater
         )
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         val assetLoader = WebViewAssetLoader.Builder()
             .setDomain(Globals.WEBVIEW_DOMAIN)
             .addPathHandler(Globals.WEBVIEW_PATH, AssetsPathHandler(this))
             .build()
-        binding!!.animationWeb.resumeTimers()
-        binding!!.animationWeb.webViewClient = object : WebViewClient() {
+        binding.animationWeb.resumeTimers()
+        binding.animationWeb.webViewClient = object : WebViewClient() {
             private fun overrideUrl(uri: Uri): Boolean {
                 if (!uri.toString()
                         .matches(("https://" + Globals.WEBVIEW_DOMAIN + Globals.WEBVIEW_PATH + "(.*)").toRegex())
@@ -71,25 +71,25 @@ class WebGameActivity : MOROwayActivity() {
             }
 
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-                super.onPageStarted(binding!!.animationWeb, url, favicon)
-                initWeb(binding!!.animationWeb, true)
-                binding!!.pageLoading.visibility = View.VISIBLE
+                super.onPageStarted(binding.animationWeb, url, favicon)
+                initWeb(binding.animationWeb, true)
+                binding.pageLoading.visibility = View.VISIBLE
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-                super.onPageFinished(binding!!.animationWeb, url)
+                super.onPageFinished(binding.animationWeb, url)
                 if (url == "about:blank") {
-                    binding!!.animationWeb.clearCache(true)
-                    binding!!.animationWeb.clearHistory()
-                    binding!!.animationWeb.loadUrl(location)
+                    binding.animationWeb.clearCache(true)
+                    binding.animationWeb.clearHistory()
+                    binding.animationWeb.loadUrl(location)
                 }
-                initWeb(binding!!.animationWeb, true)
-                binding!!.pageLoading.visibility = View.INVISIBLE
+                initWeb(binding.animationWeb, true)
+                binding.pageLoading.visibility = View.INVISIBLE
             }
         }
-        binding!!.animationWeb.addJavascriptInterface(WebJSInterface(this), "WebJSInterface")
+        binding.animationWeb.addJavascriptInterface(WebJSInterface(this), "WebJSInterface")
         loadInitialURL(intent)
-        binding!!.backToLastActivity.setOnClickListener {
+        binding.backToLastActivity.setOnClickListener {
             goBack()
         }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -106,8 +106,8 @@ class WebGameActivity : MOROwayActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.animationWeb.pauseTimers()
-        binding!!.animationWeb.destroy()
+        binding.animationWeb.pauseTimers()
+        binding.animationWeb.destroy()
     }
 
     private fun loadInitialURL(intent: Intent) {
@@ -120,8 +120,8 @@ class WebGameActivity : MOROwayActivity() {
             queryString = bundle.getString("queryString")
         }
         evaluateLocation(queryString)
-        initWeb(binding!!.animationWeb, true)
-        binding!!.animationWeb.loadUrl("about:blank")
+        initWeb(binding.animationWeb, true)
+        binding.animationWeb.loadUrl("about:blank")
     }
 
     private fun getUriQuery(uri: Uri): String? {

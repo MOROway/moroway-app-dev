@@ -214,9 +214,12 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             if (hedgehogX + hedgehog!!.bitmap.width >= snailX) {
                 hedgehogVelocityX = 0.0
                 hedgehogVelocityY = 0.0
-                hedgehogSmall1Y = hedgehogY + hedgehog!!.bitmap.height - smallHedgehog1!!.bitmap.height
-                hedgehogSmall2Y = hedgehogY + hedgehog!!.bitmap.height - smallHedgehog2!!.bitmap.height
-                hedgehogSmall3Y = hedgehogY + hedgehog!!.bitmap.height - smallHedgehog3!!.bitmap.height
+                hedgehogSmall1Y =
+                    hedgehogY + hedgehog!!.bitmap.height - smallHedgehog1!!.bitmap.height
+                hedgehogSmall2Y =
+                    hedgehogY + hedgehog!!.bitmap.height - smallHedgehog2!!.bitmap.height
+                hedgehogSmall3Y =
+                    hedgehogY + hedgehog!!.bitmap.height - smallHedgehog3!!.bitmap.height
                 val hedgehogMin = 0.085 * height
                 hedgehogEndMinY = hedgehogY - hedgehogMin
                 hedgehogEndMaxY = hedgehogY
@@ -257,7 +260,8 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
         }
         if (smallHedgehog2Run) {
             if (hedgehogSmall2X + smallHedgehog2!!.bitmap.width + smallHedgehogDistance >= hedgehogSmall1X) {
-                hedgehogSmall2X = hedgehogSmall1X - smallHedgehog2!!.bitmap.width - smallHedgehogDistance
+                hedgehogSmall2X =
+                    hedgehogSmall1X - smallHedgehog2!!.bitmap.width - smallHedgehogDistance
                 smallHedgehog2Run = false
                 smallHedgehog3Run = true
             } else {
@@ -266,7 +270,8 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
         }
         if (smallHedgehog3Run) {
             if (hedgehogSmall3X + smallHedgehog3!!.bitmap.width + smallHedgehogDistance >= hedgehogSmall2X) {
-                hedgehogSmall3X = hedgehogSmall2X - smallHedgehog3!!.bitmap.width - smallHedgehogDistance
+                hedgehogSmall3X =
+                    hedgehogSmall2X - smallHedgehog3!!.bitmap.width - smallHedgehogDistance
                 smallHedgehog3Run = false
                 appleRun = true
             } else {
@@ -301,7 +306,12 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
                 replayRun = true
                 clicked = false
             } else {
-                hedgehogY = getHedgehogFinalY(hedgehogY, hedgehogEndVelocityY, hedgehogEndMaxY, hedgehogEndMinY)
+                hedgehogY = getHedgehogFinalY(
+                    hedgehogY,
+                    hedgehogEndVelocityY,
+                    hedgehogEndMaxY,
+                    hedgehogEndMinY
+                )
                 hedgehogSmall1Y = getHedgehogFinalY(
                     hedgehogSmall1Y,
                     hedgehogSmall1EndVelocityY,
@@ -346,7 +356,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             null
         )
         hedgehogCanvas.drawBitmap(apple!!.bitmap, appleX.toFloat(), appleY.toFloat(), null)
-        if(replayRun) {
+        if (replayRun) {
             hedgehogCanvas.drawText(
                 resources.getString(R.string.a_g1_again),
                 replayX.toFloat(),

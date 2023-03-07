@@ -20,7 +20,7 @@ import kotlin.math.abs
 
 
 class HomeActivity : MOROwayActivity() {
-    private var binding: ActivityMorowayAppBinding? = null
+    private lateinit var binding: ActivityMorowayAppBinding
     private var width = 0
     private var dimen = 0
     private var portraitPictureSettingsEditor: SharedPreferences.Editor? = null
@@ -39,24 +39,25 @@ class HomeActivity : MOROwayActivity() {
         binding = ActivityMorowayAppBinding.inflate(
             layoutInflater
         )
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         val settings = getSharedPreferences("MOROwaySettings", MODE_PRIVATE)
         val settingsEditor = settings.edit()
 
-        val height : Int
+        val height: Int
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             val windowMetrics = windowManager.currentWindowMetrics
-            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets =
+                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             width = windowMetrics.bounds.width() - insets.left - insets.right
             height = windowMetrics.bounds.height() - insets.top - insets.bottom
         } else {
             val metrics = DisplayMetrics()
             windowManager.defaultDisplay.getMetrics(metrics)
             width = metrics.widthPixels
-            height =  metrics.heightPixels
+            height = metrics.heightPixels
         }
         dimen = height / 30
-        binding!!.animationButton.setOnClickListener {
+        binding.animationButton.setOnClickListener {
             startActivity(
                 Intent(
                     this,
@@ -64,7 +65,7 @@ class HomeActivity : MOROwayActivity() {
                 )
             )
         }
-        binding!!.moreButton.setOnClickListener {
+        binding.moreButton.setOnClickListener {
             startActivity(
                 Intent(
                     this,
@@ -83,7 +84,7 @@ class HomeActivity : MOROwayActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            val imageContext = binding!!.bigStylePictures!!.context
+            val imageContext = binding.bigStylePictures!!.context
             portraitPictureZoom = ScaleGestureDetector(
                 imageContext,
                 ScaleListener()
@@ -97,23 +98,23 @@ class HomeActivity : MOROwayActivity() {
             setImage()
 
             //Buttons
-            binding!!.imageHandlerForwards!!.setOnClickListener { nextImage() }
-            binding!!.imageHandlerBackwards!!.setOnClickListener { prevImage() }
+            binding.imageHandlerForwards!!.setOnClickListener { nextImage() }
+            binding.imageHandlerBackwards!!.setOnClickListener { prevImage() }
             val marginHandler = width / 15
-            binding!!.imageHandlerForwards!!.setPadding(marginHandler, 0, 0, 0)
-            binding!!.imageHandlerBackwards!!.setPadding(0, 0, marginHandler, 0)
-            binding!!.imageHandlerForwards!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, height / 17f)
-            binding!!.imageHandlerBackwards!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, height / 17f)
+            binding.imageHandlerForwards!!.setPadding(marginHandler, 0, 0, 0)
+            binding.imageHandlerBackwards!!.setPadding(0, 0, marginHandler, 0)
+            binding.imageHandlerForwards!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, height / 17f)
+            binding.imageHandlerBackwards!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, height / 17f)
             val paddingButton = height / 20
-            binding!!.animationButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, height * 0.1f)
-            binding!!.moreButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, height * 0.05f)
-            binding!!.moreButton.setPadding(0, paddingButton, 0, paddingButton)
+            binding.animationButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, height * 0.1f)
+            binding.moreButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, height * 0.05f)
+            binding.moreButton.setPadding(0, paddingButton, 0, paddingButton)
         } else {
-            binding!!.homescreenbuttons!!.setOnClickListener(null)
+            binding.homescreenbuttons!!.setOnClickListener(null)
             //Buttons
-            binding!!.animationButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.088f)
-            binding!!.moreButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.044f)
-            binding!!.aboutButton!!.setOnClickListener {
+            binding.animationButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.088f)
+            binding.moreButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.044f)
+            binding.aboutButton!!.setOnClickListener {
                 startActivity(
                     Intent(
                         this,
@@ -121,12 +122,12 @@ class HomeActivity : MOROwayActivity() {
                     )
                 )
             }
-            binding!!.aboutButton!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.044f)
+            binding.aboutButton!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.044f)
         }
 
         //Inform about new Version or Server messages
         val serverMsgSettings = getSharedPreferences("MOROwayAnimServerNote", MODE_PRIVATE)
-        val lastShownVersionNote =settings.getString("versionNoteName", Globals.VERSION_NAME)
+        val lastShownVersionNote = settings.getString("versionNoteName", Globals.VERSION_NAME)
         val showVersionNoteAnyway = settings.getBoolean("versionNoteShowAnyWay", false)
         if (serverMsgSettings.getInt(
                 "id",
@@ -247,44 +248,44 @@ class HomeActivity : MOROwayActivity() {
         portraitPictureBigAndZoomed = false
         portraitPictureZoomOffsetX = 0f
         portraitPictureZoomOffsetY = 0f
-        binding!!.bigStylePictures!!.scaleX = 1f
-        binding!!.bigStylePictures!!.scaleY = 1f
-        binding!!.bigStylePictures!!.translationX = portraitPictureZoomOffsetX
-        binding!!.bigStylePictures!!.translationY = portraitPictureZoomOffsetY
+        binding.bigStylePictures!!.scaleX = 1f
+        binding.bigStylePictures!!.scaleY = 1f
+        binding.bigStylePictures!!.translationX = portraitPictureZoomOffsetX
+        binding.bigStylePictures!!.translationY = portraitPictureZoomOffsetY
         if (portraitPictureBig) {
             portraitPictureLayoutParams!!.removeRule(RelativeLayout.BELOW)
-            binding!!.bigStylePictures!!.layoutParams = portraitPictureLayoutParams
-            binding!!.bigStylePictures!!.scaleType = ImageView.ScaleType.CENTER_CROP
-            binding!!.bigStylePictures!!.setPadding(0, 0, 0, 0)
-            binding!!.root.setPadding(0, 0, 0, 0)
+            binding.bigStylePictures!!.layoutParams = portraitPictureLayoutParams
+            binding.bigStylePictures!!.scaleType = ImageView.ScaleType.CENTER_CROP
+            binding.bigStylePictures!!.setPadding(0, 0, 0, 0)
+            binding.root.setPadding(0, 0, 0, 0)
         } else {
             portraitPictureLayoutParams!!.addRule(RelativeLayout.BELOW, R.id.ImageHandler)
-            binding!!.bigStylePictures!!.layoutParams = portraitPictureLayoutParams
-            binding!!.bigStylePictures!!.scaleType = ImageView.ScaleType.FIT_CENTER
-            binding!!.bigStylePictures!!.setPadding(0, 0, 0, 10)
-            binding!!.root.setPadding(dimen, dimen, dimen, dimen)
+            binding.bigStylePictures!!.layoutParams = portraitPictureLayoutParams
+            binding.bigStylePictures!!.scaleType = ImageView.ScaleType.FIT_CENTER
+            binding.bigStylePictures!!.setPadding(0, 0, 0, 10)
+            binding.root.setPadding(dimen, dimen, dimen, dimen)
         }
     }
 
     private fun setImage() {
         when (portraitPictureCurrent) {
-            5 -> binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic6cs)
-            4 -> binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic5cs)
+            5 -> binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic6cs)
+            4 -> binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic5cs)
             3 -> if (portraitPictureBig) {
-                binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic4csbigstyle)
+                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic4csbigstyle)
             } else {
-                binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic4cs)
+                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic4cs)
             }
             2 -> if (portraitPictureBig) {
-                binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic3csbigstyle)
+                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic3csbigstyle)
             } else {
-                binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic3cs)
+                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic3cs)
             }
-            1 -> binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic2cs)
+            1 -> binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic2cs)
             else -> if (portraitPictureBig) {
-                binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic1csbigstyle)
+                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic1csbigstyle)
             } else {
-                binding!!.bigStylePictures!!.setImageResource(R.drawable.screen1pic1cs)
+                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic1cs)
             }
         }
     }
@@ -305,21 +306,21 @@ class HomeActivity : MOROwayActivity() {
 
     fun setZoomOffset() {
         val xMax =
-            ((binding!!.bigStylePictures!!.scaleX - 1) * (binding!!.bigStylePictures!!.width / 2))
+            ((binding.bigStylePictures!!.scaleX - 1) * (binding.bigStylePictures!!.width / 2))
         if (portraitPictureZoomOffsetX >= xMax) {
             portraitPictureZoomOffsetX = xMax
         } else if (portraitPictureZoomOffsetX <= -xMax) {
             portraitPictureZoomOffsetX = -xMax
         }
         val yMax =
-            ((binding!!.bigStylePictures!!.scaleY - 1) * (binding!!.bigStylePictures!!.height / 2))
+            ((binding.bigStylePictures!!.scaleY - 1) * (binding.bigStylePictures!!.height / 2))
         if (portraitPictureZoomOffsetY >= yMax) {
             portraitPictureZoomOffsetY = yMax
         } else if (portraitPictureZoomOffsetY <= -yMax) {
             portraitPictureZoomOffsetY = -yMax
         }
-        binding!!.bigStylePictures!!.translationX = portraitPictureZoomOffsetX
-        binding!!.bigStylePictures!!.translationY = portraitPictureZoomOffsetY
+        binding.bigStylePictures!!.translationX = portraitPictureZoomOffsetX
+        binding.bigStylePictures!!.translationY = portraitPictureZoomOffsetY
     }
 
     private inner class ScaleListener : SimpleOnScaleGestureListener() {
@@ -330,27 +331,27 @@ class HomeActivity : MOROwayActivity() {
                 updateImageSettings()
                 resetImage()
                 setImage()
-            } else if (imageScale > 0 && imageScale < 1 && binding!!.bigStylePictures!!.scaleX <= 1 && portraitPictureBig && !portraitPictureBigAndZoomed) {
+            } else if (imageScale > 0 && imageScale < 1 && binding.bigStylePictures!!.scaleX <= 1 && portraitPictureBig && !portraitPictureBigAndZoomed) {
                 portraitPictureBig = false
                 portraitPictureAllowZoom = false
                 updateImageSettings()
                 resetImage()
                 setImage()
-            } else if ((imageScale > 1 || binding!!.bigStylePictures!!.scaleX > 1) && portraitPictureBig && portraitPictureAllowZoom) {
+            } else if ((imageScale > 1 || binding.bigStylePictures!!.scaleX > 1) && portraitPictureBig && portraitPictureAllowZoom) {
                 val imageZoomMaxScale = 3.25f
                 portraitPictureBigAndZoomed = true
-                binding!!.bigStylePictures!!.scaleType = ImageView.ScaleType.MATRIX
-                if (imageScale * binding!!.bigStylePictures!!.scaleX.coerceAtLeast(binding!!.bigStylePictures!!.scaleY) > imageZoomMaxScale
+                binding.bigStylePictures!!.scaleType = ImageView.ScaleType.MATRIX
+                if (imageScale * binding.bigStylePictures!!.scaleX.coerceAtLeast(binding.bigStylePictures!!.scaleY) > imageZoomMaxScale
                 ) {
                     imageScale =
-                        imageZoomMaxScale / binding!!.bigStylePictures!!.scaleX.coerceAtLeast(
-                            binding!!.bigStylePictures!!.scaleY
+                        imageZoomMaxScale / binding.bigStylePictures!!.scaleX.coerceAtLeast(
+                            binding.bigStylePictures!!.scaleY
                         )
                 }
-                binding!!.bigStylePictures!!.scaleX =
-                    1f.coerceAtLeast(imageScale * binding!!.bigStylePictures!!.scaleX)
-                binding!!.bigStylePictures!!.scaleY =
-                    1f.coerceAtLeast(imageScale * binding!!.bigStylePictures!!.scaleY)
+                binding.bigStylePictures!!.scaleX =
+                    1f.coerceAtLeast(imageScale * binding.bigStylePictures!!.scaleX)
+                binding.bigStylePictures!!.scaleY =
+                    1f.coerceAtLeast(imageScale * binding.bigStylePictures!!.scaleY)
                 setZoomOffset()
             }
             return true
@@ -373,14 +374,18 @@ class HomeActivity : MOROwayActivity() {
             val swipeMaxOffPath = width / 5
             val swipeThresholdVelocity = 222
             val imageZoomMinScale = 1.7
-            if (portraitPictureBig && binding!!.bigStylePictures!!.scaleX >= imageZoomMinScale && binding!!.bigStylePictures!!.scaleY >= imageZoomMinScale) {
+            if (portraitPictureBig && binding.bigStylePictures!!.scaleX >= imageZoomMinScale && binding.bigStylePictures!!.scaleY >= imageZoomMinScale) {
                 portraitPictureZoomOffsetX -= e1.x - e2.x
                 portraitPictureZoomOffsetY -= e1.y - e2.y
                 setZoomOffset()
-            } else if (e1.x - e2.x > swipeMinDistance && abs(velocityX) > swipeThresholdVelocity && abs(e1.y - e2.y) < swipeMaxOffPath
+            } else if (e1.x - e2.x > swipeMinDistance && abs(velocityX) > swipeThresholdVelocity && abs(
+                    e1.y - e2.y
+                ) < swipeMaxOffPath
             ) {
                 nextImage()
-            } else if (e2.x - e1.x > swipeMinDistance && abs(velocityX) > swipeThresholdVelocity && abs(e1.y - e2.y) < swipeMaxOffPath
+            } else if (e2.x - e1.x > swipeMinDistance && abs(velocityX) > swipeThresholdVelocity && abs(
+                    e1.y - e2.y
+                ) < swipeMaxOffPath
             ) {
                 prevImage()
             } else {

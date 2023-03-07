@@ -1,9 +1,7 @@
 package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
-import android.R.attr.textSize
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.WindowInsets
@@ -75,34 +73,34 @@ class MenuActivity : MOROwayActivity() {
                 )
             )
         }
-            binding.homeButton.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                getButtonTextSize(binding.homeButton)
-            )
-            binding.animationButton.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                getButtonTextSize(binding.animationButton)
-            )
-            binding.animationTeamplayButton.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                getButtonTextSize(binding.animationTeamplayButton)
-            )
-            binding.animationDemoButton.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                getButtonTextSize(binding.animationDemoButton)
-            )
-            binding.helpButton.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                getButtonTextSize(binding.helpButton)
-            )
-            binding.animSettingsButton.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                getButtonTextSize(binding.animSettingsButton)
-            )
-            binding.settingsButton.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                getButtonTextSize(binding.settingsButton)
-            )
+        binding.homeButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            getButtonTextSize(binding.homeButton)
+        )
+        binding.animationButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            getButtonTextSize(binding.animationButton)
+        )
+        binding.animationTeamplayButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            getButtonTextSize(binding.animationTeamplayButton)
+        )
+        binding.animationDemoButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            getButtonTextSize(binding.animationDemoButton)
+        )
+        binding.helpButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            getButtonTextSize(binding.helpButton)
+        )
+        binding.animSettingsButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            getButtonTextSize(binding.animSettingsButton)
+        )
+        binding.settingsButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            getButtonTextSize(binding.settingsButton)
+        )
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 backToHome()
@@ -115,35 +113,37 @@ class MenuActivity : MOROwayActivity() {
         lockOtherActivity(this)
     }
 
-    private fun getButtonTextSize(view: Button) : Float{
+    private fun getButtonTextSize(view: Button): Float {
         val buttonCount = 7
-        val width : Int
+        val width: Int
         val height: Int
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             val windowMetrics = windowManager.currentWindowMetrics
-            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets =
+                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             width = windowMetrics.bounds.width() - insets.left - insets.right
             height = windowMetrics.bounds.height() - insets.top - insets.bottom
         } else {
             val metrics = DisplayMetrics()
             windowManager.defaultDisplay.getMetrics(metrics)
             width = metrics.widthPixels
-            height =  metrics.heightPixels
+            height = metrics.heightPixels
         }
         val diagonal = sqrt(
-            (width / resources.displayMetrics.xdpi).toDouble().pow(2.0) + (height / resources.displayMetrics.ydpi).toDouble().pow(2.0)
+            (width / resources.displayMetrics.xdpi).toDouble()
+                .pow(2.0) + (height / resources.displayMetrics.ydpi).toDouble().pow(2.0)
         )
         val base = 5.8
         var size = view.textSize
         if (diagonal > base) {
             val factor = (diagonal / base).toFloat()
             size *= factor
-            if(view.text.length * size > width){
+            if (view.text.length * size > width) {
                 size = width / (view.text.length).toFloat()
             }
         }
-        if(size + view.paddingTop + view.paddingBottom > height / buttonCount) {
-            return (height /buttonCount - (view.paddingTop + view.paddingBottom + view.marginBottom + view.marginTop)).toFloat()
+        if (size + view.paddingTop + view.paddingBottom > height / buttonCount) {
+            return (height / buttonCount - (view.paddingTop + view.paddingBottom + view.marginBottom + view.marginTop)).toFloat()
         }
         return size
     }
