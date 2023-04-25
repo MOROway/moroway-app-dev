@@ -28,7 +28,7 @@
 	"appScreenDemoModeEnterDialogText": "You can leave demo mode by touch/click and hold or using the “Escape” key.",
 	"appScreenDemoModeEnterDialogTitle": "Start demo mode?",
 	"appScreenDemoModeTitle": "demo mode",
-	"appScreenFurtherInformation": "More information",
+	"appScreenFurtherInformation": "More info",
 	"appScreenGraphicalInfo": "Graphical info",
 	"appScreenGraphicalInfoList": [
 		"Trains",
@@ -196,13 +196,13 @@
 	"generalTitleWhatsNewScreen": "Changelog",
 	"generalYes": "yes",
 	"helpScreenContact": "Contact",
-	"helpScreenContactBackupLink": "Open contact information",
-	"helpScreenContactBackupLinkNotification": "Contact information opened",
+	"helpScreenContactBackupLink": "Open contact info",
+	"helpScreenContactBackupLinkNotification": "Contact info opened",
 	"helpScreenContactFeedback": "Feedback {{0}}",
 	"helpScreenContactFeedbackBugs": "Report a bug",
 	"helpScreenContactFeedbackIcon": "📫",
 	"helpScreenContactFeedbackPs": [
-		"Get in touch using the contact information displayed below!"
+		"Get in touch using the contact info displayed below."
 	],
 	"helpScreenContactFeedbackSend": "Send feedback",
 	"helpScreenContactFeedbackSendNotification": "Feedback page opened",
