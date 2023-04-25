@@ -20,11 +20,11 @@
 		"Tog",
 		"Biler",
 		"Animert brennende bygning",
-		null,
+		"None",
 		"Valgt tog",
-		null,
+		"None",
 		"Endre togretning",
-		null,
+		"None",
 		"Toghastighet",
 		"Start/stopp tog"
 	],
@@ -84,20 +84,20 @@
 	"appScreenTextCommandsGeneralUsage": "bruk: {{0}}",
 	"appScreenTextCommandsTrainsName": "tog",
 	"appScreenTrainIcons": [
-		null,
 		"None",
-		null,
+		"",
 		"None",
-		null,
+		"",
 		"None",
+		"",
 		"🛲"
 	],
 	"appScreenTrainNames": [
-		null,
 		"None",
-		null,
+		"",
 		"None",
-		null,
+		"",
+		"None",
 		"Lokaltog"
 	],
 	"errorScreenErrorMissing": "Manglende elementer",
@@ -143,7 +143,7 @@
 	"helpScreenGeneralCars": "Biler {{0}}",
 	"helpScreenGeneralTeamplay": "Flerspillermodus {{0}}",
 	"helpScreenGeneralTeamplayPs": [
-		null,
+		"None",
 		"Først må du velge et kallenavn."
 	],
 	"helpScreenGeneralTrains": "Tog {{0}}",
