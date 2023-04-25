@@ -85,18 +85,18 @@
 	"appScreenTextCommandsTrainsName": "tog",
 	"appScreenTrainIcons": [
 		null,
+		"None",
 		null,
+		"None",
 		null,
-		null,
-		null,
-		null,
+		"None",
 		"🛲"
 	],
 	"appScreenTrainNames": [
 		null,
+		"None",
 		null,
-		null,
-		null,
+		"None",
 		null,
 		"Lokaltog"
 	],
