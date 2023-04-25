@@ -1,0 +1,15 @@
+{
+	"appScreenAMillionFrames": "{{0}} millioner rammer vist",
+	"appScreenCarAutoModeInit": "aktivert",
+	"appScreenCarAutoModePause": "på pause",
+	"appScreenCarControlCenterAutoModeActivate": "Start automatisk modus",
+	"appScreenCarControlCenterAutoModeBackToRoot": "Parker biler",
+	"appScreenCarControlCenterAutoModePause": "Sett på pause",
+	"appScreenCarControlCenterAutoModeResume": "Fortsett",
+	"appScreenCarControlCenterStartCar": "Start «{{0}}»",
+	"appScreenCarNames": [
+		"Rød bil",
+		"Hvit bil",
+		"Gul bil"
+	]
+}
