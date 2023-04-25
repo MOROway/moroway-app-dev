@@ -127,29 +127,31 @@ for platform in ${platforms[@]}; do
 			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]]; then
 				changelogs=""
 				for changelogfile in "$clangdir"/*.0; do
-					cv=$(basename "$changelogfile")
-					cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
-					cvMi=$(echo "$cv" | sed 's/^[0-9]\+\.\([0-9]\+\)\.0$/\1/')
-					changelog="whatsNewScreenByVersionMa${cvMa}Mi${cvMi}: ["
-					changelogfile_year="changelogs/meta/year/$cv"
-					if [[ -f "$changelogfile_year" ]]; then
-						changelog="$changelog"'"'$(cat "$changelogfile_year")'",'
-					fi
-					while read -r line; do
-						line=$(echo "$line" | sed 's/"/\\"/g')
-						changelog="$changelog"$(printf '"%s",' "$line")
-					done <"$changelogfile"
-					if [[ -f "$changelogfile-$platform" ]]; then
+					if [[ -f "$changelogfile" ]]; then
+						cv=$(basename "$changelogfile")
+						cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
+						cvMi=$(echo "$cv" | sed 's/^[0-9]\+\.\([0-9]\+\)\.0$/\1/')
+						changelog="whatsNewScreenByVersionMa${cvMa}Mi${cvMi}: ["
+						changelogfile_year="changelogs/meta/year/$cv"
+						if [[ -f "$changelogfile_year" ]]; then
+							changelog="$changelog"'"'$(cat "$changelogfile_year")'",'
+						fi
 						while read -r line; do
 							line=$(echo "$line" | sed 's/"/\\"/g')
 							changelog="$changelog"$(printf '"%s",' "$line")
-						done <"$changelogfile-$platform"
+						done <"$changelogfile"
+						if [[ -f "$changelogfile-$platform" ]]; then
+							while read -r line; do
+								line=$(echo "$line" | sed 's/"/\\"/g')
+								changelog="$changelog"$(printf '"%s",' "$line")
+							done <"$changelogfile-$platform"
+						fi
+						if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]]; then
+							line=$(echo "$(cat "changelogs/meta/fixes/locale/$clang")." | sed 's/"/\\"/g')
+							changelog="$changelog"$(printf '"%s",' "$line")
+						fi
+						changelogs="$changelogs"$(echo "$changelog" | sed 's/,$/],/')
 					fi
-					if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]]; then
-						line=$(echo "$(cat "changelogs/meta/fixes/locale/$clang")." | sed 's/"/\\"/g')
-						changelog="$changelog"$(printf '"%s",' "$line")
-					fi
-					changelogs="$changelogs"$(echo "$changelog" | sed 's/,$/],/')
 				done
 				changelogs=$(echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g' | perl -0pe 's/,$//g')
 				sed -i "s/{{changelog=$clang}}/$changelogs/" "$file"

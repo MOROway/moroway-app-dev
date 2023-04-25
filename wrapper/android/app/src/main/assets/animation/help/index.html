@@ -1,383 +1,315 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <base href="../"/>
-    <meta charset="UTF-8"/>
-    <meta content="#000" name="theme-color"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title data-stringid-content="generalTitleHelpScreen"></title>
-    <link href="favicon.ico" rel="icon" sizes="32x32" type="image/x-icon"/>
+    <head>
+        <base href="../" />
+        <meta charset="UTF-8" />
+        <meta name="theme-color" content="#000" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title data-stringid-content="generalTitleHelpScreen"></title>
+        <link rel="icon" type="image/x-icon" sizes="32x32" href="favicon.ico" />
 
-    <!-- Open Source Libraries And Fonts -->
-    <!-- Fonts -->
-    <link href="src/lib/open_fonts/google/MaterialIcons/font.css" rel="stylesheet" type="text/css"/>
-    <link href="src/lib/open_fonts/google/Roboto/font.css" rel="stylesheet" type="text/css"/>
+        <!-- Open Source Libraries And Fonts -->
+        <!-- Fonts -->
+        <link rel="stylesheet" type="text/css" href="src/lib/open_fonts/google/MaterialIcons/font.css" />
+        <link rel="stylesheet" type="text/css" href="src/lib/open_fonts/google/Roboto/font.css" />
 
-    <!-- General Scripts -->
-    <script src="src/js/error_handler.js"></script>
-    <script src="src/js_platform/error_handler.js"></script>
-    <script src="src/js/appdata.js"></script>
-    <script src="src/js/general.js"></script>
-    <script src="src/js_platform/general.js"></script>
-    <!-- Help Scripts -->
-    <script src="src/js/help.js"></script>
-    <script src="src/js_platform/help.js"></script>
+        <!-- General Scripts -->
+        <script src="src/js/error_handler.js"></script>
+        <script src="src/js_platform/error_handler.js"></script>
+        <script src="src/js/appdata.js"></script>
+        <script src="src/js/general.js"></script>
+        <script src="src/js_platform/general.js"></script>
+        <!-- Help Scripts -->
+        <script src="src/js/help.js"></script>
+        <script src="src/js_platform/help.js"></script>
 
-    <!-- General Styles -->
-    <link href="src/css/general.css" rel="stylesheet" type="text/css"/>
-    <!-- Help Styles -->
-    <link href="src/css/help.css" rel="stylesheet" type="text/css"/>
-    <link href="src/css_platform/help.css" rel="stylesheet" type="text/css"/>
-</head>
+        <!-- General Styles -->
+        <link rel="stylesheet" type="text/css" href="src/css/general.css" />
+        <!-- Help Styles -->
+        <link rel="stylesheet" type="text/css" href="src/css/help.css" />
+        <link rel="stylesheet" type="text/css" href="src/css_platform/help.css" />
+    </head>
 
-<body>
-<header class="page-header">
-    <i class="internal-link material-icons" id="backOption">arrow_back</i>
-    <h1 data-stringid-content="generalTitleHelpScreen"></h1>
-</header>
+    <body>
+        <header class="page-header">
+            <i id="backOption" class="internal-link material-icons">arrow_back</i>
+            <h1 data-stringid-content="generalTitleHelpScreen"></h1>
+        </header>
 
-<main>
-    <article id="general">
-        <h2 data-stringid-content="helpScreenGeneral"></h2>
-        <div class="card-container">
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenGeneralWelcome"
-                        data-stringid-content-arg1="helpScreenGeneralWelcomeIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <div class="content" data-stringid-content="helpScreenGeneralWelcomePs"
-                         id="general-version"></div>
-                    <button data-stringid-content="helpScreenGeneralWelcomeButtonWhatsNew"
-                            id="general-whatsnew"></button>
-                </div>
-            </div>
-            <div class="card card-big">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenGeneralTrains"
-                        data-stringid-content-arg1="helpScreenGeneralTrainsIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <div class="content" data-stringid-content="helpScreenGeneralTrainsPs"></div>
-                </div>
-            </div>
-            <div class="card card-big">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenGeneralCars"
-                        data-stringid-content-arg1="helpScreenGeneralCarsIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <div class="content" data-stringid-content="helpScreenGeneralCarsPs"></div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenGeneralTeamplay"
-                        data-stringid-content-arg1="helpScreenGeneralTeamplayIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <div class="content" data-stringid-content="helpScreenGeneralTeamplayPs"></div>
-                </div>
-            </div>
-        </div>
-    </article>
-
-    <article id="legal">
-        <h2 data-stringid-content="helpScreenLegal"></h2>
-        <div class="card-container">
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenLegalFonts"
-                        data-stringid-content-arg1="helpScreenLegalFontsIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalFontsRoboto"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalFontsRobotoPs"></div>
-                        <button data-stringid-content="helpScreenLegalStrCopyright"
-                                id="legal-fonts-roboto-copyright"></button>
-                        /
-                        <button data-stringid-content="helpScreenLegalStrLicense"
-                                id="legal-fonts-roboto-license"></button>
-                    </section>
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalFontsMaterialIcons"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalFontsMaterialIconsPs"></div>
-                        <button data-stringid-content="helpScreenLegalStrLicense"
-                                id="legal-fonts-materialicons-license"></button>
-                    </section>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenLegalOwn"
-                        data-stringid-content-arg1="helpScreenLegalOwnIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalOwnCode"></h3>
-                        <div class="content" data-stringid-content="helpScreenLegalOwnCodePs"></div>
-                        <button id="legal-self-code-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalOwnPics"></h3>
-                        <div class="content" data-stringid-content="helpScreenLegalOwnPicsPs"></div>
-                        <button data-stringid-content="helpScreenLegalStrLicense"
-                                id="legal-self-assets-license"></button>
-                    </section>
-                </div>
-            </div>
-            <div class="card card-big hidden" id="legal-appoc-licenses">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenLegalAppOC"
-                        data-stringid-content-arg1="helpScreenLegalAppOCIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalAppOCCordova"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalAppOCCordovaPs"></div>
-                        <button id="legal-appoc-cordova-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalAppOCInsomnia"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalAppOCInsomniaPs"></div>
-                        <button id="legal-appoc-insomnia-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalAppOCWebintent"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalAppOCWebintentPs"></div>
-                        <button id="legal-appoc-webintent-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalAppOCDialogs"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalAppOCDialogsPs"></div>
-                        <button id="legal-appoc-dialogs-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                </div>
-            </div>
-            <div class="card hidden" id="legal-appsnap-licenses">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenLegalAppSnap"
-                        data-stringid-content-arg1="helpScreenLegalAppSnapIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalAppSnapCordova"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalAppSnapCordovaPs"></div>
-                        <button id="legal-appsnap-cordova-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                </div>
-            </div>
-            <div class="card hidden" id="legal-appandroid-licenses">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenLegalAppAndroid"
-                        data-stringid-content-arg1="helpScreenLegalAppAndroidIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalAppAndroidAndroidXWebkit"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalAppAndroidAndroidXWebkitPs"></div>
-                        <button id="legal-appandroid-android-x-webkit-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                </div>
-                <div class="card-content">
-                    <section>
-                        <h3 data-stringid-content="helpScreenLegalAppAndroidPicasso"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenLegalAppAndroidPicassoPs"></div>
-                        <button id="legal-appandroid-picasso-license"><span
-                                data-stringid-content="helpScreenLegalStrLicense"></span></button>
-                    </section>
-                </div>
-            </div>
-        </div>
-    </article>
-
-    <article id="privacy">
-        <h2 data-stringid-content="helpScreenPrivacy"></h2>
-        <div class="card-container">
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenPrivacyStatement"
-                        data-stringid-content-arg1="helpScreenPrivacyStatementIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <div id="privacy-statement">
-                        <button data-stringid-content="helpScreenPrivacyStatementBackupLink"
-                                id="privacy-statement-link"></button>
+        <main>
+            <article id="general">
+                <h2 data-stringid-content="helpScreenGeneral"></h2>
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenGeneralWelcome" data-stringid-content-arg1="helpScreenGeneralWelcomeIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <div id="general-version" class="content" data-stringid-content="helpScreenGeneralWelcomePs"></div>
+                            <button id="general-whatsnew" data-stringid-content="helpScreenGeneralWelcomeButtonWhatsNew"></button>
+                        </div>
+                    </div>
+                    <div class="card card-big">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenGeneralTrains" data-stringid-content-arg1="helpScreenGeneralTrainsIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="content" data-stringid-content="helpScreenGeneralTrainsPs"></div>
+                        </div>
+                    </div>
+                    <div class="card card-big">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenGeneralCars" data-stringid-content-arg1="helpScreenGeneralCarsIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="content" data-stringid-content="helpScreenGeneralCarsPs"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenGeneralTeamplay" data-stringid-content-arg1="helpScreenGeneralTeamplayIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="content" data-stringid-content="helpScreenGeneralTeamplayPs"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </article>
+            </article>
 
-    <article id="contact">
-        <h2 data-stringid-content="helpScreenContact"></h2>
-        <div class="card-container">
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenContactFeedback"
-                        data-stringid-content-arg1="helpScreenContactFeedbackIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <p>
-                        <img class="decorative-image"
-                             data-stringid-alt="helpScreenContactFeedbackBugs"
-                             src="assets/helpasset1_bug_report.png"/>
-                    </p>
-                    <div class="content" data-stringid-content="helpScreenContactFeedbackPs"></div>
-                    <div id="contact-imprint">
-                        <button data-stringid-content="helpScreenContactBackupLink"
-                                id="contact-imprintlink"></button>
+            <article id="legal">
+                <h2 data-stringid-content="helpScreenLegal"></h2>
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenLegalFonts" data-stringid-content-arg1="helpScreenLegalFontsIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalFontsRoboto"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalFontsRobotoPs"></div>
+                                <button id="legal-fonts-roboto-copyright" data-stringid-content="helpScreenLegalStrCopyright"></button> /
+                                <button id="legal-fonts-roboto-license" data-stringid-content="helpScreenLegalStrLicense"></button>
+                            </section>
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalFontsMaterialIcons"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalFontsMaterialIconsPs"></div>
+                                <button id="legal-fonts-materialicons-license" data-stringid-content="helpScreenLegalStrLicense"></button>
+                            </section>
+                        </div>
                     </div>
-                    <button data-stringid-content="helpScreenContactFeedbackSend"
-                            id="contact-feedbacklink"></button>
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenLegalOwn" data-stringid-content-arg1="helpScreenLegalOwnIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalOwnCode"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalOwnCodePs"></div>
+                                <button id="legal-self-code-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalOwnPics"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalOwnPicsPs"></div>
+                                <button id="legal-self-assets-license" data-stringid-content="helpScreenLegalStrLicense"></button>
+                            </section>
+                        </div>
+                    </div>
+                    <div id="legal-appoc-licenses" class="card card-big hidden">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenLegalAppOC" data-stringid-content-arg1="helpScreenLegalAppOCIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppOCCordova"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalAppOCCordovaPs"></div>
+                                <button id="legal-appoc-cordova-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppOCInsomnia"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalAppOCInsomniaPs"></div>
+                                <button id="legal-appoc-insomnia-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppOCWebintent"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalAppOCWebintentPs"></div>
+                                <button id="legal-appoc-webintent-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppOCDialogs"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalAppOCDialogsPs"></div>
+                                <button id="legal-appoc-dialogs-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                        </div>
+                    </div>
+                    <div id="legal-appsnap-licenses" class="card hidden">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenLegalAppSnap" data-stringid-content-arg1="helpScreenLegalAppSnapIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppSnapCordova"></h3>
+                                <div class="content" data-stringid-content="helpScreenLegalAppSnapCordovaPs"></div>
+                                <button id="legal-appsnap-cordova-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                        </div>
+                    </div>
+                    <div id="legal-appandroid-licenses" class="card hidden">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenLegalAppAndroid" data-stringid-content-arg1="helpScreenLegalAppAndroidIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppAndroidKotlin"></h3>
+                                <button id="legal-appandroid-kotlin-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppAndroidAndroidXAppcompat"></h3>
+                                <button id="legal-appandroid-android-x-appcompat-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppAndroidAndroidXActivity"></h3>
+                                <button id="legal-appandroid-android-x-activity-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppAndroidAndroidXWebkit"></h3>
+                                <button id="legal-appandroid-android-x-webkit-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenLegalAppAndroidPicasso"></h3>
+                                <button id="legal-appandroid-picasso-license"><span data-stringid-content="helpScreenLegalStrLicense"></span></button>
+                            </section>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </article>
+
+            <article id="privacy">
+                <h2 data-stringid-content="helpScreenPrivacy"></h2>
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenPrivacyStatement" data-stringid-content-arg1="helpScreenPrivacyStatementIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <div id="privacy-statement"><button id="privacy-statement-link" data-stringid-content="helpScreenPrivacyStatementBackupLink"></button></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article id="contact">
+                <h2 data-stringid-content="helpScreenContact"></h2>
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenContactFeedback" data-stringid-content-arg1="helpScreenContactFeedbackIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <p>
+                                <img class="decorative-image" src="assets/helpasset1_bug_report.png" data-stringid-alt="helpScreenContactFeedbackBugs" />
+                            </p>
+                            <div class="content" data-stringid-content="helpScreenContactFeedbackPs"></div>
+                            <div id="contact-imprint"><button id="contact-imprintlink" data-stringid-content="helpScreenContactBackupLink"></button></div>
+                            <button id="contact-feedbacklink" data-stringid-content="helpScreenContactFeedbackSend"></button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article id="download">
+                <h2 data-stringid-content="helpScreenDownload"></h2>
+                <div class="card-container">
+                    <div class="card" id="download-apps">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenDownloadApps" data-stringid-content-arg1="helpScreenDownloadAppsIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <section>
+                                <h3 data-stringid-content="helpScreenDownloadAppsAndroid"></h3>
+                                <div class="content" data-stringid-content="helpScreenDownloadAppsAndroidPs"></div>
+                                <button id="download-androidlink" data-stringid-content="helpScreenDownloadAppsAndroidButton"></button>
+                                <button id="download-fdroidlink" data-stringid-content="helpScreenDownloadAppsFdroidButton"></button>
+                            </section>
+                            <section>
+                                <h3 data-stringid-content="helpScreenDownloadAppsWindows"></h3>
+                                <div class="content" data-stringid-content="helpScreenDownloadAppsWindowsPs"></div>
+                                <button id="download-windowslink" data-stringid-content="helpScreenDownloadAppsWindowsButton"></button>
+                            </section>
+                            <section>
+                                <h3 data-stringid-content="helpScreenDownloadAppsLinux"></h3>
+                                <div class="content" data-stringid-content="helpScreenDownloadAppsLinuxPs"></div>
+                                <button id="download-snaplink" data-stringid-content="helpScreenDownloadAppsSnapButton"></button>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenDownloadViewSource" data-stringid-content-arg1="helpScreenDownloadViewSourceIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <p>
+                            <img class="decorative-image" src="assets/helpasset3_source.png" data-stringid-alt="helpScreenDownloadViewSourceCodePic" />
+                        </p>
+                        <div class="card-content">
+                            <div class="content" data-stringid-content="helpScreenDownloadViewSourcePs"></div>
+                            <button id="download-sourcelink" data-stringid-content="helpScreenDownloadViewSourceButtonSource"></button>
+                            <button id="download-sourcelink-oc" data-stringid-content="helpScreenDownloadViewSourceButtonSource"></button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenDownloadTranslations" data-stringid-content-arg1="helpScreenDownloadTranslationsIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <p>
+                            <img class="decorative-image" src="assets/helpasset4_translate.jpg" data-stringid-alt="helpScreenDownloadTranslationsPic" />
+                        </p>
+                        <div class="card-content">
+                            <div class="content" data-stringid-content="helpScreenDownloadTranslationsPs"></div>
+                            <button id="download-translations" data-stringid-content="helpScreenDownloadTranslationsButtonTranslations"></button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article id="website">
+                <h2 data-stringid-content="helpScreenMOROmore"></h2>
+                <div class="card-container">
+                    <div class="card" id="website-about">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenMOROmoreAbout" data-stringid-content-arg1="helpScreenMOROmoreAboutIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="content" id="website-about-text"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <h2 data-stringid-content="helpScreenMOROmoreWebsite" data-stringid-content-arg1="helpScreenMOROmoreWebsiteIcon" data-stringid-content-argisstringref1="1"></h2>
+                        </div>
+                        <div><div id="website-pics"></div></div>
+                        <div class="card-content">
+                            <div class="content" data-stringid-content="helpScreenMOROmoreWebsitePs"></div>
+                            <button id="website-link" data-stringid-content="helpScreenMOROmoreWebsiteButtonLink"></button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        <!-- notify -->
+        <div id="help-notifier" class="notify">
+            <span></span>
+            <button></button>
         </div>
-    </article>
 
-    <article id="download">
-        <h2 data-stringid-content="helpScreenDownload"></h2>
-        <div class="card-container">
-            <div class="card" id="download-apps">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenDownloadApps"
-                        data-stringid-content-arg1="helpScreenDownloadAppsIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <section>
-                        <h3 data-stringid-content="helpScreenDownloadAppsAndroid"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenDownloadAppsAndroidPs"></div>
-                        <button data-stringid-content="helpScreenDownloadAppsAndroidButton"
-                                id="download-androidlink"></button>
-                        <button data-stringid-content="helpScreenDownloadAppsFdroidButton"
-                                id="download-fdroidlink"></button>
-                    </section>
-                    <section>
-                        <h3 data-stringid-content="helpScreenDownloadAppsWindows"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenDownloadAppsWindowsPs"></div>
-                        <button data-stringid-content="helpScreenDownloadAppsWindowsButton"
-                                id="download-windowslink"></button>
-                    </section>
-                    <section>
-                        <h3 data-stringid-content="helpScreenDownloadAppsLinux"></h3>
-                        <div class="content"
-                             data-stringid-content="helpScreenDownloadAppsLinuxPs"></div>
-                        <button data-stringid-content="helpScreenDownloadAppsSnapButton"
-                                id="download-snaplink"></button>
-                    </section>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenDownloadViewSource"
-                        data-stringid-content-arg1="helpScreenDownloadViewSourceIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <p>
-                    <img class="decorative-image"
-                         data-stringid-alt="helpScreenDownloadViewSourceCodePic"
-                         src="assets/helpasset3_source.png"/>
-                </p>
-                <div class="card-content">
-                    <div class="content"
-                         data-stringid-content="helpScreenDownloadViewSourcePs"></div>
-                    <button data-stringid-content="helpScreenDownloadViewSourceButtonSource"
-                            id="download-sourcelink"></button>
-                    <button data-stringid-content="helpScreenDownloadViewSourceButtonSource"
-                            id="download-sourcelink-oc"></button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenDownloadTranslations"
-                        data-stringid-content-arg1="helpScreenDownloadTranslationsIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <p>
-                    <img class="decorative-image"
-                         data-stringid-alt="helpScreenDownloadTranslationsPic"
-                         src="assets/helpasset4_translate.jpg"/>
-                </p>
-                <div class="card-content">
-                    <div class="content"
-                         data-stringid-content="helpScreenDownloadTranslationsPs"></div>
-                    <button data-stringid-content="helpScreenDownloadTranslationsButtonTranslations"
-                            id="download-translations"></button>
-                </div>
-            </div>
-        </div>
-    </article>
-
-    <article id="website">
-        <h2 data-stringid-content="helpScreenMOROmore"></h2>
-        <div class="card-container">
-            <div class="card" id="website-about">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenMOROmoreAbout"
-                        data-stringid-content-arg1="helpScreenMOROmoreAboutIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div class="card-content">
-                    <div class="content" id="website-about-text"></div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">
-                    <h2 data-stringid-content="helpScreenMOROmoreWebsite"
-                        data-stringid-content-arg1="helpScreenMOROmoreWebsiteIcon"
-                        data-stringid-content-argisstringref1="1"></h2>
-                </div>
-                <div>
-                    <div id="website-pics"></div>
-                </div>
-                <div class="card-content">
-                    <div class="content" data-stringid-content="helpScreenMOROmoreWebsitePs"></div>
-                    <button data-stringid-content="helpScreenMOROmoreWebsiteButtonLink"
-                            id="website-link"></button>
-                </div>
-            </div>
-        </div>
-    </article>
-</main>
-
-<!-- notify -->
-<div class="notify" id="help-notifier">
-    <span></span>
-    <button></button>
-</div>
-
-<!-- initialize -->
-<script src="src/js/init.js"></script>
-</body>
+        <!-- initialize -->
+        <script src="src/js/init.js"></script>
+    </body>
 </html>

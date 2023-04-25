@@ -42,7 +42,7 @@
     <string name="a_g2_turned">Our turtle became sea sick!</string>
     <!-- Dialog: Update -->
     <string name="d_update_text">New features:\n\n%1$s</string>
-    <string name="d_update_changelog">Improved in-app navigation and UX.\nBugfixes.</string>
+    <string name="d_update_changelog">Translation: Norsk Bokmål (thanks to Weblate user kingu)\nUpdate dependencies</string>
     <string name="d_update_title">Up to date! (%1$s)</string>
     <string name="d_update_oK">Got it</string>
     <string name="d_server_msg_show_again">Show again</string>

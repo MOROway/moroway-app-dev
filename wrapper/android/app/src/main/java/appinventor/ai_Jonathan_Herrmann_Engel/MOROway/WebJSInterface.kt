@@ -15,7 +15,10 @@ internal class WebJSInterface(private val c: Context) {
     @JavascriptInterface
     fun setLang(lang: String?) {
         val e = c.getSharedPreferences("MOROwaySettings", Context.MODE_PRIVATE).edit()
-        e.putString("lang", lang)
+        if (lang != null) {
+            e.putString("lang", lang.replace(Regex("_.*$"), ""))
+            e.putString("langRegion", lang.replace(Regex("^[^_]*_?"),""))
+        }
         e.apply()
         try {
             (c as WebSettingsActivity).reload()

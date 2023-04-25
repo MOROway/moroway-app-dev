@@ -37,6 +37,8 @@ for lang in "$working_dir_build"/changelogs/*; do
 	if [[ ! -z "$changelog" ]] && [[ -d app/src/main/res/values"$lang"/ ]]; then
 		changelog=$(echo "$changelog" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g' | perl -0pe 's/\n$//g' | perl -0pe 's/\n/\\n/g' | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g')
 		sed -i "s/\(<string name=\"d_update_changelog\">\).*\(<\/string>\)/\1$changelog\2/" app/src/main/res/values"$lang"/strings.xml
+	elif [[ -d app/src/main/res/values"$lang"/ ]]; then
+		sed -i "/<string name=\"d_update_changelog\">.*<\/string>/d" app/src/main/res/values"$lang"/strings.xml
 	fi
 done
 if [[ $version =~ .0$ ]]; then

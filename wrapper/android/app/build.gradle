@@ -17,8 +17,8 @@ android {
         applicationId 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 80104
-        versionName '8.1.4'
+        versionCode 80106
+        versionName '8.1.6'
     }
     buildTypes {
         release {
@@ -38,8 +38,8 @@ android {
         viewBinding true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
 }
@@ -47,8 +47,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.activity:activity-ktx:1.6.1'
-    implementation 'androidx.webkit:webkit:1.6.0'
+    implementation 'androidx.activity:activity-ktx:1.7.1'
+    implementation 'androidx.webkit:webkit:1.6.1'
     implementation 'com.squareup.picasso:picasso:2.8'
 }
 repositories {

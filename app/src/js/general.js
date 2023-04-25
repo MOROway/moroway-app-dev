@@ -250,9 +250,9 @@ function getString(prop, punctuationMark, caseType, lang) {
     var str;
     if (Array.isArray(prop)) {
         if (prop.length == 2 && typeof prop[0] == "string" && typeof prop[1] == "number") {
-            if (typeof STRINGS[lang] != "undefined" && typeof STRINGS[lang][prop[0]] != "undefined" && typeof STRINGS[lang][prop[0]][prop[1]] != "undefined") {
+            if (typeof STRINGS[lang] != "undefined" && typeof STRINGS[lang][prop[0]] != "undefined" && typeof STRINGS[lang][prop[0]][prop[1]] != "undefined" && STRINGS[lang][prop[0]][prop[1]] != null && STRINGS[lang][prop[0]][prop[1]] != "") {
                 str = STRINGS[lang][prop[0]][prop[1]];
-            } else if (typeof STRINGS[DEFAULT_LANG] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != "undefined") {
+            } else if (typeof STRINGS[DEFAULT_LANG] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != "undefined" && STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != null) {
                 str = STRINGS[DEFAULT_LANG][prop[0]][prop[1]];
             } else {
                 return "undefined";
@@ -261,7 +261,7 @@ function getString(prop, punctuationMark, caseType, lang) {
             return "undefined";
         }
     } else {
-        str = typeof STRINGS[lang] == "undefined" || typeof STRINGS[lang][prop] == "undefined" ? (typeof STRINGS[DEFAULT_LANG] == "undefined" || typeof STRINGS[DEFAULT_LANG][prop] == "undefined" ? "undefined" : STRINGS[DEFAULT_LANG][prop]) : STRINGS[lang][prop];
+        str = typeof STRINGS[lang] == "undefined" || typeof STRINGS[lang][prop] == "undefined" || STRINGS[lang][prop] == null || STRINGS[lang][prop] == "" ? (typeof STRINGS[DEFAULT_LANG] == "undefined" || typeof STRINGS[DEFAULT_LANG][prop] == "undefined" || typeof STRINGS[DEFAULT_LANG][prop] == null ? "undefined" : STRINGS[DEFAULT_LANG][prop]) : STRINGS[lang][prop];
     }
     str += typeof punctuationMark == "string" ? punctuationMark : "";
     return typeof caseType == "string" && caseType == "upper" ? str.toUpperCase() : typeof caseType == "string" && caseType == "lower" ? str.toLowerCase() : str;
@@ -350,11 +350,22 @@ function getCurrentLang() {
     if (typeof window.localStorage != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string") {
         return window.localStorage.getItem("morowayAppLang");
     }
-    if (typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language)) {
-        return window.navigator.language;
-    }
-    if (typeof window.navigator.language != "undefined" && STRINGS.hasOwnProperty(window.navigator.language.substring(0, 2))) {
-        return window.navigator.language.substring(0, 2);
+    if (typeof window.navigator.language != "undefined") {
+        if (STRINGS.hasOwnProperty(window.navigator.language)) {
+            return window.navigator.language;
+        }
+        if (STRINGS.hasOwnProperty(window.navigator.language.replace(/-.*/, ""))) {
+            return window.navigator.language.replace(/-.*/, "");
+        }
+        const langKeys = Object.keys(STRINGS);
+        for (var i = 0; i < langKeys.length; i++) {
+            if (langKeys[i].replace("_", "-") == window.navigator.language) {
+                return langKeys[i];
+            }
+            if (langKeys[i].replace(/_.*/, "") == window.navigator.language) {
+                return langKeys[i];
+            }
+        }
     }
     return DEFAULT_LANG;
 }

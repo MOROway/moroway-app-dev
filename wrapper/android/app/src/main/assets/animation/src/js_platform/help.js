@@ -16,6 +16,15 @@ function init_local() {
     });
 
     document.querySelector("#legal-appandroid-licenses").classList.remove("hidden");
+    document.querySelector("#legal-appandroid-kotlin-license").addEventListener("click", function () {
+        followLink("licenses_platform/org.jetbrains.kotlin.txt", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
+    });
+    document.querySelector("#legal-appandroid-android-x-appcompat-license").addEventListener("click", function () {
+        followLink("licenses_platform/androidx.appcompat.txt", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
+    });
+    document.querySelector("#legal-appandroid-android-x-activity-license").addEventListener("click", function () {
+        followLink("licenses_platform/androidx.activity.txt", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
+    });
     document.querySelector("#legal-appandroid-android-x-webkit-license").addEventListener("click", function () {
         followLink("licenses_platform/androidx.webkit.txt", "_self", LINK_STATE_INTERNAL_LICENSE_FILE);
     });

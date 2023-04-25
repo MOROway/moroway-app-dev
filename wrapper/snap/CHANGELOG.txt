@@ -159,3 +159,13 @@ Bugfixes.
 
 ---
 
+
+
+8.1.6
+
+Translation: Norsk Bokmål (currently incomplete)
+Update dependencies
+
+
+---
+

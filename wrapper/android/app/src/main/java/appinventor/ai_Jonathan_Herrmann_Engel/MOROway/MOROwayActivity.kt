@@ -5,16 +5,21 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
-import java.util.*
+import java.util.Locale
 
 open class MOROwayActivity : AppCompatActivity() {
     override fun attachBaseContext(base: Context) {
         val settings = base.getSharedPreferences("MOROwaySettings", MODE_PRIVATE)
         val language = settings.getString("lang", "")
+        val region = settings.getString("langRegion", "")
         val configuration = base.resources.configuration
         if (language != null) {
             if (language.isNotEmpty()) {
-                val locale = Locale(language)
+                val locale = if (region.isNullOrEmpty()) {
+                    Locale(language)
+                } else {
+                    Locale(language, region)
+                }
                 Locale.setDefault(locale)
                 configuration.setLocale(locale)
             }
@@ -31,10 +36,12 @@ open class MOROwayActivity : AppCompatActivity() {
                 activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 state
             }
+
             (state == 2) -> {
                 activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                 state
             }
+
             else -> {
                 activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
                 defaultState
