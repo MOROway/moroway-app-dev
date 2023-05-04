@@ -14,7 +14,7 @@ cd $(dirname "$0") || exit 3
 
 rm -r app/src/main/assets/animation
 cp -r "$output_dir_build" app/src/main/assets/animation
-version_long=$(echo "$version" | sed 's/\.\([0-9]\)/.0\1/g' | sed 's/\.0\([0-9]\{2\}\)/\1/g' | sed 's/\.//g')
+version_long=$(echo "$version" | sed 's/\.\([0-9]\)/.0\1/g' | sed 's/\.0\([0-9]\{2\}\)/\1/g' | sed 's/\.//g')"0"
 sed -i "s/\(versionCode\s\)[0-9]\+/\1$version_long/" app/build.gradle
 sed -i "s/\(versionName\s'\)[^']\+/\1$version/" app/build.gradle
 for lang in "$working_dir_build"/changelogs/*; do

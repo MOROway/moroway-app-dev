@@ -354,14 +354,14 @@ function getCurrentLang() {
         if (STRINGS.hasOwnProperty(window.navigator.language)) {
             return window.navigator.language;
         }
+        if (STRINGS.hasOwnProperty(window.navigator.language.replace("-", "_"))) {
+            return window.navigator.language.replace("-", "_");
+        }
         if (STRINGS.hasOwnProperty(window.navigator.language.replace(/-.*/, ""))) {
             return window.navigator.language.replace(/-.*/, "");
         }
         const langKeys = Object.keys(STRINGS);
         for (var i = 0; i < langKeys.length; i++) {
-            if (langKeys[i].replace("_", "-") == window.navigator.language) {
-                return langKeys[i];
-            }
             if (langKeys[i].replace(/_.*/, "") == window.navigator.language) {
                 return langKeys[i];
             }
