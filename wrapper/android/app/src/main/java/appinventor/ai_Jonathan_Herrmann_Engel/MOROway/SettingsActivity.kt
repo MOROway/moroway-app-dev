@@ -20,8 +20,10 @@ class SettingsActivity : MOROwayActivity() {
             when {
                 (id == R.id.startStateLandscape) ->
                     editor.putInt("startScreenState", 2)
+
                 (id == R.id.startStatePortrait) ->
                     editor.putInt("startScreenState", 1)
+
                 else ->
                     editor.putInt("startScreenState", 0)
             }
@@ -31,8 +33,10 @@ class SettingsActivity : MOROwayActivity() {
         when {
             (startScreenState == 2) ->
                 binding.startStateLandscape.isChecked = true
+
             (startScreenState == 1) ->
                 binding.startStatePortrait.isChecked = true
+
             else ->
                 binding.startStateAuto.isChecked = true
         }
@@ -40,8 +44,10 @@ class SettingsActivity : MOROwayActivity() {
             when {
                 (id == R.id.otherStateLandscape) ->
                     editor.putInt("otherScreensState", 2)
+
                 (id == R.id.otherStatePortrait) ->
                     editor.putInt("otherScreensState", 1)
+
                 else ->
                     editor.putInt("otherScreensState", 0)
             }
@@ -52,8 +58,10 @@ class SettingsActivity : MOROwayActivity() {
         when {
             (otherScreensState == 2) ->
                 binding.otherStateLandscape.isChecked = true
+
             (otherScreensState == 1) ->
                 binding.otherStatePortrait.isChecked = true
+
             else ->
                 binding.otherStateAuto.isChecked = true
         }

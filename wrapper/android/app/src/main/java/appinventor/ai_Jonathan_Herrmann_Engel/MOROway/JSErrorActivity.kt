@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityJserrorBinding
-import java.util.*
+import java.util.Locale
 
 class JSErrorActivity : MOROwayActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {

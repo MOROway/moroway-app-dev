@@ -8,9 +8,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.*
+import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMorowayAppBinding
@@ -276,11 +282,13 @@ class HomeActivity : MOROwayActivity() {
             } else {
                 binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic4cs)
             }
+
             2 -> if (portraitPictureBig) {
                 binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic3csbigstyle)
             } else {
                 binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic3cs)
             }
+
             1 -> binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic2cs)
             else -> if (portraitPictureBig) {
                 binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic1csbigstyle)

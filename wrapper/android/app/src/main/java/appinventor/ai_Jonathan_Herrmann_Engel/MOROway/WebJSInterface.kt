@@ -17,7 +17,7 @@ internal class WebJSInterface(private val c: Context) {
         val e = c.getSharedPreferences("MOROwaySettings", Context.MODE_PRIVATE).edit()
         if (lang != null) {
             e.putString("lang", lang.replace(Regex("_.*$"), ""))
-            e.putString("langRegion", lang.replace(Regex("^[^_]*_?"),""))
+            e.putString("langRegion", lang.replace(Regex("^[^_]*_?"), ""))
         }
         e.apply()
         try {

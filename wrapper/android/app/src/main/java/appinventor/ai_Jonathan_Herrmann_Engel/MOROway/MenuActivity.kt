@@ -7,18 +7,17 @@ import android.util.TypedValue
 import android.view.WindowInsets
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.marginBottom
-import androidx.core.view.marginTop
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMenuBinding
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 
 class MenuActivity : MOROwayActivity() {
+    private lateinit var binding: ActivityMenuBinding
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lockOtherActivity(this)
-        val binding = ActivityMenuBinding.inflate(
+        binding = ActivityMenuBinding.inflate(
             layoutInflater
         )
         setContentView(binding.root)
@@ -73,6 +72,16 @@ class MenuActivity : MOROwayActivity() {
                 )
             )
         }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                backToHome()
+            }
+        })
+    }
+
+    public override fun onResume() {
+        super.onResume()
+        lockOtherActivity(this)
         binding.homeButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             getButtonTextSize(binding.homeButton)
@@ -101,20 +110,9 @@ class MenuActivity : MOROwayActivity() {
             TypedValue.COMPLEX_UNIT_PX,
             getButtonTextSize(binding.settingsButton)
         )
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                backToHome()
-            }
-        })
-    }
-
-    public override fun onResume() {
-        super.onResume()
-        lockOtherActivity(this)
     }
 
     private fun getButtonTextSize(view: Button): Float {
-        val buttonCount = 7
         val width: Int
         val height: Int
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -138,14 +136,11 @@ class MenuActivity : MOROwayActivity() {
         if (diagonal > base) {
             val factor = (diagonal / base).toFloat()
             size *= factor
-            if (view.text.length * size > width) {
-                size = width / (view.text.length).toFloat()
-            }
         }
-        if (size + view.paddingTop + view.paddingBottom > height / buttonCount) {
-            return (height / buttonCount - (view.paddingTop + view.paddingBottom + view.marginBottom + view.marginTop)).toFloat()
+        if (view.text.length * size > width) {
+            size = width / (view.text.length).toFloat()
         }
-        return size
+        return size.coerceAtLeast(50f)
     }
 
     private fun backToHome() {
