@@ -1092,9 +1092,7 @@ function calcMenusAndBackground(state) {
         });
         settingsElem.querySelector("#settings-apply").onclick = function () {
             gui.settings = false;
-            if (typeof settingsElem.scrollTo == "function") {
-                settingsElem.scrollTo(0, 0);
-            }
+            settingsElem.scrollTo(0, 0);
             settingsElem.style.display = "";
             resize();
             drawOptionsMenu("visible");
@@ -4690,29 +4688,27 @@ window.onload = function () {
                 rotationPoints = message.data.rotationPoints;
                 teamplaySync("sync-ready");
             } else if (message.data.k == "save-game") {
-                if (typeof window.localStorage != "undefined") {
-                    if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo) {
-                        try {
-                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
-                            var saveSwitches = {};
-                            Object.keys(switches).forEach(function (key) {
-                                saveSwitches[key] = {};
-                                Object.keys(switches[key]).forEach(function (side) {
-                                    saveSwitches[key][side] = switches[key][side].turned;
-                                });
+                if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo) {
+                    try {
+                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
+                        var saveSwitches = {};
+                        Object.keys(switches).forEach(function (key) {
+                            saveSwitches[key] = {};
+                            Object.keys(switches[key]).forEach(function (side) {
+                                saveSwitches[key][side] = switches[key][side].turned;
                             });
-                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
-                            if (cars.length == carWays.length && cars.length > 0) {
-                                window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
-                                window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
-                            }
-                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
-                        } catch (e) {
-                            if (APP_DATA.debug) {
-                                console.log(e.name + "/" + e.message);
-                            }
-                            notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + menus.outerContainer.height);
+                        });
+                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
+                        if (cars.length == carWays.length && cars.length > 0) {
+                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
+                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
                         }
+                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
+                    } catch (e) {
+                        if (APP_DATA.debug) {
+                            console.log(e.name + "/" + e.message);
+                        }
+                        notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + menus.outerContainer.height);
                     }
                     animateWorker.postMessage({k: "game-saved"});
                 }

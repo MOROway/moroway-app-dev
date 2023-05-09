@@ -19,15 +19,7 @@ function followLink(input1, input2, input3) {
             input1 += hash;
         }
     }
-    if (input3 == LINK_STATE_NORMAL && typeof Windows != "undefined") {
-        Windows.System.Launcher.launchUriAsync(new Windows.Foundation.Uri(input1)).then(function (success) {
-            if (!success && document.querySelector(".notify") != null) {
-                notify(".notify", getString("platformWindowsLinkError"), NOTIFICATION_PRIO_HIGH, 1000, null, null, window.innerHeight);
-            }
-        });
-    } else {
-        window.open(input1, input2);
-    }
+    window.open(input1, input2);
 }
 
 //Enable offline functionality

@@ -89,7 +89,7 @@ function copy(selector) {
     var range = document.createRange();
     range.selectNodeContents(document.querySelector(selector));
     selection.addRange(range);
-    if (document.execCommand("copy")) {
+    if (document.execCommand && document.execCommand("copy")) {
         return true;
     } else if (typeof navigator.permissions == "object") {
         navigator.permissions
@@ -97,21 +97,19 @@ function copy(selector) {
             .then(function (status) {
                 if (status.state == "granted") {
                     var text = document.querySelector(selector).textContent;
-                    navigator.clipboard.writeText(text).then(
-                        function () {
-                            return true;
-                        },
-                        function () {
-                            return false;
+                    navigator.clipboard.writeText(text).catch(function (error) {
+                        if (APP_DATA.debug) {
+                            console.log(error);
                         }
-                    );
-                } else {
-                    return false;
+                    });
                 }
             })
             .catch(function (error) {
-                return false;
+                if (APP_DATA.debug) {
+                    console.log(error);
+                }
             });
+        return true;
     }
     return false;
 }
@@ -187,7 +185,7 @@ function getServerNote(func) {
     function getServerNoteImage(id, background) {
         return getServerDataLink("/server-note/img/") + id + (background ? "-background-image" : "-image") + ".png";
     }
-    if (typeof window.localStorage != "undefined" && (window.localStorage.getItem("morowayAppLastServerNoteLastQuery") == null || Date.now() - parseInt(window.localStorage.getItem("morowayAppLastServerNoteLastQuery"), 10) >= 86400000 || window.localStorage.getItem("morowayAppLastServerNoteShowAgain") == 1)) {
+    if (window.localStorage.getItem("morowayAppLastServerNoteLastQuery") == null || Date.now() - parseInt(window.localStorage.getItem("morowayAppLastServerNoteLastQuery"), 10) >= 86400000 || window.localStorage.getItem("morowayAppLastServerNoteShowAgain") == 1) {
         window.localStorage.setItem("morowayAppLastServerNoteLastQuery", Date.now());
         handleServerJSONValues("news-msg", function (serverMsg) {
             if (typeof serverMsg == "object" && serverMsg.id != undefined && typeof serverMsg.id == "number" && serverMsg.title != undefined && typeof serverMsg.title == "string" && serverMsg.text != undefined && typeof serverMsg.text == "string" && serverMsg.validUntil != undefined && typeof serverMsg.validUntil == "number" && Date.now() / 1000 <= serverMsg.validUntil && (window.localStorage.getItem("morowayAppLastServerNoteShown") != serverMsg.id || window.localStorage.getItem("morowayAppLastServerNoteShowAgain") == 1)) {
@@ -341,30 +339,26 @@ function setHTMLStrings() {
 }
 
 function setCurrentLang(lang) {
-    if (typeof window.localStorage != "undefined") {
-        window.localStorage.setItem("morowayAppLang", lang);
-    }
+    window.localStorage.setItem("morowayAppLang", lang);
 }
 
 function getCurrentLang() {
-    if (typeof window.localStorage != "undefined" && typeof window.localStorage.getItem("morowayAppLang") == "string") {
+    if (typeof window.localStorage.getItem("morowayAppLang") == "string") {
         return window.localStorage.getItem("morowayAppLang");
     }
-    if (typeof window.navigator.language != "undefined") {
-        if (STRINGS.hasOwnProperty(window.navigator.language)) {
-            return window.navigator.language;
-        }
-        if (STRINGS.hasOwnProperty(window.navigator.language.replace("-", "_"))) {
-            return window.navigator.language.replace("-", "_");
-        }
-        if (STRINGS.hasOwnProperty(window.navigator.language.replace(/-.*/, ""))) {
-            return window.navigator.language.replace(/-.*/, "");
-        }
-        const langKeys = Object.keys(STRINGS);
-        for (var i = 0; i < langKeys.length; i++) {
-            if (langKeys[i].replace(/_.*/, "") == window.navigator.language) {
-                return langKeys[i];
-            }
+    if (STRINGS.hasOwnProperty(window.navigator.language)) {
+        return window.navigator.language;
+    }
+    if (STRINGS.hasOwnProperty(window.navigator.language.replace("-", "_"))) {
+        return window.navigator.language.replace("-", "_");
+    }
+    if (STRINGS.hasOwnProperty(window.navigator.language.replace(/-.*/, ""))) {
+        return window.navigator.language.replace(/-.*/, "");
+    }
+    const langKeys = Object.keys(STRINGS);
+    for (var i = 0; i < langKeys.length; i++) {
+        if (langKeys[i].replace(/_.*/, "") == window.navigator.language) {
+            return langKeys[i];
         }
     }
     return DEFAULT_LANG;
@@ -374,31 +368,25 @@ function getCurrentLang() {
 function getLocalAppDataCopy() {
     var localAppDataCopy = {};
 
-    if (typeof window.localStorage != "undefined") {
-        try {
-            localAppDataCopy = JSON.parse(window.localStorage.getItem("morowayAppData") || "{}");
-        } catch (e) {
-            localAppDataCopy = {};
-        }
+    try {
+        localAppDataCopy = JSON.parse(window.localStorage.getItem("morowayAppData") || "{}");
+    } catch (e) {
+        localAppDataCopy = {};
     }
 
     return Object.keys(localAppDataCopy).length === 0 ? null : localAppDataCopy;
 }
 
 function setLocalAppDataCopy() {
-    if (typeof window.localStorage != "undefined") {
-        window.localStorage.setItem("morowayAppData", JSON.stringify(APP_DATA));
-    }
+    window.localStorage.setItem("morowayAppData", JSON.stringify(APP_DATA));
 }
 
 //SETTINGS
 function getSettings() {
     var values = {};
-    if (typeof window.localStorage != "undefined") {
-        try {
-            values = JSON.parse(window.localStorage.getItem(SETTINGS_NAME) || "{}");
-        } catch (e) {}
-    }
+    try {
+        values = JSON.parse(window.localStorage.getItem(SETTINGS_NAME) || "{}");
+    } catch (e) {}
 
     var defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false};
     var dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"]};
@@ -702,33 +690,29 @@ function updateSavedGame() {
             window.localStorage.setItem(newItem, newVal);
         }
     }
-    if (typeof window.localStorage != "undefined") {
-        var localStorageKeys = Object.keys(window.localStorage);
-        var savedGameKeys = localStorageKeys.filter(function (elem) {
-            return elem.indexOf("morowayAppSaved") === 0;
-        });
-        updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Bg$/, "morowayAppSavedBg", "morowayAppSavedGame_v-" + getVersionCode() + "_Bg");
-        updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Trains$/, "morowayAppSavedGameTrains", "morowayAppSavedGame_v-" + getVersionCode() + "_Trains");
-        updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Switches$/, "morowayAppSavedGameSwitches", "morowayAppSavedGame_v-" + getVersionCode() + "_Switches");
-        updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Cars$/, "morowayAppSavedCars", "morowayAppSavedGame_v-" + getVersionCode() + "_Cars");
-        updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_CarParams$/, "morowayAppSavedCarParams", "morowayAppSavedGame_v-" + getVersionCode() + "_CarParams");
-        if (APP_DATA.version.beta == 0) {
-            savedGameKeys.forEach(function (key) {
-                if (key == "morowayAppSavedWithVersion") {
-                    window.localStorage.removeItem(key);
-                }
-            });
-        }
-    }
-}
-function removeSavedGame() {
-    if (typeof window.localStorage != "undefined") {
-        Object.keys(window.localStorage).forEach(function (key) {
-            if (key.indexOf("morowayAppSaved") === 0) {
+    var localStorageKeys = Object.keys(window.localStorage);
+    var savedGameKeys = localStorageKeys.filter(function (elem) {
+        return elem.indexOf("morowayAppSaved") === 0;
+    });
+    updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Bg$/, "morowayAppSavedBg", "morowayAppSavedGame_v-" + getVersionCode() + "_Bg");
+    updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Trains$/, "morowayAppSavedGameTrains", "morowayAppSavedGame_v-" + getVersionCode() + "_Trains");
+    updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Switches$/, "morowayAppSavedGameSwitches", "morowayAppSavedGame_v-" + getVersionCode() + "_Switches");
+    updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_Cars$/, "morowayAppSavedCars", "morowayAppSavedGame_v-" + getVersionCode() + "_Cars");
+    updateSavedGameElem(/^morowayAppSavedGame_v-([0-9]+)_CarParams$/, "morowayAppSavedCarParams", "morowayAppSavedGame_v-" + getVersionCode() + "_CarParams");
+    if (APP_DATA.version.beta == 0) {
+        savedGameKeys.forEach(function (key) {
+            if (key == "morowayAppSavedWithVersion") {
                 window.localStorage.removeItem(key);
             }
         });
     }
+}
+function removeSavedGame() {
+    Object.keys(window.localStorage).forEach(function (key) {
+        if (key.indexOf("morowayAppSaved") === 0) {
+            window.localStorage.removeItem(key);
+        }
+    });
 }
 
 //WINDOW
