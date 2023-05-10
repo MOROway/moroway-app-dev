@@ -5263,9 +5263,9 @@ window.onload = function () {
                                         resetForElem(parent, elem);
                                         elem.querySelector("#setup-start-gamelink").textContent = getShareLink(onlineGame.gameId, onlineGame.gameKey);
                                         elem.querySelector("#setup-start-button").onclick = function () {
-                                            if (!copy("#setup #setup-start #setup-start-gamelink")) {
+                                            copy("#setup #setup-start #setup-start-gamelink", null, function () {
                                                 notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.height);
-                                            }
+                                            });
                                         };
                                     } else {
                                         showNewGameLink();
