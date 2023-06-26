@@ -734,6 +734,26 @@ function removeSavedGame() {
     });
 }
 
+//GUI STATE
+function getGuiState(item) {
+    var guiState = {};
+    try {
+        guiState = JSON.parse(window.localStorage.getItem("morowayAppGuiState") || "{}");
+    } catch (e) {
+        guiState = {};
+    }
+    if (item) {
+        return guiState[item];
+    }
+    return guiState;
+}
+
+function setGuiState(item, value) {
+    var guiState = getGuiState();
+    guiState[item] = value;
+    window.localStorage.setItem("morowayAppGuiState", JSON.stringify(guiState));
+}
+
 //WINDOW
 function measureViewspace(a) {
     var b = [{hasTouch: "ontouchstart" in document.documentElement}, {isSmallDevice: window.innerHeight < 290 || window.innerWidth < 750}, {isTinyDevice: window.innerHeight < 250 || window.innerWidth < 600}];

@@ -140,14 +140,22 @@ for platform in ${platforms[@]}; do
 							line=$(echo "$line" | sed 's/"/\\"/g')
 							changelog="$changelog"$(printf '"%s",' "$line")
 						done <"$changelogfile"
-						if [[ -f "$changelogfile-$platform" ]]; then
+						if [[ -f "$changelogfile-$platform" ]] || [[ -f "changelogs/default/$cvMa.$cvMi.0-platform" ]]; then
+							changelogfile_platform="changelogs/default/$cvMa.$cvMi.0-platform"
+							if [[ -f "$changelogfile-$platform" ]]; then
+								changelogfile_bool="$changelogfile-$platform"
+							fi
 							while read -r line; do
 								line=$(echo "$line" | sed 's/"/\\"/g')
 								changelog="$changelog"$(printf '"%s",' "$line")
 							done <"$changelogfile-$platform"
 						fi
 						if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]]; then
-							line=$(echo "$(cat "changelogs/meta/fixes/locale/$clang")." | sed 's/"/\\"/g')
+							changelogfile_bool="changelogs/meta/fixes/locale/default"
+							if [[ -f "changelogs/meta/fixes/locale/$clang" ]]; then
+								changelogfile_bool="changelogs/meta/fixes/locale/$clang"
+							fi
+							line=$(echo "$(cat "$changelogfile_bool")." | sed 's/"/\\"/g')
 							changelog="$changelog"$(printf '"%s",' "$line")
 						fi
 						changelogs="$changelogs"$(echo "$changelog" | sed 's/,$/],/')
