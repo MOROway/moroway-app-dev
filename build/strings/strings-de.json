@@ -323,7 +323,9 @@
 	"helpScreenLegalLibraries": "Bibliotheken",
 	"helpScreenLegalLibrariesIcon": "🏗️",
 	"helpScreenLegalLibrariesThreeJs": "Three.js",
-	"helpScreenLegalLibrariesThreeJsPs": "Wir verwenden die 3D-Bibliothek „Three.js“.",
+	"helpScreenLegalLibrariesThreeJsPs": [
+		"Wir verwenden die 3D-Bibliothek „Three.js“."
+	],
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "Allgemein",
 	"helpScreenLegalOwnCodePs": [
