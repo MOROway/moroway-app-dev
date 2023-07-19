@@ -843,9 +843,8 @@ function drawMenuIcons(menu, state) {
     if (menus.floating) {
         itemSize = Math.min(itemSize, Math.max(itemSize / 2, 30));
     }
-    var items = menu.container.elementInner.querySelectorAll("*");
     for (var i = 0; i < menu.items.length; i++) {
-        menus.options.items[i].style.display = "";
+        menu.items[i].style.display = "";
         var textItem = menu.items[i].querySelector("i") == undefined ? menu.items[i] : menu.items[i].querySelector("i");
         menu.items[i].style.width = menu.items[i].style.height = textItem.style.fontSize = textItem.style.lineHeight = itemSize + "px";
     }
