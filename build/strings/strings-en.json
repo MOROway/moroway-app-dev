@@ -1,4 +1,7 @@
 {
+	"appScreen3DView": "3D mode",
+	"appScreen3DViewDayNight": "Switch day and night mode.",
+	"appScreen3DViewTitle": "{{0}} is {{1}}.",
 	"appScreenAMillionFrames": "{{0}} million frames shown",
 	"appScreenCarAutoModeChange": "Automatic car control {{0}}",
 	"appScreenCarAutoModeCrash": "Auto mode: Car crash! Switching over to manual control. Good luck!",
@@ -317,6 +320,10 @@
 	"helpScreenLegalFontsRobotoPs": [
 		"This app uses “Roboto” font by Google Inc."
 	],
+	"helpScreenLegalLibraries": "Libraries",
+	"helpScreenLegalLibrariesIcon": "🏗️",
+	"helpScreenLegalLibrariesThreeJs": "Three.js",
+	"helpScreenLegalLibrariesThreeJsPs": "This app uses the “Three.js” 3D library.",
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "General",
 	"helpScreenLegalOwnCodePs": [
