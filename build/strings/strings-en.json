@@ -320,7 +320,7 @@
 	"helpScreenLegalFontsRobotoPs": [
 		"This app uses “Roboto” font by Google Inc."
 	],
-	"helpScreenLegalLibraries": "Libraries",
+	"helpScreenLegalLibraries": "Libraries {{0}}",
 	"helpScreenLegalLibrariesIcon": "🏗️",
 	"helpScreenLegalLibrariesThreeJs": "Three.js",
 	"helpScreenLegalLibrariesThreeJsPs": [

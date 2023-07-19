@@ -320,7 +320,7 @@
 	"helpScreenLegalFontsRobotoPs": [
 		"Wir verwenden an einigen Stellen die Schriftart „Roboto“ der Google Inc."
 	],
-	"helpScreenLegalLibraries": "Bibliotheken",
+	"helpScreenLegalLibraries": "Bibliotheken {{0}}",
 	"helpScreenLegalLibrariesIcon": "🏗️",
 	"helpScreenLegalLibrariesThreeJs": "Three.js",
 	"helpScreenLegalLibrariesThreeJsPs": [
