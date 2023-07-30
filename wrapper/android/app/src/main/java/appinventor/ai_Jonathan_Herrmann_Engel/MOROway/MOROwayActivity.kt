@@ -2,7 +2,6 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +29,13 @@ open class MOROwayActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lockActivity()
+        val settings = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
+        val lockOrientationLandscape = settings.getBoolean("lockOrientationLandscape", false)
+        requestedOrientation = if (lockOrientationLandscape) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR
+        }
     }
 
     fun initWeb(webView: WebView, gameView: Boolean) {
@@ -40,16 +45,6 @@ open class MOROwayActivity : AppCompatActivity() {
             webView.settings.useWideViewPort = true
             webView.settings.builtInZoomControls = false
             webView.settings.setSupportZoom(false)
-        }
-    }
-
-    private fun lockActivity() {
-        val settings = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
-        val lockOrientationLandscape = settings.getBoolean("lockOrientationLandscape", false)
-        requestedOrientation = if (lockOrientationLandscape) {
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR
         }
     }
 }

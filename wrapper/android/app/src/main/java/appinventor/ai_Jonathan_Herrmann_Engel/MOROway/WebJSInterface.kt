@@ -11,8 +11,9 @@ internal class WebJSInterface(private val c: Context) {
         e.putBoolean(setting, value)
         e.apply()
     }
+
     @JavascriptInterface
-    fun getSettingShowVersionNoteAgain (): Boolean {
+    fun getSettingShowVersionNoteAgain(): Boolean {
         val settings = c.getSharedPreferences("MOROwayAnimSettings", Context.MODE_PRIVATE)
         return settings.getBoolean("showVersionNoteAgain", false)
     }

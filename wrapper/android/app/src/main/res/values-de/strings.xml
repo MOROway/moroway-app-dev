@@ -28,5 +28,5 @@
     <string name="d_confirmback_title">Zurück-Taste: Bestätigung</string>
     <string name="d_confirmback_ok">Spiel abbrechen</string>
     <string name="d_confirmback_cancel">Spiel fortführen</string>
-<string name="d_update_changelog">Vereinfachte Einstellungen.\nFehlerkorrekturen.</string>
+    <string name="d_update_changelog">Vereinfachte Einstellungen.\nFehlerkorrekturen.</string>
 </resources>
