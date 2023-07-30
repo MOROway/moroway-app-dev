@@ -19,7 +19,6 @@ class WebSettingsActivity : MOROwayActivity() {
     private lateinit var binding: ActivityAnimationSettingsBinding
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lockOtherActivity(this)
         binding = ActivityAnimationSettingsBinding.inflate(
             layoutInflater
         )

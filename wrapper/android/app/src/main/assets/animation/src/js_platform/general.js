@@ -30,32 +30,30 @@ function followLink(input1, input2, input3) {
 }
 
 function setSettingsHTMLLocal(elem, standalone) {
-    if (typeof window.localStorage != "undefined") {
-        var elems = elem.querySelectorAll("#langoption .langvalue");
-        for (var i = 0; i < elems.length; i++) {
-            if (elems[i].id != "clang") {
-                elems[i].addEventListener("click", function (src) {
-                    WebJSInterface.setLang(src.target.dataset.langCode);
-                });
-            }
+    var elems = elem.querySelectorAll("#langoption .langvalue");
+    for (var i = 0; i < elems.length; i++) {
+        if (elems[i].id != "clang") {
+            elems[i].addEventListener("click", function (src) {
+                WebJSInterface.setLang(src.target.dataset.langCode);
+            });
         }
-        var settings = getSettings().values;
-        for (var i = 0; i < Object.keys(settings).length; i++) {
-            var key = Object.keys(settings)[i];
-            WebJSInterface.setSetting(key, getSetting(Object.keys(settings)[i]));
-            var settingElem = elem.querySelector('li[data-settings-id="' + key + '"]');
-            if (settingElem !== null) {
-                var leftButton = settingElem.querySelector(".settings-opts-left-button");
-                var textButton = settingElem.querySelector(".settings-opts-text-button");
-                leftButton.addEventListener("click", function (event) {
-                    var currentKey = event.target.parentNode.parentNode.dataset.settingsId;
-                    WebJSInterface.setSetting(currentKey, getSetting(currentKey));
-                });
-                textButton.addEventListener("click", function (event) {
-                    var currentKey = event.target.parentNode.parentNode.dataset.settingsId;
-                    WebJSInterface.setSetting(currentKey, getSetting(currentKey));
-                });
-            }
+    }
+    var settings = getSettings().values;
+    for (var i = 0; i < Object.keys(settings).length; i++) {
+        var key = Object.keys(settings)[i];
+        WebJSInterface.setSetting(key, getSetting(Object.keys(settings)[i]));
+        var settingElem = elem.querySelector('li[data-settings-id="' + key + '"]');
+        if (settingElem !== null) {
+            var leftButton = settingElem.querySelector(".settings-opts-left-button");
+            var textButton = settingElem.querySelector(".settings-opts-text-button");
+            leftButton.addEventListener("click", function (event) {
+                var currentKey = event.target.parentNode.parentNode.dataset.settingsId;
+                WebJSInterface.setSetting(currentKey, getSetting(currentKey));
+            });
+            textButton.addEventListener("click", function (event) {
+                var currentKey = event.target.parentNode.parentNode.dataset.settingsId;
+                WebJSInterface.setSetting(currentKey, getSetting(currentKey));
+            });
         }
     }
 }
@@ -85,3 +83,4 @@ window.addEventListener("load", function () {
         WebJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil, link, image, imageLink, backgroundImage);
     });
 });
+setSetting("showVersionNoteAgain", WebJSInterface.getSettingShowVersionNoteAgain());

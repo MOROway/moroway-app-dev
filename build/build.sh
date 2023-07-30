@@ -143,12 +143,12 @@ for platform in ${platforms[@]}; do
 						if [[ -f "$changelogfile-$platform" ]] || [[ -f "changelogs/default/$cvMa.$cvMi.0-platform" ]]; then
 							changelogfile_platform="changelogs/default/$cvMa.$cvMi.0-platform"
 							if [[ -f "$changelogfile-$platform" ]]; then
-								changelogfile_bool="$changelogfile-$platform"
+								changelogfile_platform="$changelogfile-$platform"
 							fi
 							while read -r line; do
 								line=$(echo "$line" | sed 's/"/\\"/g')
 								changelog="$changelog"$(printf '"%s",' "$line")
-							done <"$changelogfile-$platform"
+							done <"$changelogfile_platform"
 						fi
 						if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]]; then
 							changelogfile_bool="changelogs/meta/fixes/locale/default"

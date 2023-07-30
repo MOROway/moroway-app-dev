@@ -83,3 +83,4 @@ window.addEventListener("load", function () {
         WebJSInterface.saveServerNote(serverMsg.id, serverMsg.title, serverMsg.text, serverMsg.validUntil, link, image, imageLink, backgroundImage);
     });
 });
+setSetting("showVersionNoteAgain", WebJSInterface.getSettingShowVersionNoteAgain());

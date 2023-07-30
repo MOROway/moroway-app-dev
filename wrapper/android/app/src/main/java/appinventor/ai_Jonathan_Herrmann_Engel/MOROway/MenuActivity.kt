@@ -16,7 +16,6 @@ class MenuActivity : MOROwayActivity() {
     private lateinit var binding: ActivityMenuBinding
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lockOtherActivity(this)
         binding = ActivityMenuBinding.inflate(
             layoutInflater
         )
@@ -64,14 +63,6 @@ class MenuActivity : MOROwayActivity() {
                 )
             )
         }
-        binding.settingsButton.setOnClickListener {
-            startActivity(
-                Intent(
-                    this,
-                    SettingsActivity::class.java
-                )
-            )
-        }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 backToHome()
@@ -81,7 +72,6 @@ class MenuActivity : MOROwayActivity() {
 
     public override fun onResume() {
         super.onResume()
-        lockOtherActivity(this)
         binding.homeButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             getButtonTextSize(binding.homeButton)
@@ -105,10 +95,6 @@ class MenuActivity : MOROwayActivity() {
         binding.animSettingsButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             getButtonTextSize(binding.animSettingsButton)
-        )
-        binding.settingsButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            getButtonTextSize(binding.settingsButton)
         )
     }
 

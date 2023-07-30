@@ -384,6 +384,8 @@
 	"optTitle_morowayApp_saveGame": "Spiel speichern",
 	"optTitle_morowayApp_showNotifications": "Benachrichtigungen",
 	"optTitle_morowayApp_startDemoMode": "App in Demo-Modus starten",
+        "optTitle_morowayApp_lockOrientationLandscape": "App nur im Querformat darstellen",
+        "optTitle_morowayApp_showVersionNoteAgain": "Zeige Versionshinweise erneut",
 	"platformOcAppUpdate": "Es sind neue Funktionen verfügbar!",
 	"platformOcAppUpdateNo": "Ignorieren",
 	"platformOcAppUpdateTitel": "App-Update",

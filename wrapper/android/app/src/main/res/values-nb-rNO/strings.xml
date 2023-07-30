@@ -2,23 +2,14 @@
 <resources>
     <string name="title_activity_optionen">Alternativer</string>
     <string name="title_activity_animation">Animasjon</string>
-    <string name="title_activity_settings_advanced">Avanserte innstillinger</string>
     <string name="title_activity_jserror">JavaScript-feil</string>
     <string name="title_activity_gimmick2">Skilpadde</string>
     <string name="a_home_animation_button">Spill</string>
     <string name="a_anim_pleaseWait">vent …</string>
     <string name="a_opt_start">Hjem</string>
     <string name="a_opt_singleplay">Spill</string>
-    <string name="a_settings_advanced_orientation_state_auto">Auto</string>
-    <string name="a_settings_advanced_orientation_state_portrait">Stående</string>
-    <string name="a_settings_advanced_orientation_state_landscape">Liggende</string>
-    <string name="a_settings_advanced_versionnote">Vis versjonsnotat igjen</string>
     <string name="a_jserror_button">Åpne Play-butikken</string>
-    <string name="title_activity_gimmick1">Pinnsvin og snegle</string>
-    <string name="a_settings_advanced_orientation_home">Orientering: startskjerm</string>
-    <string name="a_settings_advanced_orientation_other">Orientering: andre aktiviteter</string>
     <string name="a_g1_again">Spill igjen …</string>
-    <string name="a_g2_turned">Vår sjøskilpadde har blitt sjøsyk.</string>
     <string name="d_update_text">Nye funksjoner:
 \n
 \n%1$s</string>
@@ -33,10 +24,11 @@
     <string name="d_confirmback_text_online">Bruk «Tilbake»-knappen for å terminere dette nettbaserte spillet. Bruk «Hjem»-knappen for å gå til f.eks. deling av lenke til spillet. Nettbasert spill vil nå forbli aktivt en stund.</string>
     <string name="d_confirmback_title">Bekreftelse av «Tilbake»-knapp</string>
     <string name="title_activity_help">Hjelp/juridisk</string>
-    <string name="title_activity_settings_basic">Grunnleggende innstillinger</string>
+    <string name="title_activity_settings">Innstillinger</string>
     <string name="a_opt_teamplay">Flerspiller</string>
     <string name="a_opt_demo">Demo-modus</string>
     <string name="a_jserror_button2">Åpen tilbakemelding</string>
     <string name="a_jserror_text">En fatal JavaScript-feil inntraff. Programmet er basert på et progressivt vev-program, som bruker nyere vev-standarder. Disse vev-baserte filene vises i Android WebView-komponenten. Prøv å oppgradere denne fra Play-butikken ved å klikke på knappen nedenfor.</string>
     <string name="a_jserror_text2">Hvis en oppgradering ikke løser problemet kan du sende tilbakemelding inneholdende infoen nedenfor. (Du kan kopiere den herfra og lime den inn i skjemaet.)</string>
+<string name="d_update_changelog">Simplify settings.\nBugfixes.</string>
 </resources>

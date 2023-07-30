@@ -407,10 +407,10 @@ function getSettings() {
         values = JSON.parse(window.localStorage.getItem(SETTINGS_NAME) || "{}");
     } catch (e) {}
 
-    var defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false};
+    var defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false, lockOrientationLandscape: false, showVersionNoteAgain: false};
     var dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"]};
     var hardware = {cursorascircle: ["mouse"]};
-    var platforms = {reduceOptMenuHideDemoMode: ["snap", "web", "windows"], startDemoMode: ["snap", "windows"]};
+    var platforms = {reduceOptMenuHideDemoMode: ["snap", "web", "windows"], startDemoMode: ["snap", "windows"], lockOrientationLandscape: ["android"], showVersionNoteAgain: ["android"]};
 
     Object.keys(defaults).forEach(function (key) {
         if (typeof values[key] !== "boolean") {
@@ -522,15 +522,11 @@ function setSettingsHTML(elem, standalone) {
     }
 
     function changeSetting(event, idOnElement) {
-        var settings = getSettings().values;
         var id = idOnElement ? event.target.dataset.settingsId : event.target.parentNode.parentNode.dataset.settingsId;
-        if (isSettingActive(id) && isHardwareAvailable(id) && isInPlatformList(id)) {
-            settings[id] = !settings[id];
-            window.localStorage.setItem(SETTINGS_NAME, JSON.stringify(settings));
-            displaySettingsOpts();
-            displaySettingsButtons();
-            notify(".notify", getString("optApply", "."), NOTIFICATION_PRIO_LOW, 900, null, null, window.innerHeight);
-        }
+        setSetting(id, !getSetting(id));
+        displaySettingsOpts();
+        displaySettingsButtons();
+        notify(".notify", getString("optApply", "."), NOTIFICATION_PRIO_LOW, 900, null, null, window.innerHeight);
     }
 
     if (elem == undefined || elem == null) {
@@ -669,6 +665,13 @@ function getSetting(key) {
         return false;
     }
     return getSettings().values[key] && isSettingActive(key) && isHardwareAvailable(key) && isInPlatformList(key);
+}
+function setSetting(key, value) {
+    var settings = getSettings().values;
+    if (isSettingActive(key) && isHardwareAvailable(key) && isInPlatformList(key)) {
+        settings[key] = value;
+        window.localStorage.setItem(SETTINGS_NAME, JSON.stringify(settings));
+    }
 }
 
 //SAVED GAME

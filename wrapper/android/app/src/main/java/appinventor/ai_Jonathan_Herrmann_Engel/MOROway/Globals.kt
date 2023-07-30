@@ -11,5 +11,5 @@ object Globals {
     const val SHOW_UPDATE_NOTE = false
 
     //Current version name
-    const val VERSION_NAME = "8.1.7"
+    const val VERSION_NAME = "8.1.8"
 }

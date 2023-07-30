@@ -152,5 +152,7 @@
 	"helpScreenLegal": "Lisenser",
 	"helpScreenLegalFonts": "Skrifter {{0}}",
 	"helpScreenLegalFontsRoboto": "Roboto",
-	"langName": "Norsk Bokmål"
+	"langName": "Norsk Bokmål",
+	"optTitle_morowayApp_showVersionNoteAgain": "Vis versjonsnotat igjen"
+
 }

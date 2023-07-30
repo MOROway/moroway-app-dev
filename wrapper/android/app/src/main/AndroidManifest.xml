@@ -42,7 +42,7 @@
         <activity
             android:name=".WebSettingsActivity"
             android:configChanges="keyboardHidden|screenSize"
-            android:label="@string/title_activity_settings_basic"
+            android:label="@string/title_activity_settings"
             android:screenOrientation="locked" />
         <activity
             android:name=".WebHelpActivity"
@@ -55,19 +55,12 @@
             android:label="@string/title_activity_optionen"
             android:screenOrientation="locked" />
         <activity
-            android:name=".SettingsActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_settings_advanced"
-            android:screenOrientation="locked" />
-        <activity
             android:name=".Gimmick1Activity"
             android:configChanges="keyboardHidden|screenSize"
-            android:label="@string/title_activity_gimmick1"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".Gimmick2Activity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_gimmick2"
             android:screenOrientation="sensor" />
         <activity
             android:name=".JSErrorActivity"

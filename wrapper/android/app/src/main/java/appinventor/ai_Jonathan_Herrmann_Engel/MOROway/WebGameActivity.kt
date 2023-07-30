@@ -26,7 +26,6 @@ class WebGameActivity : MOROwayActivity() {
     private var location = ""
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lockOtherActivity(this)
         binding = ActivityAnimationActivityBinding.inflate(
             layoutInflater
         )

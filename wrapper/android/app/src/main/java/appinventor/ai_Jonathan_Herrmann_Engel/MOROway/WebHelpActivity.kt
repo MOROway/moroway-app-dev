@@ -19,7 +19,6 @@ class WebHelpActivity : MOROwayActivity() {
     private lateinit var binding: ActivityAnimationHelpBinding
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lockOtherActivity(this)
         binding = ActivityAnimationHelpBinding.inflate(
             layoutInflater
         )

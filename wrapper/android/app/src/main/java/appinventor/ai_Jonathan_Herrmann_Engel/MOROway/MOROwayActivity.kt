@@ -1,8 +1,9 @@
 package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
+import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
@@ -27,26 +28,9 @@ open class MOROwayActivity : AppCompatActivity() {
         super.attachBaseContext(base.createConfigurationContext(configuration))
     }
 
-    private fun lockActivity(activity: Activity, settingsName: String): Int {
-        val settings = activity.getSharedPreferences("MOROwaySettings", MODE_PRIVATE)
-        val defaultState = 0
-        val state = settings.getInt(settingsName, defaultState)
-        return when {
-            (state == 1) -> {
-                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                state
-            }
-
-            (state == 2) -> {
-                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                state
-            }
-
-            else -> {
-                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
-                defaultState
-            }
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lockActivity()
     }
 
     fun initWeb(webView: WebView, gameView: Boolean) {
@@ -59,11 +43,13 @@ open class MOROwayActivity : AppCompatActivity() {
         }
     }
 
-    fun lockOtherActivity(activity: Activity): Int {
-        return lockActivity(activity, "otherScreensState")
-    }
-
-    fun lockStartActivity(activity: Activity): Int {
-        return lockActivity(activity, "startScreenState")
+    private fun lockActivity() {
+        val settings = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
+        val lockOrientationLandscape = settings.getBoolean("lockOrientationLandscape", false)
+        requestedOrientation = if (lockOrientationLandscape) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR
+        }
     }
 }

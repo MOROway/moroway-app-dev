@@ -17,8 +17,8 @@ android {
         applicationId 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 801091
-        versionName '8.1.7'
+        versionCode 801104
+        versionName '8.1.8'
     }
     buildTypes {
         release {

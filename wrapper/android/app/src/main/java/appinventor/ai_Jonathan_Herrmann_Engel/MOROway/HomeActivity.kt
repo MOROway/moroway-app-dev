@@ -41,7 +41,6 @@ class HomeActivity : MOROwayActivity() {
     private var portraitPictureZoomOffsetY = 0f
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lockStartActivity(this)
         binding = ActivityMorowayAppBinding.inflate(
             layoutInflater
         )
@@ -132,9 +131,10 @@ class HomeActivity : MOROwayActivity() {
         }
 
         //Inform about new Version or Server messages
+        val settingsAnimation = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
         val serverMsgSettings = getSharedPreferences("MOROwayAnimServerNote", MODE_PRIVATE)
         val lastShownVersionNote = settings.getString("versionNoteName", Globals.VERSION_NAME)
-        val showVersionNoteAnyway = settings.getBoolean("versionNoteShowAnyWay", false)
+        val showVersionNoteAnyway = settingsAnimation.getBoolean("showVersionNoteAgain", false)
         if (serverMsgSettings.getInt(
                 "id",
                 0
@@ -166,11 +166,11 @@ class HomeActivity : MOROwayActivity() {
                 exception.printStackTrace()
             }
             val imageSrc = serverMsgSettings.getString("image", null)
-            if (imageSrc != null && imageSrc.isNotEmpty()) {
+            if (!imageSrc.isNullOrEmpty()) {
                 Picasso.get().load(imageSrc).into(versionNoteBinding.versioNoteImage)
                 versionNoteBinding.versioNoteImage.visibility = View.VISIBLE
                 val imageLink = serverMsgSettings.getString("imageLink", null)
-                if (imageLink != null && imageLink.isNotEmpty()) {
+                if (!imageLink.isNullOrEmpty()) {
                     versionNoteBinding.versioNoteImage.setOnClickListener {
                         try {
                             val intent = Intent(Intent.ACTION_VIEW)
@@ -183,7 +183,7 @@ class HomeActivity : MOROwayActivity() {
                 }
             }
             val imageSrcBackground = serverMsgSettings.getString("backgroundImage", null)
-            if (imageSrcBackground != null && imageSrcBackground.isNotEmpty()) {
+            if (!imageSrcBackground.isNullOrEmpty()) {
                 Picasso.get().load(imageSrcBackground)
                     .into(versionNoteBinding.versioNoteBackgroundImage)
                 versionNoteBinding.versioNoteBackgroundImage.visibility = View.VISIBLE
@@ -213,8 +213,10 @@ class HomeActivity : MOROwayActivity() {
                 getString(R.string.d_update_text, getString(R.string.d_update_changelog))
             versionNoteBinding.button.setOnClickListener {
                 settingsEditor.putString("versionNoteName", Globals.VERSION_NAME)
-                settingsEditor.remove("versionNoteShowAnyWay")
                 settingsEditor.apply()
+                val settingsAnimationEditor = settingsAnimation.edit()
+                settingsAnimationEditor.putBoolean("showVersionNoteAgain", false)
+                settingsAnimationEditor.apply()
                 versionNote.dismiss()
             }
             versionNote.show()
@@ -223,7 +225,6 @@ class HomeActivity : MOROwayActivity() {
 
     public override fun onResume() {
         super.onResume()
-        lockStartActivity(this)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

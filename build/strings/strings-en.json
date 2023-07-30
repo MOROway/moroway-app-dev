@@ -384,6 +384,8 @@
 	"optTitle_morowayApp_saveGame": "Save Game",
 	"optTitle_morowayApp_showNotifications": "Notifications",
 	"optTitle_morowayApp_startDemoMode": "Start app in demo mode",
+	"optTitle_morowayApp_lockOrientationLandscape": "Lock app in landscape mode",
+	"optTitle_morowayApp_showVersionNoteAgain": "Show version note again",
 	"platformOcAppUpdate": "New features available!",
 	"platformOcAppUpdateNo": "Ignore",
 	"platformOcAppUpdateTitel": "App-Update",
