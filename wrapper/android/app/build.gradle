@@ -3,21 +3,13 @@ plugins {
 }
 apply plugin: 'kotlin-android'
 
-final def fileNameStats = '../stats.sh'
-task stats(type: Exec) {
-    commandLine 'bash', fileNameStats
-}
-if (file(fileNameStats).exists()) {
-    preBuild.dependsOn stats
-}
-
 android {
-    compileSdkVersion 33
+    compileSdk 33
     defaultConfig {
         applicationId 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 801105
+        versionCode 801107
         versionName '8.1.8'
     }
     buildTypes {

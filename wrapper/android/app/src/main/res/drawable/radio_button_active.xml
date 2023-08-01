@@ -9,7 +9,7 @@
 
             <stroke
                 android:width="@dimen/radio_button_outer_stroke"
-                android:color="@color/highlight" />
+                android:color="@color/highlight_moro_color" />
 
             <size
                 android:width="@dimen/radio_button_outer_size"

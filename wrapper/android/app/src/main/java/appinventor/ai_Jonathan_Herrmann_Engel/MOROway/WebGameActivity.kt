@@ -149,7 +149,7 @@ class WebGameActivity : MOROwayActivity() {
         isDemoGame = false
         location =
             "https://" + Globals.WEBVIEW_DOMAIN + Globals.WEBVIEW_PATH + "animation/index.html"
-        if (queryString != null && queryString.isNotEmpty()) {
+        if (!queryString.isNullOrEmpty()) {
             location += "?$queryString"
             val locationUri = Uri.parse(location)
             if (locationUri.getQueryParameter("mode") == "multiplay") {

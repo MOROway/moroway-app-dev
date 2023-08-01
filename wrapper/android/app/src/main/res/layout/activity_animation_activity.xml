@@ -13,7 +13,7 @@
         android:id="@+id/pageLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/accent_moro_color"
+        android:background="@color/black"
         android:gravity="center"
         android:text="@string/a_anim_pleaseWait"
         android:textAppearance="?android:attr/textAppearanceLarge"

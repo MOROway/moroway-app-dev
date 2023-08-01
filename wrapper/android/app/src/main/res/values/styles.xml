@@ -20,9 +20,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
-        <item name="android:background">@color/accent_moro_color</item>
+        <item name="android:background">@color/black</item>
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/highlight</item>
+        <item name="android:textColor">@color/highlight_moro_color</item>
     </style>
 
 </resources>

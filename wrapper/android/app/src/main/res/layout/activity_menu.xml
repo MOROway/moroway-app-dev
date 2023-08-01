@@ -85,7 +85,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/title_activity_help"
-                android:textColor="@color/options_help"
+                android:textColor="@color/options_animation_help"
                 android:textSize="34sp" />
 
             <Button
@@ -99,7 +99,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/title_activity_settings"
-                android:textColor="@color/options_anim_settings"
+                android:textColor="@color/options_animation_settings"
                 android:textSize="32sp" />
 
         </RelativeLayout>

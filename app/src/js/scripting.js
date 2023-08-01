@@ -1022,6 +1022,19 @@ function calcMenusAndBackground(state) {
             drawBackground();
         }
     }
+    function set3DItems() {
+        if (gui.three) {
+            document.querySelector("#canvas-info-toggle").classList.add("gui-hidden");
+            document.querySelector("#canvas-3d-view-day-night").classList.remove("gui-hidden");
+            document.querySelector("#canvas-3d-view-toggle").querySelector("i").textContent = "looks_two";
+            document.querySelector("#canvas-3d-view-toggle").title = formatJSString(getString("appScreen3DViewTitle"), getString("appScreen3DView"), getString("generalOn"));
+        } else {
+            document.querySelector("#canvas-info-toggle").classList.remove("gui-hidden");
+            document.querySelector("#canvas-3d-view-day-night").classList.add("gui-hidden");
+            document.querySelector("#canvas-3d-view-toggle").querySelector("i").textContent = "view_in_ar";
+            document.querySelector("#canvas-3d-view-toggle").title = formatJSString(getString("appScreen3DViewTitle"), getString("appScreen3DView"), getString("generalOff"));
+        }
+    }
     if (document.querySelector("#canvas-info-toggle") != null) {
         if (getSetting("reduceOptMenuHideGraphicalInfoToggle")) {
             document.querySelector("#canvas-info-toggle").classList.add("settings-hidden");
@@ -1230,19 +1243,6 @@ function calcMenusAndBackground(state) {
             }
         });
         if (three) {
-            function set3DItems() {
-                if (gui.three) {
-                    document.querySelector("#canvas-info-toggle").classList.add("gui-hidden");
-                    document.querySelector("#canvas-3d-view-day-night").classList.remove("gui-hidden");
-                    document.querySelector("#canvas-3d-view-toggle").querySelector("i").textContent = "looks_two";
-                    document.querySelector("#canvas-3d-view-toggle").title = formatJSString(getString("appScreen3DViewTitle"), getString("appScreen3DView"), getString("generalOn"));
-                } else {
-                    document.querySelector("#canvas-info-toggle").classList.remove("gui-hidden");
-                    document.querySelector("#canvas-3d-view-day-night").classList.add("gui-hidden");
-                    document.querySelector("#canvas-3d-view-toggle").querySelector("i").textContent = "view_in_ar";
-                    document.querySelector("#canvas-3d-view-toggle").title = formatJSString(getString("appScreen3DViewTitle"), getString("appScreen3DView"), getString("generalOff"));
-                }
-            }
             document.querySelector("#canvas-3d-view-toggle").addEventListener("click", function () {
                 gui.three = !gui.three;
                 setGuiState("3d", gui.three);
@@ -6238,7 +6238,7 @@ window.onload = function () {
                     }
 
                     if (APP_DATA.debug && debug.paint) {
-                        const axesHelper = new THREE.AxesHelper(15);
+                        var axesHelper = new THREE.AxesHelper(15);
                         three.scene.add(axesHelper);
                     }
                 }

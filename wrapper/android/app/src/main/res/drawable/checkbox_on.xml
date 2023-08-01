@@ -7,7 +7,7 @@
 
             <stroke
                 android:width="@dimen/checkbox_outer_stroke"
-                android:color="@color/highlight" />
+                android:color="@color/highlight_moro_color" />
 
             <corners
                 android:bottomLeftRadius="@dimen/checkbox_corner_radius"
@@ -24,7 +24,7 @@
     <item android:gravity="center">
         <shape android:shape="rectangle">
 
-            <solid android:color="@color/highlight_overlay" />
+            <solid android:color="@color/highlight_moro_color_overlay" />
 
             <corners
                 android:bottomLeftRadius="@dimen/checkbox_corner_radius"

@@ -7,8 +7,8 @@ const APP_DATA = {
         beta: 2,
         date: {
             year: 2023,
-            month: 7,
-            day: 30
+            month: 8,
+            day: 1
         }
     },
     platform: "android",
