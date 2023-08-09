@@ -5390,8 +5390,18 @@ window.onload = function () {
     //THREE.JS
     if (typeof THREE != "undefined" && THREE.Scene && THREE.GLTFLoader) {
         three = {};
-        gui.three = getGuiState("3d");
-        three.night = getGuiState("3d-night");
+        var queryString3D = getQueryString("gui-3d");
+        if (queryString3D != "" && (queryString3D == "0" || queryString3D == "1")) {
+            gui.three = queryString3D == "1";
+        } else {
+            gui.three = getGuiState("3d");
+        }
+        var queryString3DNight = getQueryString("gui-3d-night");
+        if (queryString3DNight != "" && (queryString3DNight == "0" || queryString3DNight == "1")) {
+            three.night = queryString3DNight == "1";
+        } else {
+            three.night = getGuiState("3d-night");
+        }
     }
 
     if (getQueryString("mode") == "multiplay") {
