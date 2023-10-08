@@ -42,5 +42,5 @@
     <string name="d_confirmback_title">"Back"-Button Confirmation</string>
     <string name="d_confirmback_ok">Exit</string>
     <string name="d_confirmback_cancel">Stay</string>
-    <string name="d_update_changelog">Simplify settings.\nBugfixes.</string>
+    <string name="d_update_changelog">Simplify settings.\nThis is the last version to support Android 5 and 6.\nBugfixes.</string>
 </resources>

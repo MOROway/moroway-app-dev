@@ -2305,6 +2305,10 @@ function drawObjects() {
                 cars3D[i].mesh.position.set((car.x - background.width / 2) / background.width, -(car.y - background.height / 2) / background.width, cars3D[i].positionZ);
                 cars3D[i].mesh.rotation.z = -car.displayAngle;
             }
+            if (!gui.demo && cars3D[i] && cars3D[i].meshParkingLot) {
+                cars3D[i].meshParkingLot.visible = !carParams.init && ((carParams.autoModeOff && cars[i].cType == "normal" && !cars[i].move) || (!carParams.autoModeOff && !carParams.autoModeRuns && !carParams.isBackToRoot));
+                cars3D[i].meshParkingLot.material.color.setHex(carParams.autoModeOff ? cars[i].hexColor : "0xffeeef");
+            }
         });
 
         if (gui.demo) {
@@ -3895,9 +3899,9 @@ var switchActions = {
 var switchesBeforeFac, switchesBeforeAddSidings;
 
 var cars = [
-    {src: 16, fac: 0.02, speed: 0.0008, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}},
-    {src: 17, fac: 0.02, speed: 0.001, startFrameFac: 0.335, angles: {start: 0, normal: Math.PI}},
-    {src: 0, fac: 0.0202, speed: 0.00082, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}}
+    {src: 16, fac: 0.02, speed: 0.0008, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xff0000"},
+    {src: 17, fac: 0.02, speed: 0.001, startFrameFac: 0.335, angles: {start: 0, normal: Math.PI}, hexColor: "0xffffff"},
+    {src: 0, fac: 0.0202, speed: 0.00082, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xffee00"}
 ];
 var cars3D = [];
 var carPaths = [
@@ -4724,7 +4728,18 @@ window.onload = function () {
         //Cars
         if (defineCarParams()) {
             if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars") != null && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams") != null && window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg") != null) {
+                /* UPDATE: v9.0.0 */
+                var carColors = [];
+                for (var i = 0; i < cars.length; i++) {
+                    carColors[i] = cars[i].hexColor;
+                }
+                /* END UPDATE: v9.0.0 */
                 cars = JSON.parse(window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars"));
+                /* UPDATE: v9.0.0 */
+                for (var i = 0; i < cars.length; i++) {
+                    cars[i].hexColor = carColors[i];
+                }
+                /* END UPDATE: v9.0.0 */
                 carParams = JSON.parse(window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams"));
                 resizeCars(JSON.parse(window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg")));
             } else if (gui.demo && window.sessionStorage.getItem("demoCars") != null && window.sessionStorage.getItem("demoCarParams") != null && window.sessionStorage.getItem("demoBg") != null) {
@@ -5042,6 +5057,20 @@ window.onload = function () {
                                 cars3D[i].resize();
                             }
                         );
+                        var radius = 0.0036;
+                        var height3D = 0.0005;
+                        cars3D[i].meshParkingLot = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.5, transparent: true}));
+                        cars3D[i].meshParkingLot.rotation.x = Math.PI / 2;
+                        cars3D[i].meshParkingLot.position.set((carWays[i].start[cars[i].startFrame].x - background.width / 2) / background.width, -(carWays[i].start[cars[i].startFrame].y - background.height / 2) / background.width, height3D / 2);
+                        cars3D[i].meshParkingLot.callback = function () {
+                            if (carParams.autoModeOff) {
+                                carActions.manual.park(i);
+                            } else {
+                                carActions.auto.end();
+                            }
+                        };
+                        cars3D[i].meshParkingLot.visible = false;
+                        three.scene.add(cars3D[i].meshParkingLot);
                     });
                     if (!gui.demo) {
                         Object.keys(switches).forEach(function (key) {
@@ -5390,8 +5419,18 @@ window.onload = function () {
     //THREE.JS
     if (typeof THREE != "undefined" && THREE.Scene && THREE.GLTFLoader) {
         three = {};
-        gui.three = getGuiState("3d");
-        three.night = getGuiState("3d-night");
+        var queryString3D = getQueryString("gui-3d");
+        if (queryString3D == "0" || queryString3D == "1") {
+            gui.three = queryString3D == "1";
+        } else {
+            gui.three = getGuiState("3d");
+        }
+        var queryString3DNight = getQueryString("gui-3d-night");
+        if (queryString3DNight == "0" || queryString3DNight == "1") {
+            three.night = queryString3DNight == "1";
+        } else {
+            three.night = getGuiState("3d-night");
+        }
     }
 
     if (getQueryString("mode") == "multiplay") {

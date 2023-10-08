@@ -169,3 +169,13 @@ Update dependencies
 
 ---
 
+
+
+8.1.8
+
+Update Electron version.
+Bugfixes.
+
+
+---
+

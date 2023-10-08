@@ -7,7 +7,7 @@
     },
     "overrides": {
         "cordova-electron": {
-            "electron": "^24.0.0"
+            "electron": "^26.3.0"
         }
     },
     "devDependencies": {

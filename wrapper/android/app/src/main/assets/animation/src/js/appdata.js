@@ -4,11 +4,11 @@ const APP_DATA = {
         major: 8,
         minor: 1,
         patch: 8,
-        beta: 2,
+        beta: 0,
         date: {
             year: 2023,
-            month: 8,
-            day: 1
+            month: 10,
+            day: 8
         }
     },
     platform: "android",
