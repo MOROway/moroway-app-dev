@@ -41,11 +41,6 @@ class WebHelpActivity : MOROwayActivity() {
                 return false
             }
 
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                return overrideUrl(Uri.parse(url))
-            }
-
-            @RequiresApi(Build.VERSION_CODES.N)
             override fun shouldOverrideUrlLoading(
                 view: WebView,
                 webResourceRequest: WebResourceRequest

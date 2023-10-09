@@ -62,3 +62,22 @@ MOROway App uses Weblate for translations.
   - android: [here](./wrapper/android)
   - oc: [Extra repository](https://github.com/MOROway/moroway-app-oc)
   - snap: [here](./wrapper/snap)
+
+## Query-Parameters
+
+The following query parameters can be used with MOROway App.
+
+### General
+
+- `mode`: normal, demo, demoStandalone, multiplay (_app mode_)
+- `gui-3d`: 0, 1 (_3D view_)
+- `gui-3d-night`: 0, 1 (_3D night view_)
+
+### Demo mode
+
+- `gui-demo-3d-rotation-speed-percent`: 0-100 (_3D demo mode canvas rotation speed in percent_)
+
+### Multiplay mode
+
+- `key`: _game key_
+- `id`: _game id_

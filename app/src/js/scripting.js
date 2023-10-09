@@ -1375,7 +1375,13 @@ function calcClassicUIElements() {
     var wantedWidth = ((menus.small ? 0.35 : 0.9) * background.width) / 4 / widthMultiply;
     var tempFont = measureFontSize(getString(["appScreenTrainNames", longestName]), classicUI.trainSwitch.selectedTrainDisplay.fontFamily, wantedWidth / getString(["appScreenTrainNames", longestName]).length, wantedWidth, 3, background.width * 0.004);
     var tempFontSize = menus.small ? getFontSize(tempFont, "px") : Math.min((0.9 * menus.outerContainer.height * client.devicePixelRatio) / heightMultiply, getFontSize(tempFont, "px"));
-    classicUI.trainSwitch.selectedTrainDisplay.visible = getSetting("alwaysShowSelectedTrain") && tempFontSize >= 7;
+    var currentSelectedTrainDisplayVisible = getSetting("alwaysShowSelectedTrain") && tempFontSize >= 7;
+    if (classicUI.trainSwitch.selectedTrainDisplay.visible != currentSelectedTrainDisplayVisible) {
+        classicUI.trainSwitch.selectedTrainDisplay.visible = currentSelectedTrainDisplayVisible;
+        if (gui.infoOverlay) {
+            drawInfoOverlayMenu("items-change");
+        }
+    }
     classicUI.trainSwitch.selectedTrainDisplay.font = tempFontSize + "px " + classicUI.trainSwitch.selectedTrainDisplay.fontFamily;
     context.font = classicUI.trainSwitch.selectedTrainDisplay.font;
     classicUI.trainSwitch.selectedTrainDisplay.width = widthMultiply * context.measureText(getString(["appScreenTrainNames", longestName])).width;
@@ -2312,7 +2318,7 @@ function drawObjects() {
         });
 
         if (gui.demo) {
-            var rotation = Math.random() / 1000;
+            var rotation = (Math.random() / 500) * (three.demoRotationSpeedFac / 100);
             three.scene.rotation.x += three.demoRotationFacX * rotation;
             three.scene.rotation.y += three.demoRotationFacY * rotation;
         } else {
@@ -2685,7 +2691,12 @@ function drawObjects() {
                 drawImage(pics[classicUI.transformer.onSrc], -classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height, contextForeground);
             }
             if (!client.isTiny || !(typeof client.zoomAndTilt.realScale == "undefined" || client.zoomAndTilt.realScale <= Math.max(1, client.zoomAndTilt.maxScale / 3))) {
-                classicUI.transformer.directionInput.visible = true;
+                if (!classicUI.transformer.directionInput.visible) {
+                    classicUI.transformer.directionInput.visible = true;
+                    if (gui.infoOverlay) {
+                        drawInfoOverlayMenu("items-change");
+                    }
+                }
                 contextForeground.save();
                 contextForeground.translate(classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
                 if (trains[trainParams.selected].move) {
@@ -2734,7 +2745,12 @@ function drawObjects() {
                 }
                 contextForeground.restore();
             } else {
-                classicUI.transformer.directionInput.visible = false;
+                if (classicUI.transformer.directionInput.visible) {
+                    classicUI.transformer.directionInput.visible = false;
+                    if (gui.infoOverlay) {
+                        drawInfoOverlayMenu("items-change");
+                    }
+                }
             }
             contextForeground.save();
             contextForeground.translate(0, -classicUI.transformer.input.diffY);
@@ -3806,7 +3822,7 @@ var pics = [
 
 var background = {src: 9, secondLayer: 10};
 var oldBackground;
-var background3D = {flat: {src: "assets/3d/background-flat.jpg"}, three: {src: "background-3d.glb"}};
+var background3D = {flat: {src: "assets/3d/background-flat.jpg"}, three: {src: "background-3d.gltf"}};
 
 var audio = {};
 
@@ -5431,6 +5447,12 @@ window.onload = function () {
         } else {
             three.night = getGuiState("3d-night");
         }
+        var queryStringDemoRotationSpeedFac = parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10);
+        if (!Number.isNaN(queryStringDemoRotationSpeedFac) && queryStringDemoRotationSpeedFac >= 0 && queryStringDemoRotationSpeedFac <= 100) {
+            three.demoRotationSpeedFac = queryStringDemoRotationSpeedFac;
+        } else {
+            three.demoRotationSpeedFac = 50;
+        }
     }
 
     if (getQueryString("mode") == "multiplay") {
@@ -6257,7 +6279,7 @@ window.onload = function () {
                     three.scene.add(background3D.flat.mesh);
 
                     var loaderGLTF = new THREE.GLTFLoader();
-                    loaderGLTF.setPath("assets/3d/").load(background3D.three.src, function (gltf) {
+                    loaderGLTF.setPath("assets/3d/background-3d/").load(background3D.three.src, function (gltf) {
                         background3D.three.mesh = gltf.scene;
                         resetScale();
                         resetTilt();
