@@ -1,12 +1,13 @@
 <resources>
 
-    <color name="white_clean">#ffffff</color>
+    <color name="white">#ffffff</color>
     <color name="white_overlay">#cccfcfcf</color>
-    <color name="white">#cfcfcf</color>
-    <color name="black">#0c0c0c</color>
-    <color name="background_moro_color">#303030</color>
-    <color name="highlight_moro_color">#d2781b</color>
-    <color name="highlight_moro_color_overlay">#ccd2781b</color>
+    <color name="white_light">#cfcfcf</color>
+    <color name="black_light">#0c0c0c</color>
+
+    <color name="moro_color_background">#303030</color>
+    <color name="moro_color_highlight">#d2781b</color>
+    <color name="moro_color_highlight_overlay">#ccd2781b</color>
 
     <color name="options_home">#ff1efff8</color>
     <color name="options_animation">#88dd00</color>

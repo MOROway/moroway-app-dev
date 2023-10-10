@@ -7,7 +7,8 @@
     <dimen name="checkbox_outer_size">20dp</dimen>
     <dimen name="checkbox_inner_size">10dp</dimen>
 
-    <dimen name="radio_button_outer_stroke">2dp</dimen>
-    <dimen name="radio_button_outer_size">20dp</dimen>
-    <dimen name="radio_button_inner_size">10dp</dimen>
+    <dimen name="options_button_small">32sp</dimen>
+    <dimen name="options_button_medium">34sp</dimen>
+    <dimen name="options_button_big">36sp</dimen>
+    <dimen name="options_button_huge">40sp</dimen>
 </resources>

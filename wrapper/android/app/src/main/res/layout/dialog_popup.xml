@@ -38,7 +38,7 @@
                 android:text="@string/d_update_text"
                 android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/white"
+                android:textColor="@color/white_light"
                 android:textSize="20sp" />
 
             <ImageView
@@ -74,7 +74,7 @@
                     android:layout_marginEnd="10dp"
                     android:text="@string/d_server_msg_show_again"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white_light" />
 
             </LinearLayout>
 
@@ -87,7 +87,7 @@
                 android:layout_marginBottom="15dp"
                 android:text="@string/d_server_msg_show_again_info"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/white"
+                android:textColor="@color/white_light"
                 android:visibility="gone" />
 
             <Button
@@ -100,7 +100,7 @@
                 android:layout_marginTop="20dp"
                 android:background="@null"
                 android:text="@string/d_server_msg_link"
-                android:textColor="@color/white"
+                android:textColor="@color/white_light"
                 android:textSize="20sp"
                 android:visibility="gone" />
 
@@ -114,7 +114,7 @@
                 android:layout_marginTop="20dp"
                 android:background="@null"
                 android:text="@string/d_update_oK"
-                android:textColor="@color/white"
+                android:textColor="@color/white_light"
                 android:textSize="20sp" />
 
         </RelativeLayout>

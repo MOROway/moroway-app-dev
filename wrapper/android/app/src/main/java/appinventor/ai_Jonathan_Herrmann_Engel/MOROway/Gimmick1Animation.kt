@@ -132,7 +132,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
 
     override fun onDraw(hedgehogCanvas: Canvas) {
         if (firstRun) {
-            val unscaledSnail = BitmapFactory.decodeResource(resources, R.drawable.screen7pic2)
+            val unscaledSnail = BitmapFactory.decodeResource(resources, R.drawable.gimmick1_4)
             val scaledSnailWidth = width / 8
             val scaledSnail = Bitmap.createScaledBitmap(
                 unscaledSnail,
@@ -142,7 +142,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             )
             snail = BitmapDrawable(resources, scaledSnail)
             val unscaledHedgehog =
-                BitmapFactory.decodeResource(resources, R.drawable.screen7pic1)
+                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_0)
             val scaledHedgehogWidth = width / 3
             val scaledHedgehog = Bitmap.createScaledBitmap(
                 unscaledHedgehog,
@@ -153,7 +153,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             hedgehog = BitmapDrawable(resources, scaledHedgehog)
             val scaledSmallHedgehogWidth = width / 8
             val unscaledSmallHedgehog1 =
-                BitmapFactory.decodeResource(resources, R.drawable.screen7pic1a)
+                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_1)
             val scaledSmallHedgehog1 = Bitmap.createScaledBitmap(
                 unscaledSmallHedgehog1,
                 scaledSmallHedgehogWidth,
@@ -166,7 +166,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             )
             smallHedgehog1 = BitmapDrawable(resources, scaledSmallHedgehog1)
             val unscaledSmallHedgehog2 =
-                BitmapFactory.decodeResource(resources, R.drawable.screen7pic1b)
+                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_2)
             val scaledSmallHedgehog2 = Bitmap.createScaledBitmap(
                 unscaledSmallHedgehog2,
                 scaledSmallHedgehogWidth,
@@ -179,7 +179,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             )
             smallHedgehog2 = BitmapDrawable(resources, scaledSmallHedgehog2)
             val unscaledSmallHedgehog3 =
-                BitmapFactory.decodeResource(resources, R.drawable.screen7pic1c)
+                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_3)
             val scaledSmallHedgehog3 = Bitmap.createScaledBitmap(
                 unscaledSmallHedgehog3,
                 scaledSmallHedgehogWidth,
@@ -191,7 +191,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
                 false
             )
             smallHedgehog3 = BitmapDrawable(resources, scaledSmallHedgehog3)
-            val unscaledApple = BitmapFactory.decodeResource(resources, R.drawable.screen7pic6)
+            val unscaledApple = BitmapFactory.decodeResource(resources, R.drawable.gimmick1_4)
             val scaledAppleWidth = width / 14
             val scaledApple = Bitmap.createScaledBitmap(
                 unscaledApple,

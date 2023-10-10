@@ -74,7 +74,15 @@ class MenuActivity : MOROwayActivity() {
         super.onResume()
         binding.homeButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
+            resources.getDimension(R.dimen.options_button_small)
+        )
+        binding.homeButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
             getButtonTextSize(binding.homeButton)
+        )
+        binding.animationButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            resources.getDimension(R.dimen.options_button_huge)
         )
         binding.animationButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
@@ -82,7 +90,15 @@ class MenuActivity : MOROwayActivity() {
         )
         binding.animationTeamplayButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
+            resources.getDimension(R.dimen.options_button_big)
+        )
+        binding.animationTeamplayButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
             getButtonTextSize(binding.animationTeamplayButton)
+        )
+        binding.animationDemoButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            resources.getDimension(R.dimen.options_button_big)
         )
         binding.animationDemoButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
@@ -90,7 +106,15 @@ class MenuActivity : MOROwayActivity() {
         )
         binding.helpButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
+            resources.getDimension(R.dimen.options_button_medium)
+        )
+        binding.helpButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
             getButtonTextSize(binding.helpButton)
+        )
+        binding.animSettingsButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            resources.getDimension(R.dimen.options_button_small)
         )
         binding.animSettingsButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,

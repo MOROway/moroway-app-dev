@@ -3,7 +3,6 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
 
@@ -35,16 +34,6 @@ open class MOROwayActivity : AppCompatActivity() {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         } else {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR
-        }
-    }
-
-    fun initWeb(webView: WebView, gameView: Boolean) {
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        if (gameView) {
-            webView.settings.useWideViewPort = true
-            webView.settings.builtInZoomControls = false
-            webView.settings.setSupportZoom(false)
         }
     }
 }

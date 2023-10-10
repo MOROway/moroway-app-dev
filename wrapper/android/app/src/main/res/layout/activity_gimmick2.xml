@@ -14,6 +14,6 @@
         android:layout_centerVertical="true"
         android:background="@color/white_overlay"
         android:contentDescription="@string/title_activity_gimmick2"
-        android:src="@drawable/screen8pic1" />
+        android:src="@drawable/gimmick2" />
 
 </RelativeLayout>

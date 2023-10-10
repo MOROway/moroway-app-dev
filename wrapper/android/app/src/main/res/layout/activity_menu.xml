@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/screen3pic1"
+    android:background="@drawable/menu"
     android:gravity="center">
 
     <ScrollView
@@ -26,7 +26,7 @@
                 android:maxLines="1"
                 android:text="@string/a_opt_start"
                 android:textColor="@color/options_home"
-                android:textSize="32sp" />
+                android:textSize="@dimen/options_button_small" />
 
             <Button
                 android:id="@+id/animationButton"
@@ -41,7 +41,7 @@
                 android:maxLines="1"
                 android:text="@string/a_opt_singleplay"
                 android:textColor="@color/options_animation"
-                android:textSize="40sp" />
+                android:textSize="@dimen/options_button_huge" />
 
             <Button
                 android:id="@+id/animationTeamplayButton"
@@ -56,7 +56,7 @@
                 android:maxLines="1"
                 android:text="@string/a_opt_teamplay"
                 android:textColor="@color/options_animation_teamplay"
-                android:textSize="36sp" />
+                android:textSize="@dimen/options_button_big" />
 
             <Button
                 android:id="@+id/animationDemoButton"
@@ -71,7 +71,7 @@
                 android:maxLines="1"
                 android:text="@string/a_opt_demo"
                 android:textColor="@color/options_animation_demo"
-                android:textSize="36sp" />
+                android:textSize="@dimen/options_button_big" />
 
             <Button
                 android:id="@+id/helpButton"
@@ -86,7 +86,7 @@
                 android:maxLines="1"
                 android:text="@string/title_activity_help"
                 android:textColor="@color/options_animation_help"
-                android:textSize="34sp" />
+                android:textSize="@dimen/options_button_medium" />
 
             <Button
                 android:id="@+id/animSettingsButton"
@@ -100,7 +100,7 @@
                 android:maxLines="1"
                 android:text="@string/title_activity_settings"
                 android:textColor="@color/options_animation_settings"
-                android:textSize="32sp" />
+                android:textSize="@dimen/options_button_small" />
 
         </RelativeLayout>
     </ScrollView>

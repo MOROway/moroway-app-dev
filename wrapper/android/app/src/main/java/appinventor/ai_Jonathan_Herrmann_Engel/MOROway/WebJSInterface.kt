@@ -27,7 +27,7 @@ internal class WebJSInterface(private val c: Context) {
         }
         e.apply()
         try {
-            (c as WebSettingsActivity).reload()
+            (c as WebActivity).reload()
         } catch (exception: Exception) {
             exception.printStackTrace()
         }

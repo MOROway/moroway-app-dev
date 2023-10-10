@@ -16,7 +16,7 @@
         android:adjustViewBounds="true"
         android:paddingBottom="10dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/screen1pic1cs" />
+        android:src="@drawable/home_portrait_0" />
 
     <Button
         android:id="@+id/animationButton"
@@ -25,10 +25,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="@null"
-        android:shadowColor="@color/black"
+        android:shadowColor="@color/black_light"
         android:shadowRadius="10"
         android:text="@string/a_home_animation_button"
-        android:textColor="@color/white_clean"
+        android:textColor="@color/white"
         android:textSize="36sp" />
 
     <LinearLayout
@@ -52,12 +52,12 @@
             android:elegantTextHeight="false"
             android:gravity="center|top"
             android:paddingEnd="30dp"
-            android:shadowColor="@color/black"
+            android:shadowColor="@color/black_light"
             android:shadowRadius="10"
             android:singleLine="false"
             android:text="@string/a_home_iHB"
             android:textAlignment="center"
-            android:textColor="@color/white_clean"
+            android:textColor="@color/white"
             android:textSize="45sp" />
 
         <Button
@@ -67,10 +67,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:background="@null"
-            android:shadowColor="@color/black"
+            android:shadowColor="@color/black_light"
             android:shadowRadius="10"
             android:text="@string/title_activity_optionen"
-            android:textColor="@color/white_clean"
+            android:textColor="@color/white"
             android:textSize="24sp" />
 
         <Button
@@ -82,10 +82,10 @@
             android:layout_weight="1"
             android:background="@null"
             android:paddingStart="30dp"
-            android:shadowColor="@color/black"
+            android:shadowColor="@color/black_light"
             android:shadowRadius="10"
             android:text="@string/a_home_iHF"
-            android:textColor="@color/white_clean"
+            android:textColor="@color/white"
             android:textSize="45sp" />
     </LinearLayout>
 

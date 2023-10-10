@@ -6,7 +6,7 @@
 
     <stroke
         android:width="@dimen/checkbox_outer_stroke"
-        android:color="@color/white" />
+        android:color="@color/white_light" />
 
     <corners
         android:bottomLeftRadius="@dimen/checkbox_corner_radius"

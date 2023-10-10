@@ -276,25 +276,25 @@ class HomeActivity : MOROwayActivity() {
 
     private fun setImage() {
         when (portraitPictureCurrent) {
-            5 -> binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic6cs)
-            4 -> binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic5cs)
+            5 -> binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_5)
+            4 -> binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_4)
             3 -> if (portraitPictureBig) {
-                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic4csbigstyle)
+                binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_3_big)
             } else {
-                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic4cs)
+                binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_3)
             }
 
             2 -> if (portraitPictureBig) {
-                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic3csbigstyle)
+                binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_2_big)
             } else {
-                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic3cs)
+                binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_2)
             }
 
-            1 -> binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic2cs)
+            1 -> binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_1)
             else -> if (portraitPictureBig) {
-                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic1csbigstyle)
+                binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_0_big)
             } else {
-                binding.bigStylePictures!!.setImageResource(R.drawable.screen1pic1cs)
+                binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_0)
             }
         }
     }
