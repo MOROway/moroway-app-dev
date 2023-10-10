@@ -1,5 +1,5 @@
 {
-	"appScreen3DView": "3D-Modus",
+	"appScreen3DView": "3D-Ansicht",
 	"appScreen3DViewDayNight": "Tag- und Nachtmodus wechseln.",
 	"appScreen3DViewTitle": "{{0}} ist {{1}}.",
 	"appScreenAMillionFrames": "{{0}} Millionen Einzelbilder gezeigt",
@@ -354,6 +354,8 @@
 	"helpScreenPrivacyStatementIcon": "🦮",
 	"langName": "Deutsch",
 	"optApply": "Einstellungen aktualisiert",
+	"optButton_morowayApp_reduceOptMenuHide3DViewNightToggle": "3D-Ansicht Tag/Nacht",
+	"optButton_morowayApp_reduceOptMenuHide3DViewToggle": "3D-Ansicht",
 	"optButton_morowayApp_reduceOptMenuHideAudioToggle": "Audio-Effekte",
 	"optButton_morowayApp_reduceOptMenuHideCarControlCenter": "Autokontrollzentrum",
 	"optButton_morowayApp_reduceOptMenuHideDemoMode": "Demo-Modus",
