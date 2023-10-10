@@ -354,6 +354,8 @@
 	"helpScreenPrivacyStatementIcon": "🦮",
 	"langName": "English",
 	"optApply": "New configuration saved",
+	"optButton_morowayApp_reduceOptMenuHide3DViewNightToggle": "3D-view day/night",
+	"optButton_morowayApp_reduceOptMenuHide3DViewToggle": "3D-view",
 	"optButton_morowayApp_reduceOptMenuHideAudioToggle": "Sound toggle",
 	"optButton_morowayApp_reduceOptMenuHideCarControlCenter": "Car Control Center",
 	"optButton_morowayApp_reduceOptMenuHideDemoMode": "Demo mode",
@@ -403,6 +405,8 @@
 	"platformOcStartSettings": "Settings",
 	"platformSnapAppExit": "Exit app",
 	"platformWindowsLinkError": "Error! Couldn't open link.",
+	"reduceOptMenuHide3DViewNightToggle": "3D-view day/night",
+	"reduceOptMenuHide3DViewToggle": "3D-view",
 	"whatsNewScreenVersionIsNew": "New",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
 	"whatsNewScreenVersionNumberMinor": "New in version {{0}}.{{1}}"
