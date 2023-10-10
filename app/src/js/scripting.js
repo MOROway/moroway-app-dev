@@ -1080,10 +1080,17 @@ function calcMenusAndBackground(state) {
         }
     }
     if (document.querySelector("#canvas-3d-view-toggle") != null) {
-        if (getSetting("reduceOptMenuHide3DView")) {
+        if (getSetting("reduceOptMenuHide3DViewToggle")) {
             document.querySelector("#canvas-3d-view-toggle").classList.add("settings-hidden");
         } else {
             document.querySelector("#canvas-3d-view-toggle").classList.remove("settings-hidden");
+        }
+    }
+    if (document.querySelector("#canvas-3d-view-day-night") != null) {
+        if (getSetting("reduceOptMenuHide3DViewNightToggle")) {
+            document.querySelector("#canvas-3d-view-day-night").classList.add("settings-hidden");
+        } else {
+            document.querySelector("#canvas-3d-view-day-night").classList.remove("settings-hidden");
         }
     }
     if (state == "load") {

@@ -407,8 +407,8 @@ function getSettings() {
         values = JSON.parse(window.localStorage.getItem(SETTINGS_NAME) || "{}");
     } catch (e) {}
 
-    var defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false, lockOrientationLandscape: false, showVersionNoteAgain: false};
-    var dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"]};
+    var defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false, lockOrientationLandscape: false, showVersionNoteAgain: false, reduceOptMenuHide3DViewToggle: false, reduceOptMenuHide3DViewNightToggle: false};
+    var dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"], reduceOptMenuHide3DViewToggle: ["reduceOptMenu"], reduceOptMenuHide3DViewNightToggle: ["reduceOptMenu"]};
     var hardware = {cursorascircle: ["mouse"]};
     var platforms = {reduceOptMenuHideDemoMode: ["snap", "web", "windows"], startDemoMode: ["snap", "windows"], lockOrientationLandscape: ["android"], showVersionNoteAgain: ["android"]};
 
@@ -600,7 +600,7 @@ function setSettingsHTML(elem, standalone) {
             } else if (opt == "reduceOptMenu") {
                 child = document.createElement("div");
                 child.className = "settings-buttons-wrapper";
-                var kidNames = ["reduceOptMenuHideGraphicalInfoToggle", "reduceOptMenuHideTrainControlCenter", "reduceOptMenuHideCarControlCenter", "reduceOptMenuHideAudioToggle", "reduceOptMenuHideDemoMode"];
+                var kidNames = ["reduceOptMenuHideGraphicalInfoToggle", "reduceOptMenuHideTrainControlCenter", "reduceOptMenuHideCarControlCenter", "reduceOptMenuHideAudioToggle", "reduceOptMenuHideDemoMode", "reduceOptMenuHide3DViewToggle", "reduceOptMenuHide3DViewNightToggle"];
                 kidNames.forEach(function (kidName) {
                     if (isHardwareAvailable(kidName) && isInPlatformList(kidName)) {
                         kid = document.createElement("button");
