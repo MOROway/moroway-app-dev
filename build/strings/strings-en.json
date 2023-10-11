@@ -256,7 +256,8 @@
 	"helpScreenGeneralGesturesPs": [
 		"To zoom in and out you have several options: “control”-key + “+”/“-”, “control”-key + mouse wheel and the pinch touch gesture.",
 		"To change the display detail you may use the arrow keys or click/touch, hold and move.",
-		"The reset the zoom factor you may use the “control”-key + “0” or double-touch on the background."
+		"The reset the zoom factor you may use the “control”-key + “0” or double-touch on the background.",
+		"In the 3D-view you can also tilt the view by using the control-key + an arrow-key or moving two fingers parallel."
 	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
 	"helpScreenGeneralTeamplayIcon": "🎮",
