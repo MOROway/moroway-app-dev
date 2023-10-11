@@ -251,6 +251,15 @@
 		"Touching or clicking on a stopped car's parking lot will navigate it back there.",
 		"You may access a car control center by touching with three fingers / right-clicking the background of the train control center. Alternatively you may use the options menu icon below the virtual model railroad."
 	],
+	"helpScreenGeneralGestures": "Gestures {{0}}",
+	"helpScreenGeneralGesturesIcon": "🖼️",
+	"helpScreenGeneralGesturesPs": [
+		"To zoom in and out you have several options: “control”-key + “+”/“-”, “control”-key + mouse wheel and the pinch touch gesture.",
+		"To change the zoom display detail you may use the arrow keys or click/touch the background, hold and move.",
+		"The reset the zoom factor you may use the “control”-key + “0” or double-touch on the background.",
+		"In the 3D-view you can also tilt the view by using the “control”-key + an “arrow”-key or moving two fingers parallel (touch only).",
+		"In the 3D-view you can reset the tilt by double-click or touch and hold on the black area next to the game."
+	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
 	"helpScreenGeneralTeamplayIcon": "🎮",
 	"helpScreenGeneralTeamplayPs": [
@@ -405,8 +414,6 @@
 	"platformOcStartSettings": "Settings",
 	"platformSnapAppExit": "Exit app",
 	"platformWindowsLinkError": "Error! Couldn't open link.",
-	"reduceOptMenuHide3DViewNightToggle": "3D-view day/night",
-	"reduceOptMenuHide3DViewToggle": "3D-view",
 	"whatsNewScreenVersionIsNew": "New",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
 	"whatsNewScreenVersionNumberMinor": "New in version {{0}}.{{1}}"
