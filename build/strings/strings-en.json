@@ -257,7 +257,8 @@
 		"To zoom in and out you have several options: “control”-key + “+”/“-”, “control”-key + mouse wheel and the pinch touch gesture.",
 		"To change the zoom display detail you may use the arrow keys or click/touch the background, hold and move.",
 		"The reset the zoom factor you may use the “control”-key + “0” or double-touch on the background.",
-		"In the 3D-view you can also tilt the view by using the “control”-key + an “arrow”-key or moving two fingers parallel (touch only)."
+		"In the 3D-view you can also tilt the view by using the “control”-key + an “arrow”-key or moving two fingers parallel (touch only).",
+		"In the 3D-view you can reset the tilt by double-click or touch and hold on the black area next to the game."
 	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
 	"helpScreenGeneralTeamplayIcon": "🎮",
