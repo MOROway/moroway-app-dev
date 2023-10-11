@@ -251,6 +251,13 @@
 		"Touching or clicking on a stopped car's parking lot will navigate it back there.",
 		"You may access a car control center by touching with three fingers / right-clicking the background of the train control center. Alternatively you may use the options menu icon below the virtual model railroad."
 	],
+	"helpScreenGeneralGestures": "Gestures {{0}}",
+	"helpScreenGeneralGesturesIcon": "🖼️",
+	"helpScreenGeneralGesturesPs": [
+		"To zoom in and out you have several options: control key + ",
+		"To change the display detail you may use the arrow keys or click/touch, hold and move.",
+		"The reset the zoom factor you may use the control-key + 0 or double-touch on the background."
+	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
 	"helpScreenGeneralTeamplayIcon": "🎮",
 	"helpScreenGeneralTeamplayPs": [
