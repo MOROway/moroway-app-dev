@@ -405,8 +405,6 @@
 	"platformOcStartSettings": "Settings",
 	"platformSnapAppExit": "Exit app",
 	"platformWindowsLinkError": "Error! Couldn't open link.",
-	"reduceOptMenuHide3DViewNightToggle": "3D-view day/night",
-	"reduceOptMenuHide3DViewToggle": "3D-view",
 	"whatsNewScreenVersionIsNew": "New",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
 	"whatsNewScreenVersionNumberMinor": "New in version {{0}}.{{1}}"
