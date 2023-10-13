@@ -336,10 +336,12 @@
 		"This app uses the “Three.js” 3D library."
 	],
 	"helpScreenLegalMedia": "Media {{0}}",
+	"helpScreenLegalMedia3DModels": "3D models",
 	"helpScreenLegalMedia3DModelsPs": [
 		"\"Wrecking Tractor\" (https://skfb.ly/6RDvC) by Animated Fox 3D: Creative Commons Attribution (CC-BY)"
 	],
 	"helpScreenLegalMediaIcon": "🖌️",
+	"helpScreenLegalMediaSound": "Sound",
 	"helpScreenLegalMediaSoundPs": [
 		"audio_asset_0.ogg (https://freesound.org/people/steaq/sounds/594215/): CC0",
 		"audio_asset_2.ogg (https://freesound.org/people/BeeProductive/sounds/430025/, modified): CC0",
