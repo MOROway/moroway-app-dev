@@ -336,6 +336,17 @@
 		"This app uses the “Three.js” 3D library."
 	],
 	"helpScreenLegalMedia": "Media {{0}}",
+	"helpScreenLegalMedia3DModelsPs": [
+		"\"Wrecking Tractor\" (https://skfb.ly/6RDvC) by Animated Fox 3D: Creative Commons Attribution (CC-BY)"
+	],
+	"helpScreenLegalMediaIcon": "🖌️",
+	"helpScreenLegalMediaSoundPs": [
+		"audio_asset_0.ogg (https://freesound.org/people/steaq/sounds/594215/): CC0",
+		"audio_asset_2.ogg (https://freesound.org/people/BeeProductive/sounds/430025/, modified): CC0",
+		"audio_asset_4.ogg (https://freesound.org/people/bretbernhoft/sounds/131174/, modified): CC0",
+		"audio_asset_5.ogg (https://freesound.org/people/C-V/sounds/528427/, modified): CC0",
+		"audio_asset_crash.ogg (https://freesound.org/people/ludvique/sounds/71853/, modified): CC0"
+	],
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "General",
 	"helpScreenLegalOwnCodePs": [
@@ -348,6 +359,8 @@
 	],
 	"helpScreenLegalStrCopyright": "Copyright",
 	"helpScreenLegalStrLicense": "License",
+	"helpScreenLegalStrLicenseCC0": "CC0 1.0 Universal",
+	"helpScreenLegalStrLicenseCCBy": "CC BY 4.0",
 	"helpScreenMOROmore": "More about MOROway",
 	"helpScreenMOROmoreAbout": "About MOROway {{0}}",
 	"helpScreenMOROmoreAboutIcon": "📜",
