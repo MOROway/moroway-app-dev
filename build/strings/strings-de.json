@@ -336,6 +336,8 @@
 		"Wir verwenden die 3D-Bibliothek „Three.js“."
 	],
 	"helpScreenLegalMedia": "Medien {{0}}",
+	"helpScreenLegalMedia3DModels": "3D Modelle",
+	"helpScreenLegalMediaSound": "Audio",
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "Allgemein",
 	"helpScreenLegalOwnCodePs": [
