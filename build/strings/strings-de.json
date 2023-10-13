@@ -335,6 +335,7 @@
 	"helpScreenLegalLibrariesThreeJsPs": [
 		"Wir verwenden die 3D-Bibliothek „Three.js“."
 	],
+	"helpScreenLegalMedia": "Medien {{0}}",
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "Allgemein",
 	"helpScreenLegalOwnCodePs": [
