@@ -338,7 +338,8 @@
 	"helpScreenLegalMedia": "Media {{0}}",
 	"helpScreenLegalMedia3DModels": "3D models",
 	"helpScreenLegalMedia3DModelsPs": [
-		"\"Wrecking Tractor\" (https://skfb.ly/6RDvC) by Animated Fox 3D: Creative Commons Attribution (CC-BY)"
+		"\"Wrecking Tractor\" (https://skfb.ly/6RDvC) by Animated Fox 3D (modified): Creative Commons Attribution (CC-BY)",
+		"\"Chevrolet Jumbo Truck\" (https://skfb.ly/6WVRC) by Medhatelo (modified): Creative Commons Attribution (CC-BY)"
 	],
 	"helpScreenLegalMediaIcon": "🖌️",
 	"helpScreenLegalMediaSound": "Sound",
