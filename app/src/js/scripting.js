@@ -2338,21 +2338,38 @@ function drawObjects() {
                         }
                         return hex;
                     }
+                    function getAngle(fadeProgress, newAngle, oldAngle) {
+                        return fadeProgress * newAngle + (1 - fadeProgress) * oldAngle;
+                    }
                     var hex = switches[key][currentKey].turned ? "0x00ff00" : "0xff0000";
+                    var hexSquare = switches[key][currentKey].turned ? "0x005500" : "0x550000";
+                    var angle = switches[key][currentKey].turned ? switches[key][currentKey].angles.turned : switches[key][currentKey].angles.normal;
                     var transparent = true;
                     if (switches[key][currentKey].lastStateChange != undefined && frameNo - switches[key][currentKey].lastStateChange < classicUI.switches.showDuration) {
                         var fadeProgress = (frameNo - switches[key][currentKey].lastStateChange) / classicUI.switches.showDuration;
                         if (switches[key][currentKey].turned) {
                             hex = "0x" + getFadeColor(1 - fadeProgress) + getFadeColor(fadeProgress) + "00";
+                            angle = getAngle(fadeProgress, switches[key][currentKey].angles.turned, switches[key][currentKey].angles.normal);
                         } else {
                             hex = "0x" + getFadeColor(fadeProgress) + getFadeColor(1 - fadeProgress) + "00";
+                            angle = getAngle(fadeProgress, switches[key][currentKey].angles.normal, switches[key][currentKey].angles.turned);
                         }
                     }
                     if (switches[key][currentKey].lastStateChange != undefined && frameNo - switches[key][currentKey].lastStateChange < classicUI.switches.showDuration) {
                         transparent = false;
                     }
-                    switches3D[key][currentKey].mesh.material.color.setHex(hex);
-                    switches3D[key][currentKey].mesh.material.transparent = transparent;
+                    switches3D[key][currentKey].circleMesh.material.color.setHex(hex);
+                    switches3D[key][currentKey].circleMesh.material.transparent = transparent;
+
+                    switches3D[key][currentKey].squareMeshHighlight.material.color.setHex(hexSquare);
+                    switches3D[key][currentKey].squareMeshHighlight.rotation.y = -angle - Math.PI / 4;
+                    switches3D[key][currentKey].squareMeshHighlight.position.set((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshHighlight.rotation.y), -(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshHighlight.rotation.y), switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.depth / 2);
+
+                    switches3D[key][currentKey].squareMeshNormal.rotation.y = -switches[key][currentKey].angles.normal - Math.PI / 4;
+                    switches3D[key][currentKey].squareMeshNormal.position.set((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshNormal.rotation.y), -(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshNormal.rotation.y), switches3D[key][currentKey].squareMeshNormal.geometry.parameters.depth / 2);
+
+                    switches3D[key][currentKey].squareMeshTurned.rotation.y = -switches[key][currentKey].angles.turned - Math.PI / 4;
+                    switches3D[key][currentKey].squareMeshTurned.position.set((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y), -(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y), switches3D[key][currentKey].squareMeshTurned.geometry.parameters.depth / 2);
                 });
             });
             if (hardware.mouse.isHold && !gui.controlCenter) {
@@ -5100,12 +5117,12 @@ window.onload = function () {
                             switches3D[key] = {};
                             Object.keys(switches[key]).forEach(function (currentKey) {
                                 switches3D[key][currentKey] = {};
-                                var radius = 0.01;
-                                var height3D = 0.0005;
-                                switches3D[key][currentKey].mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.55, transparent: true}));
-                                switches3D[key][currentKey].mesh.rotation.x = Math.PI / 2;
-                                switches3D[key][currentKey].mesh.position.set((switches[key][currentKey].x - background.width / 2) / background.width, -(switches[key][currentKey].y - background.height / 2) / background.width, height3D / 2);
-                                switches3D[key][currentKey].mesh.callback = function () {
+
+                                const radius = 0.01;
+                                const length = radius * 1.25;
+                                const height3D = 0.0005;
+
+                                const meshCallback = function () {
                                     if (typeof clickTimeOut !== "undefined") {
                                         window.clearTimeout(clickTimeOut);
                                         clickTimeOut = null;
@@ -5119,7 +5136,24 @@ window.onload = function () {
                                         hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
                                     );
                                 };
-                                three.scene.add(switches3D[key][currentKey].mesh);
+
+                                switches3D[key][currentKey].circleMesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.25, transparent: true}));
+                                switches3D[key][currentKey].circleMesh.rotation.x = Math.PI / 2;
+                                switches3D[key][currentKey].circleMesh.position.set((switches[key][currentKey].x - background.width / 2) / background.width, -(switches[key][currentKey].y - background.height / 2) / background.width, height3D / 2);
+                                switches3D[key][currentKey].circleMesh.callback = meshCallback;
+                                three.scene.add(switches3D[key][currentKey].circleMesh);
+                                switches3D[key][currentKey].squareMeshHighlight = new THREE.Mesh(new THREE.BoxGeometry(length * 1.25, radius / 4, radius / 4), new THREE.MeshBasicMaterial({color: 0xffffff}));
+                                switches3D[key][currentKey].squareMeshHighlight.rotation.x = Math.PI / 2;
+                                switches3D[key][currentKey].squareMeshHighlight.callback = meshCallback;
+                                three.scene.add(switches3D[key][currentKey].squareMeshHighlight);
+                                switches3D[key][currentKey].squareMeshNormal = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
+                                switches3D[key][currentKey].squareMeshNormal.rotation.x = Math.PI / 2;
+                                switches3D[key][currentKey].squareMeshNormal.callback = meshCallback;
+                                three.scene.add(switches3D[key][currentKey].squareMeshNormal);
+                                switches3D[key][currentKey].squareMeshTurned = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
+                                switches3D[key][currentKey].squareMeshTurned.rotation.x = Math.PI / 2;
+                                switches3D[key][currentKey].squareMeshTurned.callback = meshCallback;
+                                three.scene.add(switches3D[key][currentKey].squareMeshTurned);
                             });
                         });
                     }
