@@ -3,7 +3,7 @@ const APP_DATA = {
     version: {
         major: 9,
         minor: 0,
-        patch: 0,
+        patch: 1,
         beta: 0,
         date: {
             year: 2023,

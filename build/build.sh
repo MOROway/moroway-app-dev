@@ -140,8 +140,8 @@ for platform in ${platforms[@]}; do
 							line=$(echo "$line" | sed 's/"/\\"/g')
 							changelog="$changelog"$(printf '"%s",' "$line")
 						done <"$changelogfile"
-						if [[ -f "$changelogfile-$platform" ]] || [[ -f "changelogs/default/$cvMa.$cvMi.0-platform" ]]; then
-							changelogfile_platform="changelogs/default/$cvMa.$cvMi.0-platform"
+						if [[ -f "$changelogfile-$platform" ]] || [[ -f "changelogs/default/$cvMa.$cvMi.0-$platform" ]]; then
+							changelogfile_platform="changelogs/default/$cvMa.$cvMi.0-$platform"
 							if [[ -f "$changelogfile-$platform" ]]; then
 								changelogfile_platform="$changelogfile-$platform"
 							fi
