@@ -286,6 +286,7 @@
 	"helpScreenGeneralWelcomePs": [
 		"Hello, you use MOROway App. The background image is a aerial view of the MOROway model railroad taken 2011. The central sidings have been newly taken in 2021 to make them usable. Enjoy!"
 	],
+	"helpScreenGeneralWelcomeSystem": "Your system: {{0}}",
 	"helpScreenGeneralWelcomeVersion": "Current version: {{0}}.{{1}}.{{2}}{{6}} ({{3}}-{{4}}-{{5}})",
 	"helpScreenLegal": "Licenses",
 	"helpScreenLegalAppAndroid": "MOROway App for Android {{0}}",

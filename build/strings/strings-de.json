@@ -286,6 +286,7 @@
 	"helpScreenGeneralWelcomePs": [
 		"Hallo! Sie benutzen die MOROway App. Der Hintergrund stellt eine Luftaufnahme der Modellbahn MOROway aus dem Jahre 2011 dar; 2021 wurde der Abschnitt mit den zentralen Abstellgleisen neu aufgenommen, um diese befahrbar zu machen. Viel Fahrspaß!"
 	],
+	"helpScreenGeneralWelcomeSystem": "Ihr System: {{0}}",
 	"helpScreenGeneralWelcomeVersion": "Sie verwenden aktuell die am {{5}}. {{4}}. {{3}} erstellte Version {{0}}.{{1}}.{{2}}{{6}}",
 	"helpScreenLegal": "Lizenzen",
 	"helpScreenLegalAppAndroid": "MOROway App für Android {{0}}",
