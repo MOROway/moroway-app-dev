@@ -6309,15 +6309,17 @@ window.onload = function () {
                     };
 
                     var loaderTexture = new THREE.TextureLoader();
-                    var material = new THREE.MeshStandardMaterial({
-                        map: loaderTexture.load(background3D.flat.src),
-                        roughness: 0.85,
-                        metalness: 0.15
+                    loaderTexture.load(background3D.flat.src, function (texture) {
+                        var material = new THREE.MeshStandardMaterial({
+                            map: texture,
+                            roughness: 0.85,
+                            metalness: 0.15
+                        });
+                        var geometry = new THREE.PlaneGeometry(1, background.height / background.width);
+                        background3D.flat.mesh = new THREE.Mesh(geometry, material);
+                        background3D.flat.mesh.position.set(0, 0, 0);
+                        three.scene.add(background3D.flat.mesh);
                     });
-                    var geometry = new THREE.PlaneGeometry(1, background.height / background.width);
-                    background3D.flat.mesh = new THREE.Mesh(geometry, material);
-                    background3D.flat.mesh.position.set(0, 0, 0);
-                    three.scene.add(background3D.flat.mesh);
 
                     var loaderGLTF = new THREE.GLTFLoader();
                     loaderGLTF.setPath("assets/3d/background-3d/").load(background3D.three.src, function (gltf) {

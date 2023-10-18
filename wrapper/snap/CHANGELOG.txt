@@ -179,3 +179,14 @@ Bugfixes.
 
 ---
 
+
+
+9.0.0
+
+3D view.
+Update Electron version.
+Bugfixes.
+
+
+---
+

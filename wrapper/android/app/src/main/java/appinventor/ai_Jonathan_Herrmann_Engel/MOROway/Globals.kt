@@ -8,8 +8,8 @@ object Globals {
         "https://herrmann-engel.de/projekte/moroway/moroway-app/server/html_content/index.php?key=feedback&platform=android&closeButton=off&lang=%s"
 
     //Specify if this update should trigger note
-    const val SHOW_UPDATE_NOTE = false
+    const val SHOW_UPDATE_NOTE = true
 
     //Current version name
-    const val VERSION_NAME = "8.1.8"
+    const val VERSION_NAME = "9.0.0"
 }
