@@ -45,7 +45,7 @@
     <!-- Dialog: Demo Mode -->
     <string name="d_demo_mode_3d">3D</string>
     <string name="d_demo_mode_3d_night">3D: Night</string>
-    <string name="d_demo_mode_rotation_speed">3D: Rotation speed</string>
+    <string name="d_demo_mode_3d_rotation_speed">3D: Rotation speed</string>
     <string name="d_demo_mode_go">start demo mode</string>
     <!-- Auto generated -->
     <string name="d_update_changelog">3D view.\nBugfixes.</string>

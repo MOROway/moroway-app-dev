@@ -83,7 +83,7 @@ class MenuActivity : MOROwayActivity() {
                         1
                     } else {
                         0
-                    }) + "&gui-demo-3d-rotation-speed-percent=" + demoModeDialogBinding.dDemoModeRotationSpeed.progress
+                    }) + "&gui-demo-3d-rotation-speed-percent=" + demoModeDialogBinding.dDemoMode3dRotationSpeed.progress
                 )
                 demoModeDialog.dismiss()
                 startActivity(intent)

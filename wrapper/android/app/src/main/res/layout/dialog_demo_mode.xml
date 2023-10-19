@@ -25,6 +25,7 @@
                 android:button="@drawable/checkbox"
                 android:padding="11dp"
                 android:text="@string/d_demo_mode_3d"
+                android:textColor="@color/white"
                 android:textSize="20sp" />
 
             <RelativeLayout
@@ -41,22 +42,24 @@
                     android:button="@drawable/checkbox"
                     android:padding="11dp"
                     android:text="@string/d_demo_mode_3d_night"
+                    android:textColor="@color/white"
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/d_demo_mode_rotation_speed_text"
+                    android:id="@+id/d_demo_mode_3d_rotation_speed_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/demo_mode_3d_night"
                     android:layout_margin="20dp"
-                    android:text="@string/d_demo_mode_rotation_speed"
+                    android:text="@string/d_demo_mode_3d_rotation_speed"
+                    android:textColor="@color/white"
                     android:textSize="20sp" />
 
                 <SeekBar
-                    android:id="@+id/d_demo_mode_rotation_speed"
+                    android:id="@+id/d_demo_mode_3d_rotation_speed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/d_demo_mode_rotation_speed_text"
+                    android:layout_below="@id/d_demo_mode_3d_rotation_speed_text"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginRight="20dp"
