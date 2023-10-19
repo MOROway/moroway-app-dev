@@ -28,5 +28,9 @@
     <string name="d_confirmback_title">Zurück-Taste: Bestätigung</string>
     <string name="d_confirmback_ok">Spiel abbrechen</string>
     <string name="d_confirmback_cancel">Spiel fortführen</string>
+    <string name="d_demo_mode_3d">3D</string>
+    <string name="d_demo_mode_3d_night">3D: Nacht</string>
+    <string name="d_demo_mode_rotation_speed">3D: Rotationsgeschwindigkeit</string>
+    <string name="d_demo_mode_go">Demo-Modus starten</string>
     <string name="d_update_changelog">3D-Ansicht.\nFehlerkorrekturen.</string>
 </resources>

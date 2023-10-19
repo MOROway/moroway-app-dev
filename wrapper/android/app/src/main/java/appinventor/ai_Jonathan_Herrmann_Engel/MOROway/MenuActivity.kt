@@ -1,13 +1,17 @@
 package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import android.view.View
 import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMenuBinding
+import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogDemoModeBinding
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -43,9 +47,48 @@ class MenuActivity : MOROwayActivity() {
             startActivity(intent)
         }
         binding.animationDemoButton.setOnClickListener {
-            val intent = Intent(this, WebGameActivity::class.java)
-            intent.putExtra("queryString", "mode=demoStandalone")
-            startActivity(intent)
+            val demoModeDialog = Dialog(this, R.style.versionNoteDialog)
+            val demoModeDialogBinding = DialogDemoModeBinding.inflate(
+                layoutInflater
+            )
+            demoModeDialog.setContentView(demoModeDialogBinding.root)
+            demoModeDialog.setTitle(R.string.a_opt_demo)
+            demoModeDialog.window!!
+                .setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT
+                )
+            demoModeDialogBinding.demoMode3d.setOnCheckedChangeListener { _, isChecked ->
+                demoModeDialogBinding.demoMode3dOnly.visibility = if (isChecked) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            }
+            demoModeDialogBinding.demoMode3dOnly.visibility =
+                if (demoModeDialogBinding.demoMode3d.isChecked) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            demoModeDialogBinding.dDemoModeGo.setOnClickListener {
+                val intent = Intent(this, WebGameActivity::class.java)
+                intent.putExtra(
+                    "queryString",
+                    "mode=demoStandalone&gui-3d=" + (if (demoModeDialogBinding.demoMode3d.isChecked) {
+                        1
+                    } else {
+                        0
+                    }) + "&gui-3d-night=" + (if (demoModeDialogBinding.demoMode3dNight.isChecked) {
+                        1
+                    } else {
+                        0
+                    }) + "&gui-demo-3d-rotation-speed-percent=" + demoModeDialogBinding.dDemoModeRotationSpeed.progress
+                )
+                demoModeDialog.dismiss()
+                startActivity(intent)
+            }
+            demoModeDialog.show()
         }
         binding.helpButton.setOnClickListener {
             startActivity(
