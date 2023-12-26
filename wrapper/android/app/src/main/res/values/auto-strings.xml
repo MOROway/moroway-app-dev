@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="generalBack">Back</string>
+  <string name="generalClose">close</string>
+  <string name="generalNo">no</string>
+  <string name="generalOff">off</string>
+  <string name="generalOn">on</string>
+  <string name="generalServerNoteButtonGo">show me more</string>
+  <string name="generalServerNoteButtonLater">show again</string>
+  <string name="generalServerNoteButtonNo">okay</string>
+  <string name="generalServerNoteInfoLater">Only works if this message remains valid.</string>
+  <string name="generalTitle">MOROway App</string>
+  <string name="generalTitleErrorScreen">Known issues</string>
+  <string name="generalTitleHelpScreen">Legal / Help</string>
+  <string name="generalTitleSettingsScreen">Settings</string>
+  <string name="generalTitleWhatsNewScreen">Changelog</string>
+  <string name="generalYes">yes</string>
+</resources>

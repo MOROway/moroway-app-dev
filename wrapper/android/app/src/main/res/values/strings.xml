@@ -48,5 +48,4 @@
     <string name="d_demo_mode_3d_rotation_speed">3D: Rotation speed</string>
     <string name="d_demo_mode_go">start demo mode</string>
     <!-- Auto generated -->
-    <string name="d_update_changelog">3D view.\nBugfixes.</string>
 </resources>

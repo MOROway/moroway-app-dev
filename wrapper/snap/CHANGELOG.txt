@@ -199,3 +199,12 @@ Bugfixes.
 
 ---
 
+
+
+9.0.2
+
+Add system information to help page.
+
+
+---
+

@@ -32,5 +32,4 @@
     <string name="d_demo_mode_3d_night">3D: Nacht</string>
     <string name="d_demo_mode_3d_rotation_speed">3D: Rotationsgeschwindigkeit</string>
     <string name="d_demo_mode_go">Demo-Modus starten</string>
-    <string name="d_update_changelog">3D-Ansicht.\nFehlerkorrekturen.</string>
 </resources>
