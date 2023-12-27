@@ -2,50 +2,28 @@
 <resources>
     <!-- General -->
     <string name="app_name" translatable="false">MOROway</string>
-    <string name="app_name_long" translatable="false">MOROway App</string>
     <string name="web_view_back" translatable="false">⬅</string>
     <!-- Titles (General) -->
-    <string name="title_activity_optionen">Options</string>
-    <string name="title_activity_animation">Animation</string>
-    <string name="title_activity_help">Help/Legal</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_gimmick2">Tortoise</string>
     <string name="title_activity_jserror">JavaScript Error</string>
-    <string name="title_activity_gimmick2">Turtle</string>
+    <string name="title_activity_menu">Menu</string>
     <!-- Activity: Home -->
     <string name="a_home_iHB" translatable="false">⇐</string>
     <string name="a_home_iHF" translatable="false">⇒</string>
-    <string name="a_home_animation_button">Play</string>
     <!-- Activity: Animation -->
     <string name="a_anim_pleaseWait">please wait…</string>
     <!-- Activity: MenuActivity -->
     <string name="a_opt_start">Home</string>
-    <string name="a_opt_singleplay">Play</string>
-    <string name="a_opt_teamplay">Multiplayer</string>
-    <string name="a_opt_demo">Demo mode</string>
     <!--Activity: JS Error -->
-    <string name="a_jserror_text">We are very sorry, but a fatal JavaScript error occurred. This application is based on a progressive web app, which uses newer web standards. These web page based files are displayed using the Android WebView component. Please try to update this component using the Play Store by clicking the Button below.</string>
     <string name="a_jserror_button">Open Play Store</string>
-    <string name="a_jserror_text2">If the update did not solve the problem please send a feedback including the information below (you may copy it from here and paste it to the feedback form)</string>
     <string name="a_jserror_button2">Open Feedback</string>
+    <string name="a_jserror_text">We are very sorry, but a fatal JavaScript error occurred. This application is based on a progressive web app, which uses newer web standards. These web page based files are displayed using the Android WebView component. Please try to update this component using the Play Store by clicking the Button below.</string>
+    <string name="a_jserror_text2">If the update did not solve the problem please send a feedback including the information below (you may copy it from here and paste it to the feedback form)</string>
     <!-- Activity: Gimmick 1 -->
     <string name="a_g1_again">Play Again…</string>
     <!-- Dialog: Update -->
     <string name="d_update_text">New features:\n\n%1$s</string>
-    <string name="d_update_title">Up to date! (%1$s)</string>
-    <string name="d_update_oK">Got it</string>
-    <string name="d_server_msg_show_again">Show again</string>
-    <string name="d_server_msg_show_again_info">Only works if this message remains valid.</string>
-    <string name="d_server_msg_link">Learn more</string>
+    <string name="d_update_title" translatable="false">%1$s (%2$s)</string>
     <!-- Dialog: Confirm Back -->
     <string name="d_confirmback_text_online">Using the "Back"-Button will terminate this online game! To navigate your phone e.g. to share the game link use the "Home"-Button. The online game will now stay active for some time.</string>
-    <string name="d_confirmback_text_offline">Exit Game?</string>
-    <string name="d_confirmback_title">"Back"-Button Confirmation</string>
-    <string name="d_confirmback_ok">Exit</string>
-    <string name="d_confirmback_cancel">Stay</string>
-    <!-- Dialog: Demo Mode -->
-    <string name="d_demo_mode_3d">3D</string>
-    <string name="d_demo_mode_3d_night">3D: Night</string>
-    <string name="d_demo_mode_3d_rotation_speed">3D: Rotation speed</string>
-    <string name="d_demo_mode_go">start demo mode</string>
-    <!-- Auto generated -->
 </resources>

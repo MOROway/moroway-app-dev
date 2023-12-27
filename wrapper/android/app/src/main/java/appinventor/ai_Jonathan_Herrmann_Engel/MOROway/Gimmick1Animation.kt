@@ -191,7 +191,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
                 false
             )
             smallHedgehog3 = BitmapDrawable(resources, scaledSmallHedgehog3)
-            val unscaledApple = BitmapFactory.decodeResource(resources, R.drawable.gimmick1_4)
+            val unscaledApple = BitmapFactory.decodeResource(resources, R.drawable.gimmick1_5)
             val scaledAppleWidth = width / 14
             val scaledApple = Bitmap.createScaledBitmap(
                 unscaledApple,

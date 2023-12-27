@@ -52,7 +52,7 @@ class MenuActivity : MOROwayActivity() {
                 layoutInflater
             )
             demoModeDialog.setContentView(demoModeDialogBinding.root)
-            demoModeDialog.setTitle(R.string.a_opt_demo)
+            demoModeDialog.setTitle(R.string.generalTitleDemoMode)
             demoModeDialog.window!!
                 .setLayout(
                     WindowManager.LayoutParams.MATCH_PARENT,

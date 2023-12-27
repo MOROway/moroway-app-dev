@@ -27,7 +27,7 @@
         android:background="@null"
         android:shadowColor="@color/black_light"
         android:shadowRadius="10"
-        android:text="@string/a_home_animation_button"
+        android:text="@string/generalStartGame"
         android:textColor="@color/white"
         android:textSize="36sp" />
 
@@ -69,7 +69,7 @@
             android:background="@null"
             android:shadowColor="@color/black_light"
             android:shadowRadius="10"
-            android:text="@string/title_activity_optionen"
+            android:text="@string/title_activity_menu"
             android:textColor="@color/white"
             android:textSize="24sp" />
 

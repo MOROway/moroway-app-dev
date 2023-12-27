@@ -12,8 +12,7 @@
 		"Hvit bil",
 		"Gul bil"
 	],
-	"appScreenDemoModeEnterDialogTitle": "Start demo-modus?",
-	"appScreenDemoModeTitle": "demo-modus",
+	"generalStartGameDemoMode": "Start demo-modus",
 	"appScreenFurtherInformation": "Mer info",
 	"appScreenGraphicalInfo": "Grafisk info",
 	"appScreenGraphicalInfoList": [
@@ -28,12 +27,8 @@
 		"Toghastighet",
 		"Start/stopp tog"
 	],
-	"appScreenHasUpdated": "Ny versjon",
+	"generalNewVersion": "Ny versjon",
 	"appScreenIsFail": "En feil inntraff",
-	"appScreenKonamiAnimals": [
-		"🐢",
-		"🦔"
-	],
 	"appScreenObjectHasCrashed": "Krasj mellom {{0}} og {{1}}",
 	"appScreenObjectStarts": "{{0}} starter",
 	"appScreenObjectStops": "{{0}} stopper",
@@ -48,23 +43,8 @@
 	"appScreenTeamplayChatSend": "Send",
 	"appScreenTeamplayChatSendAction": "Send togbilde",
 	"appScreenTeamplayChatSendReaction": "Send reaksjon",
-	"appScreenTeamplayChatSendReactionSmileyHeart": "❤️",
-	"appScreenTeamplayChatSendReactionSmileyLaugh": "🤣",
-	"appScreenTeamplayChatSendReactionSmileySmile": "🙂",
-	"appScreenTeamplayChatSendReactionSmileyThumbsDown": "👎",
-	"appScreenTeamplayChatSendReactionSmileyThumbsUp": "👍",
-	"appScreenTeamplayChatSendReactionSmileyUnhappy": "😢",
 	"appScreenTeamplayChatSendReactionSticker": "Klistremerke",
 	"appScreenTeamplayChatSendTitle": "Send melding",
-	"appScreenTeamplayChatStickerEmojis": [
-		"😺",
-		"😻",
-		"😿",
-		"❓",
-		"❗",
-		"💕",
-		"🚂"
-	],
 	"appScreenTeamplayChatStickerNote": "{{0}}-klistremerke",
 	"appScreenTeamplayChatTitle": "Sludring",
 	"appScreenTeamplayCreateError": "Kunne ikke opprette spill",
@@ -75,7 +55,7 @@
 	"appScreenTeamplaySetupStartButton": "Kopier",
 	"appScreenTeamplaySetupStartButtonError": "Feil: Kunne ikke kopiere spill-lenke",
 	"appScreenTeamplayStartError": "Kunne ikke starte spillet",
-	"appScreenTeamplayTitle": "Flerspiller",
+	"generalTitleTeamplay": "Flerspiller",
 	"appScreenTeamplayUnsetTitle": "Enkeltspiller",
 	"appScreenTextCommandsCarsMode": "modus: {{0}}",
 	"appScreenTextCommandsCarsModeAuto": "automatisk",
@@ -83,15 +63,6 @@
 	"appScreenTextCommandsCarsName": "bil",
 	"appScreenTextCommandsGeneralUsage": "bruk: {{0}}",
 	"appScreenTextCommandsTrainsName": "tog",
-	"appScreenTrainIcons": [
-		"🚂",
-		"🚅",
-		"🚋",
-		"🚅",
-		"🚃",
-		"🚈",
-		"🛲"
-	],
 	"appScreenTrainNames": [
 		"",
 		"",
@@ -109,11 +80,13 @@
 	"generalNo": "nei",
 	"generalOff": "av",
 	"generalOn": "på",
-	"generalServerNoteButtonGo": "vis mer",
+	"generalServerNoteButtonGo": "Lær mer",
 	"generalServerNoteButtonLater": "vis igjen",
-	"generalTitle": "MOROway-programmet",
+	"generalServerNoteInfoLater": "Fungerer kun hvis denne meldingen forblir gyldig.",
+	"generalTitleDemoMode": "Demo-modus",
 	"generalTitleErrorScreen": "Kjente problemer",
-	"generalTitleHelpScreen": "Juridisk/hjelp",
+	"generalTitleHelpScreen": "Hjelp / juridisk",
+	"generalTitleHelpScreenShort": "Hjelp",
 	"generalTitleSettingsScreen": "Innstillinger",
 	"generalTitleWhatsNewScreen": "Endringslogg",
 	"generalYes": "ja",
@@ -153,6 +126,8 @@
 	"helpScreenLegalFonts": "Skrifter {{0}}",
 	"helpScreenLegalFontsRoboto": "Roboto",
 	"langName": "Norsk Bokmål",
-	"optTitle_morowayApp_showVersionNoteAgain": "Vis versjonsnotat igjen"
-
+	"optTitle_morowayApp_showVersionNoteAgain": "Vis versjonsnotat igjen",
+	"generalStartGame": "Spill",
+	"generalLeaveAndDestroyGameNo": "Fortsett",
+	"generalLeaveAndDestroyGameYes": "Avslutt"
 }

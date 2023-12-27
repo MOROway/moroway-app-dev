@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     defaultConfig {
         applicationId 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
         minSdk 24
-        targetSdk 33
-        versionCode 900020
-        versionName '9.0.2'
+        targetSdk 34
+        versionCode 901025
+        versionName '9.1.0'
     }
     buildTypes {
         release {
@@ -39,8 +39,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.activity:activity-ktx:1.7.2'
-    implementation 'androidx.webkit:webkit:1.7.0'
+    implementation 'androidx.activity:activity-ktx:1.8.1'
+    implementation 'androidx.webkit:webkit:1.8.0'
     implementation 'com.squareup.picasso:picasso:2.8'
 }
 repositories {

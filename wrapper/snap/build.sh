@@ -50,5 +50,4 @@ fi
 echo $(echo "$link" | sed 's!^\(.*//\)*\([^/]*\).*$!\2!') >app_domain.txt
 
 # Set App Version
-content=$(cat config.xml | sed "s/version=\"[0-9]\+\.[0-9]\+\.[0-9]\+\"/version=\"$version\"/")
-echo "$content" >config.xml
+sed -i "s/version=\"[0-9]\+\.[0-9]\+\.[0-9]\+\"/version=\"$version\"/" config.xml

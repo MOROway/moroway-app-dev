@@ -40,7 +40,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:background="@null"
-                android:text="@string/d_confirmback_ok"
+                android:text="@string/generalLeaveAndDestroyGameYes"
                 android:textColor="@color/white_light"
                 android:textSize="20sp" />
 
@@ -53,7 +53,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:background="@null"
-                android:text="@string/d_confirmback_cancel"
+                android:text="@string/generalLeaveAndDestroyGameNo"
                 android:textColor="@color/white_light"
                 android:textSize="20sp" />
 

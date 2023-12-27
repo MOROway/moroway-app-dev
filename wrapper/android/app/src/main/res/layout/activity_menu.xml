@@ -39,7 +39,7 @@
                 android:background="@null"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/a_opt_singleplay"
+                android:text="@string/generalStartGame"
                 android:textColor="@color/options_animation"
                 android:textSize="@dimen/options_button_huge" />
 
@@ -54,7 +54,7 @@
                 android:background="@null"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/a_opt_teamplay"
+                android:text="@string/generalTitleTeamplay"
                 android:textColor="@color/options_animation_teamplay"
                 android:textSize="@dimen/options_button_big" />
 
@@ -69,7 +69,7 @@
                 android:background="@null"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/a_opt_demo"
+                android:text="@string/generalTitleDemoMode"
                 android:textColor="@color/options_animation_demo"
                 android:textSize="@dimen/options_button_big" />
 
@@ -84,7 +84,7 @@
                 android:background="@null"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/title_activity_help"
+                android:text="@string/generalTitleHelpScreen"
                 android:textColor="@color/options_animation_help"
                 android:textSize="@dimen/options_button_medium" />
 
@@ -98,7 +98,7 @@
                 android:background="@null"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/title_activity_settings"
+                android:text="@string/generalTitleSettingsScreen"
                 android:textColor="@color/options_animation_settings"
                 android:textSize="@dimen/options_button_small" />
 

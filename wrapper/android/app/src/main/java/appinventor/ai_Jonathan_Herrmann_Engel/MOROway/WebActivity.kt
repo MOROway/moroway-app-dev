@@ -30,22 +30,20 @@ abstract class WebActivity : MOROwayActivity() {
         binding.webAnimation.destroy()
     }
 
-    private fun initWeb(webView: WebView, gameActivity: Boolean) {
+    private fun initWeb(webView: WebView) {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
-        if (gameActivity) {
-            webView.settings.useWideViewPort = true
-            webView.settings.builtInZoomControls = false
-            webView.settings.setSupportZoom(false)
-        }
+        webView.settings.useWideViewPort = true
+        webView.settings.builtInZoomControls = false
+        webView.settings.setSupportZoom(false)
     }
 
-    protected fun setWeb(url: String, gameActivity: Boolean) {
+    protected fun setWeb(url: String) {
         val assetLoader = WebViewAssetLoader.Builder()
             .setDomain(Globals.WEBVIEW_DOMAIN)
             .addPathHandler(Globals.WEBVIEW_PATH, AssetsPathHandler(this))
             .build()
-        initWeb(binding.webAnimation, gameActivity)
+        initWeb(binding.webAnimation)
         binding.webAnimation.resumeTimers()
         binding.webAnimation.addJavascriptInterface(WebJSInterface(this), "WebJSInterface")
         binding.webAnimation.webViewClient = object : WebViewClient() {
@@ -73,15 +71,22 @@ abstract class WebActivity : MOROwayActivity() {
                 view: WebView,
                 request: WebResourceRequest
             ): WebResourceResponse? {
-                return assetLoader.shouldInterceptRequest(request.url)
+                val interceptedWebRequest = assetLoader.shouldInterceptRequest(request.url)
+                interceptedWebRequest?.let { webResourceResponse ->
+                    if ((request.url.pathSegments.find { it.startsWith("jsm") } != null) && (request.url.lastPathSegment?.endsWith(
+                            ".js",
+                            true
+                        ) == true)) {
+                        webResourceResponse.mimeType = "text/javascript"
+                    }
+                }
+                return interceptedWebRequest
             }
 
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
                 super.onPageStarted(binding.webAnimation, url, favicon)
-                initWeb(binding.webAnimation, gameActivity)
-                if (gameActivity) {
-                    binding.webLoading.visibility = View.VISIBLE
-                }
+                binding.webAnimation.visibility = View.INVISIBLE
+                initWeb(binding.webAnimation)
             }
 
             override fun onPageFinished(view: WebView, url: String) {
@@ -91,16 +96,16 @@ abstract class WebActivity : MOROwayActivity() {
                     binding.webAnimation.clearHistory()
                     binding.webAnimation.loadUrl(location)
                 }
-                initWeb(binding.webAnimation, gameActivity)
-                binding.webLoading.visibility = View.GONE
+                initWeb(binding.webAnimation)
+                binding.webAnimation.visibility = View.VISIBLE
             }
         }
         location = url
         binding.webAnimation.loadUrl(url)
     }
 
-    protected fun loadNewUri(url: String, gameActivity: Boolean) {
-        initWeb(binding.webAnimation, gameActivity)
+    protected fun loadNewUri(url: String) {
+        initWeb(binding.webAnimation)
         location = url
         binding.webAnimation.loadUrl("about:blank")
     }
@@ -110,5 +115,7 @@ abstract class WebActivity : MOROwayActivity() {
     }
 
     abstract fun onNewUri(uri: Uri)
+
+    abstract fun goBack()
 
 }

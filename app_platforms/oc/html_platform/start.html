@@ -10,7 +10,7 @@
 
         <!-- Open Source Libraries And Fonts -->
         <!-- Fonts -->
-        <link rel="stylesheet" type="text/css" href="src/lib/open_fonts/google/MaterialIcons/font.css" />
+        <link rel="stylesheet" type="text/css" href="src/lib/open_fonts/google/MaterialSymbols/font.css" />
         <link rel="stylesheet" type="text/css" href="src/lib/open_fonts/google/Roboto/font.css" />
 
         <!-- General Scripts -->
@@ -19,16 +19,12 @@
         <!-- dep_check -->
         <script src="src/js_platform/error_handler.js"></script>
         <!-- dep_check -->
-        <script src="src/js/appdata.js"></script>
+        <script src="src/jsm/general.js" type="module"></script>
         <!-- dep_check -->
-        <script src="src/js_platform/appdata.js"></script>
-        <!-- dep_check -->
-        <script src="src/js/general.js"></script>
-        <!-- dep_check -->
-        <script src="src/js_platform/general.js"></script>
+        <script src="src/jsm_platform/general.js" type="module"></script>
         <!-- Start Scripts -->
         <!-- dep_check -->
-        <script src="src/js_platform/_start.js"></script>
+        <script src="src/jsm_platform/_start.js" type="module"></script>
 
         <!-- General Styles -->
         <!-- dep_check -->
@@ -55,7 +51,7 @@
                     <div id="server-note-later-info" data-stringid-content="generalServerNoteInfoLater"></div>
                     <div id="server-note-buttons">
                         <div id="server-note-button-go" data-stringid-content="generalServerNoteButtonGo" data-stringid-content-case="upper"></div>
-                        <div id="server-note-button-no" data-stringid-content="generalServerNoteButtonNo" data-stringid-content-case="upper"></div>
+                        <div id="server-note-button-no" data-stringid-content="generalOK" data-stringid-content-case="upper"></div>
                     </div>
                 </div>
             </div>
@@ -72,7 +68,7 @@
                         <i class="material-icons">person</i>
                     </div>
                 </div>
-                <div class="content-text" data-stringid-content="platformOcStartGame"></div>
+                <div class="content-text" data-stringid-content="generalStartGame"></div>
             </div>
             <div id="link_multiplayer">
                 <div class="text-icons">
@@ -83,7 +79,7 @@
                         <i class="material-icons">people</i>
                     </div>
                 </div>
-                <div class="content-text" data-stringid-content="platformOcStartGameOnline"></div>
+                <div class="content-text" data-stringid-content="generalTitleTeamplay"></div>
             </div>
             <div id="link_demo">
                 <div class="text-icons">
@@ -94,7 +90,7 @@
                         <i class="material-icons">visibility</i>
                     </div>
                 </div>
-                <div class="content-text" data-stringid-content="platformOcStartDemoMode"></div>
+                <div class="content-text" data-stringid-content="generalTitleDemoMode"></div>
             </div>
             <div id="link_help">
                 <div class="text-icons">
@@ -102,7 +98,7 @@
                         <i class="material-icons">help_outline</i>
                     </div>
                 </div>
-                <div class="content-text" data-stringid-content="platformOcStartHelp"></div>
+                <div class="content-text" data-stringid-content="generalTitleHelpScreenShort"></div>
             </div>
             <div id="link_settings">
                 <div class="text-icons">
@@ -110,14 +106,8 @@
                         <i class="material-icons">settings</i>
                     </div>
                 </div>
-                <div class="content-text" data-stringid-content="platformOcStartSettings"></div>
+                <div class="content-text" data-stringid-content="generalTitleSettingsScreen"></div>
             </div>
         </main>
-
-        <!-- initialize -->
-        <!-- dep_check -->
-        <script src="src/js/init.js"></script>
-        <!-- dep_check -->
-        <script src="src/js_platform/init.js"></script>
     </body>
 </html>

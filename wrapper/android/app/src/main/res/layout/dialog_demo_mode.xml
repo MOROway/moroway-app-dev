@@ -24,7 +24,7 @@
                 android:layout_margin="20dp"
                 android:button="@drawable/checkbox"
                 android:padding="11dp"
-                android:text="@string/d_demo_mode_3d"
+                android:text="@string/general3DView"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
@@ -41,7 +41,7 @@
                     android:layout_margin="20dp"
                     android:button="@drawable/checkbox"
                     android:padding="11dp"
-                    android:text="@string/d_demo_mode_3d_night"
+                    android:text="@string/generalStartGameDemoMode3DNight"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/demo_mode_3d_night"
                     android:layout_margin="20dp"
-                    android:text="@string/d_demo_mode_3d_rotation_speed"
+                    android:text="@string/generalStartDemoMode3DRotationSpeed"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
@@ -82,7 +82,7 @@
                 android:layout_below="@id/demo_mode_3d_only"
                 android:layout_margin="20dp"
                 android:background="@android:color/transparent"
-                android:text="@string/d_demo_mode_go"
+                android:text="@string/generalStartGameDemoMode"
                 android:textColor="@color/moro_color_highlight"
                 android:textSize="20sp" />
         </RelativeLayout>

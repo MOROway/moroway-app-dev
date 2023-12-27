@@ -34,6 +34,15 @@ internal class WebJSInterface(private val c: Context) {
     }
 
     @JavascriptInterface
+    fun goBack() {
+        try {
+            (c as WebActivity).goBack()
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+        }
+    }
+
+    @JavascriptInterface
     fun throwError(error: String?) {
         val intent = Intent(c, JSErrorActivity::class.java)
         intent.putExtra("error", error)

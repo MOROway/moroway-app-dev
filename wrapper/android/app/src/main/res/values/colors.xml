@@ -3,6 +3,7 @@
     <color name="white">#ffffff</color>
     <color name="white_overlay">#cccfcfcf</color>
     <color name="white_light">#cfcfcf</color>
+    <color name="black">#000000</color>
     <color name="black_light">#0c0c0c</color>
 
     <color name="moro_color_background">#303030</color>

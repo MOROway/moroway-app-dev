@@ -8,19 +8,24 @@ class WebHelpActivity : WebActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setWeb(
-            "https://" + Globals.WEBVIEW_DOMAIN + Globals.WEBVIEW_PATH + "animation/help/index.html",
-            false
+            "https://" + Globals.WEBVIEW_DOMAIN + Globals.WEBVIEW_PATH + "animation/help/index.html"
         )
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (!binding.webAnimation.canGoBack()) {
-                    finish()
-                } else {
-                    binding.webAnimation.goBack()
-                }
+                goBack()
             }
         })
     }
 
     override fun onNewUri(uri: Uri) {}
+
+    override fun goBack() {
+        runOnUiThread {
+            if (!binding.webAnimation.canGoBack()) {
+                finish()
+            } else {
+                binding.webAnimation.goBack()
+            }
+        }
+    }
 }

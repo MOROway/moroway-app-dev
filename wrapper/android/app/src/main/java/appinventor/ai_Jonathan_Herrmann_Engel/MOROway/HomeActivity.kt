@@ -133,7 +133,7 @@ class HomeActivity : MOROwayActivity() {
         //Inform about new Version or Server messages
         val settingsAnimation = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
         val serverMsgSettings = getSharedPreferences("MOROwayAnimServerNote", MODE_PRIVATE)
-        val lastShownVersionNote = settings.getString("versionNoteName", Globals.VERSION_NAME)
+        val lastShownVersionNote = settings.getString("versionNoteName", BuildConfig.VERSION_NAME)
         val showVersionNoteAnyway = settingsAnimation.getBoolean("showVersionNoteAgain", false)
         if (serverMsgSettings.getInt(
                 "id",
@@ -197,13 +197,22 @@ class HomeActivity : MOROwayActivity() {
                 versionNote.dismiss()
             }
             versionNote.show()
-        } else if (lastShownVersionNote != Globals.VERSION_NAME && Globals.SHOW_UPDATE_NOTE || showVersionNoteAnyway) {
+        } else if (lastShownVersionNote != BuildConfig.VERSION_NAME && BuildConfig.VERSION_NAME.endsWith(
+                ".0"
+            ) || showVersionNoteAnyway
+        ) {
             val versionNote = Dialog(this, R.style.versionNoteDialog)
             val versionNoteBinding = DialogPopupBinding.inflate(
                 layoutInflater
             )
             versionNote.setContentView(versionNoteBinding.root)
-            versionNote.setTitle(getString(R.string.d_update_title, Globals.VERSION_NAME))
+            versionNote.setTitle(
+                getString(
+                    R.string.d_update_title,
+                    getString(R.string.generalNewVersion),
+                    BuildConfig.VERSION_NAME
+                )
+            )
             versionNote.window!!
                 .setLayout(
                     WindowManager.LayoutParams.MATCH_PARENT,
@@ -212,7 +221,7 @@ class HomeActivity : MOROwayActivity() {
             versionNoteBinding.popupMainText.text =
                 getString(R.string.d_update_text, getString(R.string.d_update_changelog))
             versionNoteBinding.button.setOnClickListener {
-                settingsEditor.putString("versionNoteName", Globals.VERSION_NAME)
+                settingsEditor.putString("versionNoteName", BuildConfig.VERSION_NAME)
                 settingsEditor.apply()
                 val settingsAnimationEditor = settingsAnimation.edit()
                 settingsAnimationEditor.putBoolean("showVersionNoteAgain", false)
@@ -374,11 +383,14 @@ class HomeActivity : MOROwayActivity() {
 
     private inner class SwipeListener : SimpleOnGestureListener() {
         override fun onFling(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
         ): Boolean {
+            if (e1 == null) {
+                return false
+            }
             val swipeMinDistance = width / 3
             val swipeMaxOffPath = width / 5
             val swipeThresholdVelocity = 222
@@ -400,7 +412,7 @@ class HomeActivity : MOROwayActivity() {
             } else {
                 resetImage()
             }
-            return false
+            return true
         }
 
         override fun onDown(e: MotionEvent): Boolean {

@@ -1,5 +1,5 @@
 {
-	"appScreen3DView": "3D-Ansicht",
+	"general3DView": "3D-Ansicht",
 	"appScreen3DViewDayNight": "Tag- und Nachtmodus wechseln.",
 	"appScreen3DViewTitle": "{{0}} ist {{1}}.",
 	"appScreenAMillionFrames": "{{0}} Millionen Einzelbilder gezeigt",
@@ -14,11 +14,6 @@
 	"appScreenCarControlCenterAutoModeResume": "Weiter",
 	"appScreenCarControlCenterStartCar": "„{{0}}“ starten",
 	"appScreenCarControlCenterTitle": "Autokontrollzentrum",
-	"appScreenCarIcons": [
-		"🏎️",
-		"🚗",
-		"🚕"
-	],
 	"appScreenCarNames": [
 		"Rotes Auto",
 		"Weißes Auto",
@@ -29,8 +24,7 @@
 	"appScreenControlCenterSpeedOff": "gestoppt",
 	"appScreenControlCenterTitle": "Zugkontrollzentrum",
 	"appScreenDemoModeEnterDialogText": "Sie können den Demo-Modus verlassen durch Touchen/Klicken und Halten oder mit Hilfe der „Escape“-Taste.",
-	"appScreenDemoModeEnterDialogTitle": "Demo-Modus starten?",
-	"appScreenDemoModeTitle": "Demo-Modus",
+	"generalTitleDemoMode": "Demo-Modus",
 	"appScreenFurtherInformation": "Mehr Informationen",
 	"appScreenGraphicalInfo": "Graphische Info",
 	"appScreenGraphicalInfoList": [
@@ -47,14 +41,9 @@
 		"Wechsel der Zug-Fahrtrichtung"
 	],
 	"appScreenHasLoaded": "Anwendung geladen",
-	"appScreenHasUpdated": "Neue Version",
+	"generalNewVersion": "Neue Version",
 	"appScreenIsFail": "Ein Fehler ist aufgetreten",
 	"appScreenKonami": "Super - Sie haben den Konamicode geknackt",
-	"appScreenKonamiAnimals": [
-		"🐢",
-		"🦔"
-	],
-	"appScreenKonamiIconRow": "🚂🚂🚂",
 	"appScreenNoCanvas": "Bitte aktualisieren Sie Ihren Browser",
 	"appScreenObjectChangesDirection": "{{0}}: Richtung gewechselt",
 	"appScreenObjectHasCrashed": "Crash zwischen {{0}} und {{1}}",
@@ -74,23 +63,8 @@
 	"appScreenTeamplayChatSendAction": "Zugbild senden",
 	"appScreenTeamplayChatSendReaction": "Reaktion senden",
 	"appScreenTeamplayChatSendReactionSmiley": "Emoji",
-	"appScreenTeamplayChatSendReactionSmileyHeart": "❤️",
-	"appScreenTeamplayChatSendReactionSmileyLaugh": "🤣",
-	"appScreenTeamplayChatSendReactionSmileySmile": "🙂",
-	"appScreenTeamplayChatSendReactionSmileyThumbsDown": "👎",
-	"appScreenTeamplayChatSendReactionSmileyThumbsUp": "👍",
-	"appScreenTeamplayChatSendReactionSmileyUnhappy": "😢",
 	"appScreenTeamplayChatSendReactionSticker": "Sticker",
 	"appScreenTeamplayChatSendTitle": "Nachricht senden",
-	"appScreenTeamplayChatStickerEmojis": [
-		"😺",
-		"😻",
-		"😿",
-		"❓",
-		"❗",
-		"💕",
-		"🚂"
-	],
 	"appScreenTeamplayChatStickerNote": "{{0}}-Sticker",
 	"appScreenTeamplayChatTitle": "Chat",
 	"appScreenTeamplayConnectionError": "Fehler: Keine Verbindung möglich oder Verbindung verloren",
@@ -116,9 +90,9 @@
 	"appScreenTeamplayTeammateLeft": "Ein Mitspieler hat das Spiel verlassen. Das Spiel ist obsolet",
 	"appScreenTeamplayTeammateReady": "Ihr Mitspieler ist bereit. Sie auch",
 	"appScreenTeamplayTeammateWait": "Bitte warten sie auf Ihren Mitspieler …",
-	"appScreenTeamplayTitle": "Mehrspielermodus",
+	"generalTitleTeamplay": "Mehrspieler",
 	"appScreenTeamplayUnknownRequest": "Der Server konnte die Anfrage nicht verarbeiten",
-	"appScreenTeamplayUnsetTitle": "Einzelspielermodus",
+	"appScreenTeamplayUnsetTitle": "Einzelspieler",
 	"appScreenTeamplayUpdateError": "App-Aktualisierung erforderlich",
 	"appScreenTeamplayUpdateNote": "App-Aktualisierung empfohlen",
 	"appScreenTextCommandsCarsMode": "Modus: {{0}}",
@@ -136,16 +110,6 @@
 	"appScreenTextCommandsTrainsSpeedInPercent": "Geschwindigkeit in Prozent: {{0}}",
 	"appScreenTextCommandsTrainsStarting": "Am Losfahren: {{0}}",
 	"appScreenTextCommandsTrainsStopping": "Am Anhalten: {{0}}",
-	"appScreenTrainCarIcon": "🚃",
-	"appScreenTrainIcons": [
-		"🚂",
-		"🚅",
-		"🚋",
-		"🚅",
-		"🚃",
-		"🚈",
-		"🛲"
-	],
 	"appScreenTrainNames": [
 		"Dampflok",
 		"TGV Duplex",
@@ -189,11 +153,11 @@
 	"generalOn": "ein",
 	"generalServerNoteButtonGo": "Mehr erfahren",
 	"generalServerNoteButtonLater": "Nochmals einblenden",
-	"generalServerNoteButtonNo": "Okay",
+	"generalOK": "Okay",
 	"generalServerNoteInfoLater": "Funktioniert nur, wenn diese Nachricht gültig bleibt.",
-	"generalTitle": "MOROway App",
 	"generalTitleErrorScreen": "Bekannte Probleme",
 	"generalTitleHelpScreen": "Hilfe / Informationen",
+	"generalTitleHelpScreenShort": "Hilfe",
 	"generalTitleSettingsScreen": "Einstellungen",
 	"generalTitleWhatsNewScreen": "Versionsgeschichte",
 	"generalYes": "ja",
@@ -202,7 +166,6 @@
 	"helpScreenContactBackupLinkNotification": "Kontaktdaten geöffnet",
 	"helpScreenContactFeedback": "Feedback {{0}}",
 	"helpScreenContactFeedbackBugs": "Bugreport",
-	"helpScreenContactFeedbackIcon": "📫",
 	"helpScreenContactFeedbackPs": [
 		"Sie kennen uns unbekannte Bugs? Sie haben Vorschläge, Feedback, Lob, Kritik, Fragen oder ein anderes Anliegen, dass Sie kommunizieren möchten? Hier sind die Kontaktdaten."
 	],
@@ -217,7 +180,6 @@
 		"Laden Sie sich die App auf Ihr Android Gerät über den Google Play Store oder über F-Droid."
 	],
 	"helpScreenDownloadAppsFdroidButton": "F-Droid",
-	"helpScreenDownloadAppsIcon": "💾",
 	"helpScreenDownloadAppsLinux": "Linux",
 	"helpScreenDownloadAppsLinuxPs": [
 		"Laden Sie sich die App auf Ihren Linux Laptop bzw. PC über Ubuntu's Snap Store."
@@ -230,7 +192,6 @@
 	],
 	"helpScreenDownloadTranslations": "Übersetzungen {{0}}",
 	"helpScreenDownloadTranslationsButtonTranslations": "Weblate",
-	"helpScreenDownloadTranslationsIcon": "🌍",
 	"helpScreenDownloadTranslationsPic": "Verfremdeter Text",
 	"helpScreenDownloadTranslationsPs": [
 		"Die Übersetzungen werden mit Weblate verwaltet."
@@ -238,13 +199,11 @@
 	"helpScreenDownloadViewSource": "Quelltext {{0}}",
 	"helpScreenDownloadViewSourceButtonSource": "GitHub",
 	"helpScreenDownloadViewSourceCodePic": "Beispiel-Code",
-	"helpScreenDownloadViewSourceIcon": "🔍️",
 	"helpScreenDownloadViewSourcePs": [
 		"Den Quelltext dieser Anwendung finden Sie auf GitHub."
 	],
 	"helpScreenGeneral": "Allgemeines",
 	"helpScreenGeneralCars": "Autos {{0}}",
-	"helpScreenGeneralCarsIcon": "🚗",
 	"helpScreenGeneralCarsPs": [
 		"Sie können die drei links neben dem Bahnhof geparkten Autos (gelbes Cabrio, rotes Cabrio, weißer VW-Bus) jeweils per Klick auf das Fahrzeug zum Fahren bringen. Um alle Autos automatisch fahren zu lassen, aktivieren Sie durch Touchen und halten bzw. Doppelklicken eines Autos den automatischen Modus.",
 		"Sofern sie den automatischen Modus nicht aktiviert haben lassen sich die Autos getrennt per Klick starten und stoppen. Starten Sie mehrere Autos, riskieren Sie einen Frontalzusammenstoß. Um die betroffenen Autos hiernach erneut starten zu können, setzten Sie ein Auto durch Touchen und halten bzw. Doppelklicken des Autos zurück.",
@@ -252,7 +211,6 @@
 		"Sie können ein Autokontrollzentrum aufrufen durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund des Zugkontrollzentrums. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden."
 	],
 	"helpScreenGeneralGestures": "Gesten {{0}}",
-	"helpScreenGeneralGesturesIcon": "🖼️",
 	"helpScreenGeneralGesturesPs": [
 		"Um zu zoomen können Sie folgende Optionen wählen: „Steuerungstaste“ + „+“/„-“, „Steuerungstaste“ + Mausrad und die Pinch-Touch-Geste (Finger auseinander bzw. zusammen ziehen).",
 		"Um den gezoomten Bildausschnitt zu ändern, können Sie die Pfeiltasten nutzen oder auf den Hintergrund der Anlage klicken / touchen, halten und bewegen.",
@@ -261,7 +219,6 @@
 		"In der 3D-Ansicht können Sie die Neigung zurücksetzen mit einem Doppelklick oder langem Touch auf den schwarzen Bereich neben der Anlage."
 	],
 	"helpScreenGeneralTeamplay": "Mehrspielermodus {{0}}",
-	"helpScreenGeneralTeamplayIcon": "🎮",
 	"helpScreenGeneralTeamplayPs": [
 		"Um ein Spiel mit Freunden zu starten, wählen Sie den Mehrspielermodus in der Hauptansicht.",
 		"Zunächst ist ein Spitzname zu wählen.",
@@ -270,7 +227,6 @@
 		"Ab jetzt werden alle Aktionen synchronisiert und Sie können gemeinsam spielen. Außerdem steht Ihnen ein Chat zur Verfügung."
 	],
 	"helpScreenGeneralTrains": "Eisenbahnen {{0}}",
-	"helpScreenGeneralTrainsIcon": "🚂",
 	"helpScreenGeneralTrainsPs": [
 		"Sie können zur Zeit sieben Züge steuern: Eine Dampflok, einen TGV Duplex, einen Schienen-Straßen-Bus, einen Thalys, einen Regionalzug, eine Straßenbahn und einen amerikanischen Güterzug. Das Starten bzw. Stoppen eines Zuges erfolgt durch Touch bzw. Klick auf den gewünschten Zug oder mit Hilfe der ausblendbaren klassischen Steuerelemente. Um einen Zug zu wenden, halten Sie den Zug an und touchen und halten bzw. doppelklicken Sie ihn.",
 		"Um mittels der klassischen Steuerelemente zu fahren, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im App-Bildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im App-Bildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
@@ -282,7 +238,6 @@
 	],
 	"helpScreenGeneralWelcome": "Willkommen {{0}}",
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Neuigkeiten",
-	"helpScreenGeneralWelcomeIcon": "🏡",
 	"helpScreenGeneralWelcomePs": [
 		"Hallo! Sie benutzen die MOROway App. Der Hintergrund stellt eine Luftaufnahme der Modellbahn MOROway aus dem Jahre 2011 dar; 2021 wurde der Abschnitt mit den zentralen Abstellgleisen neu aufgenommen, um diese befahrbar zu machen. Viel Fahrspaß!"
 	],
@@ -293,7 +248,6 @@
 	"helpScreenLegalAppAndroidAndroidXActivity": "androidx.activity",
 	"helpScreenLegalAppAndroidAndroidXAppcompat": "androidx.appcompat",
 	"helpScreenLegalAppAndroidAndroidXWebkit": "androidx.webkit",
-	"helpScreenLegalAppAndroidIcon": "📱",
 	"helpScreenLegalAppAndroidKotlin": "org.jetbrains.kotlin",
 	"helpScreenLegalAppAndroidPicasso": "com.squareup.picasso",
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
@@ -305,7 +259,6 @@
 	"helpScreenLegalAppOCDialogsPs": [
 		"Die MOROway App OC Variante nutzt das „Dialogs Plugin“ erstellt von der Apache Software Foundation."
 	],
-	"helpScreenLegalAppOCIcon": "📱",
 	"helpScreenLegalAppOCInsomnia": "Insomnia",
 	"helpScreenLegalAppOCInsomniaPs": [
 		"Die MOROway App OC Variante nutzt das „Insomnia-PhoneGap-Plugin“ erstellt von Eddy Verbruggen."
@@ -319,19 +272,16 @@
 	"helpScreenLegalAppSnapCordovaPs": [
 		"Die MOROway „snApp“ Variante basiert auf Apache Cordova mit der Plattform Electron von der Apache Software Foundation."
 	],
-	"helpScreenLegalAppSnapIcon": "💻",
 	"helpScreenLegalFonts": "Verwendete Schriften {{0}}",
-	"helpScreenLegalFontsIcon": "🌐",
-	"helpScreenLegalFontsMaterialIcons": "Material Icon Font",
+	"helpScreenLegalFontsMaterialIcons": "Material Symbols Font",
 	"helpScreenLegalFontsMaterialIconsPs": [
-		"Wir verwenden an einigen Stellen die „Material Icons“ Schrift der Google Inc."
+		"Wir verwenden an einigen Stellen die „Material Symbols“-Schrift der Google Inc."
 	],
 	"helpScreenLegalFontsRoboto": "Roboto",
 	"helpScreenLegalFontsRobotoPs": [
 		"Wir verwenden an einigen Stellen die Schriftart „Roboto“ der Google Inc."
 	],
 	"helpScreenLegalLibraries": "Bibliotheken {{0}}",
-	"helpScreenLegalLibrariesIcon": "🏗️",
 	"helpScreenLegalLibrariesThreeJs": "Three.js",
 	"helpScreenLegalLibrariesThreeJsPs": [
 		"Wir verwenden die 3D-Bibliothek „Three.js“."
@@ -344,19 +294,15 @@
 	"helpScreenLegalOwnCodePs": [
 		"Sie dürfen die MOROway App unter den Bedingungen der Apache License Version 2.0 weiterverwenden."
 	],
-	"helpScreenLegalOwnIcon": "✌️",
 	"helpScreenLegalOwnPics": "Medieninhalte",
 	"helpScreenLegalOwnPicsPs": [
 		"Sie dürfen unsere Medieninhalte auch unter der Creative Commons Attribution 4.0 International-Lizenz weiterverwenden."
 	],
-	"helpScreenLegalStrCopyright": "Copyright",
-	"helpScreenLegalStrLicense": "Lizenz",
+	"generalLicense": "Lizenz",
 	"helpScreenMOROmore": "Mehr über MOROway",
 	"helpScreenMOROmoreAbout": "Über MOROway {{0}}",
-	"helpScreenMOROmoreAboutIcon": "📜",
 	"helpScreenMOROmoreWebsite": "MOROway-Website {{0}}",
 	"helpScreenMOROmoreWebsiteButtonLink": "Webseite",
-	"helpScreenMOROmoreWebsiteIcon": "🛤️",
 	"helpScreenMOROmoreWebsitePs": [
 		"Besuchen Sie die MOROway Webseite …"
 	],
@@ -364,7 +310,6 @@
 	"helpScreenPrivacyStatement": "Datenschutzerklärung",
 	"helpScreenPrivacyStatementBackupLink": "Datenschutzerklärung öffnen",
 	"helpScreenPrivacyStatementBackupLinkNotification": "Link geöffnet",
-	"helpScreenPrivacyStatementIcon": "🦮",
 	"langName": "Deutsch",
 	"optApply": "Einstellungen aktualisiert",
 	"optButton_morowayApp_reduceOptMenuHide3DViewNightToggle": "3D-Ansicht Tag/Nacht",
@@ -403,21 +348,18 @@
 	"optTitle_morowayApp_showNotifications": "Benachrichtigungen",
 	"optTitle_morowayApp_showVersionNoteAgain": "Zeige Versionshinweise erneut",
 	"optTitle_morowayApp_startDemoMode": "App in Demo-Modus starten",
-	"platformOcAppUpdate": "Es sind neue Funktionen verfügbar!",
+	"platformOcAppUpdate": "Es sind neue Funktionen verfügbar.",
 	"platformOcAppUpdateNo": "Ignorieren",
-	"platformOcAppUpdateTitel": "App-Update",
 	"platformOcAppUpdateYes": "Ansehen",
-	"platformOcGameLeave": "Verlassen und Spiel zerstören?",
-	"platformOcGameLeaveNo": "Abbrechen!",
-	"platformOcGameLeaveTitel": "Sind Sie sich sicher?",
-	"platformOcGameLeaveYes": "Verlassen!",
-	"platformOcStartDemoMode": "Demo",
-	"platformOcStartGame": "Spielen",
-	"platformOcStartGameOnline": "Mehrspieler",
-	"platformOcStartHelp": "Hilfe/Credits",
-	"platformOcStartSettings": "Einstellungen",
+	"generalLeaveAndDestroyGame": "Verlassen und Spiel zerstören?",
+	"generalLeaveAndDestroyGameTitle": "Sind Sie sich sicher?",
+	"generalLeaveAndDestroyGameNo": "Spiel fortführen",
+	"generalLeaveAndDestroyGameYes": "Spiel verlassen",
+	"generalStartGameDemoMode3DNight": "3D: Nacht",
+	"generalStartDemoMode3DRotationSpeed": "3D: Rotationsgeschwindigkeit",
+	"generalStartGameDemoMode": "Demo-Modus starten",
+	"generalStartGame": "Spielen",
 	"platformSnapAppExit": "App verlassen",
-	"platformWindowsLinkError": "Fehler - Link konnte nicht geöffnet werden.",
 	"whatsNewScreenVersionIsNew": "Neu",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
 	"whatsNewScreenVersionNumberMinor": "Neu in Version {{0}}.{{1}}"

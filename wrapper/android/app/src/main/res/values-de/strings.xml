@@ -1,35 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_activity_animation">Animation</string>
     <string name="title_activity_gimmick2">Schildkröte</string>
-    <string name="title_activity_optionen">Optionen</string>
-    <string name="title_activity_settings">Einstellungen</string>
-    <string name="title_activity_help">Hilfe/Credits</string>
+    <string name="title_activity_menu">Menü</string>
     <string name="title_activity_jserror">JavaScript-Fehler</string>
-    <string name="a_home_animation_button">Spielen</string>
     <string name="a_anim_pleaseWait">bitte warten…</string>
     <string name="a_opt_start">Start</string>
-    <string name="a_opt_singleplay">Spielen</string>
-    <string name="a_opt_teamplay">Mehrspielermodus</string>
-    <string name="a_opt_demo">Demo-Modus</string>
-    <string name="a_jserror_text">Es tut uns sehr leid, aber ein schwerweigender JavaScript-Fehler ist aufgetreten. Diese App basiert auf einer Progressive Web App und nutzt neuere Web Standards. Diese Webseiten-Komponenten werden mit einem Android WebView in die Anwendung geladen. Bitte versuchen Sie, diese Komponente über den Play Store upzudaten, indem Sie den Button unten anklicken.</string>
     <string name="a_jserror_button">Zum Play Store</string>
-    <string name="a_jserror_text2">Wenn das Update nicht weitergeholfen hat, senden Sie uns bitte ein Feedback inklusive der unten angezeigten Informationen (welche sie hier kopieren und im Feedbackformular einfügen können)</string>
     <string name="a_jserror_button2">Feedback öffnen</string>
-    <string name="a_g1_again">Nochmal…</string>
-    <string name="d_update_title">Neue Funktionen (%1$s)</string>
-    <string name="d_update_text">%1$s\n\nWeiterhin viel Fahrspaß zu haben wünscht MOROway!</string>
-    <string name="d_update_oK">O.K.</string>
-    <string name="d_server_msg_show_again">Nochmals anzeigen</string>
-    <string name="d_server_msg_show_again_info">Funktioniert nur, wenn diese Nachricht gültig bleibt.</string>
-    <string name="d_server_msg_link">Mehr erfahren</string>
+    <string name="a_jserror_text">Es tut uns sehr leid, aber ein schwerweigender JavaScript-Fehler ist aufgetreten. Diese App basiert auf einer Progressive Web App und nutzt neuere Web Standards. Diese Webseiten-Komponenten werden mit einem Android WebView in die Anwendung geladen. Bitte versuchen Sie, diese Komponente über den Play Store upzudaten, indem Sie den Button unten anklicken.</string>
+    <string name="a_jserror_text2">Wenn das Update nicht weitergeholfen hat, senden Sie uns bitte ein Feedback inklusive der unten angezeigten Informationen (welche sie hier kopieren und im Feedbackformular einfügen können)</string>
+    <string name="a_g1_again">Nochmal spielen…</string>
+    <string name="d_update_text">Neue Funktionen:\n\n%1$s\n\nWeiterhin viel Fahrspaß zu haben wünscht MOROway!</string>
     <string name="d_confirmback_text_online">Dieses Onlinespiel wird durch Benutzen der Zurück-Taste beendet! Wenn Sie weiternavigieren wollen, beispielsweise, um den Onlinespiel-Link zu teilen, benutzen Sie bitte den Home-Button. Dann bleibt das Onlinespiel einige Zeit erhalten.</string>
-    <string name="d_confirmback_text_offline">Dieses Spiel beenden?</string>
-    <string name="d_confirmback_title">Zurück-Taste: Bestätigung</string>
-    <string name="d_confirmback_ok">Spiel abbrechen</string>
-    <string name="d_confirmback_cancel">Spiel fortführen</string>
-    <string name="d_demo_mode_3d">3D</string>
-    <string name="d_demo_mode_3d_night">3D: Nacht</string>
-    <string name="d_demo_mode_3d_rotation_speed">3D: Rotationsgeschwindigkeit</string>
-    <string name="d_demo_mode_go">Demo-Modus starten</string>
 </resources>

@@ -2,11 +2,12 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogBackConfirmBinding
 
 class WebGameActivity : WebActivity() {
@@ -17,11 +18,9 @@ class WebGameActivity : WebActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setWeb(processAndGetURL(intent), true)
-        binding.webBack.visibility = View.VISIBLE
-        binding.webBack.setOnClickListener {
-            goBack()
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        binding.root.background = ColorDrawable(ContextCompat.getColor(this, R.color.black))
+        setWeb(processAndGetURL(intent))
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 goBack()
@@ -31,7 +30,7 @@ class WebGameActivity : WebActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        loadNewUri(processAndGetURL(intent), true)
+        loadNewUri(processAndGetURL(intent))
     }
 
     override fun onNewUri(uri: Uri) {
@@ -92,33 +91,35 @@ class WebGameActivity : WebActivity() {
         return locationOutput
     }
 
-    private fun goBack() {
-        val animSettings = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
-        if (onlineGame || (!animSettings.getBoolean("saveGame", true) && !demoGame)) {
-            val backConfirm = Dialog(this, R.style.versionNoteDialog)
-            val backConfirmBinding = DialogBackConfirmBinding.inflate(
-                layoutInflater
-            )
-            backConfirm.setContentView(backConfirmBinding.root)
-            backConfirm.setTitle(getString(R.string.d_confirmback_title))
-            backConfirm.window!!
-                .setLayout(
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.MATCH_PARENT
+    override fun goBack() {
+        runOnUiThread {
+            val animSettings = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
+            if (onlineGame || (!animSettings.getBoolean("saveGame", true) && !demoGame)) {
+                val backConfirm = Dialog(this@WebGameActivity, R.style.versionNoteDialog)
+                val backConfirmBinding = DialogBackConfirmBinding.inflate(
+                    layoutInflater
                 )
-            if (onlineGame) {
-                backConfirmBinding.backDialogText.setText(R.string.d_confirmback_text_online)
+                backConfirm.setContentView(backConfirmBinding.root)
+                backConfirm.setTitle(getString(R.string.generalLeaveAndDestroyGameTitle))
+                backConfirm.window!!
+                    .setLayout(
+                        WindowManager.LayoutParams.MATCH_PARENT,
+                        WindowManager.LayoutParams.MATCH_PARENT
+                    )
+                if (onlineGame) {
+                    backConfirmBinding.backDialogText.setText(R.string.d_confirmback_text_online)
+                } else {
+                    backConfirmBinding.backDialogText.setText(R.string.generalLeaveAndDestroyGame)
+                }
+                backConfirmBinding.backConfirm.setOnClickListener {
+                    backConfirm.dismiss()
+                    finish()
+                }
+                backConfirmBinding.backCancel.setOnClickListener { backConfirm.dismiss() }
+                backConfirm.show()
             } else {
-                backConfirmBinding.backDialogText.setText(R.string.d_confirmback_text_offline)
-            }
-            backConfirmBinding.backConfirm.setOnClickListener {
-                backConfirm.dismiss()
                 finish()
             }
-            backConfirmBinding.backCancel.setOnClickListener { backConfirm.dismiss() }
-            backConfirm.show()
-        } else {
-            finish()
         }
     }
 

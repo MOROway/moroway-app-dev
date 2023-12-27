@@ -23,7 +23,6 @@
             android:name=".WebGameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true"
-            android:label="@string/title_activity_animation"
             android:launchMode="singleTop"
             android:screenOrientation="locked">
             <intent-filter
@@ -42,17 +41,17 @@
         <activity
             android:name=".WebSettingsActivity"
             android:configChanges="keyboardHidden|screenSize"
-            android:label="@string/title_activity_settings"
+            android:label="@string/generalTitleSettingsScreen"
             android:screenOrientation="locked" />
         <activity
             android:name=".WebHelpActivity"
             android:configChanges="keyboardHidden|screenSize"
-            android:label="@string/title_activity_help"
+            android:label="@string/generalTitleHelpScreen"
             android:screenOrientation="locked" />
         <activity
             android:name=".MenuActivity"
             android:configChanges="keyboardHidden|screenSize"
-            android:label="@string/title_activity_optionen"
+            android:label="@string/title_activity_menu"
             android:screenOrientation="locked" />
         <activity
             android:name=".Gimmick1Activity"

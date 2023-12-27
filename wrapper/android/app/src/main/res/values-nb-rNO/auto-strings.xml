@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="generalStartGameDemoMode">Start demo-modus</string>
+  <string name="generalNewVersion">Ny versjon</string>
+  <string name="generalTitleTeamplay">Flerspiller</string>
   <string name="generalBack">Tilbake</string>
   <string name="generalClose">lukk</string>
   <string name="generalNo">nei</string>
   <string name="generalOff">av</string>
   <string name="generalOn">på</string>
-  <string name="generalServerNoteButtonGo">vis mer</string>
+  <string name="generalServerNoteButtonGo">Lær mer</string>
   <string name="generalServerNoteButtonLater">vis igjen</string>
-  <string name="generalTitle">MOROway-programmet</string>
+  <string name="generalServerNoteInfoLater">Fungerer kun hvis denne meldingen forblir gyldig.</string>
+  <string name="generalTitleDemoMode">Demo-modus</string>
   <string name="generalTitleErrorScreen">Kjente problemer</string>
-  <string name="generalTitleHelpScreen">Juridisk/hjelp</string>
+  <string name="generalTitleHelpScreen">Hjelp / juridisk</string>
+  <string name="generalTitleHelpScreenShort">Hjelp</string>
   <string name="generalTitleSettingsScreen">Innstillinger</string>
   <string name="generalTitleWhatsNewScreen">Endringslogg</string>
   <string name="generalYes">ja</string>
+  <string name="generalStartGame">Spill</string>
+  <string name="generalLeaveAndDestroyGameNo">Fortsett</string>
+  <string name="generalLeaveAndDestroyGameYes">Avslutt</string>
 </resources>

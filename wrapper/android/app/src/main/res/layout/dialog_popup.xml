@@ -72,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/d_server_msg_show_again"
+                    android:text="@string/generalServerNoteButtonLater"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/white_light" />
 
@@ -85,7 +85,7 @@
                 android:layout_below="@+id/showAgainContainer"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="15dp"
-                android:text="@string/d_server_msg_show_again_info"
+                android:text="@string/generalServerNoteInfoLater"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/white_light"
                 android:visibility="gone" />
@@ -99,7 +99,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:background="@null"
-                android:text="@string/d_server_msg_link"
+                android:text="@string/generalServerNoteButtonGo"
                 android:textColor="@color/white_light"
                 android:textSize="20sp"
                 android:visibility="gone" />
@@ -113,7 +113,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:background="@null"
-                android:text="@string/d_update_oK"
+                android:text="@string/generalOK"
                 android:textColor="@color/white_light"
                 android:textSize="20sp" />
 
