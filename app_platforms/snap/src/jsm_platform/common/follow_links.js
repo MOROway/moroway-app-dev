@@ -28,7 +28,7 @@ export function followLink(input1, input2, input3) {
             }
             break;
         case LINK_STATE_INTERNAL_LICENSE:
-            followLink("license?license-file=" + input1, input2, LINK_STATE_INTERNAL_HTML);
+            followLink("license/?license-file=" + input1, input2, LINK_STATE_INTERNAL_HTML);
             break;
         case LINK_STATE_INTERNAL_LICENSE_FILE:
             window.open(input1, "_blank", "frame=false");

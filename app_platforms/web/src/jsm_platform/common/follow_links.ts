@@ -5,7 +5,7 @@ export function followLink(input1, input2, input3) {
         location.reload();
         return;
     } else if (input3 == LINK_STATE_INTERNAL_LICENSE) {
-        input1 = "license?license-file=" + input1;
+        input1 = "license/?license-file=" + input1;
     } else if (input3 == LINK_STATE_INTERNAL_HTML && !input1.endsWith("/") && input1.indexOf("#") == -1 && input1.indexOf("?") == -1) {
         input1 += "/";
     } else if (input1.indexOf("/#") == -1 && input1.indexOf("#") > -1) {

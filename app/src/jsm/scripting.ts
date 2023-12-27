@@ -1466,7 +1466,6 @@ function getTouchStart(event) {
         }
         if (event.touches.length == 2) {
             client.zoomAndTilt.pinchHypotDown = Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
-            client.zoomAndTilt.pinchGestureIsTilt = false;
         }
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
         hardware.mouse.moveX = hardware.mouse.downX = xTS;
