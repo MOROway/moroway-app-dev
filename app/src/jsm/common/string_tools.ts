@@ -42,8 +42,8 @@ export function setHTMLStrings() {
     const elemsContent = document.querySelectorAll("*[data-stringid-content]") as NodeListOf<HTMLElement>;
     for (var i = 0; i < elemsContent.length; i++) {
         var args: string[] = [];
-        var stringIdAltArrayNo = elemsContent[i].dataset.stringidAltArrayno;
-        args[0] = typeof stringIdAltArrayNo == "string" ? getString([elemsContent[i].dataset.stringidContent, parseInt(stringIdAltArrayNo, 10)], elemsContent[i].dataset.stringidContentPunctuation, elemsContent[i].dataset.stringidContentCase) : getString(elemsContent[i].dataset.stringidContent, elemsContent[i].dataset.stringidContentPunctuation, elemsContent[i].dataset.stringidContentCase);
+        var stringIdContentArrayNo = elemsContent[i].dataset.stringidContentArrayno;
+        args[0] = typeof stringIdContentArrayNo == "string" ? getString([elemsContent[i].dataset.stringidContent, parseInt(stringIdContentArrayNo, 10)], elemsContent[i].dataset.stringidContentPunctuation, elemsContent[i].dataset.stringidContentCase) : getString(elemsContent[i].dataset.stringidContent, elemsContent[i].dataset.stringidContentPunctuation, elemsContent[i].dataset.stringidContentCase);
         var argsNo = 1;
         do {
             var elCArg = elemsContent[i].dataset["stringidContentArgisstringref" + argsNo] == "1" ? getString(elemsContent[i].dataset["stringidContentArg" + argsNo]) : elemsContent[i].dataset["stringidContentArg" + argsNo];
@@ -59,8 +59,8 @@ export function setHTMLStrings() {
     const elemsTitle = document.querySelectorAll("*[data-stringid-title]") as NodeListOf<HTMLElement>;
     for (var i = 0; i < elemsTitle.length; i++) {
         var args: string[] = [];
-        var stringIdAltArrayNo = elemsTitle[i].dataset.stringidAltArrayno;
-        args[0] = typeof stringIdAltArrayNo == "string" ? getString([elemsTitle[i].dataset.stringidTitle, parseInt(stringIdAltArrayNo, 10)], elemsTitle[i].dataset.stringidTitlePunctuation, elemsTitle[i].dataset.stringidTitleCase) : getString(elemsTitle[i].dataset.stringidTitle, elemsTitle[i].dataset.stringidTitlePunctuation, elemsTitle[i].dataset.stringidTitleCase);
+        var stringIdTitleArrayNo = elemsTitle[i].dataset.stringidTitleArrayno;
+        args[0] = typeof stringIdTitleArrayNo == "string" ? getString([elemsTitle[i].dataset.stringidTitle, parseInt(stringIdTitleArrayNo, 10)], elemsTitle[i].dataset.stringidTitlePunctuation, elemsTitle[i].dataset.stringidTitleCase) : getString(elemsTitle[i].dataset.stringidTitle, elemsTitle[i].dataset.stringidTitlePunctuation, elemsTitle[i].dataset.stringidTitleCase);
         var argsNo = 1;
         do {
             var elCArg = elemsTitle[i].dataset["stringidTitleArgisstringref" + argsNo] == "1" ? getString(elemsTitle[i].dataset["tringidTitleArg" + argsNo]) : elemsTitle[i].dataset["tringidTitleArg" + argsNo];
