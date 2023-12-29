@@ -12,7 +12,6 @@
 		"Hvit bil",
 		"Gul bil"
 	],
-	"generalStartGameDemoMode": "Start demo-modus",
 	"appScreenFurtherInformation": "Mer info",
 	"appScreenGraphicalInfo": "Grafisk info",
 	"appScreenGraphicalInfoList": [
@@ -27,7 +26,6 @@
 		"Toghastighet",
 		"Start/stopp tog"
 	],
-	"generalNewVersion": "Ny versjon",
 	"appScreenIsFail": "En feil inntraff",
 	"appScreenObjectHasCrashed": "Krasj mellom {{0}} og {{1}}",
 	"appScreenObjectStarts": "{{0}} starter",
@@ -55,7 +53,6 @@
 	"appScreenTeamplaySetupStartButton": "Kopier",
 	"appScreenTeamplaySetupStartButtonError": "Feil: Kunne ikke kopiere spill-lenke",
 	"appScreenTeamplayStartError": "Kunne ikke starte spillet",
-	"generalTitleTeamplay": "Flerspiller",
 	"appScreenTeamplayUnsetTitle": "Enkeltspiller",
 	"appScreenTextCommandsCarsMode": "modus: {{0}}",
 	"appScreenTextCommandsCarsModeAuto": "automatisk",
@@ -77,17 +74,23 @@
 	"errorScreenErrorTeamplayJoin": "Kan ikke ta del i spillet",
 	"generalBack": "Tilbake",
 	"generalClose": "lukk",
+	"generalLeaveAndDestroyGameNo": "Fortsett",
+	"generalLeaveAndDestroyGameYes": "Avslutt",
+	"generalNewVersion": "Ny versjon",
 	"generalNo": "nei",
 	"generalOff": "av",
 	"generalOn": "på",
 	"generalServerNoteButtonGo": "Lær mer",
 	"generalServerNoteButtonLater": "vis igjen",
 	"generalServerNoteInfoLater": "Fungerer kun hvis denne meldingen forblir gyldig.",
+	"generalStartGame": "Spill",
+	"generalStartGameDemoMode": "Start demo-modus",
 	"generalTitleDemoMode": "Demo-modus",
 	"generalTitleErrorScreen": "Kjente problemer",
 	"generalTitleHelpScreen": "Hjelp / juridisk",
 	"generalTitleHelpScreenShort": "Hjelp",
 	"generalTitleSettingsScreen": "Innstillinger",
+	"generalTitleTeamplay": "Flerspiller",
 	"generalTitleWhatsNewScreen": "Endringslogg",
 	"generalYes": "ja",
 	"helpScreenContact": "Kontakt",
@@ -126,8 +129,6 @@
 	"helpScreenLegalFonts": "Skrifter {{0}}",
 	"helpScreenLegalFontsRoboto": "Roboto",
 	"langName": "Norsk Bokmål",
-	"optTitle_morowayApp_showVersionNoteAgain": "Vis versjonsnotat igjen",
-	"generalStartGame": "Spill",
-	"generalLeaveAndDestroyGameNo": "Fortsett",
-	"generalLeaveAndDestroyGameYes": "Avslutt"
+	"optButton_morowayApp_reduceOptMenuHideAudioToggle": "Lydeffekter",
+	"optTitle_morowayApp_showVersionNoteAgain": "Vis versjonsnotat igjen"
 }
