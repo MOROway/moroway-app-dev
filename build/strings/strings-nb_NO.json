@@ -33,7 +33,7 @@
 	"appScreenSaveGameError": "Kunne ikke lagre spillet",
 	"appScreenSettingsApplyAndClose": "Bruk og lukk",
 	"appScreenSound": "Lydeffekter",
-	"appScreenSoundToggle": "{{0}} er {{1}}",
+	"generalXAreY": "{{0}} er {{1}}",
 	"appScreenTeamplayChatClear": "Tøm sludring",
 	"appScreenTeamplayChatClose": "Lukk sludring",
 	"appScreenTeamplayChatMe": "Meg",

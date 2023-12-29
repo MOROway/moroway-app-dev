@@ -732,14 +732,14 @@ function calcMenusAndBackground(state) {
             element3DViewNightToggle?.classList.remove("gui-hidden");
             if (element3DViewToggle != null) {
                 element3DViewToggle.querySelector("i")!.textContent = "2d";
-                element3DViewToggle.title = formatJSString(getString("appScreen3DViewTitle"), getString("general3DView"), getString("generalOn"));
+                element3DViewToggle.title = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
             }
         } else {
             elementInfoToggle?.classList.remove("gui-hidden");
             element3DViewNightToggle?.classList.add("gui-hidden");
             if (element3DViewToggle != null) {
                 element3DViewToggle.querySelector("i")!.textContent = "view_in_ar";
-                element3DViewToggle.title = formatJSString(getString("appScreen3DViewTitle"), getString("general3DView"), getString("generalOff"));
+                element3DViewToggle.title = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
             }
         }
     }
@@ -787,7 +787,7 @@ function calcMenusAndBackground(state) {
             audio.active = false;
             playAndPauseAudio();
             elementSoundToggle!.querySelector("i")!.textContent = "volume_off";
-            elementSoundToggle.title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
+            elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
         } else {
             elementSoundToggle.classList.remove("settings-hidden");
         }
@@ -841,7 +841,7 @@ function calcMenusAndBackground(state) {
             }
         }
         if (elementSoundToggle != null) {
-            elementSoundToggle.title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
+            elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
             elementSoundToggle.addEventListener("click", function () {
                 commonOnOptionsMenuClick();
                 if (audio.context == undefined) {
@@ -901,10 +901,10 @@ function calcMenusAndBackground(state) {
                 if (elementSoundToggle != null) {
                     if (audio.active) {
                         elementSoundToggle.querySelector("i")!.textContent = "volume_up";
-                        elementSoundToggle.title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOn"));
+                        elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
                     } else {
                         elementSoundToggle.querySelector("i")!.textContent = "volume_off";
-                        elementSoundToggle.title = formatJSString(getString("appScreenSoundToggle"), getString("appScreenSound"), getString("generalOff"));
+                        elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
                     }
                 }
             });

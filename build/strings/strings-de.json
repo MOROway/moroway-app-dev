@@ -1,6 +1,6 @@
 {
 	"appScreen3DViewDayNight": "Tag- und Nachtmodus wechseln.",
-	"appScreen3DViewTitle": "{{0}} ist {{1}}.",
+	"generalXIsY": "{{0}} ist {{1}}.",
 	"appScreenAMillionFrames": "{{0}} Millionen Einzelbilder gezeigt",
 	"appScreenCarAutoModeChange": "Automatische Autosteuerung {{0}}",
 	"appScreenCarAutoModeCrash": "Automatischer Modus: Autounfall! Schalte um auf manuelle Steuerung. Viel Glück!",
@@ -49,7 +49,7 @@
 	"appScreenSaveGameError": "Fehler beim Speichern des Spieles",
 	"appScreenSettingsApplyAndClose": "Anwenden und schließen",
 	"appScreenSound": "Audio-Effekte",
-	"appScreenSoundToggle": "{{0}} sind {{1}}",
+	"generalXAreY": "{{0}} sind {{1}}",
 	"appScreenSwitchTurns": "Weiche gestellt",
 	"appScreenTeamplayChatClear": "Chat leeren",
 	"appScreenTeamplayChatClose": "Chat ausblenden",
@@ -254,11 +254,6 @@
 	"helpScreenGeneralWelcomeVersion": "Sie verwenden aktuell die am {{5}}. {{4}}. {{3}} erstellte Version {{0}}.{{1}}.{{2}}{{6}}",
 	"helpScreenLegal": "Lizenzen",
 	"helpScreenLegalAppAndroid": "MOROway App für Android {{0}}",
-	"helpScreenLegalAppAndroidAndroidXActivity": "androidx.activity",
-	"helpScreenLegalAppAndroidAndroidXAppcompat": "androidx.appcompat",
-	"helpScreenLegalAppAndroidAndroidXWebkit": "androidx.webkit",
-	"helpScreenLegalAppAndroidKotlin": "org.jetbrains.kotlin",
-	"helpScreenLegalAppAndroidPicasso": "com.squareup.picasso",
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [

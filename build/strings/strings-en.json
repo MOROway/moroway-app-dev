@@ -1,6 +1,6 @@
 {
 	"appScreen3DViewDayNight": "Switch day and night mode.",
-	"appScreen3DViewTitle": "{{0}} is {{1}}.",
+	"generalXIsY": "{{0}} is {{1}}.",
 	"appScreenAMillionFrames": "{{0}} million frames shown",
 	"appScreenCarAutoModeChange": "Automatic car control {{0}}",
 	"appScreenCarAutoModeCrash": "Auto mode: Car crash! Switching over to manual control. Good luck!",
@@ -59,7 +59,7 @@
 	"appScreenSaveGameError": "Error saving game",
 	"appScreenSettingsApplyAndClose": "Apply and close",
 	"appScreenSound": "Sound effects",
-	"appScreenSoundToggle": "{{0}} are {{1}}",
+	"generalXAreY": "{{0}} are {{1}}",
 	"appScreenSwitchTurns": "Switch turned",
 	"appScreenTeamplayChatClear": "Clear chat",
 	"appScreenTeamplayChatClose": "Close chat",
