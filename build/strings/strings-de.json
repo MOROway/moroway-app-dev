@@ -1,6 +1,5 @@
 {
 	"appScreen3DViewDayNight": "Tag- und Nachtmodus wechseln.",
-	"generalXIsY": "{{0}} ist {{1}}.",
 	"appScreenAMillionFrames": "{{0}} Millionen Einzelbilder gezeigt",
 	"appScreenCarAutoModeChange": "Automatische Autosteuerung {{0}}",
 	"appScreenCarAutoModeCrash": "Automatischer Modus: Autounfall! Schalte um auf manuelle Steuerung. Viel Glück!",
@@ -49,7 +48,6 @@
 	"appScreenSaveGameError": "Fehler beim Speichern des Spieles",
 	"appScreenSettingsApplyAndClose": "Anwenden und schließen",
 	"appScreenSound": "Audio-Effekte",
-	"generalXAreY": "{{0}} sind {{1}}",
 	"appScreenSwitchTurns": "Weiche gestellt",
 	"appScreenTeamplayChatClear": "Chat leeren",
 	"appScreenTeamplayChatClose": "Chat ausblenden",
@@ -169,6 +167,8 @@
 	"generalTitleSettingsScreen": "Einstellungen",
 	"generalTitleTeamplay": "Mehrspieler",
 	"generalTitleWhatsNewScreen": "Versionsgeschichte",
+	"generalXAreY": "{{0}} sind {{1}}",
+	"generalXIsY": "{{0}} ist {{1}}.",
 	"generalYes": "ja",
 	"helpScreenContact": "Kontakt",
 	"helpScreenContactBackupLink": "Zu den Kontaktdaten",
