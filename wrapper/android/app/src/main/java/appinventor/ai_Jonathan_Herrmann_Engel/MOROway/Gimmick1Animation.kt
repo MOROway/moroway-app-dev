@@ -201,7 +201,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             )
             apple = BitmapDrawable(resources, scaledApple)
             replay = Paint()
-            replay!!.textSize = height / 5f
+            replay!!.textSize = (height / 5f).coerceAtMost((width / resources.getString(R.string.a_g1_again).length).toFloat())
             replay!!.textAlign = Paint.Align.CENTER
             reset()
             firstRun = false
