@@ -35,7 +35,7 @@ MOROway App uses Weblate for translations.
 - `app` = core files for all platform
   - `src/lib`: included open source [components](./app/src/lib/README.md).
 - `app_platforms` = platform specific files
-  - All directories containing files end with `\_platform`.
+  - All directories containing files end with `_platform`.
   - `[PLATFORM]/core_excludes`: core files not used by platform.
   - `[PLATFORM]/sw_excludes`: files not used by service worker.
 - `build` = build script
