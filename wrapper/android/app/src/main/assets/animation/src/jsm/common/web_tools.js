@@ -94,7 +94,7 @@ export function showServerNote() {
             var serverNoteElementButtonNo = document.querySelector("#server-note #server-note-button-no");
             var serverNoteElementButtonGo = document.querySelector("#server-note #server-note-button-go");
             var serverNoteElementImageContainer = document.querySelector("#server-note #server-note-img");
-            var serverNoteElementImage = document.querySelector("#server-note #server-note-img");
+            var serverNoteElementImage = document.querySelector("#server-note #server-note-img img");
             serverNoteElementRoot.style.display = "block";
             serverNoteElementTitle.textContent = serverMsg.title;
             serverNoteElementText.textContent = serverMsg.text;

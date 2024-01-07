@@ -393,6 +393,7 @@
 	"optButton_morowayApp_reduceOptMenuHideAudioToggle": "Sound effects",
 	"optButton_morowayApp_reduceOptMenuHideCarControlCenter": "Car Control Center",
 	"optButton_morowayApp_reduceOptMenuHideDemoMode": "Demo mode",
+	"optButton_morowayApp_reduceOptMenuHideExit": "Exit button",
 	"optButton_morowayApp_reduceOptMenuHideGraphicalInfoToggle": "Graphical info",
 	"optButton_morowayApp_reduceOptMenuHideTrainControlCenter": "Train Control Center",
 	"optButton_morowayApp_saveGame_delete": "Delete saved game now",

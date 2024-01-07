@@ -928,14 +928,18 @@ function calcMenusAndBackground(state) {
     }
 }
 export function optionsMenuEditorAdd(id, title, icon, onClickFunction) {
-    var itemToAdd = menus.options.items[0].cloneNode(true);
+    var itemToAdd = document.createElement("button");
+    var itemToAddChild = document.createElement("i");
+    itemToAdd.classList.add("canvas-options-button");
     itemToAdd.id = id;
     itemToAdd.title = title;
-    itemToAdd.querySelector("i").textContent = icon;
+    itemToAddChild.textContent = icon;
+    itemToAddChild.classList.add("material-icons");
     itemToAdd.addEventListener("click", function () {
         commonOnOptionsMenuClick();
         onClickFunction();
     });
+    itemToAdd.appendChild(itemToAddChild);
     menus.options.container.elementInner.appendChild(itemToAdd);
     calcMenusAndBackground("items-change");
 }

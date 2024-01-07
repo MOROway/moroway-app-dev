@@ -6,11 +6,11 @@ var APP_DATA = {
         major: 9,
         minor: 1,
         patch: 0,
-        beta: 5,
+        beta: 8,
         date: {
-            year: 2023,
-            month: 12,
-            day: 30
+            year: 2024,
+            month: 1,
+            day: 7
         }
     },
     platform: "snap",
