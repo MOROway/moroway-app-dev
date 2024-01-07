@@ -320,6 +320,7 @@
 	"optButton_morowayApp_reduceOptMenuHideAudioToggle": "Audio-Effekte",
 	"optButton_morowayApp_reduceOptMenuHideCarControlCenter": "Autokontrollzentrum",
 	"optButton_morowayApp_reduceOptMenuHideDemoMode": "Demo-Modus",
+	"optButton_morowayApp_reduceOptMenuHideExit": "Beenden-Schaltfläche",
 	"optButton_morowayApp_reduceOptMenuHideGraphicalInfoToggle": "Graphische Info",
 	"optButton_morowayApp_reduceOptMenuHideTrainControlCenter": "Zugkontrollzentrum",
 	"optButton_morowayApp_saveGame_delete": "Gespeichertes Spiel jetzt löschen",
