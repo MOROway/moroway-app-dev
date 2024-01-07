@@ -10,7 +10,7 @@ document.addEventListener("moroway-app-after-calc-options-menu-load", function (
     optionsMenuEditorHide("canvas-help");
     optionsMenuEditorHide("canvas-demo-mode");
     if (!getSetting("reduceOptMenuHideExit")) {
-        optionsMenuEditorAdd("canvas-platform-back", getString("generalBack"), "close", function () {
+        optionsMenuEditorAdd("canvas-platform-back", getString("generalBack"), "cancel", function () {
             WebJSInterface.goBack();
         });
     }

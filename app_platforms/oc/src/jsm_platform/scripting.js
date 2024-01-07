@@ -26,7 +26,7 @@ document.addEventListener("deviceready", function () {
                             followLink("html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
                         }
                     },
-                    getString("generalLeaveAndDestroyGameTitel"),
+                    getString("generalLeaveAndDestroyGameTitle"),
                     [getString("generalLeaveAndDestroyGameYes"), getString("generalLeaveAndDestroyGameNo")]
                 );
             } else {
