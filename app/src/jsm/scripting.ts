@@ -6800,5 +6800,7 @@ window.onload = function () {
     });
 };
 
-document.addEventListener("DOMContentLoaded", setHTMLStrings);
-document.addEventListener("DOMContentLoaded", initTooltips);
+document.addEventListener("DOMContentLoaded", function () {
+    setHTMLStrings();
+    initTooltips();
+});

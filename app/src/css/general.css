@@ -61,7 +61,7 @@ h2 {
 /* Tooltip */
 .tooltip-container {
     display: none;
-    position: absolute;
+    position: fixed;
     z-index: 3000;
     max-width: 200px;
     padding: 0.75em;
@@ -72,6 +72,7 @@ h2 {
     user-select: none;
     background-color: rgb(48, 48, 48);
     color: rgb(207, 207, 207);
+    border: 2px solid rgb(210, 120, 27);
 }
 .tooltip-container.active {
     display: block;

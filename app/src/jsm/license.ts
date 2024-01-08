@@ -3,6 +3,7 @@ import {followLink, LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE_FILE} 
 import {APP_DATA} from "./common/app_data.js";
 import {getQueryString} from "./common/web_tools.js";
 import {setHTMLStrings} from "./common/string_tools.js";
+import {initTooltips} from "./common/tooltip.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("#backOption")?.addEventListener("click", function () {
@@ -10,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     setHTMLStrings();
+    initTooltips();
 
     const file = getQueryString("license-file");
     if ((file.startsWith(document.baseURI) || (!file.startsWith("/") && file.indexOf("://") == -1)) && (file.endsWith(".txt") || file.match(/([/]|^)[^.]+$/)) && !file.endsWith("/")) {
