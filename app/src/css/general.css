@@ -39,6 +39,7 @@ h2 {
     display: none !important;
 }
 
+/* Fatal Error */
 #error-element {
     margin-top: 1em;
     text-align: center;
@@ -55,6 +56,25 @@ h2 {
 }
 #error-element-action {
     color: #ffccee;
+}
+
+/* Tooltip */
+.tooltip-container {
+    display: none;
+    position: absolute;
+    z-index: 3000;
+    max-width: 200px;
+    padding: 0.75em;
+    border-radius: 0.25em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    user-select: none;
+    background-color: rgb(48, 48, 48);
+    color: rgb(207, 207, 207);
+}
+.tooltip-container.active {
+    display: block;
 }
 
 /* Info Cards */
