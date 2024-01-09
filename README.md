@@ -66,6 +66,10 @@ MOROway App uses Weblate for translations.
   - `oc`: [Extra repository](https://github.com/MOROway/moroway-app-oc)
   - `snap`: [here](./wrapper/snap)
 
+## Licenses
+
+[Click here](./ABOUT).
+
 ## Query-Parameters
 
 The following query parameters can be used with MOROway App (foremost web platform).
