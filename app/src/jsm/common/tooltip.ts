@@ -1,5 +1,9 @@
 "use strict";
 //TOOLTIPS
+
+function reset() {
+    tooltipContainer.classList.remove("active");
+}
 export function initTooltip(elem: HTMLElement) {
     function activate() {
         tooltipContainer.classList.add("active");
@@ -8,9 +12,6 @@ export function initTooltip(elem: HTMLElement) {
         const margin = tooltipContainer.offsetHeight * 0.2;
         tooltipContainer.style.top = (rect.top - tooltipContainer.offsetHeight - margin >= 0 ? rect.top - tooltipContainer.offsetHeight - margin : rect.top + elem.offsetHeight + margin) + "px";
         tooltipContainer.style.left = (rect.left + tooltipContainer.offsetWidth <= window.innerWidth ? rect.left : window.innerWidth - tooltipContainer.offsetWidth - margin) + "px";
-    }
-    function reset() {
-        tooltipContainer.classList.remove("active");
     }
     if (elem.dataset.tooltipInit == undefined) {
         elem.addEventListener("mouseenter", function () {
@@ -44,4 +45,7 @@ const tooltipContainer = document.createElement("div");
 tooltipContainer.classList.add("tooltip-container");
 document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(tooltipContainer);
+    document.addEventListener("touchstart", function () {
+        reset();
+    });
 });
