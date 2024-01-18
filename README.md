@@ -68,7 +68,7 @@ MOROway App uses Weblate for translations.
 
 ## Licenses
 
-[Click here](./ABOUT).
+See file: [./ABOUT](./ABOUT).
 
 ## Query-Parameters
 
