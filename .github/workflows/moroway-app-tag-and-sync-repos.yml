@@ -54,6 +54,9 @@ jobs:
                       redirectdocs: 1
         steps:
             - uses: actions/checkout@v2
+            - uses: FedericoCarboni/setup-ffmpeg@v3
+              with:
+                  - ffmpeg-version: release
               # The following step contains code from https://github.com/cpina/github-action-push-to-another-repository/  (MIT License, by cpina)
             - name: Build moroway-app and publish to platform repository
               shell: bash
