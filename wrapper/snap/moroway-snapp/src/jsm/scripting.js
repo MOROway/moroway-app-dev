@@ -9,6 +9,7 @@ import { copyJSObject } from "./common/js_objects.js";
 import { copy } from "./common/copy_paste.js";
 import { getGuiState, setGuiState } from "./common/gui_state.js";
 import { getVersionCode, updateSavedGame, removeSavedGame } from "./common/saved_game.js";
+import { initTooltip, initTooltips } from "./common/tooltip.js";
 import * as THREE from "../lib/open_code/jsm/three.js/three.module.min.js";
 import { GLTFLoader } from "../lib/open_code/jsm/three.js/GLTFLoader.js";
 /*******************************************
@@ -445,7 +446,8 @@ function drawInfoOverlayMenu(state) {
         var element = document.createElement("button");
         element.className = "canvas-info-button";
         element.textContent = menus.infoOverlay.items[i];
-        element.title = getString(["appScreenGraphicalInfoList", menus.infoOverlay.items[i] - 1]);
+        element.dataset.tooltip = getString(["appScreenGraphicalInfoList", menus.infoOverlay.items[i] - 1]);
+        initTooltip(element);
         element.onclick = function (event) {
             var target = event.target;
             if (menus.infoOverlay.textTimeout != undefined && menus.infoOverlay.textTimeout != null) {
@@ -595,7 +597,7 @@ function calcMenusAndBackground(state) {
             element3DViewNightToggle === null || element3DViewNightToggle === void 0 ? void 0 : element3DViewNightToggle.classList.remove("gui-hidden");
             if (element3DViewToggle != null) {
                 element3DViewToggle.querySelector("i").textContent = "2d";
-                element3DViewToggle.title = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
+                element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
             }
         }
         else {
@@ -603,7 +605,7 @@ function calcMenusAndBackground(state) {
             element3DViewNightToggle === null || element3DViewNightToggle === void 0 ? void 0 : element3DViewNightToggle.classList.add("gui-hidden");
             if (element3DViewToggle != null) {
                 element3DViewToggle.querySelector("i").textContent = "view_in_ar";
-                element3DViewToggle.title = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
+                element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
             }
         }
     }
@@ -654,7 +656,7 @@ function calcMenusAndBackground(state) {
             audio.active = false;
             playAndPauseAudio();
             elementSoundToggle.querySelector("i").textContent = "volume_off";
-            elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+            elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
         }
         else {
             elementSoundToggle.classList.remove("settings-hidden");
@@ -709,7 +711,7 @@ function calcMenusAndBackground(state) {
             }
         }
         if (elementSoundToggle != null) {
-            elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+            elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
             elementSoundToggle.addEventListener("click", function () {
                 commonOnOptionsMenuClick();
                 if (audio.context == undefined) {
@@ -771,11 +773,11 @@ function calcMenusAndBackground(state) {
                 if (elementSoundToggle != null) {
                     if (audio.active) {
                         elementSoundToggle.querySelector("i").textContent = "volume_up";
-                        elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
+                        elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
                     }
                     else {
                         elementSoundToggle.querySelector("i").textContent = "volume_off";
-                        elementSoundToggle.title = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+                        elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
                     }
                 }
             });
@@ -932,7 +934,8 @@ export function optionsMenuEditorAdd(id, title, icon, onClickFunction) {
     var itemToAddChild = document.createElement("i");
     itemToAdd.classList.add("canvas-options-button");
     itemToAdd.id = id;
-    itemToAdd.title = title;
+    itemToAdd.dataset.tooltip = title;
+    initTooltip(itemToAdd);
     itemToAddChild.textContent = icon;
     itemToAddChild.classList.add("material-icons");
     itemToAdd.addEventListener("click", function () {
@@ -5175,8 +5178,10 @@ window.onload = function () {
                     var chatTrainContainer = document.querySelector("#chat #chat-msg-trains-inner");
                     for (var stickerTrain = 0; stickerTrain < trains.length; stickerTrain++) {
                         var elem = document.createElement("img");
-                        elem.title = getString(["appScreenTrainNames", stickerTrain]);
                         elem.src = "./assets/chat_train_" + stickerTrain + ".png";
+                        elem.alt = getString(["appScreenTrainNames", stickerTrain]);
+                        elem.dataset.tooltip = getString(["appScreenTrainNames", stickerTrain]);
+                        initTooltip(elem);
                         elem.dataset.stickerNumber = stickerTrain.toString();
                         elem.addEventListener("click", function (event) {
                             onlineConnection.send({ mode: "chat-msg", message: "{{stickerTrain=" + event.target.dataset.stickerNumber + "}}" });
@@ -5517,13 +5522,13 @@ window.onload = function () {
                 }
                 window.setTimeout(function () {
                     destroy([document.querySelector("#snake"), document.querySelector("#percent")]);
+                    var event = new CustomEvent("moroway-app-ready");
+                    document.dispatchEvent(event);
                     var toHide = document.querySelector("#branding");
                     if (toHide != null && !onlineGame.enabled) {
                         toHide.style.transition = "opacity " + timeLoad + "s ease-in";
                         toHide.style.opacity = "0";
                         window.setTimeout(function () {
-                            var event = new CustomEvent("moroway-app-ready");
-                            document.dispatchEvent(event);
                             var localAppData = getLocalAppDataCopy();
                             if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.demo && !gui.three) {
                                 notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH, 3000, null, null, client.y + menus.outerContainer.height);
@@ -6687,4 +6692,7 @@ window.onload = function () {
         };
     });
 };
-document.addEventListener("DOMContentLoaded", setHTMLStrings);
+document.addEventListener("DOMContentLoaded", function () {
+    setHTMLStrings();
+    initTooltips();
+});

@@ -4,6 +4,7 @@ import { APP_DATA } from "./common/app_data.js";
 import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
 import { handleServerJSONValues, getServerHTMLLink, getServerRedirectLink } from "./common/web_tools.js";
 import { notify, NOTIFICATION_PRIO_DEFAULT } from "./common/notify.js";
+import { initTooltips } from "./common/tooltip.js";
 document.addEventListener("DOMContentLoaded", function () {
     function getUserSystem() {
         var shortStrings = ["Electron", "Edg", "Chrome", "Firefox", "Safari"];
@@ -92,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
         elements[i].removeAttribute("data-stringid-content");
     }
     setHTMLStrings();
+    initTooltips();
     var elem = document.createElement("p");
     elem.textContent = formatJSString(getString("helpScreenGeneralWelcomeSystem", "."), getUserSystem());
     document.querySelector("#general-version").appendChild(elem);

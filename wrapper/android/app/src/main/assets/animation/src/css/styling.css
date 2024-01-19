@@ -133,6 +133,7 @@ canvas {
     cursor: pointer;
     color: rgb(210, 120, 27);
     background: transparent;
+    user-select: none;
 }
 
 #info-overlay-text {
