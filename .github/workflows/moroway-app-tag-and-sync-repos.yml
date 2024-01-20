@@ -10,7 +10,7 @@ jobs:
             tag: ${{ steps.prepare.outputs.tag }}
             version: ${{ steps.prepare.outputs.version }}
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - name: Prepare
               id: prepare
               shell: bash
@@ -18,7 +18,7 @@ jobs:
                   cd build
                   beta=$(cat conf | grep "beta=" | sed 's/.*=//' | sed s/[^0-9]//g )
                   if [[ -z "$beta" ]] || [[ "$beta" != 0 ]]; then
-                    echo "::set-output name=create::0"
+                    echo "create=0" >> $GITHUB_OUTPUT
                     echo "No release version"
                     exit
                   fi
@@ -27,13 +27,13 @@ jobs:
                   git fetch --depth=1 origin +refs/tags/*:refs/tags/*
                   exitcode=$(git show-ref --tags --verify --quiet -- "refs/tags/$tag" && echo 0 || echo $?)
                   if [[ "$exitcode" == 0 ]]; then
-                    echo "::set-output name=create::0"
+                    echo "create=0" >> $GITHUB_OUTPUT
                     echo "No new version"
                     exit
                   fi
-                  echo "::set-output name=create::1"
-                  echo "::set-output name=tag::$tag"
-                  echo "::set-output name=version::$version"
+                  echo "create=1" >> $GITHUB_OUTPUT
+                  echo "tag=$tag" >> $GITHUB_OUTPUT
+                  echo "version=$version" >> $GITHUB_OUTPUT
             - if: steps.prepare.outputs.create == '1'
               name: Tag
               uses: rickstaa/action-create-tag@v1
@@ -53,7 +53,7 @@ jobs:
                       subdir: .
                       redirectdocs: 1
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - uses: FedericoCarboni/setup-ffmpeg@v3
               with:
                   ffmpeg-version: release
