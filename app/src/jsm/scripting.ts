@@ -4008,7 +4008,7 @@ function drawObjects() {
     }
 
     if (gui.three) {
-        canvasForeground.style.cursor = hardware.mouse.cursor;
+        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || gui.demo ? "none" : hardware.mouse.cursor;
     } else {
         /////BACKGROUND/Margins-2////
         if (konamiState < 0) {
