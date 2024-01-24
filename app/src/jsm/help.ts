@@ -109,4 +109,22 @@ document.addEventListener("DOMContentLoaded", function () {
     (document.querySelector("#general-whatsnew") as HTMLElement).addEventListener("click", function () {
         followLink("whatsnew/#newest", "_self", LINK_STATE_INTERNAL_HTML);
     });
+
+    const pics = document.querySelector("#website-pics") as HTMLElement;
+    if (pics) {
+        pics.style.display = "none";
+        handleServerJSONValues("webpics", function (res) {
+            if (typeof res.pics == "object") {
+                res.pics.forEach(function (pic) {
+                    var img = document.createElement("div");
+                    img.onclick = function () {
+                        followLink(pic.links.normal, "_blank", LINK_STATE_NORMAL);
+                    };
+                    img.style.backgroundImage = "url('" + pic.urls.thumb.url + "')";
+                    pics.appendChild(img);
+                });
+                pics.style.display = "";
+            }
+        });
+    }
 });

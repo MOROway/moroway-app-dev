@@ -4,22 +4,6 @@ import {getString} from "../jsm/common/string_tools.js";
 import {handleServerJSONValues, getServerHTMLLink} from "../jsm/common/web_tools.js";
 import {notify, NOTIFICATION_PRIO_DEFAULT} from "../jsm/common/notify.js";
 document.addEventListener("DOMContentLoaded", function () {
-    var pics = document.querySelector("#website-pics");
-    pics.style.display = "none";
-    handleServerJSONValues("webpics", function (res) {
-        if (typeof res.pics == "object") {
-            res.pics.forEach(function (pic) {
-                var img = document.createElement("div");
-                img.onclick = function () {
-                    followLink(pic.links.normal, "_blank", LINK_STATE_NORMAL);
-                };
-                img.style.backgroundImage = "url('" + pic.urls.thumb.url + "')";
-                pics.appendChild(img);
-            });
-            pics.style.display = "";
-        }
-    });
-
     const elem = document.getElementById("backOption"),
         elemClone = elem.cloneNode(true);
     elem.parentNode.replaceChild(elemClone, elem);
