@@ -12,7 +12,7 @@ This repository provides the build tools for MOROway App. The code here is used 
 ## Platforms
 
 [![Webapp](https://img.shields.io/github/release/MOROway/moroway-app.svg?label=web&labelColor=d2781b&color=303030)](https://app.moroway.de)
-[![Microsoft Store](https://img.shields.io/badge/windows-Microsoft%20Store-303030?labelColor=d2781b)](https://www.microsoft.com/p/moroway-app/9nb7t5b9rd91)
+[![Microsoft Store](https://img.shields.io/badge/windows-Microsoft%20Store-303030?labelColor=d2781b)](https://apps.microsoft.com/detail/MOROway%20App/9NB7T5B9RD91?launch=true&mode=full)
 [![Play Store](https://img.shields.io/badge/android-Play%20Store-303030?labelColor=d2781b)](https://play.google.com/store/apps/details?id=appinventor.ai_Jonathan_Herrmann_Engel.MOROway)
 [![F-Droid](https://img.shields.io/f-droid/v/de.moroway.oc.svg?label=oc&color=303030&labelColor=d2781b)](https://f-droid.org/de/packages/de.moroway.oc/)
 [![Snap Store](https://img.shields.io/badge/snap-Snap%20Store-303030?labelColor=d2781b)](https://snapcraft.io/moroway-app)
