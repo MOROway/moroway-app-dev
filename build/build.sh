@@ -247,12 +247,12 @@ for platform in ${platforms[@]}; do
 		fontBasePath="$to/src/lib/open_fonts"
 		fontPath="$fontBasePath/google/MaterialSymbols"
 		fontFile="$fontPath/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf"
-		fonttools varLib.mutator "$fontFile" FILL=1 GRAD=125 opsz=48 wght=450 -o "$fontPath/MaterialSymbols.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
+		fonttools varLib.mutator "$fontFile" FILL=1 GRAD=125 opsz=48 wght=450 --no-recalc-timestamp -o "$fontPath/MaterialSymbols.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
 		rm "$fontFile"
 		fontPath="$fontBasePath/google/Roboto"
 		fontFile="$fontPath/Roboto[wdth,wght].ttf"
-		fonttools varLib.mutator "$fontFile" wdth=480 wght=500 -o "$fontPath/Roboto-Medium.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
-		fonttools varLib.mutator "$fontFile" wdth=480 wght=400 -o "$fontPath/Roboto-Regular.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
+		fonttools varLib.mutator "$fontFile" wdth=480 wght=500 --no-recalc-timestamp -o "$fontPath/Roboto-Medium.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
+		fonttools varLib.mutator "$fontFile" wdth=480 wght=400 --no-recalc-timestamp -o "$fontPath/Roboto-Regular.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
 		rm "$fontFile"
 
 		# Service Worker
