@@ -40,7 +40,7 @@ MOROway App uses Weblate for translations.
   - `[PLATFORM]/core_excludes`: core files not used by platform.
   - `[PLATFORM]/sw_excludes`: files not used by service worker.
 - `build` = build script
-  - Linux-based OS, Bash, Typescript (tsc), FFmpeg and common CLI-tools required
+  - Linux-based OS, Bash, Typescript (tsc), FFmpeg, fonttools and common CLI-tools required
   - Usage: `bash build.sh [ -p PLATFORM ] [ -d DEBUG ]`
     - -p (platform):
       - One of the platforms listed above.

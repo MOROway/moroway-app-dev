@@ -38,6 +38,7 @@ cd "$dir" || logexit 3 "set working dir failed"
 
 tsc -v >/dev/null 2>&1 || logexit 5 "typescript not installed"
 ffmpeg -h >/dev/null 2>&1 || logexit 9 "FFmpeg not installed"
+fonttools -h >/dev/null 2>&1 || logexit 11 "fonttools not installed"
 
 platforms=$(ls "../app_platforms")
 while getopts :d:p: opts; do
@@ -242,6 +243,17 @@ for platform in ${platforms[@]}; do
 				rm "$to/$ogg_file"
 			fi
 		done
+		# Generate fonts
+		fontBasePath="$to/src/lib/open_fonts"
+		fontPath="$fontBasePath/google/MaterialSymbols"
+		fontFile="$fontPath/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf"
+		fonttools varLib.mutator "$fontFile" FILL=1 GRAD=125 opsz=48 wght=450 -o "$fontPath/MaterialSymbols.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
+		rm "$fontFile"
+		fontPath="$fontBasePath/google/Roboto"
+		fontFile="$fontPath/Roboto[wdth,wght].ttf"
+		fonttools varLib.mutator "$fontFile" wdth=480 wght=500 -o "$fontPath/Roboto-Medium.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
+		fonttools varLib.mutator "$fontFile" wdth=480 wght=400 -o "$fontPath/Roboto-Regular.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
+		rm "$fontFile"
 
 		# Service Worker
 		file="$to/sw.js"
