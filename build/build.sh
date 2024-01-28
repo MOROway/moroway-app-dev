@@ -11,6 +11,7 @@ function logexit() {
 }
 
 function loop_files() {
+	LC_COLLATE=C
 	files=("$1"/*)
 	for file in "${files[@]}"; do
 		if [[ -f "$file" ]]; then
