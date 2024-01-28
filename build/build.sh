@@ -239,7 +239,7 @@ for platform in ${platforms[@]}; do
 		# Media: OGG to MP3
 		for ogg_file in ${all_files[@]}; do
 			if [[ "$ogg_file" =~ .ogg$ ]]; then
-				ffmpeg -i "$to/$ogg_file" "$(echo "$to/$ogg_file" | sed 's/.ogg$/.mp3/')" >/dev/null 2>&1 || logexit 10 "FFmpeg error"
+				ffmpeg -i "$to/$ogg_file" -fflags +bitexact "$(echo "$to/$ogg_file" | sed 's/.ogg$/.mp3/')" >/dev/null 2>&1 || logexit 10 "FFmpeg error"
 				rm "$to/$ogg_file"
 			fi
 		done
