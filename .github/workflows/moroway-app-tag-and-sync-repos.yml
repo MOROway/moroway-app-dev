@@ -59,6 +59,7 @@ jobs:
                   ffmpeg-version: release
             - uses: actions/setup-python@v5
               with:
+                  python-version: "3.7" 
                   cache: "pip"
             - name: Install fonttools
               run: pip install fonttools
