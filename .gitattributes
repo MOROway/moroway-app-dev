@@ -1,2 +1,3 @@
 app/src/lib/** linguist-vendored
+build/changelogs/** linguist-documentation
 docs/** linguist-documentation
