@@ -61,14 +61,11 @@ for lang in "$working_dir_build"/changelogs/*; do
 	fi
 	if [[ $lang == default ]]; then
 		lang=""
-		[[ -z "$changelog" ]] && changelog="$version"
 	else
 		lang="-$lang"
 	fi
-	if [[ ! -z "$changelog" ]] && [[ -d app/src/main/res/values"$lang"/ ]]; then
+	if [[ -d app/src/main/res/values"$lang"/ ]]; then
 		echo '<?xml version="1.0" encoding="utf-8"?><resources><string name="d_update_changelog">'$(echo "$changelog" | perl -0pe 's/\n$//g' | perl -0pe 's/\n/\\n/g' | sed 's/&/\&amp;/g' | sed 's/>/\&gt;/g' | sed 's/</\&lt;/g' | sed 's/'"'"'/\&apos;/g' | sed 's/"/\&quot;/g')'</string></resources>' >app/src/main/res/values"$lang"/changelog-strings.xml
-	elif [[ -f app/src/main/res/values"$lang"/changelog-strings.xml ]]; then
-		rm app/src/main/res/values"$lang"/changelog-strings.xml
 	fi
 done
 
