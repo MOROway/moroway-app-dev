@@ -2458,6 +2458,9 @@ function drawObjects() {
         contextForeground.clearRect(0, 0, canvasForeground.width, canvasForeground.height);
         contextForeground.setTransform(1, 0, 0, 1, 0, 0);
         background3D.behind.style.display = "block";
+        if (background3D.behindClone) {
+            background3D.behindClone.style.display = "block";
+        }
         three.renderer.domElement.style.display = "block";
         /////THREE.JS/Background/////
         background3D.animateBehind();
@@ -2469,6 +2472,9 @@ function drawObjects() {
         canvasSemiForeground.style.display = "";
         canvasForeground.style.display = "";
         background3D.behind.style.display = "none";
+        if (background3D.behindClone) {
+            background3D.behindClone.style.display = "none";
+        }
         three.renderer.domElement.style.display = "none";
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvas.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvas.height) / 2 + client.zoomAndTilt.offsetY);
@@ -3936,7 +3942,7 @@ function drawObjects() {
         gui.controlCenter = false;
     }
     if (gui.three) {
-        canvasForeground.style.cursor = hardware.mouse.cursor;
+        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || gui.demo ? "none" : hardware.mouse.cursor;
     }
     else {
         /////BACKGROUND/Margins-2////
@@ -6612,6 +6618,12 @@ window.onload = function () {
                 background3D.animateBehind = function (reset) {
                     if (reset === void 0) { reset = false; }
                     if (reset) {
+                        background3D.behind.style.transform = "";
+                        var behindCloneId = background3D.behind.id + "-clone";
+                        var oldBehindClone = document.getElementById(behindCloneId);
+                        if (oldBehindClone != null) {
+                            oldBehindClone.parentNode.removeChild(oldBehindClone);
+                        }
                         background3D.animateBehindFac = 0;
                         background3D.animateBehindStars = [];
                         if (three.night) {
@@ -6644,19 +6656,10 @@ window.onload = function () {
                                 background3D.animateBehindStars.push({ left: left, top: top_2, radius: radius, fill: fill });
                             }
                         }
-                    }
-                    if (three.night) {
-                        background3D.animateBehindFac += 0.00025;
-                        if (background3D.animateBehindFac >= 1) {
-                            background3D.animateBehindFac -= 1;
-                        }
-                    }
-                    if (reset || three.night) {
                         var behindContext = background3D.behind.getContext("2d");
                         behindContext.save();
                         behindContext.fillStyle = "black";
                         behindContext.fillRect(0, 0, background3D.behind.width, background3D.behind.height);
-                        behindContext.translate(-background3D.animateBehindFac * background3D.behind.width, 0);
                         for (var i_3 = 0; i_3 < background3D.animateBehindStars.length; i_3++) {
                             behindContext.save();
                             behindContext.fillStyle = background3D.animateBehindStars[i_3].fill;
@@ -6667,6 +6670,24 @@ window.onload = function () {
                             behindContext.restore();
                         }
                         behindContext.restore();
+                        if (three.night) {
+                            background3D.behindClone = background3D.behind.cloneNode();
+                            background3D.behindClone.id = behindCloneId;
+                            background3D.behind.parentNode.insertBefore(background3D.behindClone, background3D.behind);
+                            var behindCloneContext = background3D.behindClone.getContext("2d");
+                            behindCloneContext.drawImage(background3D.behind, 0, 0);
+                        }
+                        else {
+                            background3D.behindClone = null;
+                        }
+                    }
+                    if (three.night) {
+                        background3D.animateBehindFac += 0.00025;
+                        if (background3D.animateBehindFac >= 1) {
+                            background3D.animateBehindFac -= 1;
+                        }
+                        background3D.behind.style.transform = "translateX(" + -background3D.animateBehindFac * background3D.behind.offsetWidth + "px)";
+                        background3D.behindClone.style.transform = "translateX(" + (1 - background3D.animateBehindFac) * background3D.behind.offsetWidth + "px)";
                     }
                 };
                 three.camera = new THREE.PerspectiveCamera(60, client.width / client.height, 0.1, 10);
