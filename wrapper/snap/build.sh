@@ -4,7 +4,7 @@
 # -b beta number (0=off, 1,2,3,etc=beta number)
 # -d debug (0=off, 1=on)
 # -l server link
-# -o path to build tools output directory (e.g. /path/to/moroway-app-dev/out/oc/latest/)
+# -o path to build tools output directory (e.g. /path/to/moroway-app-dev/out/snap/latest/)
 # -s share link
 # -v version
 # -w path to build tools working directory (e.g. /path/to/moroway-app-dev/build)
