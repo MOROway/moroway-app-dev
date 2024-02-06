@@ -508,27 +508,34 @@
     },
     {
       "bufferView": 20,
-      "byteOffset": 3432,
+      "byteOffset": 4824,
       "componentType": 5125,
       "count": 54,
       "type": "SCALAR"
     },
     {
       "bufferView": 20,
+      "byteOffset": 4800,
+      "componentType": 5125,
+      "count": 6,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 20,
       "byteOffset": 0,
       "componentType": 5125,
-      "count": 858,
+      "count": 1200,
       "type": "SCALAR"
     },
     {
       "bufferView": 21,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 767,
+      "count": 851,
       "max": [
         3.51824537159449335366e-01,
         -6.79089591995759023213e-02,
-        3.52178865427221765572e-02
+        3.57721098231120054889e-02
       ],
       "min": [
         3.14089510005224004097e-01,
@@ -541,14 +548,14 @@
       "bufferView": 21,
       "byteOffset": 12,
       "componentType": 5126,
-      "count": 767,
+      "count": 851,
       "type": "VEC3"
     },
     {
       "bufferView": 21,
       "byteOffset": 24,
       "componentType": 5126,
-      "count": 767,
+      "count": 851,
       "type": "VEC4"
     },
     {
@@ -3320,602 +3327,602 @@
     },
     {
       "buffer": 0,
-      "byteLength": 3648,
+      "byteLength": 5040,
       "byteOffset": 1333432
     },
     {
       "buffer": 0,
-      "byteLength": 30680,
-      "byteOffset": 1337080,
+      "byteLength": 34040,
+      "byteOffset": 1338472,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 3300,
-      "byteOffset": 1367760
+      "byteOffset": 1372512
     },
     {
       "buffer": 0,
       "byteLength": 19360,
-      "byteOffset": 1371060,
+      "byteOffset": 1375812,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 8256,
-      "byteOffset": 1390420
+      "byteOffset": 1395172
     },
     {
       "buffer": 0,
       "byteLength": 39160,
-      "byteOffset": 1398676,
+      "byteOffset": 1403428,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 42672,
-      "byteOffset": 1437836
+      "byteOffset": 1442588
     },
     {
       "buffer": 0,
       "byteLength": 154040,
-      "byteOffset": 1480508,
+      "byteOffset": 1485260,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 8100,
-      "byteOffset": 1634548
+      "byteOffset": 1639300
     },
     {
       "buffer": 0,
       "byteLength": 34160,
-      "byteOffset": 1642648,
+      "byteOffset": 1647400,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 8244,
-      "byteOffset": 1676808
+      "byteOffset": 1681560
     },
     {
       "buffer": 0,
       "byteLength": 40160,
-      "byteOffset": 1685052,
+      "byteOffset": 1689804,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 1725212
+      "byteOffset": 1729964
     },
     {
       "buffer": 0,
       "byteLength": 4120,
-      "byteOffset": 1727348,
+      "byteOffset": 1732100,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 9432,
-      "byteOffset": 1731468
+      "byteOffset": 1736220
     },
     {
       "buffer": 0,
       "byteLength": 36600,
-      "byteOffset": 1740900,
+      "byteOffset": 1745652,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 8304,
-      "byteOffset": 1777500
+      "byteOffset": 1782252
     },
     {
       "buffer": 0,
       "byteLength": 35240,
-      "byteOffset": 1785804,
+      "byteOffset": 1790556,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 1821044
+      "byteOffset": 1825796
     },
     {
       "buffer": 0,
       "byteLength": 3200,
-      "byteOffset": 1822316,
+      "byteOffset": 1827068,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 1825516
+      "byteOffset": 1830268
     },
     {
       "buffer": 0,
       "byteLength": 3200,
-      "byteOffset": 1826788,
+      "byteOffset": 1831540,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2280,
-      "byteOffset": 1829988
+      "byteOffset": 1834740
     },
     {
       "buffer": 0,
       "byteLength": 8880,
-      "byteOffset": 1832268,
+      "byteOffset": 1837020,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 26088,
-      "byteOffset": 1841148
+      "byteOffset": 1845900
     },
     {
       "buffer": 0,
       "byteLength": 144520,
-      "byteOffset": 1867236,
+      "byteOffset": 1871988,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 11976,
-      "byteOffset": 2011756
+      "byteOffset": 2016508
     },
     {
       "buffer": 0,
       "byteLength": 38160,
-      "byteOffset": 2023732,
+      "byteOffset": 2028484,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 6324,
-      "byteOffset": 2061892
+      "byteOffset": 2066644
     },
     {
       "buffer": 0,
       "byteLength": 29400,
-      "byteOffset": 2068216,
+      "byteOffset": 2072968,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 720,
-      "byteOffset": 2097616
+      "byteOffset": 2102368
     },
     {
       "buffer": 0,
       "byteLength": 1920,
-      "byteOffset": 2098336,
+      "byteOffset": 2103088,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 432,
-      "byteOffset": 2100256
+      "byteOffset": 2105008
     },
     {
       "buffer": 0,
       "byteLength": 3456,
-      "byteOffset": 2100688,
+      "byteOffset": 2105440,
       "byteStride": 32
     },
     {
       "buffer": 0,
       "byteLength": 9384,
-      "byteOffset": 2104144
+      "byteOffset": 2108896
     },
     {
       "buffer": 0,
       "byteLength": 17760,
-      "byteOffset": 2113528,
+      "byteOffset": 2118280,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2424,
-      "byteOffset": 2131288
+      "byteOffset": 2136040
     },
     {
       "buffer": 0,
       "byteLength": 23440,
-      "byteOffset": 2133712,
+      "byteOffset": 2138464,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2157152
+      "byteOffset": 2161904
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2159288,
+      "byteOffset": 2164040,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2163008
+      "byteOffset": 2167760
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2165144,
+      "byteOffset": 2169896,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2168864
+      "byteOffset": 2173616
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2171000,
+      "byteOffset": 2175752,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2174720
+      "byteOffset": 2179472
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2176856,
+      "byteOffset": 2181608,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2180576
+      "byteOffset": 2185328
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2182712,
+      "byteOffset": 2187464,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2186432
+      "byteOffset": 2191184
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2188568,
+      "byteOffset": 2193320,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2192288
+      "byteOffset": 2197040
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2194424,
+      "byteOffset": 2199176,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2198144
+      "byteOffset": 2202896
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2200280,
+      "byteOffset": 2205032,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2204000
+      "byteOffset": 2208752
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2206136,
+      "byteOffset": 2210888,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 336,
-      "byteOffset": 2209856
+      "byteOffset": 2214608
     },
     {
       "buffer": 0,
       "byteLength": 640,
-      "byteOffset": 2210192,
+      "byteOffset": 2214944,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2210832
+      "byteOffset": 2215584
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2212968,
+      "byteOffset": 2217720,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2216688
+      "byteOffset": 2221440
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2218824,
+      "byteOffset": 2223576,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2222544
+      "byteOffset": 2227296
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2224680,
+      "byteOffset": 2229432,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2228400
+      "byteOffset": 2233152
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2230536,
+      "byteOffset": 2235288,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2234256
+      "byteOffset": 2239008
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2236392,
+      "byteOffset": 2241144,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 672,
-      "byteOffset": 2240112
+      "byteOffset": 2244864
     },
     {
       "buffer": 0,
       "byteLength": 1280,
-      "byteOffset": 2240784,
+      "byteOffset": 2245536,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 336,
-      "byteOffset": 2242064
+      "byteOffset": 2246816
     },
     {
       "buffer": 0,
       "byteLength": 640,
-      "byteOffset": 2242400,
-      "byteStride": 40
-    },
-    {
-      "buffer": 0,
-      "byteLength": 672,
-      "byteOffset": 2243040
-    },
-    {
-      "buffer": 0,
-      "byteLength": 1280,
-      "byteOffset": 2243712,
-      "byteStride": 40
-    },
-    {
-      "buffer": 0,
-      "byteLength": 2160,
-      "byteOffset": 2244992
-    },
-    {
-      "buffer": 0,
-      "byteLength": 10480,
       "byteOffset": 2247152,
       "byteStride": 40
     },
     {
       "buffer": 0,
+      "byteLength": 672,
+      "byteOffset": 2247792
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1280,
+      "byteOffset": 2248464,
+      "byteStride": 40
+    },
+    {
+      "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2257632
+      "byteOffset": 2249744
+    },
+    {
+      "buffer": 0,
+      "byteLength": 10480,
+      "byteOffset": 2251904,
+      "byteStride": 40
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2160,
+      "byteOffset": 2262384
     },
     {
       "buffer": 0,
       "byteLength": 10560,
-      "byteOffset": 2259792,
+      "byteOffset": 2264544,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2270352
+      "byteOffset": 2275104
     },
     {
       "buffer": 0,
       "byteLength": 10400,
-      "byteOffset": 2272512,
+      "byteOffset": 2277264,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2282912
+      "byteOffset": 2287664
     },
     {
       "buffer": 0,
       "byteLength": 3840,
-      "byteOffset": 2284904,
+      "byteOffset": 2289656,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2288744
+      "byteOffset": 2293496
     },
     {
       "buffer": 0,
       "byteLength": 3840,
-      "byteOffset": 2290736,
+      "byteOffset": 2295488,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2294576
+      "byteOffset": 2299328
     },
     {
       "buffer": 0,
       "byteLength": 3840,
-      "byteOffset": 2296568,
+      "byteOffset": 2301320,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2300408
+      "byteOffset": 2305160
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2301680,
+      "byteOffset": 2306432,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2304240
+      "byteOffset": 2308992
     },
     {
       "buffer": 0,
       "byteLength": 17280,
-      "byteOffset": 2306400,
+      "byteOffset": 2311152,
       "byteStride": 32
     },
     {
       "buffer": 0,
       "byteLength": 816,
-      "byteOffset": 2323680
+      "byteOffset": 2328432
     },
     {
       "buffer": 0,
       "byteLength": 1680,
-      "byteOffset": 2324496,
+      "byteOffset": 2329248,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 11856,
-      "byteOffset": 2326176
+      "byteOffset": 2330928
     },
     {
       "buffer": 0,
       "byteLength": 20800,
-      "byteOffset": 2338032,
+      "byteOffset": 2342784,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 11856,
-      "byteOffset": 2358832
+      "byteOffset": 2363584
     },
     {
       "buffer": 0,
       "byteLength": 20800,
-      "byteOffset": 2370688,
+      "byteOffset": 2375440,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 19416,
-      "byteOffset": 2391488
+      "byteOffset": 2396240
     },
     {
       "buffer": 0,
       "byteLength": 114680,
-      "byteOffset": 2410904,
+      "byteOffset": 2415656,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2525584
+      "byteOffset": 2530336
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2526856,
+      "byteOffset": 2531608,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2529416
+      "byteOffset": 2534168
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2530688,
+      "byteOffset": 2535440,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2533248
+      "byteOffset": 2538000
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2534520,
+      "byteOffset": 2539272,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2537080
+      "byteOffset": 2541832
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2538352,
+      "byteOffset": 2543104,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 288,
-      "byteOffset": 2540912
+      "byteOffset": 2545664
     },
     {
       "buffer": 0,
       "byteLength": 2304,
-      "byteOffset": 2541200,
+      "byteOffset": 2545952,
       "byteStride": 32
     }
   ],
   "buffers": [
     {
-      "byteLength": 2543504,
+      "byteLength": 2548256,
       "uri": "background-3d.bin"
     }
   ],
@@ -4316,6 +4323,26 @@
       "alphaMode": "BLEND",
       "doubleSided": false,
       "emissiveFactor": [
+        1.26865671641791050162e-01,
+        9.24614217050341580251e-02,
+        9.24614217050341580251e-02
+      ],
+      "name": "old_chimney",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          8.00000000000000044409e-01,
+          5.21568627450980426552e-01,
+          5.21568627450980426552e-01,
+          9.00000000000000022204e-01
+        ],
+        "metallicFactor": 5.00000000000000027756e-02,
+        "roughnessFactor": 1.00000000000000000000e+00
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "doubleSided": false,
+      "emissiveFactor": [
         1.78082191780821907923e-01,
         1.78082191780821907923e-01,
         1.78082191780821907923e-01
@@ -4458,26 +4485,6 @@
           4.40000000000000002220e-01
         ],
         "metallicFactor": 0.00000000000000000000e+00,
-        "roughnessFactor": 1.00000000000000000000e+00
-      }
-    },
-    {
-      "alphaMode": "BLEND",
-      "doubleSided": false,
-      "emissiveFactor": [
-        1.26865671641791050162e-01,
-        9.24614217050341580251e-02,
-        9.24614217050341580251e-02
-      ],
-      "name": "old_chimney",
-      "pbrMetallicRoughness": {
-        "baseColorFactor": [
-          8.00000000000000044409e-01,
-          5.21568627450980426552e-01,
-          5.21568627450980426552e-01,
-          9.00000000000000022204e-01
-        ],
-        "metallicFactor": 5.00000000000000027756e-02,
         "roughnessFactor": 1.00000000000000000000e+00
       }
     },
@@ -5152,18 +5159,27 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 62,
-            "NORMAL": 61,
-            "POSITION": 60
+            "COLOR_0": 63,
+            "NORMAL": 62,
+            "POSITION": 61
           },
-          "indices": 59,
+          "indices": 60,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 62,
-            "NORMAL": 61,
-            "POSITION": 60
+            "COLOR_0": 63,
+            "NORMAL": 62,
+            "POSITION": 61
+          },
+          "indices": 59,
+          "material": 16
+        },
+        {
+          "attributes": {
+            "COLOR_0": 63,
+            "NORMAL": 62,
+            "POSITION": 61
           },
           "indices": 58,
           "material": 7
@@ -5175,29 +5191,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 68,
-            "NORMAL": 67,
-            "POSITION": 66
+            "COLOR_0": 69,
+            "NORMAL": 68,
+            "POSITION": 67
           },
-          "indices": 65,
+          "indices": 66,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 68,
-            "NORMAL": 67,
-            "POSITION": 66
+            "COLOR_0": 69,
+            "NORMAL": 68,
+            "POSITION": 67
           },
-          "indices": 64,
+          "indices": 65,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 68,
-            "NORMAL": 67,
-            "POSITION": 66
+            "COLOR_0": 69,
+            "NORMAL": 68,
+            "POSITION": 67
           },
-          "indices": 63,
+          "indices": 64,
           "material": 7
         }
       ]
@@ -5207,29 +5223,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 74,
-            "NORMAL": 73,
-            "POSITION": 72
+            "COLOR_0": 75,
+            "NORMAL": 74,
+            "POSITION": 73
           },
-          "indices": 71,
-          "material": 16
+          "indices": 72,
+          "material": 17
         },
         {
           "attributes": {
-            "COLOR_0": 74,
-            "NORMAL": 73,
-            "POSITION": 72
+            "COLOR_0": 75,
+            "NORMAL": 74,
+            "POSITION": 73
           },
-          "indices": 70,
+          "indices": 71,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 74,
-            "NORMAL": 73,
-            "POSITION": 72
+            "COLOR_0": 75,
+            "NORMAL": 74,
+            "POSITION": 73
           },
-          "indices": 69,
+          "indices": 70,
           "material": 7
         }
       ]
@@ -5239,38 +5255,38 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 81,
-            "NORMAL": 80,
-            "POSITION": 79
+            "COLOR_0": 82,
+            "NORMAL": 81,
+            "POSITION": 80
           },
-          "indices": 78,
+          "indices": 79,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 81,
-            "NORMAL": 80,
-            "POSITION": 79
+            "COLOR_0": 82,
+            "NORMAL": 81,
+            "POSITION": 80
           },
-          "indices": 77,
-          "material": 17
-        },
-        {
-          "attributes": {
-            "COLOR_0": 81,
-            "NORMAL": 80,
-            "POSITION": 79
-          },
-          "indices": 76,
+          "indices": 78,
           "material": 18
         },
         {
           "attributes": {
-            "COLOR_0": 81,
-            "NORMAL": 80,
-            "POSITION": 79
+            "COLOR_0": 82,
+            "NORMAL": 81,
+            "POSITION": 80
           },
-          "indices": 75,
+          "indices": 77,
+          "material": 19
+        },
+        {
+          "attributes": {
+            "COLOR_0": 82,
+            "NORMAL": 81,
+            "POSITION": 80
+          },
+          "indices": 76,
           "material": 7
         }
       ]
@@ -5280,20 +5296,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 86,
-            "NORMAL": 85,
-            "POSITION": 84
+            "COLOR_0": 87,
+            "NORMAL": 86,
+            "POSITION": 85
           },
-          "indices": 83,
+          "indices": 84,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 86,
-            "NORMAL": 85,
-            "POSITION": 84
+            "COLOR_0": 87,
+            "NORMAL": 86,
+            "POSITION": 85
           },
-          "indices": 82,
+          "indices": 83,
           "material": 7
         }
       ]
@@ -5303,38 +5319,38 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 93,
-            "NORMAL": 92,
-            "POSITION": 91
+            "COLOR_0": 94,
+            "NORMAL": 93,
+            "POSITION": 92
           },
-          "indices": 90,
+          "indices": 91,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 93,
-            "NORMAL": 92,
-            "POSITION": 91
+            "COLOR_0": 94,
+            "NORMAL": 93,
+            "POSITION": 92
           },
-          "indices": 89,
-          "material": 16
+          "indices": 90,
+          "material": 17
         },
         {
           "attributes": {
-            "COLOR_0": 93,
-            "NORMAL": 92,
-            "POSITION": 91
+            "COLOR_0": 94,
+            "NORMAL": 93,
+            "POSITION": 92
           },
-          "indices": 88,
+          "indices": 89,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 93,
-            "NORMAL": 92,
-            "POSITION": 91
+            "COLOR_0": 94,
+            "NORMAL": 93,
+            "POSITION": 92
           },
-          "indices": 87,
+          "indices": 88,
           "material": 7
         }
       ]
@@ -5344,20 +5360,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 98,
-            "NORMAL": 97,
-            "POSITION": 96
+            "COLOR_0": 99,
+            "NORMAL": 98,
+            "POSITION": 97
           },
-          "indices": 95,
+          "indices": 96,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 98,
-            "NORMAL": 97,
-            "POSITION": 96
+            "COLOR_0": 99,
+            "NORMAL": 98,
+            "POSITION": 97
           },
-          "indices": 94,
+          "indices": 95,
           "material": 1
         }
       ]
@@ -5367,47 +5383,47 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 106,
-            "NORMAL": 105,
-            "POSITION": 104
+            "COLOR_0": 107,
+            "NORMAL": 106,
+            "POSITION": 105
           },
-          "indices": 103,
+          "indices": 104,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 106,
-            "NORMAL": 105,
-            "POSITION": 104
+            "COLOR_0": 107,
+            "NORMAL": 106,
+            "POSITION": 105
           },
-          "indices": 102,
+          "indices": 103,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 106,
-            "NORMAL": 105,
-            "POSITION": 104
+            "COLOR_0": 107,
+            "NORMAL": 106,
+            "POSITION": 105
           },
-          "indices": 101,
-          "material": 18
+          "indices": 102,
+          "material": 19
         },
         {
           "attributes": {
-            "COLOR_0": 106,
-            "NORMAL": 105,
-            "POSITION": 104
+            "COLOR_0": 107,
+            "NORMAL": 106,
+            "POSITION": 105
           },
-          "indices": 100,
+          "indices": 101,
           "material": 6
         },
         {
           "attributes": {
-            "COLOR_0": 106,
-            "NORMAL": 105,
-            "POSITION": 104
+            "COLOR_0": 107,
+            "NORMAL": 106,
+            "POSITION": 105
           },
-          "indices": 99,
+          "indices": 100,
           "material": 7
         }
       ]
@@ -5417,20 +5433,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 111,
-            "NORMAL": 110,
-            "POSITION": 109
+            "COLOR_0": 112,
+            "NORMAL": 111,
+            "POSITION": 110
           },
-          "indices": 108,
+          "indices": 109,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 111,
-            "NORMAL": 110,
-            "POSITION": 109
+            "COLOR_0": 112,
+            "NORMAL": 111,
+            "POSITION": 110
           },
-          "indices": 107,
+          "indices": 108,
           "material": 7
         }
       ]
@@ -5440,29 +5456,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 117,
-            "NORMAL": 116,
-            "POSITION": 115
+            "COLOR_0": 118,
+            "NORMAL": 117,
+            "POSITION": 116
           },
-          "indices": 114,
+          "indices": 115,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 117,
-            "NORMAL": 116,
-            "POSITION": 115
+            "COLOR_0": 118,
+            "NORMAL": 117,
+            "POSITION": 116
           },
-          "indices": 113,
+          "indices": 114,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 117,
-            "NORMAL": 116,
-            "POSITION": 115
+            "COLOR_0": 118,
+            "NORMAL": 117,
+            "POSITION": 116
           },
-          "indices": 112,
+          "indices": 113,
           "material": 14
         }
       ]
@@ -5472,29 +5488,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 123,
-            "NORMAL": 122,
-            "POSITION": 121
+            "COLOR_0": 124,
+            "NORMAL": 123,
+            "POSITION": 122
           },
-          "indices": 120,
+          "indices": 121,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 123,
-            "NORMAL": 122,
-            "POSITION": 121
+            "COLOR_0": 124,
+            "NORMAL": 123,
+            "POSITION": 122
           },
-          "indices": 119,
+          "indices": 120,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 123,
-            "NORMAL": 122,
-            "POSITION": 121
+            "COLOR_0": 124,
+            "NORMAL": 123,
+            "POSITION": 122
           },
-          "indices": 118,
+          "indices": 119,
           "material": 14
         }
       ]
@@ -5504,56 +5520,56 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 132,
-            "NORMAL": 131,
-            "POSITION": 130
+            "COLOR_0": 133,
+            "NORMAL": 132,
+            "POSITION": 131
           },
-          "indices": 129,
+          "indices": 130,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 132,
-            "NORMAL": 131,
-            "POSITION": 130
+            "COLOR_0": 133,
+            "NORMAL": 132,
+            "POSITION": 131
           },
-          "indices": 128,
-          "material": 16
+          "indices": 129,
+          "material": 17
         },
         {
           "attributes": {
-            "COLOR_0": 132,
-            "NORMAL": 131,
-            "POSITION": 130
+            "COLOR_0": 133,
+            "NORMAL": 132,
+            "POSITION": 131
           },
-          "indices": 127,
+          "indices": 128,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 132,
-            "NORMAL": 131,
-            "POSITION": 130
+            "COLOR_0": 133,
+            "NORMAL": 132,
+            "POSITION": 131
           },
-          "indices": 126,
-          "material": 18
+          "indices": 127,
+          "material": 19
         },
         {
           "attributes": {
-            "COLOR_0": 132,
-            "NORMAL": 131,
-            "POSITION": 130
+            "COLOR_0": 133,
+            "NORMAL": 132,
+            "POSITION": 131
           },
-          "indices": 125,
+          "indices": 126,
           "material": 6
         },
         {
           "attributes": {
-            "COLOR_0": 132,
-            "NORMAL": 131,
-            "POSITION": 130
+            "COLOR_0": 133,
+            "NORMAL": 132,
+            "POSITION": 131
           },
-          "indices": 124,
+          "indices": 125,
           "material": 7
         }
       ]
@@ -5563,20 +5579,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 137,
-            "NORMAL": 136,
-            "POSITION": 135
+            "COLOR_0": 138,
+            "NORMAL": 137,
+            "POSITION": 136
           },
-          "indices": 134,
-          "material": 19
+          "indices": 135,
+          "material": 20
         },
         {
           "attributes": {
-            "COLOR_0": 137,
-            "NORMAL": 136,
-            "POSITION": 135
+            "COLOR_0": 138,
+            "NORMAL": 137,
+            "POSITION": 136
           },
-          "indices": 133,
+          "indices": 134,
           "material": 1
         }
       ]
@@ -5586,38 +5602,38 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 144,
-            "NORMAL": 143,
-            "POSITION": 142
+            "COLOR_0": 145,
+            "NORMAL": 144,
+            "POSITION": 143
           },
-          "indices": 141,
+          "indices": 142,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 144,
-            "NORMAL": 143,
-            "POSITION": 142
+            "COLOR_0": 145,
+            "NORMAL": 144,
+            "POSITION": 143
           },
-          "indices": 140,
-          "material": 16
+          "indices": 141,
+          "material": 17
         },
         {
           "attributes": {
-            "COLOR_0": 144,
-            "NORMAL": 143,
-            "POSITION": 142
+            "COLOR_0": 145,
+            "NORMAL": 144,
+            "POSITION": 143
           },
-          "indices": 139,
+          "indices": 140,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 144,
-            "NORMAL": 143,
-            "POSITION": 142
+            "COLOR_0": 145,
+            "NORMAL": 144,
+            "POSITION": 143
           },
-          "indices": 138,
+          "indices": 139,
           "material": 15
         }
       ]
@@ -5627,39 +5643,39 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 151,
-            "NORMAL": 150,
-            "POSITION": 149
+            "COLOR_0": 152,
+            "NORMAL": 151,
+            "POSITION": 150
           },
-          "indices": 148,
+          "indices": 149,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 151,
-            "NORMAL": 150,
-            "POSITION": 149
+            "COLOR_0": 152,
+            "NORMAL": 151,
+            "POSITION": 150
           },
-          "indices": 147,
+          "indices": 148,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 151,
-            "NORMAL": 150,
-            "POSITION": 149
+            "COLOR_0": 152,
+            "NORMAL": 151,
+            "POSITION": 150
           },
-          "indices": 146,
+          "indices": 147,
           "material": 15
         },
         {
           "attributes": {
-            "COLOR_0": 151,
-            "NORMAL": 150,
-            "POSITION": 149
+            "COLOR_0": 152,
+            "NORMAL": 151,
+            "POSITION": 150
           },
-          "indices": 145,
-          "material": 18
+          "indices": 146,
+          "material": 19
         }
       ]
     },
@@ -5668,11 +5684,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 155,
-            "NORMAL": 154,
-            "POSITION": 153
+            "COLOR_0": 156,
+            "NORMAL": 155,
+            "POSITION": 154
           },
-          "indices": 152,
+          "indices": 153,
           "material": 0
         }
       ]
@@ -5682,47 +5698,47 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 162,
-            "POSITION": 161,
-            "TEXCOORD_0": 163
+            "NORMAL": 163,
+            "POSITION": 162,
+            "TEXCOORD_0": 164
           },
-          "indices": 160,
+          "indices": 161,
           "material": 1
         },
         {
           "attributes": {
-            "NORMAL": 162,
-            "POSITION": 161,
-            "TEXCOORD_0": 163
+            "NORMAL": 163,
+            "POSITION": 162,
+            "TEXCOORD_0": 164
           },
-          "indices": 159,
-          "material": 20
-        },
-        {
-          "attributes": {
-            "NORMAL": 162,
-            "POSITION": 161,
-            "TEXCOORD_0": 163
-          },
-          "indices": 158,
+          "indices": 160,
           "material": 21
         },
         {
           "attributes": {
-            "NORMAL": 162,
-            "POSITION": 161,
-            "TEXCOORD_0": 163
+            "NORMAL": 163,
+            "POSITION": 162,
+            "TEXCOORD_0": 164
           },
-          "indices": 157,
+          "indices": 159,
           "material": 22
         },
         {
           "attributes": {
-            "NORMAL": 162,
-            "POSITION": 161,
-            "TEXCOORD_0": 163
+            "NORMAL": 163,
+            "POSITION": 162,
+            "TEXCOORD_0": 164
           },
-          "indices": 156,
+          "indices": 158,
+          "material": 23
+        },
+        {
+          "attributes": {
+            "NORMAL": 163,
+            "POSITION": 162,
+            "TEXCOORD_0": 164
+          },
+          "indices": 157,
           "material": 6
         }
       ]
@@ -5732,29 +5748,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 169,
-            "NORMAL": 168,
-            "POSITION": 167
+            "COLOR_0": 170,
+            "NORMAL": 169,
+            "POSITION": 168
           },
-          "indices": 166,
+          "indices": 167,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 169,
-            "NORMAL": 168,
-            "POSITION": 167
+            "COLOR_0": 170,
+            "NORMAL": 169,
+            "POSITION": 168
           },
-          "indices": 165,
+          "indices": 166,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 169,
-            "NORMAL": 168,
-            "POSITION": 167
+            "COLOR_0": 170,
+            "NORMAL": 169,
+            "POSITION": 168
           },
-          "indices": 164,
+          "indices": 165,
           "material": 14
         }
       ]
@@ -5764,30 +5780,30 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 175,
-            "NORMAL": 174,
-            "POSITION": 173
+            "COLOR_0": 176,
+            "NORMAL": 175,
+            "POSITION": 174
           },
-          "indices": 172,
+          "indices": 173,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 175,
-            "NORMAL": 174,
-            "POSITION": 173
+            "COLOR_0": 176,
+            "NORMAL": 175,
+            "POSITION": 174
           },
-          "indices": 171,
+          "indices": 172,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 175,
-            "NORMAL": 174,
-            "POSITION": 173
+            "COLOR_0": 176,
+            "NORMAL": 175,
+            "POSITION": 174
           },
-          "indices": 170,
-          "material": 23
+          "indices": 171,
+          "material": 16
         }
       ]
     },
@@ -5796,20 +5812,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 180,
-            "NORMAL": 179,
-            "POSITION": 178
+            "COLOR_0": 181,
+            "NORMAL": 180,
+            "POSITION": 179
           },
-          "indices": 177,
+          "indices": 178,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 180,
-            "NORMAL": 179,
-            "POSITION": 178
+            "COLOR_0": 181,
+            "NORMAL": 180,
+            "POSITION": 179
           },
-          "indices": 176,
+          "indices": 177,
           "material": 1
         }
       ]
@@ -5819,20 +5835,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 185,
-            "NORMAL": 184,
-            "POSITION": 183
+            "COLOR_0": 186,
+            "NORMAL": 185,
+            "POSITION": 184
           },
-          "indices": 182,
+          "indices": 183,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 185,
-            "NORMAL": 184,
-            "POSITION": 183
+            "COLOR_0": 186,
+            "NORMAL": 185,
+            "POSITION": 184
           },
-          "indices": 181,
+          "indices": 182,
           "material": 1
         }
       ]
@@ -5842,20 +5858,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 190,
-            "NORMAL": 189,
-            "POSITION": 188
+            "COLOR_0": 191,
+            "NORMAL": 190,
+            "POSITION": 189
           },
-          "indices": 187,
+          "indices": 188,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 190,
-            "NORMAL": 189,
-            "POSITION": 188
+            "COLOR_0": 191,
+            "NORMAL": 190,
+            "POSITION": 189
           },
-          "indices": 186,
+          "indices": 187,
           "material": 1
         }
       ]
@@ -5865,20 +5881,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 195,
-            "NORMAL": 194,
-            "POSITION": 193
+            "COLOR_0": 196,
+            "NORMAL": 195,
+            "POSITION": 194
           },
-          "indices": 192,
+          "indices": 193,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 195,
-            "NORMAL": 194,
-            "POSITION": 193
+            "COLOR_0": 196,
+            "NORMAL": 195,
+            "POSITION": 194
           },
-          "indices": 191,
+          "indices": 192,
           "material": 1
         }
       ]
@@ -5888,20 +5904,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 200,
-            "NORMAL": 199,
-            "POSITION": 198
+            "COLOR_0": 201,
+            "NORMAL": 200,
+            "POSITION": 199
           },
-          "indices": 197,
+          "indices": 198,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 200,
-            "NORMAL": 199,
-            "POSITION": 198
+            "COLOR_0": 201,
+            "NORMAL": 200,
+            "POSITION": 199
           },
-          "indices": 196,
+          "indices": 197,
           "material": 1
         }
       ]
@@ -5911,20 +5927,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 205,
-            "NORMAL": 204,
-            "POSITION": 203
+            "COLOR_0": 206,
+            "NORMAL": 205,
+            "POSITION": 204
           },
-          "indices": 202,
+          "indices": 203,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 205,
-            "NORMAL": 204,
-            "POSITION": 203
+            "COLOR_0": 206,
+            "NORMAL": 205,
+            "POSITION": 204
           },
-          "indices": 201,
+          "indices": 202,
           "material": 1
         }
       ]
@@ -5934,20 +5950,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 210,
-            "NORMAL": 209,
-            "POSITION": 208
+            "COLOR_0": 211,
+            "NORMAL": 210,
+            "POSITION": 209
           },
-          "indices": 207,
+          "indices": 208,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 210,
-            "NORMAL": 209,
-            "POSITION": 208
+            "COLOR_0": 211,
+            "NORMAL": 210,
+            "POSITION": 209
           },
-          "indices": 206,
+          "indices": 207,
           "material": 1
         }
       ]
@@ -5957,20 +5973,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 215,
-            "NORMAL": 214,
-            "POSITION": 213
+            "COLOR_0": 216,
+            "NORMAL": 215,
+            "POSITION": 214
           },
-          "indices": 212,
+          "indices": 213,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 215,
-            "NORMAL": 214,
-            "POSITION": 213
+            "COLOR_0": 216,
+            "NORMAL": 215,
+            "POSITION": 214
           },
-          "indices": 211,
+          "indices": 212,
           "material": 1
         }
       ]
@@ -5980,20 +5996,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 220,
-            "NORMAL": 219,
-            "POSITION": 218
+            "COLOR_0": 221,
+            "NORMAL": 220,
+            "POSITION": 219
           },
-          "indices": 217,
+          "indices": 218,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 220,
-            "NORMAL": 219,
-            "POSITION": 218
+            "COLOR_0": 221,
+            "NORMAL": 220,
+            "POSITION": 219
           },
-          "indices": 216,
+          "indices": 217,
           "material": 1
         }
       ]
@@ -6003,11 +6019,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 224,
-            "NORMAL": 223,
-            "POSITION": 222
+            "COLOR_0": 225,
+            "NORMAL": 224,
+            "POSITION": 223
           },
-          "indices": 221,
+          "indices": 222,
           "material": 0
         }
       ]
@@ -6017,20 +6033,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 229,
-            "NORMAL": 228,
-            "POSITION": 227
+            "COLOR_0": 230,
+            "NORMAL": 229,
+            "POSITION": 228
           },
-          "indices": 226,
+          "indices": 227,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 229,
-            "NORMAL": 228,
-            "POSITION": 227
+            "COLOR_0": 230,
+            "NORMAL": 229,
+            "POSITION": 228
           },
-          "indices": 225,
+          "indices": 226,
           "material": 1
         }
       ]
@@ -6040,20 +6056,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 234,
-            "NORMAL": 233,
-            "POSITION": 232
+            "COLOR_0": 235,
+            "NORMAL": 234,
+            "POSITION": 233
           },
-          "indices": 231,
+          "indices": 232,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 234,
-            "NORMAL": 233,
-            "POSITION": 232
+            "COLOR_0": 235,
+            "NORMAL": 234,
+            "POSITION": 233
           },
-          "indices": 230,
+          "indices": 231,
           "material": 1
         }
       ]
@@ -6063,20 +6079,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 239,
-            "NORMAL": 238,
-            "POSITION": 237
+            "COLOR_0": 240,
+            "NORMAL": 239,
+            "POSITION": 238
           },
-          "indices": 236,
+          "indices": 237,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 239,
-            "NORMAL": 238,
-            "POSITION": 237
+            "COLOR_0": 240,
+            "NORMAL": 239,
+            "POSITION": 238
           },
-          "indices": 235,
+          "indices": 236,
           "material": 1
         }
       ]
@@ -6086,20 +6102,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 244,
-            "NORMAL": 243,
-            "POSITION": 242
+            "COLOR_0": 245,
+            "NORMAL": 244,
+            "POSITION": 243
           },
-          "indices": 241,
+          "indices": 242,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 244,
-            "NORMAL": 243,
-            "POSITION": 242
+            "COLOR_0": 245,
+            "NORMAL": 244,
+            "POSITION": 243
           },
-          "indices": 240,
+          "indices": 241,
           "material": 1
         }
       ]
@@ -6109,20 +6125,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 249,
-            "NORMAL": 248,
-            "POSITION": 247
+            "COLOR_0": 250,
+            "NORMAL": 249,
+            "POSITION": 248
           },
-          "indices": 246,
+          "indices": 247,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 249,
-            "NORMAL": 248,
-            "POSITION": 247
+            "COLOR_0": 250,
+            "NORMAL": 249,
+            "POSITION": 248
           },
-          "indices": 245,
+          "indices": 246,
           "material": 1
         }
       ]
@@ -6132,11 +6148,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 253,
-            "NORMAL": 252,
-            "POSITION": 251
+            "COLOR_0": 254,
+            "NORMAL": 253,
+            "POSITION": 252
           },
-          "indices": 250,
+          "indices": 251,
           "material": 0
         }
       ]
@@ -6146,11 +6162,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 257,
-            "NORMAL": 256,
-            "POSITION": 255
+            "COLOR_0": 258,
+            "NORMAL": 257,
+            "POSITION": 256
           },
-          "indices": 254,
+          "indices": 255,
           "material": 0
         }
       ]
@@ -6160,11 +6176,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 261,
-            "NORMAL": 260,
-            "POSITION": 259
+            "COLOR_0": 262,
+            "NORMAL": 261,
+            "POSITION": 260
           },
-          "indices": 258,
+          "indices": 259,
           "material": 0
         }
       ]
@@ -6174,20 +6190,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 266,
-            "NORMAL": 265,
-            "POSITION": 264
+            "COLOR_0": 267,
+            "NORMAL": 266,
+            "POSITION": 265
           },
-          "indices": 263,
+          "indices": 264,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 266,
-            "NORMAL": 265,
-            "POSITION": 264
+            "COLOR_0": 267,
+            "NORMAL": 266,
+            "POSITION": 265
           },
-          "indices": 262,
+          "indices": 263,
           "material": 14
         }
       ]
@@ -6197,20 +6213,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 271,
-            "NORMAL": 270,
-            "POSITION": 269
+            "COLOR_0": 272,
+            "NORMAL": 271,
+            "POSITION": 270
           },
-          "indices": 268,
+          "indices": 269,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 271,
-            "NORMAL": 270,
-            "POSITION": 269
+            "COLOR_0": 272,
+            "NORMAL": 271,
+            "POSITION": 270
           },
-          "indices": 267,
+          "indices": 268,
           "material": 14
         }
       ]
@@ -6220,20 +6236,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 276,
-            "NORMAL": 275,
-            "POSITION": 274
+            "COLOR_0": 277,
+            "NORMAL": 276,
+            "POSITION": 275
           },
-          "indices": 273,
+          "indices": 274,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 276,
-            "NORMAL": 275,
-            "POSITION": 274
+            "COLOR_0": 277,
+            "NORMAL": 276,
+            "POSITION": 275
           },
-          "indices": 272,
+          "indices": 273,
           "material": 14
         }
       ]
@@ -6243,29 +6259,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 282,
-            "NORMAL": 281,
-            "POSITION": 280
+            "COLOR_0": 283,
+            "NORMAL": 282,
+            "POSITION": 281
           },
-          "indices": 279,
+          "indices": 280,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 282,
-            "NORMAL": 281,
-            "POSITION": 280
+            "COLOR_0": 283,
+            "NORMAL": 282,
+            "POSITION": 281
           },
-          "indices": 278,
+          "indices": 279,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 282,
-            "NORMAL": 281,
-            "POSITION": 280
+            "COLOR_0": 283,
+            "NORMAL": 282,
+            "POSITION": 281
           },
-          "indices": 277,
+          "indices": 278,
           "material": 14
         }
       ]
@@ -6275,29 +6291,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 288,
-            "NORMAL": 287,
-            "POSITION": 286
+            "COLOR_0": 289,
+            "NORMAL": 288,
+            "POSITION": 287
           },
-          "indices": 285,
+          "indices": 286,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 288,
-            "NORMAL": 287,
-            "POSITION": 286
+            "COLOR_0": 289,
+            "NORMAL": 288,
+            "POSITION": 287
           },
-          "indices": 284,
+          "indices": 285,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 288,
-            "NORMAL": 287,
-            "POSITION": 286
+            "COLOR_0": 289,
+            "NORMAL": 288,
+            "POSITION": 287
           },
-          "indices": 283,
+          "indices": 284,
           "material": 14
         }
       ]
@@ -6307,29 +6323,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 294,
-            "NORMAL": 293,
-            "POSITION": 292
+            "COLOR_0": 295,
+            "NORMAL": 294,
+            "POSITION": 293
           },
-          "indices": 291,
+          "indices": 292,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 294,
-            "NORMAL": 293,
-            "POSITION": 292
+            "COLOR_0": 295,
+            "NORMAL": 294,
+            "POSITION": 293
           },
-          "indices": 290,
+          "indices": 291,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 294,
-            "NORMAL": 293,
-            "POSITION": 292
+            "COLOR_0": 295,
+            "NORMAL": 294,
+            "POSITION": 293
           },
-          "indices": 289,
+          "indices": 290,
           "material": 14
         }
       ]
@@ -6339,20 +6355,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 299,
-            "NORMAL": 298,
-            "POSITION": 297
+            "COLOR_0": 300,
+            "NORMAL": 299,
+            "POSITION": 298
           },
-          "indices": 296,
+          "indices": 297,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 299,
-            "NORMAL": 298,
-            "POSITION": 297
+            "COLOR_0": 300,
+            "NORMAL": 299,
+            "POSITION": 298
           },
-          "indices": 295,
+          "indices": 296,
           "material": 14
         }
       ]
@@ -6362,146 +6378,146 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 315,
+          "indices": 316,
           "material": 1
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 314,
+          "indices": 315,
           "material": 24
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 313,
+          "indices": 314,
           "material": 25
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 312,
+          "indices": 313,
           "material": 26
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 311,
+          "indices": 312,
           "material": 27
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 310,
+          "indices": 311,
           "material": 28
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 309,
+          "indices": 310,
           "material": 29
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 308,
+          "indices": 309,
           "material": 30
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 307,
+          "indices": 308,
           "material": 31
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 306,
+          "indices": 307,
           "material": 32
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 305,
+          "indices": 306,
           "material": 33
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 304,
+          "indices": 305,
           "material": 34
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 303,
+          "indices": 304,
           "material": 35
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 302,
+          "indices": 303,
           "material": 36
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 301,
+          "indices": 302,
           "material": 37
         },
         {
           "attributes": {
-            "NORMAL": 317,
-            "POSITION": 316,
-            "TEXCOORD_0": 318
+            "NORMAL": 318,
+            "POSITION": 317,
+            "TEXCOORD_0": 319
           },
-          "indices": 300,
+          "indices": 301,
           "material": 38
         }
       ]
@@ -6511,29 +6527,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 324,
-            "NORMAL": 323,
-            "POSITION": 322
+            "COLOR_0": 325,
+            "NORMAL": 324,
+            "POSITION": 323
           },
-          "indices": 321,
+          "indices": 322,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 324,
-            "NORMAL": 323,
-            "POSITION": 322
+            "COLOR_0": 325,
+            "NORMAL": 324,
+            "POSITION": 323
           },
-          "indices": 320,
+          "indices": 321,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 324,
-            "NORMAL": 323,
-            "POSITION": 322
+            "COLOR_0": 325,
+            "NORMAL": 324,
+            "POSITION": 323
           },
-          "indices": 319,
+          "indices": 320,
           "material": 39
         }
       ]
@@ -6543,20 +6559,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 329,
-            "NORMAL": 328,
-            "POSITION": 327
+            "COLOR_0": 330,
+            "NORMAL": 329,
+            "POSITION": 328
           },
-          "indices": 326,
+          "indices": 327,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 329,
-            "NORMAL": 328,
-            "POSITION": 327
+            "COLOR_0": 330,
+            "NORMAL": 329,
+            "POSITION": 328
           },
-          "indices": 325,
+          "indices": 326,
           "material": 14
         }
       ]
@@ -6566,20 +6582,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 334,
-            "NORMAL": 333,
-            "POSITION": 332
+            "COLOR_0": 335,
+            "NORMAL": 334,
+            "POSITION": 333
           },
-          "indices": 331,
+          "indices": 332,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 334,
-            "NORMAL": 333,
-            "POSITION": 332
+            "COLOR_0": 335,
+            "NORMAL": 334,
+            "POSITION": 333
           },
-          "indices": 330,
+          "indices": 331,
           "material": 14
         }
       ]
@@ -6589,38 +6605,38 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 341,
-            "NORMAL": 340,
-            "POSITION": 339
+            "COLOR_0": 342,
+            "NORMAL": 341,
+            "POSITION": 340
           },
-          "indices": 338,
+          "indices": 339,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 341,
-            "NORMAL": 340,
-            "POSITION": 339
+            "COLOR_0": 342,
+            "NORMAL": 341,
+            "POSITION": 340
           },
-          "indices": 337,
+          "indices": 338,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 341,
-            "NORMAL": 340,
-            "POSITION": 339
+            "COLOR_0": 342,
+            "NORMAL": 341,
+            "POSITION": 340
           },
-          "indices": 336,
-          "material": 17
+          "indices": 337,
+          "material": 18
         },
         {
           "attributes": {
-            "COLOR_0": 341,
-            "NORMAL": 340,
-            "POSITION": 339
+            "COLOR_0": 342,
+            "NORMAL": 341,
+            "POSITION": 340
           },
-          "indices": 335,
+          "indices": 336,
           "material": 14
         }
       ]
@@ -6630,20 +6646,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 346,
-            "NORMAL": 345,
-            "POSITION": 344
+            "COLOR_0": 347,
+            "NORMAL": 346,
+            "POSITION": 345
           },
-          "indices": 343,
+          "indices": 344,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 346,
-            "NORMAL": 345,
-            "POSITION": 344
+            "COLOR_0": 347,
+            "NORMAL": 346,
+            "POSITION": 345
           },
-          "indices": 342,
+          "indices": 343,
           "material": 14
         }
       ]
@@ -6653,20 +6669,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 351,
-            "NORMAL": 350,
-            "POSITION": 349
+            "COLOR_0": 352,
+            "NORMAL": 351,
+            "POSITION": 350
           },
-          "indices": 348,
+          "indices": 349,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 351,
-            "NORMAL": 350,
-            "POSITION": 349
+            "COLOR_0": 352,
+            "NORMAL": 351,
+            "POSITION": 350
           },
-          "indices": 347,
+          "indices": 348,
           "material": 14
         }
       ]
@@ -6676,20 +6692,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 356,
-            "NORMAL": 355,
-            "POSITION": 354
+            "COLOR_0": 357,
+            "NORMAL": 356,
+            "POSITION": 355
           },
-          "indices": 353,
+          "indices": 354,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 356,
-            "NORMAL": 355,
-            "POSITION": 354
+            "COLOR_0": 357,
+            "NORMAL": 356,
+            "POSITION": 355
           },
-          "indices": 352,
+          "indices": 353,
           "material": 14
         }
       ]
@@ -6699,20 +6715,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 361,
-            "NORMAL": 360,
-            "POSITION": 359
+            "COLOR_0": 362,
+            "NORMAL": 361,
+            "POSITION": 360
           },
-          "indices": 358,
+          "indices": 359,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 361,
-            "NORMAL": 360,
-            "POSITION": 359
+            "COLOR_0": 362,
+            "NORMAL": 361,
+            "POSITION": 360
           },
-          "indices": 357,
+          "indices": 358,
           "material": 14
         }
       ]
@@ -6722,11 +6738,11 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 364,
-            "POSITION": 363,
-            "TEXCOORD_0": 365
+            "NORMAL": 365,
+            "POSITION": 364,
+            "TEXCOORD_0": 366
           },
-          "indices": 362,
+          "indices": 363,
           "material": 40
         }
       ]
