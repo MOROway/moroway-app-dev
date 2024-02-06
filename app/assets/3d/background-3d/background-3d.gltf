@@ -628,7 +628,7 @@
       "bufferView": 25,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 979,
+      "count": 977,
       "max": [
         1.62148109831244502388e-01,
         1.25983292806931240770e-01,
@@ -645,14 +645,14 @@
       "bufferView": 25,
       "byteOffset": 12,
       "componentType": 5126,
-      "count": 979,
+      "count": 977,
       "type": "VEC3"
     },
     {
       "bufferView": 25,
       "byteOffset": 24,
       "componentType": 5126,
-      "count": 979,
+      "count": 977,
       "type": "VEC4"
     },
     {
@@ -732,7 +732,7 @@
       "bufferView": 29,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 856,
+      "count": 854,
       "max": [
         2.15207812090079719791e-01,
         2.44814457614702211952e-02,
@@ -749,14 +749,14 @@
       "bufferView": 29,
       "byteOffset": 12,
       "componentType": 5126,
-      "count": 856,
+      "count": 854,
       "type": "VEC3"
     },
     {
       "bufferView": 29,
       "byteOffset": 24,
       "componentType": 5126,
-      "count": 856,
+      "count": 854,
       "type": "VEC4"
     },
     {
@@ -1472,31 +1472,38 @@
     },
     {
       "bufferView": 56,
-      "byteOffset": 384,
+      "byteOffset": 2088,
       "componentType": 5125,
-      "count": 426,
+      "count": 84,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 56,
+      "byteOffset": 96,
+      "componentType": 5125,
+      "count": 498,
       "type": "SCALAR"
     },
     {
       "bufferView": 56,
       "byteOffset": 0,
       "componentType": 5125,
-      "count": 96,
+      "count": 24,
       "type": "SCALAR"
     },
     {
       "bufferView": 57,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 516,
+      "count": 586,
       "max": [
         3.44029679445240377245e-01,
         8.87979685434428372970e-02,
         4.86913839897284636549e-02
       ],
       "min": [
-        2.63245841827585314032e-01,
-        -6.63077978405818800611e-03,
+        2.62598548418837174356e-01,
+        -7.70805692329836877191e-03,
         -5.43730739737573182089e-18
       ],
       "type": "VEC3"
@@ -1505,14 +1512,14 @@
       "bufferView": 57,
       "byteOffset": 12,
       "componentType": 5126,
-      "count": 516,
+      "count": 586,
       "type": "VEC3"
     },
     {
       "bufferView": 57,
       "byteOffset": 24,
       "componentType": 5126,
-      "count": 516,
+      "count": 586,
       "type": "VEC4"
     },
     {
@@ -3340,575 +3347,575 @@
     },
     {
       "buffer": 0,
-      "byteLength": 39160,
+      "byteLength": 39080,
       "byteOffset": 1398676,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 42672,
-      "byteOffset": 1437836
+      "byteOffset": 1437756
     },
     {
       "buffer": 0,
       "byteLength": 154040,
-      "byteOffset": 1480508,
+      "byteOffset": 1480428,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 8100,
-      "byteOffset": 1634548
+      "byteOffset": 1634468
     },
     {
       "buffer": 0,
-      "byteLength": 34240,
-      "byteOffset": 1642648,
+      "byteLength": 34160,
+      "byteOffset": 1642568,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 8244,
-      "byteOffset": 1676888
+      "byteOffset": 1676728
     },
     {
       "buffer": 0,
       "byteLength": 40160,
-      "byteOffset": 1685132,
+      "byteOffset": 1684972,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 1725292
+      "byteOffset": 1725132
     },
     {
       "buffer": 0,
       "byteLength": 4120,
-      "byteOffset": 1727428,
+      "byteOffset": 1727268,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 9432,
-      "byteOffset": 1731548
+      "byteOffset": 1731388
     },
     {
       "buffer": 0,
       "byteLength": 36600,
-      "byteOffset": 1740980,
+      "byteOffset": 1740820,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 8304,
-      "byteOffset": 1777580
+      "byteOffset": 1777420
     },
     {
       "buffer": 0,
       "byteLength": 35240,
-      "byteOffset": 1785884,
+      "byteOffset": 1785724,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 1821124
+      "byteOffset": 1820964
     },
     {
       "buffer": 0,
       "byteLength": 3200,
-      "byteOffset": 1822396,
+      "byteOffset": 1822236,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 1825596
+      "byteOffset": 1825436
     },
     {
       "buffer": 0,
       "byteLength": 3200,
-      "byteOffset": 1826868,
+      "byteOffset": 1826708,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2280,
-      "byteOffset": 1830068
+      "byteOffset": 1829908
     },
     {
       "buffer": 0,
       "byteLength": 8880,
-      "byteOffset": 1832348,
+      "byteOffset": 1832188,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 26088,
-      "byteOffset": 1841228
+      "byteOffset": 1841068
     },
     {
       "buffer": 0,
       "byteLength": 144520,
-      "byteOffset": 1867316,
+      "byteOffset": 1867156,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 11976,
-      "byteOffset": 2011836
+      "byteOffset": 2011676
     },
     {
       "buffer": 0,
       "byteLength": 38160,
-      "byteOffset": 2023812,
+      "byteOffset": 2023652,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 6324,
-      "byteOffset": 2061972
+      "byteOffset": 2061812
     },
     {
       "buffer": 0,
       "byteLength": 29400,
-      "byteOffset": 2068296,
+      "byteOffset": 2068136,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 720,
-      "byteOffset": 2097696
+      "byteOffset": 2097536
     },
     {
       "buffer": 0,
       "byteLength": 1920,
-      "byteOffset": 2098416,
+      "byteOffset": 2098256,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 432,
-      "byteOffset": 2100336
+      "byteOffset": 2100176
     },
     {
       "buffer": 0,
       "byteLength": 3456,
-      "byteOffset": 2100768,
+      "byteOffset": 2100608,
       "byteStride": 32
     },
     {
       "buffer": 0,
       "byteLength": 9384,
-      "byteOffset": 2104224
+      "byteOffset": 2104064
     },
     {
       "buffer": 0,
       "byteLength": 17760,
-      "byteOffset": 2113608,
+      "byteOffset": 2113448,
       "byteStride": 40
     },
     {
       "buffer": 0,
-      "byteLength": 2088,
-      "byteOffset": 2131368
+      "byteLength": 2424,
+      "byteOffset": 2131208
     },
     {
       "buffer": 0,
-      "byteLength": 20640,
-      "byteOffset": 2133456,
-      "byteStride": 40
-    },
-    {
-      "buffer": 0,
-      "byteLength": 2136,
-      "byteOffset": 2154096
-    },
-    {
-      "buffer": 0,
-      "byteLength": 3720,
-      "byteOffset": 2156232,
+      "byteLength": 23440,
+      "byteOffset": 2133632,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2159952
+      "byteOffset": 2157072
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2162088,
+      "byteOffset": 2159208,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2165808
+      "byteOffset": 2162928
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2167944,
+      "byteOffset": 2165064,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2171664
+      "byteOffset": 2168784
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2173800,
+      "byteOffset": 2170920,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2177520
+      "byteOffset": 2174640
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2179656,
+      "byteOffset": 2176776,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2183376
+      "byteOffset": 2180496
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2185512,
+      "byteOffset": 2182632,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2189232
+      "byteOffset": 2186352
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2191368,
+      "byteOffset": 2188488,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2195088
+      "byteOffset": 2192208
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2197224,
+      "byteOffset": 2194344,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2200944
+      "byteOffset": 2198064
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2203080,
+      "byteOffset": 2200200,
+      "byteStride": 40
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2136,
+      "byteOffset": 2203920
+    },
+    {
+      "buffer": 0,
+      "byteLength": 3720,
+      "byteOffset": 2206056,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 336,
-      "byteOffset": 2206800
+      "byteOffset": 2209776
     },
     {
       "buffer": 0,
       "byteLength": 640,
-      "byteOffset": 2207136,
+      "byteOffset": 2210112,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2207776
+      "byteOffset": 2210752
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2209912,
+      "byteOffset": 2212888,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2213632
+      "byteOffset": 2216608
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2215768,
+      "byteOffset": 2218744,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2219488
+      "byteOffset": 2222464
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2221624,
+      "byteOffset": 2224600,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2225344
+      "byteOffset": 2228320
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2227480,
+      "byteOffset": 2230456,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2231200
+      "byteOffset": 2234176
     },
     {
       "buffer": 0,
       "byteLength": 3720,
-      "byteOffset": 2233336,
+      "byteOffset": 2236312,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 672,
-      "byteOffset": 2237056
+      "byteOffset": 2240032
     },
     {
       "buffer": 0,
       "byteLength": 1280,
-      "byteOffset": 2237728,
+      "byteOffset": 2240704,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 336,
-      "byteOffset": 2239008
+      "byteOffset": 2241984
     },
     {
       "buffer": 0,
       "byteLength": 640,
-      "byteOffset": 2239344,
+      "byteOffset": 2242320,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 672,
-      "byteOffset": 2239984
+      "byteOffset": 2242960
     },
     {
       "buffer": 0,
       "byteLength": 1280,
-      "byteOffset": 2240656,
+      "byteOffset": 2243632,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2241936
+      "byteOffset": 2244912
     },
     {
       "buffer": 0,
       "byteLength": 10480,
-      "byteOffset": 2244096,
+      "byteOffset": 2247072,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2254576
+      "byteOffset": 2257552
     },
     {
       "buffer": 0,
       "byteLength": 10560,
-      "byteOffset": 2256736,
+      "byteOffset": 2259712,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2267296
+      "byteOffset": 2270272
     },
     {
       "buffer": 0,
       "byteLength": 10400,
-      "byteOffset": 2269456,
+      "byteOffset": 2272432,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2279856
+      "byteOffset": 2282832
     },
     {
       "buffer": 0,
       "byteLength": 3840,
-      "byteOffset": 2281848,
+      "byteOffset": 2284824,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2285688
+      "byteOffset": 2288664
     },
     {
       "buffer": 0,
       "byteLength": 3840,
-      "byteOffset": 2287680,
+      "byteOffset": 2290656,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2291520
+      "byteOffset": 2294496
     },
     {
       "buffer": 0,
       "byteLength": 3840,
-      "byteOffset": 2293512,
+      "byteOffset": 2296488,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2297352
+      "byteOffset": 2300328
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2298624,
+      "byteOffset": 2301600,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2301184
+      "byteOffset": 2304160
     },
     {
       "buffer": 0,
       "byteLength": 17280,
-      "byteOffset": 2303344,
+      "byteOffset": 2306320,
       "byteStride": 32
     },
     {
       "buffer": 0,
       "byteLength": 528,
-      "byteOffset": 2320624
+      "byteOffset": 2323600
     },
     {
       "buffer": 0,
       "byteLength": 1120,
-      "byteOffset": 2321152,
+      "byteOffset": 2324128,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 11856,
-      "byteOffset": 2322272
+      "byteOffset": 2325248
     },
     {
       "buffer": 0,
       "byteLength": 20800,
-      "byteOffset": 2334128,
+      "byteOffset": 2337104,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 11856,
-      "byteOffset": 2354928
+      "byteOffset": 2357904
     },
     {
       "buffer": 0,
       "byteLength": 20800,
-      "byteOffset": 2366784,
+      "byteOffset": 2369760,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 19416,
-      "byteOffset": 2387584
+      "byteOffset": 2390560
     },
     {
       "buffer": 0,
       "byteLength": 114680,
-      "byteOffset": 2407000,
+      "byteOffset": 2409976,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2521680
+      "byteOffset": 2524656
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2522952,
+      "byteOffset": 2525928,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2525512
+      "byteOffset": 2528488
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2526784,
+      "byteOffset": 2529760,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2529344
+      "byteOffset": 2532320
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2530616,
+      "byteOffset": 2533592,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2533176
+      "byteOffset": 2536152
     },
     {
       "buffer": 0,
       "byteLength": 2560,
-      "byteOffset": 2534448,
+      "byteOffset": 2537424,
       "byteStride": 40
     },
     {
       "buffer": 0,
       "byteLength": 288,
-      "byteOffset": 2537008
+      "byteOffset": 2539984
     },
     {
       "buffer": 0,
       "byteLength": 2304,
-      "byteOffset": 2537296,
+      "byteOffset": 2540272,
       "byteStride": 32
     }
   ],
   "buffers": [
     {
-      "byteLength": 2539600,
+      "byteLength": 2542576,
       "uri": "background-3d.bin"
     }
   ],
@@ -4451,6 +4458,26 @@
           4.40000000000000002220e-01
         ],
         "metallicFactor": 0.00000000000000000000e+00,
+        "roughnessFactor": 1.00000000000000000000e+00
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "doubleSided": false,
+      "emissiveFactor": [
+        1.26865671641791050162e-01,
+        9.24614217050341580251e-02,
+        9.24614217050341580251e-02
+      ],
+      "name": "old_chimney",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          8.00000000000000044409e-01,
+          5.21568627450980426552e-01,
+          5.21568627450980426552e-01,
+          9.00000000000000022204e-01
+        ],
+        "metallicFactor": 5.00000000000000027756e-02,
         "roughnessFactor": 1.00000000000000000000e+00
       }
     },
@@ -5737,21 +5764,30 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 174,
-            "NORMAL": 173,
-            "POSITION": 172
+            "COLOR_0": 175,
+            "NORMAL": 174,
+            "POSITION": 173
           },
-          "indices": 171,
+          "indices": 172,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 174,
-            "NORMAL": 173,
-            "POSITION": 172
+            "COLOR_0": 175,
+            "NORMAL": 174,
+            "POSITION": 173
+          },
+          "indices": 171,
+          "material": 1
+        },
+        {
+          "attributes": {
+            "COLOR_0": 175,
+            "NORMAL": 174,
+            "POSITION": 173
           },
           "indices": 170,
-          "material": 1
+          "material": 23
         }
       ]
     },
@@ -5760,20 +5796,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 179,
-            "NORMAL": 178,
-            "POSITION": 177
+            "COLOR_0": 180,
+            "NORMAL": 179,
+            "POSITION": 178
           },
-          "indices": 176,
+          "indices": 177,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 179,
-            "NORMAL": 178,
-            "POSITION": 177
+            "COLOR_0": 180,
+            "NORMAL": 179,
+            "POSITION": 178
           },
-          "indices": 175,
+          "indices": 176,
           "material": 1
         }
       ]
@@ -5783,20 +5819,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 184,
-            "NORMAL": 183,
-            "POSITION": 182
+            "COLOR_0": 185,
+            "NORMAL": 184,
+            "POSITION": 183
           },
-          "indices": 181,
+          "indices": 182,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 184,
-            "NORMAL": 183,
-            "POSITION": 182
+            "COLOR_0": 185,
+            "NORMAL": 184,
+            "POSITION": 183
           },
-          "indices": 180,
+          "indices": 181,
           "material": 1
         }
       ]
@@ -5806,20 +5842,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 189,
-            "NORMAL": 188,
-            "POSITION": 187
+            "COLOR_0": 190,
+            "NORMAL": 189,
+            "POSITION": 188
           },
-          "indices": 186,
+          "indices": 187,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 189,
-            "NORMAL": 188,
-            "POSITION": 187
+            "COLOR_0": 190,
+            "NORMAL": 189,
+            "POSITION": 188
           },
-          "indices": 185,
+          "indices": 186,
           "material": 1
         }
       ]
@@ -5829,20 +5865,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 194,
-            "NORMAL": 193,
-            "POSITION": 192
+            "COLOR_0": 195,
+            "NORMAL": 194,
+            "POSITION": 193
           },
-          "indices": 191,
+          "indices": 192,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 194,
-            "NORMAL": 193,
-            "POSITION": 192
+            "COLOR_0": 195,
+            "NORMAL": 194,
+            "POSITION": 193
           },
-          "indices": 190,
+          "indices": 191,
           "material": 1
         }
       ]
@@ -5852,20 +5888,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 199,
-            "NORMAL": 198,
-            "POSITION": 197
+            "COLOR_0": 200,
+            "NORMAL": 199,
+            "POSITION": 198
           },
-          "indices": 196,
+          "indices": 197,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 199,
-            "NORMAL": 198,
-            "POSITION": 197
+            "COLOR_0": 200,
+            "NORMAL": 199,
+            "POSITION": 198
           },
-          "indices": 195,
+          "indices": 196,
           "material": 1
         }
       ]
@@ -5875,20 +5911,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 204,
-            "NORMAL": 203,
-            "POSITION": 202
+            "COLOR_0": 205,
+            "NORMAL": 204,
+            "POSITION": 203
           },
-          "indices": 201,
+          "indices": 202,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 204,
-            "NORMAL": 203,
-            "POSITION": 202
+            "COLOR_0": 205,
+            "NORMAL": 204,
+            "POSITION": 203
           },
-          "indices": 200,
+          "indices": 201,
           "material": 1
         }
       ]
@@ -5898,20 +5934,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 209,
-            "NORMAL": 208,
-            "POSITION": 207
+            "COLOR_0": 210,
+            "NORMAL": 209,
+            "POSITION": 208
           },
-          "indices": 206,
+          "indices": 207,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 209,
-            "NORMAL": 208,
-            "POSITION": 207
+            "COLOR_0": 210,
+            "NORMAL": 209,
+            "POSITION": 208
           },
-          "indices": 205,
+          "indices": 206,
           "material": 1
         }
       ]
@@ -5921,20 +5957,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 214,
-            "NORMAL": 213,
-            "POSITION": 212
+            "COLOR_0": 215,
+            "NORMAL": 214,
+            "POSITION": 213
           },
-          "indices": 211,
+          "indices": 212,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 214,
-            "NORMAL": 213,
-            "POSITION": 212
+            "COLOR_0": 215,
+            "NORMAL": 214,
+            "POSITION": 213
           },
-          "indices": 210,
+          "indices": 211,
           "material": 1
         }
       ]
@@ -5944,20 +5980,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 219,
-            "NORMAL": 218,
-            "POSITION": 217
+            "COLOR_0": 220,
+            "NORMAL": 219,
+            "POSITION": 218
           },
-          "indices": 216,
+          "indices": 217,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 219,
-            "NORMAL": 218,
-            "POSITION": 217
+            "COLOR_0": 220,
+            "NORMAL": 219,
+            "POSITION": 218
           },
-          "indices": 215,
+          "indices": 216,
           "material": 1
         }
       ]
@@ -5967,11 +6003,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 223,
-            "NORMAL": 222,
-            "POSITION": 221
+            "COLOR_0": 224,
+            "NORMAL": 223,
+            "POSITION": 222
           },
-          "indices": 220,
+          "indices": 221,
           "material": 0
         }
       ]
@@ -5981,20 +6017,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 228,
-            "NORMAL": 227,
-            "POSITION": 226
+            "COLOR_0": 229,
+            "NORMAL": 228,
+            "POSITION": 227
           },
-          "indices": 225,
+          "indices": 226,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 228,
-            "NORMAL": 227,
-            "POSITION": 226
+            "COLOR_0": 229,
+            "NORMAL": 228,
+            "POSITION": 227
           },
-          "indices": 224,
+          "indices": 225,
           "material": 1
         }
       ]
@@ -6004,20 +6040,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 233,
-            "NORMAL": 232,
-            "POSITION": 231
+            "COLOR_0": 234,
+            "NORMAL": 233,
+            "POSITION": 232
           },
-          "indices": 230,
+          "indices": 231,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 233,
-            "NORMAL": 232,
-            "POSITION": 231
+            "COLOR_0": 234,
+            "NORMAL": 233,
+            "POSITION": 232
           },
-          "indices": 229,
+          "indices": 230,
           "material": 1
         }
       ]
@@ -6027,20 +6063,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 238,
-            "NORMAL": 237,
-            "POSITION": 236
+            "COLOR_0": 239,
+            "NORMAL": 238,
+            "POSITION": 237
           },
-          "indices": 235,
+          "indices": 236,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 238,
-            "NORMAL": 237,
-            "POSITION": 236
+            "COLOR_0": 239,
+            "NORMAL": 238,
+            "POSITION": 237
           },
-          "indices": 234,
+          "indices": 235,
           "material": 1
         }
       ]
@@ -6050,20 +6086,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 243,
-            "NORMAL": 242,
-            "POSITION": 241
+            "COLOR_0": 244,
+            "NORMAL": 243,
+            "POSITION": 242
           },
-          "indices": 240,
+          "indices": 241,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 243,
-            "NORMAL": 242,
-            "POSITION": 241
+            "COLOR_0": 244,
+            "NORMAL": 243,
+            "POSITION": 242
           },
-          "indices": 239,
+          "indices": 240,
           "material": 1
         }
       ]
@@ -6073,20 +6109,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 248,
-            "NORMAL": 247,
-            "POSITION": 246
+            "COLOR_0": 249,
+            "NORMAL": 248,
+            "POSITION": 247
           },
-          "indices": 245,
+          "indices": 246,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 248,
-            "NORMAL": 247,
-            "POSITION": 246
+            "COLOR_0": 249,
+            "NORMAL": 248,
+            "POSITION": 247
           },
-          "indices": 244,
+          "indices": 245,
           "material": 1
         }
       ]
@@ -6096,11 +6132,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 252,
-            "NORMAL": 251,
-            "POSITION": 250
+            "COLOR_0": 253,
+            "NORMAL": 252,
+            "POSITION": 251
           },
-          "indices": 249,
+          "indices": 250,
           "material": 0
         }
       ]
@@ -6110,11 +6146,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 256,
-            "NORMAL": 255,
-            "POSITION": 254
+            "COLOR_0": 257,
+            "NORMAL": 256,
+            "POSITION": 255
           },
-          "indices": 253,
+          "indices": 254,
           "material": 0
         }
       ]
@@ -6124,11 +6160,11 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 260,
-            "NORMAL": 259,
-            "POSITION": 258
+            "COLOR_0": 261,
+            "NORMAL": 260,
+            "POSITION": 259
           },
-          "indices": 257,
+          "indices": 258,
           "material": 0
         }
       ]
@@ -6138,20 +6174,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 265,
-            "NORMAL": 264,
-            "POSITION": 263
+            "COLOR_0": 266,
+            "NORMAL": 265,
+            "POSITION": 264
           },
-          "indices": 262,
+          "indices": 263,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 265,
-            "NORMAL": 264,
-            "POSITION": 263
+            "COLOR_0": 266,
+            "NORMAL": 265,
+            "POSITION": 264
           },
-          "indices": 261,
+          "indices": 262,
           "material": 14
         }
       ]
@@ -6161,20 +6197,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 270,
-            "NORMAL": 269,
-            "POSITION": 268
+            "COLOR_0": 271,
+            "NORMAL": 270,
+            "POSITION": 269
           },
-          "indices": 267,
+          "indices": 268,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 270,
-            "NORMAL": 269,
-            "POSITION": 268
+            "COLOR_0": 271,
+            "NORMAL": 270,
+            "POSITION": 269
           },
-          "indices": 266,
+          "indices": 267,
           "material": 14
         }
       ]
@@ -6184,20 +6220,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 275,
-            "NORMAL": 274,
-            "POSITION": 273
+            "COLOR_0": 276,
+            "NORMAL": 275,
+            "POSITION": 274
           },
-          "indices": 272,
+          "indices": 273,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 275,
-            "NORMAL": 274,
-            "POSITION": 273
+            "COLOR_0": 276,
+            "NORMAL": 275,
+            "POSITION": 274
           },
-          "indices": 271,
+          "indices": 272,
           "material": 14
         }
       ]
@@ -6207,29 +6243,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 281,
-            "NORMAL": 280,
-            "POSITION": 279
+            "COLOR_0": 282,
+            "NORMAL": 281,
+            "POSITION": 280
           },
-          "indices": 278,
+          "indices": 279,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 281,
-            "NORMAL": 280,
-            "POSITION": 279
+            "COLOR_0": 282,
+            "NORMAL": 281,
+            "POSITION": 280
           },
-          "indices": 277,
+          "indices": 278,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 281,
-            "NORMAL": 280,
-            "POSITION": 279
+            "COLOR_0": 282,
+            "NORMAL": 281,
+            "POSITION": 280
           },
-          "indices": 276,
+          "indices": 277,
           "material": 14
         }
       ]
@@ -6239,29 +6275,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 287,
-            "NORMAL": 286,
-            "POSITION": 285
+            "COLOR_0": 288,
+            "NORMAL": 287,
+            "POSITION": 286
           },
-          "indices": 284,
+          "indices": 285,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 287,
-            "NORMAL": 286,
-            "POSITION": 285
+            "COLOR_0": 288,
+            "NORMAL": 287,
+            "POSITION": 286
           },
-          "indices": 283,
+          "indices": 284,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 287,
-            "NORMAL": 286,
-            "POSITION": 285
+            "COLOR_0": 288,
+            "NORMAL": 287,
+            "POSITION": 286
           },
-          "indices": 282,
+          "indices": 283,
           "material": 14
         }
       ]
@@ -6271,29 +6307,29 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 293,
-            "NORMAL": 292,
-            "POSITION": 291
+            "COLOR_0": 294,
+            "NORMAL": 293,
+            "POSITION": 292
           },
-          "indices": 290,
+          "indices": 291,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 293,
-            "NORMAL": 292,
-            "POSITION": 291
+            "COLOR_0": 294,
+            "NORMAL": 293,
+            "POSITION": 292
           },
-          "indices": 289,
+          "indices": 290,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 293,
-            "NORMAL": 292,
-            "POSITION": 291
+            "COLOR_0": 294,
+            "NORMAL": 293,
+            "POSITION": 292
           },
-          "indices": 288,
+          "indices": 289,
           "material": 14
         }
       ]
@@ -6303,20 +6339,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 298,
-            "NORMAL": 297,
-            "POSITION": 296
+            "COLOR_0": 299,
+            "NORMAL": 298,
+            "POSITION": 297
           },
-          "indices": 295,
+          "indices": 296,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 298,
-            "NORMAL": 297,
-            "POSITION": 296
+            "COLOR_0": 299,
+            "NORMAL": 298,
+            "POSITION": 297
           },
-          "indices": 294,
+          "indices": 295,
           "material": 14
         }
       ]
@@ -6326,147 +6362,147 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 314,
+          "indices": 315,
           "material": 1
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 313,
-          "material": 23
-        },
-        {
-          "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
-          },
-          "indices": 312,
+          "indices": 314,
           "material": 24
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 311,
+          "indices": 313,
           "material": 25
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 310,
+          "indices": 312,
           "material": 26
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 309,
+          "indices": 311,
           "material": 27
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 308,
+          "indices": 310,
           "material": 28
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 307,
+          "indices": 309,
           "material": 29
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 306,
+          "indices": 308,
           "material": 30
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 305,
+          "indices": 307,
           "material": 31
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 304,
+          "indices": 306,
           "material": 32
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 303,
+          "indices": 305,
           "material": 33
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 302,
+          "indices": 304,
           "material": 34
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 301,
+          "indices": 303,
           "material": 35
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 300,
+          "indices": 302,
           "material": 36
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "TEXCOORD_0": 317
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
           },
-          "indices": 299,
+          "indices": 301,
           "material": 37
+        },
+        {
+          "attributes": {
+            "NORMAL": 317,
+            "POSITION": 316,
+            "TEXCOORD_0": 318
+          },
+          "indices": 300,
+          "material": 38
         }
       ]
     },
@@ -6475,30 +6511,30 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 323,
-            "NORMAL": 322,
-            "POSITION": 321
+            "COLOR_0": 324,
+            "NORMAL": 323,
+            "POSITION": 322
           },
-          "indices": 320,
+          "indices": 321,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 323,
-            "NORMAL": 322,
-            "POSITION": 321
+            "COLOR_0": 324,
+            "NORMAL": 323,
+            "POSITION": 322
           },
-          "indices": 319,
+          "indices": 320,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 323,
-            "NORMAL": 322,
-            "POSITION": 321
+            "COLOR_0": 324,
+            "NORMAL": 323,
+            "POSITION": 322
           },
-          "indices": 318,
-          "material": 38
+          "indices": 319,
+          "material": 39
         }
       ]
     },
@@ -6507,20 +6543,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 328,
-            "NORMAL": 327,
-            "POSITION": 326
+            "COLOR_0": 329,
+            "NORMAL": 328,
+            "POSITION": 327
           },
-          "indices": 325,
+          "indices": 326,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 328,
-            "NORMAL": 327,
-            "POSITION": 326
+            "COLOR_0": 329,
+            "NORMAL": 328,
+            "POSITION": 327
           },
-          "indices": 324,
+          "indices": 325,
           "material": 14
         }
       ]
@@ -6530,20 +6566,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 333,
-            "NORMAL": 332,
-            "POSITION": 331
+            "COLOR_0": 334,
+            "NORMAL": 333,
+            "POSITION": 332
           },
-          "indices": 330,
+          "indices": 331,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 333,
-            "NORMAL": 332,
-            "POSITION": 331
+            "COLOR_0": 334,
+            "NORMAL": 333,
+            "POSITION": 332
           },
-          "indices": 329,
+          "indices": 330,
           "material": 14
         }
       ]
@@ -6553,38 +6589,38 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 340,
-            "NORMAL": 339,
-            "POSITION": 338
+            "COLOR_0": 341,
+            "NORMAL": 340,
+            "POSITION": 339
           },
-          "indices": 337,
+          "indices": 338,
           "material": 0
         },
         {
           "attributes": {
-            "COLOR_0": 340,
-            "NORMAL": 339,
-            "POSITION": 338
+            "COLOR_0": 341,
+            "NORMAL": 340,
+            "POSITION": 339
           },
-          "indices": 336,
+          "indices": 337,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 340,
-            "NORMAL": 339,
-            "POSITION": 338
+            "COLOR_0": 341,
+            "NORMAL": 340,
+            "POSITION": 339
           },
-          "indices": 335,
+          "indices": 336,
           "material": 17
         },
         {
           "attributes": {
-            "COLOR_0": 340,
-            "NORMAL": 339,
-            "POSITION": 338
+            "COLOR_0": 341,
+            "NORMAL": 340,
+            "POSITION": 339
           },
-          "indices": 334,
+          "indices": 335,
           "material": 14
         }
       ]
@@ -6594,20 +6630,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 345,
-            "NORMAL": 344,
-            "POSITION": 343
+            "COLOR_0": 346,
+            "NORMAL": 345,
+            "POSITION": 344
           },
-          "indices": 342,
+          "indices": 343,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 345,
-            "NORMAL": 344,
-            "POSITION": 343
+            "COLOR_0": 346,
+            "NORMAL": 345,
+            "POSITION": 344
           },
-          "indices": 341,
+          "indices": 342,
           "material": 14
         }
       ]
@@ -6617,20 +6653,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 350,
-            "NORMAL": 349,
-            "POSITION": 348
+            "COLOR_0": 351,
+            "NORMAL": 350,
+            "POSITION": 349
           },
-          "indices": 347,
+          "indices": 348,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 350,
-            "NORMAL": 349,
-            "POSITION": 348
+            "COLOR_0": 351,
+            "NORMAL": 350,
+            "POSITION": 349
           },
-          "indices": 346,
+          "indices": 347,
           "material": 14
         }
       ]
@@ -6640,20 +6676,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 355,
-            "NORMAL": 354,
-            "POSITION": 353
+            "COLOR_0": 356,
+            "NORMAL": 355,
+            "POSITION": 354
           },
-          "indices": 352,
+          "indices": 353,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 355,
-            "NORMAL": 354,
-            "POSITION": 353
+            "COLOR_0": 356,
+            "NORMAL": 355,
+            "POSITION": 354
           },
-          "indices": 351,
+          "indices": 352,
           "material": 14
         }
       ]
@@ -6663,20 +6699,20 @@
       "primitives": [
         {
           "attributes": {
-            "COLOR_0": 360,
-            "NORMAL": 359,
-            "POSITION": 358
+            "COLOR_0": 361,
+            "NORMAL": 360,
+            "POSITION": 359
           },
-          "indices": 357,
+          "indices": 358,
           "material": 1
         },
         {
           "attributes": {
-            "COLOR_0": 360,
-            "NORMAL": 359,
-            "POSITION": 358
+            "COLOR_0": 361,
+            "NORMAL": 360,
+            "POSITION": 359
           },
-          "indices": 356,
+          "indices": 357,
           "material": 14
         }
       ]
@@ -6686,12 +6722,12 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 363,
-            "POSITION": 362,
-            "TEXCOORD_0": 364
+            "NORMAL": 364,
+            "POSITION": 363,
+            "TEXCOORD_0": 365
           },
-          "indices": 361,
-          "material": 39
+          "indices": 362,
+          "material": 40
         }
       ]
     }
