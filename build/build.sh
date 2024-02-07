@@ -228,6 +228,10 @@ for platform in ${platforms[@]}; do
 					sed -i 's/<\!--\sinsert_link_webmanifest\s-->//' "$to/$html_file"
 					perl -pi -e "s/^\s+\n\$//" "$to/$html_file"
 				fi
+				meta_app_name="$(cat "metadata/default/application-name.txt")"
+				meta_author="$(cat "metadata/default/author.txt")"
+				meta_description="$(cat "metadata/default/description.txt")"
+				sed -i 's/<\!--\sinsert_meta_app_name\s-->/<meta name="application-name" content="'"$meta_app_name"'">/;s/<\!--\sinsert_meta_author\s-->/<meta name="author" content="'"$meta_author"'">/;s/<\!--\sinsert_meta_description\s-->/<meta name="description" content="'"$meta_description"'">/' "$to/$html_file"
 				while [[ ! -z $(cat "$to/$html_file" | grep "<\!-- dep_check -->" | head -1) ]]; do
 					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
 						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n/\n/" "$to/$html_file"
@@ -256,6 +260,14 @@ for platform in ${platforms[@]}; do
 		fonttools varLib.mutator "$fontFile" wdth=480 wght=400 --no-recalc-timestamp -o "$fontPath/Roboto-Regular.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
 		rm "$fontFile"
 
+		# Web Manifest
+		file="$to/manifest.webmanifest"
+		if [[ -f "$file" ]]; then
+			meta_app_name="$(cat "metadata/default/application-name.txt")"
+			meta_app_name_short="$(cat "metadata/default/application-name-short.txt")"
+			meta_description="$(cat "metadata/default/description.txt")"
+			sed -i "s/{{name}}/$meta_app_name/;s/{{short_name}}/$meta_app_name_short/;s/{{description}}/$meta_description/" "$file"
+		fi
 		# Service Worker
 		file="$to/sw.js"
 		if [[ -f "$file" ]]; then

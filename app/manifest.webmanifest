@@ -1,9 +1,7 @@
 {
-    "lang": "de",
-    "dir": "ltr",
-    "name": "MOROway App",
-    "description": "MOROway App - Modellbahn im Web",
-    "short_name": "MOROway",
+    "name": "{{name}}",
+    "description": "{{description}}",
+    "short_name": "{{short_name}}",
     "start_url": "./",
     "icons": [
         {
