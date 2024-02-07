@@ -55,6 +55,8 @@ MOROway App uses Weblate for translations.
       - `beta`: 0 for release / beta off; 1,2,3,… for beta number
       - `sharelink`: Share link displayed to users when creating a multiplayer game
       - `serverlink`: Link to server backend without protocol
+      - `app_self_link`: Link to app (currently used for Open Graph metadata)
+      - `app_banner_link`: Link to app promotion image (currently used for Open Graph metadata)
       - prefixes:
         - `debug`: Configuration only used for debug mode
         - `[platform]`: Configuration only used for specific platform
