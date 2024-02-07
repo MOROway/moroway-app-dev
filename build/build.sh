@@ -28,8 +28,12 @@ function get_conf() {
 		conf=$(cat ./conf ./conf_local)
 	fi
 	pattern="^$1="
-	if [[ "$2" == 1 ]] && [[ ! -z $(echo "$conf" | grep -e "^debug:$1=") ]]; then
+	if [[ "$2" == 1 ]] && [[ ! -z $(echo "$conf" | grep -e "^debug:$platform:$1=\|^$platform:debug:$1=") ]]; then
+		pattern="^debug:$platform:$1=\|^$platform:debug:$1="
+	elif [[ "$2" == 1 ]] && [[ ! -z $(echo "$conf" | grep -e "^debug:$1=") ]]; then
 		pattern="^debug:$1="
+	elif [[ ! -z $(echo "$conf" | grep -e "^$platform:$1=") ]]; then
+		pattern="^$platform:$1="
 	fi
 	echo $(echo "$conf" | grep -e "$pattern" | tail -1 | sed s/[^=]*=//)
 }
@@ -54,34 +58,40 @@ if [[ "$d" == 1 ]]; then
 fi
 
 [[ ! -d ../out ]] && mkdir ../out
+
 log "build started" 0
+valid_platform=0
 
 [[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh >../out/pre_build.log
 
-version="$(get_conf "version" "$debug")"
-[[ -z "$version" ]] && logexit 1 "version empty"
-version_major=$(echo "$version" | sed 's/^\([0-9]\+\)\.[0-9]\+\.[0-9]\+$/\1/')
-version_minor=$(echo "$version" | sed 's/^[0-9]\+\.\([0-9]\+\)\.[0-9]\+$/\1/')
-version_patch=$(echo "$version" | sed 's/^[0-9]\+\.[0-9]\+\.\([0-9]\+\)$/\1/')
-[[ "$version_major" != $(echo "$version_major" | sed 's/[^0-9]//g') || "$version_minor" != $(echo "$version_minor" | sed 's/[^0-9]//g') || "$version_patch" != $(echo "$version_patch" | sed 's/[^0-9]//g') ]] && logexit 1 "version invalid"
-date '+%Y' >changelogs/meta/year/"$version"
-[[ ! -f changelogs/meta/fixes/bool/"$version" ]] && echo 0 >changelogs/meta/fixes/bool/"$version"
-
-beta=$(echo "$(get_conf "beta" "$debug")" | sed s/[^0-9]//g)
-[[ -z "$beta" ]] && logexit 2 "beta empty"
-beta_identifier=""
-if (($beta > 0)); then
-	beta_identifier="-beta-$beta"
-fi
-
-sharelink=$(echo "$(get_conf "sharelink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g')
-serverlink=$(echo "$(get_conf "serverlink" "$debug")" | sed 's/!/\\!/g' | sed 's/&/\\&/g')
-
-valid_platform=0
 for platform in ${platforms[@]}; do
 	if [[ "$p" == "$platform" ]] || [[ -z "$p" ]]; then
+
+		# Get Configuration
+		version="$(get_conf "version" "$debug" "$platform")"
+		[[ -z "$version" ]] && logexit 1 "version empty"
+		version_major=$(echo "$version" | sed 's/^\([0-9]\+\)\.[0-9]\+\.[0-9]\+$/\1/')
+		version_minor=$(echo "$version" | sed 's/^[0-9]\+\.\([0-9]\+\)\.[0-9]\+$/\1/')
+		version_patch=$(echo "$version" | sed 's/^[0-9]\+\.[0-9]\+\.\([0-9]\+\)$/\1/')
+		[[ "$version_major" != $(echo "$version_major" | sed 's/[^0-9]//g') || "$version_minor" != $(echo "$version_minor" | sed 's/[^0-9]//g') || "$version_patch" != $(echo "$version_patch" | sed 's/[^0-9]//g') ]] && logexit 1 "version invalid"
+		date '+%Y' >changelogs/meta/year/"$version"
+		[[ ! -f changelogs/meta/fixes/bool/"$version" ]] && echo 0 >changelogs/meta/fixes/bool/"$version"
+		beta=$(echo "$(get_conf "beta" "$debug" "$platform")" | sed s/[^0-9]//g)
+		[[ -z "$beta" ]] && logexit 2 "beta empty"
+		beta_identifier=""
+		if (($beta > 0)); then
+			beta_identifier="-beta-$beta"
+		fi
+		sharelink=$(echo "$(get_conf "sharelink" "$debug" "$platform")" | sed 's/!/\\!/g' | sed 's/&/\\&/g')
+		serverlink=$(echo "$(get_conf "serverlink" "$debug" "$platform")" | sed 's/!/\\!/g' | sed 's/&/\\&/g')
+		app_link_self=$(echo "$(get_conf "app_self_link" "$debug" "$platform")" | sed 's!/!\\/!g' | sed 's/&/\\&/g')
+		app_link_banner=$(echo "$(get_conf "app_banner_link" "$debug" "$platform")" | sed 's!/!\\/!g' | sed 's/&/\\&/g')
+
+		# Start build for platform
 		valid_platform=1
 		log "platform/version $platform/$version.$beta"
+
+		# Prepare copy files
 		from=../app
 		fromPf=../app_platforms/"$platform"
 		to=../out/"$platform"/"$version$beta_identifier"
@@ -89,19 +99,19 @@ for platform in ${platforms[@]}; do
 		[[ -d "$to" ]] && rm -r "$to"
 		mkdir "$to"
 
-		# Copy Core and Platforms
+		# Copy core and platform files
 		cp -pr "$from/"* "$to"
 		cp -pr "$fromPf/"* "$to"
 		cp -pr ../ABOUT "$to"
 		cp -pr ../LICENSE* "$to"
 
-		# Remove excludes
+		# Remove core excludes
 		file="$to/core_excludes"
 		if [[ -f "$file" ]]; then
 			while read -r line; do
 				if [[ ! "$line" =~ ^"#" ]]; then
-					line=$(echo "$line" | sed 's/^[./]\+//g')
-					rm -r "$to/"$line
+					line=$(echo "$line" | sed 's/\(^\|[^\\]\)\s\+/\1/g;s/\(^\|[/]\)\+[.][.]\+//g;s!^[/]\+!!g')
+					[[ ! -z "$line" ]] && rm -r "$to/"$line
 				fi
 			done <"$file"
 			rm "$file"
@@ -126,7 +136,6 @@ for platform in ${platforms[@]}; do
 		done
 		strings=$(echo "$strings" | perl -0pe 's/,$/}/g')
 		perl -0pi -e "s/\"\{\{strings\}\}\"/$strings/" "$file"
-
 		[[ $(file -i "$file" | sed 's/.*charset=//') != utf-8 ]] && logexit 4 "setting strings internal error"
 		for clangdir in changelogs/*; do
 			clang=$(basename "$clangdir")
@@ -228,9 +237,9 @@ for platform in ${platforms[@]}; do
 					sed -i 's/<\!--\sinsert_link_webmanifest\s-->//' "$to/$html_file"
 					perl -pi -e "s/^\s+\n\$//" "$to/$html_file"
 				fi
-				meta_app_name="$(cat "metadata/default/application-name.txt")"
-				meta_author="$(cat "metadata/default/author.txt")"
-				meta_description="$(cat "metadata/default/description.txt")"
+				meta_app_name="$(cat "metadata/default/application-name.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g')"
+				meta_author="$(cat "metadata/default/author.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g')"
+				meta_description="$(cat "metadata/default/description.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g')"
 				sed -i 's/<\!--\sinsert_meta_app_name\s-->/<meta name="application-name" content="'"$meta_app_name"'">/;s/<\!--\sinsert_meta_author\s-->/<meta name="author" content="'"$meta_author"'">/;s/<\!--\sinsert_meta_description\s-->/<meta name="description" content="'"$meta_description"'">/' "$to/$html_file"
 				while [[ ! -z $(cat "$to/$html_file" | grep "<\!-- dep_check -->" | head -1) ]]; do
 					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
@@ -239,8 +248,15 @@ for platform in ${platforms[@]}; do
 						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n.*\n/\n/" "$to/$html_file"
 					fi
 				done
+				if [[ ! -z "$app_link_self" ]] && [[ ! -z "$app_link_banner" ]]; then
+					sed -i 's/<\!--\sinsert_open_graph_data\s-->/<meta property="og:title" content="'"$meta_app_name"'"><meta property="og:type" content="website"><meta property="og:url" content="'"$app_link_self"'"><meta property="og:image" content="'"$app_link_banner"'">/' "$to/$html_file"
+				else
+					sed -i 's/<\!--\sinsert_open_graph_data\s-->//' "$to/$html_file"
+					perl -pi -e "s/^\s+\n\$//" "$to/$html_file"
+				fi
 			fi
 		done
+
 		# Media: OGG to MP3
 		for ogg_file in ${all_files[@]}; do
 			if [[ "$ogg_file" =~ .ogg$ ]]; then
@@ -305,7 +321,7 @@ for platform in ${platforms[@]}; do
 		[[ -L ../out/"$platform"/latest ]] && rm ../out/"$platform"/latest
 		ln -s "$version$beta_identifier" ../out/"$platform"/latest
 
-		# Platform specific build files
+		# Platform specific build scripts
 		if [[ -f ../wrapper/"$platform"/build.sh ]]; then
 			log "start platform-wrapper build"
 			$(../wrapper/"$platform"/build.sh -b "$beta" -d "$debug" -l "$serverlink" -o "$(realpath ../out/"$platform"/latest/)" -s "$sharelink" -v "$version" -w "$(realpath .)" >/dev/null 2>&1) || logexit $((1000 + $?)) "platform-wrapper build"
