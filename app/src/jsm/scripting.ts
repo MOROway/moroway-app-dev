@@ -1131,8 +1131,8 @@ function getGesture(gesture) {
                 client.zoomAndTilt.pinchY -= gesture.deltaY / client.zoomAndTilt.realScale;
                 break;
             case "tilt":
-                client.zoomAndTilt.tiltX -= gesture.deltaX / client.zoomAndTilt.realScale;
-                client.zoomAndTilt.tiltY -= gesture.deltaY / client.zoomAndTilt.realScale;
+                client.zoomAndTilt.tiltX -= gesture.deltaX;
+                client.zoomAndTilt.tiltY -= gesture.deltaY;
                 break;
         }
         client.zoomAndTilt.offsetX = (canvas.width / 2 - client.zoomAndTilt.pinchX) * client.zoomAndTilt.realScale;
@@ -1303,8 +1303,8 @@ function onMouseMove(event) {
             hardware.mouse.isHold = false;
         }
     } else if (gui.three && hardware.mouse.isWheelHold) {
-        var deltaX = 5 * client.zoomAndTilt.realScale * (hardware.mouse.moveX - event.clientX * client.devicePixelRatio);
-        var deltaY = 5 * client.zoomAndTilt.realScale * (hardware.mouse.moveY - event.clientY * client.devicePixelRatio);
+        var deltaX = 5 * (hardware.mouse.moveX - event.clientX * client.devicePixelRatio);
+        var deltaY = 5 * (hardware.mouse.moveY - event.clientY * client.devicePixelRatio);
         getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
     }
     hardware.mouse.moveX = event.clientX * client.devicePixelRatio;
@@ -1421,7 +1421,7 @@ function getTouchMove(event) {
         var deltaX = -(hardware.mouse.moveX - event.touches[1].clientX * client.devicePixelRatio);
         var deltaY = -(hardware.mouse.moveY - event.touches[1].clientY * client.devicePixelRatio);
         var hypot = Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
-        if (Math.abs(deltaX) > background.width / 20 || Math.abs(deltaY) > background.width / 20 || Math.abs(hypot - client.zoomAndTilt.pinchHypotDown) > background.width / 20) {
+        if (Math.abs(deltaX) > background.width / 20 || Math.abs(deltaY) > background.width / 20 || Math.abs(hypot - client.zoomAndTilt.pinchHypotDown) > background.width / 20 || typeof client.zoomAndTilt.pinchHypot != "undefined" || client.zoomAndTilt.pinchGestureIsTilt) {
             if (typeof client.zoomAndTilt.pinchHypot == "undefined" && !client.zoomAndTilt.pinchGestureIsTilt) {
                 if (Math.abs(hypot - client.zoomAndTilt.pinchHypotDown) < background.width / 50) {
                     client.zoomAndTilt.tiltXOld = ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio;
@@ -1440,11 +1440,13 @@ function getTouchMove(event) {
                 }
             }
             if (client.zoomAndTilt.pinchGestureIsTilt) {
-                var deltaX = 3 * (client.zoomAndTilt.tiltXOld - ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio);
-                var deltaY = 3 * (client.zoomAndTilt.tiltYOld - ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio);
+                var tiltXNew = ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio;
+                var tiltYNew = ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio;
+                var deltaX = 3 * (client.zoomAndTilt.tiltXOld - tiltXNew);
+                var deltaY = 3 * (client.zoomAndTilt.tiltYOld - tiltYNew);
                 getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
-                client.zoomAndTilt.tiltXOld = ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio;
-                client.zoomAndTilt.tiltYOld = ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio;
+                client.zoomAndTilt.tiltXOld = tiltXNew;
+                client.zoomAndTilt.tiltYOld = tiltYNew;
             } else {
                 getGesture({type: "pinch", scale: hypot / client.zoomAndTilt.pinchHypot, deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
             }
@@ -2620,16 +2622,16 @@ function drawObjects() {
     var deltaX = 0;
     var deltaY = 0;
     if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && hardware.keyboard.keysHold["ArrowLeft"].ctrlKey) {
-        deltaX += (canvas.width * client.zoomAndTilt.realScale) / deltaDiv;
+        deltaX += canvas.width / deltaDiv;
     }
     if (hardware.keyboard.keysHold["ArrowUp"] && hardware.keyboard.keysHold["ArrowUp"].active && hardware.keyboard.keysHold["ArrowUp"].ctrlKey) {
-        deltaY += (canvas.height * client.zoomAndTilt.realScale) / deltaDiv;
+        deltaY += canvas.height / deltaDiv;
     }
     if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && hardware.keyboard.keysHold["ArrowRight"].ctrlKey) {
-        deltaX -= (canvas.width * client.zoomAndTilt.realScale) / deltaDiv;
+        deltaX -= canvas.width / deltaDiv;
     }
     if (hardware.keyboard.keysHold["ArrowDown"] && hardware.keyboard.keysHold["ArrowDown"].active && hardware.keyboard.keysHold["ArrowDown"].ctrlKey) {
-        deltaY -= (canvas.height * client.zoomAndTilt.realScale) / deltaDiv;
+        deltaY -= canvas.height / deltaDiv;
     }
     if (deltaX != 0 || deltaY != 0) {
         getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
