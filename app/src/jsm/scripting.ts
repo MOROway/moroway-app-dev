@@ -1594,11 +1594,13 @@ function onKeyDown(event) {
         konamiState = -1;
         gui.konamiOverlay = true;
         drawBackground();
+        background3D.animateBehind(true);
     } else if (konamiState < 0 && (event.key == "Enter" || event.key == " " || event.key == "a" || event.key == "b")) {
         konamiState = konamiState > -2 ? --konamiState : 0;
         gui.konamiOverlay = false;
         if (konamiState == 0) {
             drawBackground();
+            background3D.animateBehind(true);
         }
     } else if (konamiState > 0) {
         if (typeof konamiTimeOut !== "undefined") {
@@ -4027,33 +4029,31 @@ function drawObjects() {
         gui.controlCenter = false;
     }
 
-    if (gui.three) {
-        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || gui.demo ? "none" : hardware.mouse.cursor;
-    } else {
-        /////BACKGROUND/Margins-2////
-        if (konamiState < 0) {
+    /////BACKGROUND/Margins-2////
+    if (konamiState < 0) {
+        var bgGradient = context.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
+        bgGradient.addColorStop(0, "red");
+        bgGradient.addColorStop(0.2, "orange");
+        bgGradient.addColorStop(0.4, "yellow");
+        bgGradient.addColorStop(0.6, "lightgreen");
+        bgGradient.addColorStop(0.8, "blue");
+        bgGradient.addColorStop(1, "violet");
+        if (gui.konamiOverlay) {
+            hardware.mouse.cursor = "default";
+            contextForeground.save();
+            contextForeground.fillStyle = "black";
+            contextForeground.fillRect(background.x, background.y, background.width, background.height);
+            contextForeground.textAlign = "center";
+            contextForeground.fillStyle = bgGradient;
+            var konamiText = getString("appScreenKonami", "!");
+            contextForeground.font = measureFontSize(konamiText, "monospace", 100, background.width / 1.1, 5, background.width / 300);
+            contextForeground.fillText(konamiText, background.x + background.width / 2, background.y + background.height / 2);
+            contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 4);
+            contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 2 + background.height / 4);
+            contextForeground.restore();
+        }
+        if (!gui.three) {
             context.save();
-            var bgGradient = context.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
-            bgGradient.addColorStop(0, "red");
-            bgGradient.addColorStop(0.2, "orange");
-            bgGradient.addColorStop(0.4, "yellow");
-            bgGradient.addColorStop(0.6, "lightgreen");
-            bgGradient.addColorStop(0.8, "blue");
-            bgGradient.addColorStop(1, "violet");
-            if (konamiState == -1) {
-                hardware.mouse.cursor = "default";
-                contextForeground.save();
-                contextForeground.fillStyle = "black";
-                contextForeground.fillRect(background.x, background.y, background.width, background.height);
-                contextForeground.textAlign = "center";
-                contextForeground.fillStyle = bgGradient;
-                var konamiText = getString("appScreenKonami", "!");
-                contextForeground.font = measureFontSize(konamiText, "monospace", 100, background.width / 1.1, 5, background.width / 300);
-                contextForeground.fillText(konamiText, background.x + background.width / 2, background.y + background.height / 2);
-                contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 4);
-                contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 2 + background.height / 4);
-                contextForeground.restore();
-            }
             context.fillStyle = bgGradient;
             context.fillRect(0, 0, background.x, canvas.height);
             context.fillRect(0, 0, canvas.width, background.y);
@@ -4061,8 +4061,12 @@ function drawObjects() {
             context.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvas.width, background.y);
             context.restore();
         }
+    }
 
-        /////CURSOR/////
+    /////CURSOR/////
+    if (gui.three) {
+        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || gui.demo ? "none" : hardware.mouse.cursor;
+    } else {
         if (getSetting("cursorascircle") && client.chosenInputMethod == "mouse" && (hardware.mouse.isMoving || hardware.mouse.isHold || client.zoomAndTilt.realScale > 1)) {
             contextForeground.save();
             contextForeground.translate(adjustScaleX(hardware.mouse.moveX), adjustScaleY(hardware.mouse.moveY));
@@ -6749,13 +6753,14 @@ window.onload = function () {
                             const length = 200 + 100 * Math.random();
                             const starBaseColor = 100;
                             for (let i = 0; i < length; i++) {
-                                let alpha = 0.25 + Math.random() / 2;
-                                let starColorRed = starBaseColor + Math.round((255 - starBaseColor) * Math.random());
-                                let starColorGreen = Math.round(0.65 * starColorRed + 0.35 * starColorRed * Math.random());
+                                let alpha = konamiState < 0 ? 1 : 0.25 + Math.random() / 2;
+                                let starColorRed = konamiState < 0 ? Math.round(Math.random() * 255) : starBaseColor + Math.round((255 - starBaseColor) * Math.random());
+                                let starColorGreen = konamiState < 0 ? Math.round(Math.random() * 255) : Math.round(0.65 * starColorRed + 0.35 * starColorRed * Math.random());
+                                let starColorBlue = konamiState < 0 ? Math.round(Math.random() * 255) : starBaseColor;
                                 let left = Math.random() * background3D.behind.width;
                                 let top = Math.random() * background3D.behind.height;
                                 let radius = Math.min(background3D.behind.width, background3D.behind.height) / 1000 + (Math.random() * Math.min(background3D.behind.width, background3D.behind.height)) / 500;
-                                let fill = "rgba(" + starColorRed + "," + starColorGreen + "," + starBaseColor + "," + alpha + ")";
+                                let fill = "rgba(" + starColorRed + "," + starColorGreen + "," + starColorBlue + "," + alpha + ")";
                                 background3D.animateBehindStars.push({left: left, top: top, radius: radius, fill: fill});
                                 background3D.animateBehindStars.push({left: left + background3D.behind.width, top: top, radius: radius, fill: fill});
                             }
@@ -6776,7 +6781,18 @@ window.onload = function () {
                         }
                         const behindContext = background3D.behind.getContext("2d");
                         behindContext.save();
-                        behindContext.fillStyle = "black";
+                        if (konamiState < 0 && !three.night) {
+                            var bgGradient = context.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
+                            bgGradient.addColorStop(0, "#550400");
+                            bgGradient.addColorStop(0.2, "#542400");
+                            bgGradient.addColorStop(0.4, "#442200");
+                            bgGradient.addColorStop(0.6, "#054000");
+                            bgGradient.addColorStop(0.8, "#040037");
+                            bgGradient.addColorStop(1, "#350037");
+                            behindContext.fillStyle = bgGradient;
+                        } else {
+                            behindContext.fillStyle = "black";
+                        }
                         behindContext.fillRect(0, 0, background3D.behind.width, background3D.behind.height);
                         for (let i = 0; i < background3D.animateBehindStars.length; i++) {
                             behindContext.save();
