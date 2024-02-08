@@ -1440,9 +1440,9 @@ function getTouchMove(event) {
                 }
             }
             if (client.zoomAndTilt.pinchGestureIsTilt) {
-                var deltaX = -3 * (client.zoomAndTilt.tiltXOld - ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio);
-                var deltaY = -3 * (client.zoomAndTilt.tiltYOld - ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio);
-                getGesture({type: "tilt", deltaX: -deltaX, deltaY: -deltaY});
+                var deltaX = 3 * (client.zoomAndTilt.tiltXOld - ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio);
+                var deltaY = 3 * (client.zoomAndTilt.tiltYOld - ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio);
+                getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
                 client.zoomAndTilt.tiltXOld = ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio;
                 client.zoomAndTilt.tiltYOld = ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio;
             } else {
