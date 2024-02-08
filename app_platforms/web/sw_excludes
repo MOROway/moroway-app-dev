@@ -1,4 +1,5 @@
 assets/chat*
+icons
 sw.js
 core_excludes
 sw_excludes
