@@ -187,6 +187,10 @@ function drawImage(pic, x, y, width, height, cxt = context, sx: number | undefin
     }
 }
 
+function resetGestures() {
+    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+}
+
 function resetScale() {
     client.zoomAndTilt.realScale = 1;
     client.zoomAndTilt.pinchScale = 1;
@@ -224,8 +228,8 @@ function getFontSize(font, unit) {
 }
 
 function onVisibilityChange() {
+    resetGestures();
     client.hidden = document.visibilityState == "hidden";
-    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     hardware.keyboard.keysHold = [];
     playAndPauseAudio();
 }
@@ -1318,11 +1322,11 @@ function onMouseDown(event) {
 }
 function onMouseUp(event) {
     event.preventDefault();
+    resetGestures();
     client.chosenInputMethod = "mouse";
     hardware.mouse.upX = event.clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay;
 }
 function onMouseEnter(event) {
@@ -1331,9 +1335,9 @@ function onMouseEnter(event) {
 }
 function onMouseOut(event) {
     event.preventDefault();
+    resetGestures();
     client.chosenInputMethod = null;
     hardware.mouse.out = true;
-    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     hardware.keyboard.keysHold = [];
 }
 function onMouseWheel(event) {
@@ -1359,9 +1363,9 @@ function onMouseWheel(event) {
             getGesture({type: "pinch", scale: hypot / client.zoomAndTilt.pinchHypot, deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
         }
     } else {
+        resetGestures();
         hardware.mouse.wheelScrolls = !gui.controlCenter && !gui.konamiOverlay;
         controlCenter.mouse.wheelScrolls = gui.controlCenter && !gui.konamiOverlay;
-        hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
         hardware.mouse.wheelX = event.clientX * client.devicePixelRatio;
         hardware.mouse.wheelY = event.clientY * client.devicePixelRatio;
         hardware.mouse.wheelScrollX = event.deltaX;
@@ -1398,22 +1402,22 @@ function getTouchMove(event) {
         var deltaX = -5 * (hardware.mouse.moveX - event.touches[0].clientX * client.devicePixelRatio);
         var deltaY = -5 * (hardware.mouse.moveY - event.touches[0].clientY * client.devicePixelRatio);
         if (client.zoomAndTilt.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height) / 30 && notInTransformerInput(event.touches[0].clientX * client.devicePixelRatio, event.touches[0].clientY * client.devicePixelRatio)) {
+            resetGestures();
             getGesture({type: "swipe", deltaX: deltaX / 4, deltaY: deltaY / 4});
             if (typeof clickTimeOut !== "undefined") {
                 window.clearTimeout(clickTimeOut);
                 clickTimeOut = null;
             }
             hardware.mouse.isDrag = true;
-            hardware.mouse.isHold = false;
         }
         hardware.mouse.moveX = event.touches[0].clientX * client.devicePixelRatio;
         hardware.mouse.moveY = event.touches[0].clientY * client.devicePixelRatio;
     } else if (event.touches.length == 2) {
+        resetGestures();
         if (typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
             clickTimeOut = null;
         }
-        hardware.mouse.isHold = false;
         var deltaX = -(hardware.mouse.moveX - event.touches[1].clientX * client.devicePixelRatio);
         var deltaY = -(hardware.mouse.moveY - event.touches[1].clientY * client.devicePixelRatio);
         var hypot = Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
@@ -1436,9 +1440,9 @@ function getTouchMove(event) {
                 }
             }
             if (client.zoomAndTilt.pinchGestureIsTilt) {
-                var deltaX = -(client.zoomAndTilt.tiltXOld - ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio);
-                var deltaY = -(client.zoomAndTilt.tiltYOld - ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio);
-                getGesture({type: "tilt", deltaX: -deltaX * 5, deltaY: -deltaY * 5});
+                var deltaX = -3 * (client.zoomAndTilt.tiltXOld - ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio);
+                var deltaY = -3 * (client.zoomAndTilt.tiltYOld - ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio);
+                getGesture({type: "tilt", deltaX: -deltaX, deltaY: -deltaY});
                 client.zoomAndTilt.tiltXOld = ((event.touches[0].clientX + event.touches[1].clientX) / 2) * client.devicePixelRatio;
                 client.zoomAndTilt.tiltYOld = ((event.touches[0].clientY + event.touches[1].clientY) / 2) * client.devicePixelRatio;
             } else {
@@ -1446,11 +1450,11 @@ function getTouchMove(event) {
             }
         }
     } else {
+        resetGestures();
         if (typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
             clickTimeOut = null;
         }
-        hardware.mouse.isHold = false;
     }
 }
 function getTouchStart(event) {
@@ -1459,20 +1463,21 @@ function getTouchStart(event) {
     var xTS = event.changedTouches[0].clientX * client.devicePixelRatio;
     var yTS = event.changedTouches[0].clientY * client.devicePixelRatio;
     if (event.touches.length == 1 && Math.max(hardware.mouse.moveX, xTS) < 1.1 * Math.min(hardware.mouse.moveX, xTS) && Math.max(hardware.mouse.moveY, yTS) < 1.1 * Math.min(hardware.mouse.moveY, yTS) && Date.now() - hardware.mouse.downTime < doubleTouchTime && Date.now() - hardware.mouse.upTime < doubleTouchTime && notInTransformerTrainSwitch(xTS, yTS) && notInTransformerInput(xTS, yTS)) {
+        resetGestures();
         if (typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
             clickTimeOut = null;
         }
         getGesture({type: "doubletap", deltaX: xTS, deltaY: yTS});
-        hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     } else if (event.touches.length == 3) {
+        resetGestures();
         if (typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
             clickTimeOut = null;
         }
         controlCenter.mouse.prepare = true;
-        hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     } else {
+        resetGestures();
         if (event.touches.length > 1 && typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
             clickTimeOut = null;
@@ -1483,13 +1488,13 @@ function getTouchStart(event) {
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
         hardware.mouse.moveX = hardware.mouse.downX = xTS;
         hardware.mouse.moveY = hardware.mouse.downY = yTS;
-        hardware.mouse.isDrag = hardware.mouse.isWheelHold = false;
         hardware.mouse.isHold = event.touches.length == 1 && !gui.controlCenter && !gui.konamiOverlay;
         controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay;
     }
 }
 function getTouchEnd(event) {
     event.preventDefault();
+    resetGestures();
     client.chosenInputMethod = "touch";
     if (event.touches.length == 1) {
         getGesture({type: "pinchend"});
@@ -1500,13 +1505,12 @@ function getTouchEnd(event) {
     hardware.mouse.upX = event.changedTouches[0].clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.changedTouches[0].clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     controlCenter.mouse.clickEvent = gui.controlCenter && !gui.konamiOverlay;
-    if (controlCenter.mouse.prepare) {
+    if (controlCenter.mouse.prepare && event.touches.length == 0) {
         if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && (client.zoomAndTilt.realScale == 1 || gui.three)) {
             controlCenter.showCarCenter = true;
             notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
-            controlCenter.mouse.prepare = false;
+            controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         } else {
             gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && (client.zoomAndTilt.realScale == 1 || gui.three);
             if (gui.controlCenter) {
@@ -1520,8 +1524,8 @@ function getTouchEnd(event) {
     }
 }
 function getTouchCancel(event) {
+    resetGestures();
     client.chosenInputMethod = "touch";
-    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     hardware.keyboard.keysHold = [];
 }
 
