@@ -39,7 +39,9 @@ function get_conf() {
 }
 
 dir=$(dirname "$0")
-cd "$dir" || logexit 3 "set working dir failed"
+cd "$dir" || exit 3
+
+[[ ! -d ../out ]] && mkdir ../out
 
 tsc -v >/dev/null 2>&1 || logexit 5 "typescript not installed"
 ffmpeg -h >/dev/null 2>&1 || logexit 9 "FFmpeg not installed"
@@ -57,8 +59,6 @@ if [[ "$d" == 1 ]]; then
 	debug=1
 fi
 
-[[ ! -d ../out ]] && mkdir ../out
-
 log "build started" 0
 valid_platform=0
 
@@ -68,7 +68,7 @@ for platform in ${platforms[@]}; do
 	if [[ "$p" == "$platform" ]] || [[ -z "$p" ]]; then
 
 		# Get Configuration
-		version="$(get_conf "version" "$debug" "$platform")"
+		version=$(get_conf "version" "$debug" "$platform")
 		[[ -z "$version" ]] && logexit 1 "version empty"
 		version_major=$(echo "$version" | sed 's/^\([0-9]\+\)\.[0-9]\+\.[0-9]\+$/\1/')
 		version_minor=$(echo "$version" | sed 's/^[0-9]\+\.\([0-9]\+\)\.[0-9]\+$/\1/')
@@ -237,9 +237,9 @@ for platform in ${platforms[@]}; do
 					sed -i 's/<\!--\sinsert_link_webmanifest\s-->//' "$to/$html_file"
 					perl -pi -e "s/^\s+\n\$//" "$to/$html_file"
 				fi
-				meta_app_name="$(cat "metadata/default/application-name.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')"
-				meta_author="$(cat "metadata/default/author.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')"
-				meta_description="$(cat "metadata/default/description.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')"
+				meta_app_name=$(cat "metadata/default/application-name.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
+				meta_author=$(cat "metadata/default/author.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
+				meta_description=$(cat "metadata/default/description.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
 				sed -i 's/<\!--\sinsert_meta_app_name\s-->/<meta name="application-name" content="'"$meta_app_name"'">/;s/<\!--\sinsert_meta_author\s-->/<meta name="author" content="'"$meta_author"'">/;s/<\!--\sinsert_meta_description\s-->/<meta name="description" content="'"$meta_description"'">/' "$to/$html_file"
 				while [[ ! -z $(cat "$to/$html_file" | grep "<\!-- dep_check -->" | head -1) ]]; do
 					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
@@ -279,9 +279,9 @@ for platform in ${platforms[@]}; do
 		# Web Manifest
 		file="$to/manifest.webmanifest"
 		if [[ -f "$file" ]]; then
-			meta_app_name="$(cat "metadata/default/application-name.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')"
-			meta_app_name_short="$(cat "metadata/default/application-name-short.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')"
-			meta_description="$(cat "metadata/default/description.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')"
+			meta_app_name=$(cat "metadata/default/application-name.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')
+			meta_app_name_short=$(cat "metadata/default/application-name-short.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')
+			meta_description=$(cat "metadata/default/description.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')
 			sed -i "s/{{name}}/$meta_app_name/;s/{{short_name}}/$meta_app_name_short/;s/{{description}}/$meta_description/" "$file"
 		fi
 		# Service Worker
@@ -289,7 +289,7 @@ for platform in ${platforms[@]}; do
 		if [[ -f "$file" ]]; then
 			all_files=$(loop_files "$to" "$to")
 			file_ex="$to/sw_excludes"
-			sw_files_text="'.',"
+			sw_files_text=""
 			for sw_file in ${all_files[@]}; do
 				use=1
 				if [[ -f "$file_ex" ]]; then
@@ -299,11 +299,11 @@ for platform in ${platforms[@]}; do
 						fi
 					done <"$file_ex"
 				fi
-				if [[ $use == 1 ]] && [[ $sw_file != "index.html" ]]; then
+				if [[ $use == 1 ]] && [[ "$to/$sw_file" != "$file_ex" ]]; then
 					sw_files_text="$sw_files_text'$sw_file',"
 				fi
 			done
-			sw_files_text=$(echo "$sw_files_text" | sed 's/,$//' | sed 's/index\.html//g')
+			sw_files_text=$(echo "$sw_files_text" | sed 's/,$//' | sed "s/'index\.html'/'.'/g" | sed 's/index\.html//g')
 			if [[ -f "$file_ex" ]]; then
 				rm "$file_ex"
 			fi
