@@ -224,7 +224,7 @@
 		"Um zu zoomen können Sie folgende Optionen wählen: „Steuerungstaste“ + „+“/„-“, „Steuerungstaste“ + Mausrad und die Pinch-Touch-Geste (Finger auseinander bzw. zusammen ziehen).",
 		"Um den gezoomten Bildausschnitt zu ändern, können Sie die Pfeiltasten nutzen oder auf den Hintergrund der Anlage klicken / touchen, halten und bewegen.",
 		"Um den Zoom-Faktor zurückzusetzen können Sie die „Steuerungstaste“ + „0“ oder einen Doppel-Touch auf den Hintergrund der Anlage nutzen.",
-		"In der 3D-Ansicht können Sie die Anlage auch neigen mit „Steuerungstaste“ + einer Pfeiltaste oder der parallelen Bewegung zweier Finger (nur Touch).",
+		"In der 3D-Ansicht können Sie die Anlage auch neigen mit „Steuerungstaste“ + einer Pfeiltaste, Mausrad klicken und halten + Maus bewegen oder der parallelen Bewegung zweier Finger (nur Touch).",
 		"In der 3D-Ansicht können Sie die Neigung zurücksetzen mit einem Doppelklick oder langem Touch auf den schwarzen Bereich neben der Anlage."
 	],
 	"helpScreenGeneralTeamplay": "Mehrspielermodus {{0}}",

@@ -225,7 +225,7 @@ function getFontSize(font, unit) {
 
 function onVisibilityChange() {
     client.hidden = document.visibilityState == "hidden";
-    hardware.mouse.isHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     hardware.keyboard.keysHold = [];
     playAndPauseAudio();
 }
@@ -1298,6 +1298,10 @@ function onMouseMove(event) {
             hardware.mouse.isDrag = true;
             hardware.mouse.isHold = false;
         }
+    } else if (gui.three && hardware.mouse.isWheelHold) {
+        var deltaX = 5 * client.zoomAndTilt.realScale * (hardware.mouse.moveX - event.clientX * client.devicePixelRatio);
+        var deltaY = 5 * client.zoomAndTilt.realScale * (hardware.mouse.moveY - event.clientY * client.devicePixelRatio);
+        getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
     }
     hardware.mouse.moveX = event.clientX * client.devicePixelRatio;
     hardware.mouse.moveY = event.clientY * client.devicePixelRatio;
@@ -1306,8 +1310,9 @@ function onMouseDown(event) {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     hardware.lastInputMouse = hardware.mouse.downTime = Date.now();
-    hardware.mouse.isHold = (event.which == undefined || event.which == 1) && !gui.controlCenter && !gui.konamiOverlay;
-    controlCenter.mouse.hold = (event.which == undefined || event.which == 1) && gui.controlCenter && !gui.konamiOverlay;
+    hardware.mouse.isHold = event.button == 0 && !gui.controlCenter && !gui.konamiOverlay;
+    controlCenter.mouse.hold = event.button == 0 && gui.controlCenter && !gui.konamiOverlay;
+    hardware.mouse.isWheelHold = event.button == 1 && !gui.controlCenter && !gui.konamiOverlay;
     hardware.mouse.moveX = hardware.mouse.downX = event.clientX * client.devicePixelRatio;
     hardware.mouse.moveY = hardware.mouse.downY = event.clientY * client.devicePixelRatio;
 }
@@ -1317,8 +1322,8 @@ function onMouseUp(event) {
     hardware.mouse.upX = event.clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    hardware.mouse.isHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
-    controlCenter.mouse.clickEvent = event.which == 1 && gui.controlCenter && !gui.konamiOverlay;
+    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+    controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay;
 }
 function onMouseEnter(event) {
     client.chosenInputMethod = "mouse";
@@ -1328,7 +1333,7 @@ function onMouseOut(event) {
     event.preventDefault();
     client.chosenInputMethod = null;
     hardware.mouse.out = true;
-    hardware.mouse.isHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     hardware.keyboard.keysHold = [];
 }
 function onMouseWheel(event) {
@@ -1356,7 +1361,7 @@ function onMouseWheel(event) {
     } else {
         hardware.mouse.wheelScrolls = !gui.controlCenter && !gui.konamiOverlay;
         controlCenter.mouse.wheelScrolls = gui.controlCenter && !gui.konamiOverlay;
-        hardware.mouse.isHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+        hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
         hardware.mouse.wheelX = event.clientX * client.devicePixelRatio;
         hardware.mouse.wheelY = event.clientY * client.devicePixelRatio;
         hardware.mouse.wheelScrollX = event.deltaX;
@@ -1459,14 +1464,14 @@ function getTouchStart(event) {
             clickTimeOut = null;
         }
         getGesture({type: "doubletap", deltaX: xTS, deltaY: yTS});
-        hardware.mouse.isHold = hardware.mouse.isDrag = false;
+        hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     } else if (event.touches.length == 3) {
         if (typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
             clickTimeOut = null;
         }
         controlCenter.mouse.prepare = true;
-        hardware.mouse.isHold = hardware.mouse.isDrag = false;
+        hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     } else {
         if (event.touches.length > 1 && typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
@@ -1478,7 +1483,7 @@ function getTouchStart(event) {
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
         hardware.mouse.moveX = hardware.mouse.downX = xTS;
         hardware.mouse.moveY = hardware.mouse.downY = yTS;
-        hardware.mouse.isDrag = false;
+        hardware.mouse.isDrag = hardware.mouse.isWheelHold = false;
         hardware.mouse.isHold = event.touches.length == 1 && !gui.controlCenter && !gui.konamiOverlay;
         controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay;
     }
@@ -1495,7 +1500,7 @@ function getTouchEnd(event) {
     hardware.mouse.upX = event.changedTouches[0].clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.changedTouches[0].clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    hardware.mouse.isHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     controlCenter.mouse.clickEvent = gui.controlCenter && !gui.konamiOverlay;
     if (controlCenter.mouse.prepare) {
         if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && (client.zoomAndTilt.realScale == 1 || gui.three)) {
@@ -1516,7 +1521,7 @@ function getTouchEnd(event) {
 }
 function getTouchCancel(event) {
     client.chosenInputMethod = "touch";
-    hardware.mouse.isHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
     hardware.keyboard.keysHold = [];
 }
 
