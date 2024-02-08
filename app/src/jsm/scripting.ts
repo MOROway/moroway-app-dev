@@ -2761,7 +2761,9 @@ function drawObjects() {
                         if (hardware.mouse.isHold) {
                             parent.callback(raycasterDown.intersectObject(parent).length > 0, raycasterUp.intersectObject(parent).length > 0);
                         }
-                        hardware.mouse.cursor = "pointer";
+                        if (!hardware.mouse.isDrag) {
+                            hardware.mouse.cursor = "pointer";
+                        }
                     }
                 } else if (hardware.mouse.isHold && raycasterDown.intersectObjects(three.scene.children).length == 0 && ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick && raycasterUp.intersectObjects(three.scene.children).length == 0) || (hardware.lastInputTouch > hardware.lastInputMouse && Date.now() - hardware.mouse.downTime > longTouchTime))) {
                     if (typeof clickTimeOut !== "undefined") {
