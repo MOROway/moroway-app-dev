@@ -62,7 +62,7 @@ fi
 log "build started" 0
 valid_platform=0
 
-[[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh >../out/pre_build.log
+[[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh >../out/pre_build.log 2>&1
 
 for platform in ${platforms[@]}; do
 	if [[ "$p" == "$platform" ]] || [[ -z "$p" ]]; then
@@ -331,6 +331,6 @@ for platform in ${platforms[@]}; do
 	fi
 done
 
-[[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh >../out/post_build.log
+[[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh >../out/post_build.log 2>&1
 
 [[ $valid_platform == 1 ]] && log "build succeeded" 0 || logexit 100 "invalid platform"
