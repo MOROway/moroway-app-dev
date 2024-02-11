@@ -4031,7 +4031,7 @@ function drawObjects() {
 
     /////BACKGROUND/Margins-2////
     if (konamiState < 0) {
-        var bgGradient = context.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
+        var bgGradient = contextForeground.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
         bgGradient.addColorStop(0, "red");
         bgGradient.addColorStop(0.2, "orange");
         bgGradient.addColorStop(0.4, "yellow");
@@ -6782,7 +6782,7 @@ window.onload = function () {
                         const behindContext = background3D.behind.getContext("2d");
                         behindContext.save();
                         if (konamiState < 0 && !three.night) {
-                            var bgGradient = context.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
+                            var bgGradient = behindContext.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
                             bgGradient.addColorStop(0, "#550400");
                             bgGradient.addColorStop(0.2, "#542400");
                             bgGradient.addColorStop(0.4, "#442200");
