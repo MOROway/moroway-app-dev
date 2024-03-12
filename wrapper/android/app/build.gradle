@@ -9,7 +9,7 @@ android {
         applicationId 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
         minSdk 24
         targetSdk 34
-        versionCode 901041
+        versionCode 901042
         versionName '9.1.4'
     }
     buildTypes {

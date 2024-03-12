@@ -228,3 +228,14 @@ Update dependencies.
 
 ---
 
+
+
+9.1.4
+
+Minor 3d-view improvements.
+Update dependencies.
+Bugfixes.
+
+
+---
+
