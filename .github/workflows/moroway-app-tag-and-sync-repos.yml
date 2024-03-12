@@ -59,8 +59,7 @@ jobs:
                   ffmpeg-version: release
             - uses: actions/setup-python@v5
               with:
-                  python-version: "3.x" 
-                  cache: "pip"
+                  python-version: "3.x"
             - name: Install fonttools
               run: pip install fonttools
             # The following step contains code from https://github.com/cpina/github-action-push-to-another-repository/  (MIT License, by cpina)
