@@ -162,14 +162,8 @@ interface HTMLElementNotify extends HTMLElement {
  ******************************************/
 
 function measureViewSpace() {
-    function isSmallDevice() {
-        return window.innerHeight < 290 || window.innerWidth < 750;
-    }
-    function isTinyDevice() {
-        return window.innerHeight < 250 || window.innerWidth < 600;
-    }
-    client.isSmall = isSmallDevice();
-    client.isTiny = isTinyDevice();
+    client.isSmall = window.innerHeight < 290 || window.innerWidth < 750;
+    client.isTiny = window.innerHeight < 250 || window.innerWidth < 600;
     client.devicePixelRatio = window.devicePixelRatio;
     client.width = window.innerWidth;
     client.height = window.innerHeight;
@@ -5845,17 +5839,31 @@ window.onload = function () {
     }
 
     function keepScreenAlive() {
-        if (document.visibilityState == "visible") {
-            try {
-                navigator.wakeLock.request("screen");
-            } catch (error) {
-                if (APP_DATA.debug) {
-                    console.log("Wake-Lock-Error:", error);
-                }
-            }
-        }
+        const event = new CustomEvent("moroway-app-keep-screen-alive", {detail: {acquire: document.visibilityState == "visible"}});
+        document.dispatchEvent(event);
     }
 
+    //Set mode: demo
+    gui.demo = getQueryString("mode") == "demo" || getQueryString("mode") == "demoStandalone" || (getSetting("startDemoMode") && getQueryString("mode") == "");
+    if (gui.demo) {
+        document.body.style.cursor = "none";
+        var loadingAnimElemChangingFilter = loadingImageAnimation();
+        demoMode.standalone = getQueryString("mode") == "demoStandalone";
+    }
+    //Set mode: multiplay
+    if (getQueryString("mode") == "multiplay") {
+        if ("WebSocket" in window) {
+            onlineGame.enabled = true;
+            var loadingAnimElemChangingFilter = loadingImageAnimation();
+        } else {
+            onlineGame.enabled = false;
+            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
+        }
+    } else {
+        onlineGame.enabled = false;
+    }
+
+    //Initialize canvases and contexts
     canvas = document.querySelector("canvas#game-gameplay-main");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
     canvasBackground = document.querySelector("canvas#game-gameplay-bg");
@@ -5867,22 +5875,34 @@ window.onload = function () {
     contextSemiForeground = canvasSemiForeground.getContext("2d");
     contextForeground = canvasForeground.getContext("2d");
 
+    //Input handling
     hardware.lastInputMouse = hardware.lastInputTouch = 0;
     document.addEventListener("wheel", preventMouseZoomDuringLoad, {passive: false});
     document.addEventListener("keydown", preventKeyZoomDuringLoad, {passive: false});
     document.addEventListener("keyup", preventKeyZoomDuringLoad, {passive: false});
+    //Visibility handling
     document.addEventListener("visibilitychange", onVisibilityChange);
     onVisibilityChange();
+    document.addEventListener("visibilitychange", keepScreenAlive);
+    keepScreenAlive();
 
-    gui.demo = getQueryString("mode") == "demo" || getQueryString("mode") == "demoStandalone" || (getSetting("startDemoMode") && getQueryString("mode") == "");
-    if (gui.demo) {
-        document.body.style.cursor = "none";
-        var loadingAnimElemChangingFilter = loadingImageAnimation();
-        keepScreenAlive();
-        document.addEventListener("visibilitychange", keepScreenAlive);
-        demoMode.standalone = getQueryString("mode") == "demoStandalone";
+    //Prepare game
+    if (!onlineGame.enabled) {
+        var elements = document.querySelectorAll("#content > *:not(#game), #game > *:not(#game-gameplay)");
+        for (var i = 0; i < elements.length; i++) {
+            (elements[i] as HTMLElement).style.display = "none";
+        }
+        elements = document.querySelectorAll("#content > #game, #game > #game-gameplay");
+        for (i = 0; i < elements.length; i++) {
+            (elements[i] as HTMLElement).style.display = "block";
+        }
     }
-
+    measureViewSpace();
+    if (getSetting("saveGame")) {
+        updateSavedGame();
+    } else {
+        removeSavedGame();
+    }
     //THREE.JS
     var queryString3D = getQueryString("gui-3d");
     if (queryString3D == "0" || queryString3D == "1") {
@@ -5898,31 +5918,7 @@ window.onload = function () {
     }
     three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
 
-    if (getQueryString("mode") == "multiplay") {
-        if ("WebSocket" in window) {
-            onlineGame.enabled = true;
-        } else {
-            onlineGame.enabled = false;
-            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
-        }
-    } else {
-        onlineGame.enabled = false;
-    }
-
-    if (onlineGame.enabled) {
-        var loadingAnimElemChangingFilter = loadingImageAnimation();
-        keepScreenAlive();
-        document.addEventListener("visibilitychange", keepScreenAlive);
-    } else {
-        var elements = document.querySelectorAll("#content > *:not(#game), #game > *:not(#game-gameplay)");
-        for (var i = 0; i < elements.length; i++) {
-            (elements[i] as HTMLElement).style.display = "none";
-        }
-        elements = document.querySelectorAll("#content > #game, #game > #game-gameplay");
-        for (i = 0; i < elements.length; i++) {
-            (elements[i] as HTMLElement).style.display = "block";
-        }
-    }
+    //Show progress bar if app loads slowly
     window.setTimeout(function () {
         var toShowElements = [document.querySelector("#percent")];
         toShowElements.forEach(function (toShow) {
@@ -5932,13 +5928,7 @@ window.onload = function () {
         });
     }, 2500);
 
-    measureViewSpace();
-    if (getSetting("saveGame")) {
-        updateSavedGame();
-    } else {
-        removeSavedGame();
-    }
-
+    //Load app
     var defaultPics = copyJSObject(pics);
     var finalPicNo = defaultPics.length;
     pics = [];

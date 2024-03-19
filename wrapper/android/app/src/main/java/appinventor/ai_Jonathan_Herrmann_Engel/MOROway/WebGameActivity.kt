@@ -18,7 +18,6 @@ class WebGameActivity : WebActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding.root.background = ColorDrawable(ContextCompat.getColor(this, R.color.black))
         setWeb(processAndGetURL(intent))
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

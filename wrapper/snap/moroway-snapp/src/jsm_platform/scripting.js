@@ -1,5 +1,6 @@
 "use strict";
 import {followLink, LINK_STATE_INTERNAL_HTML} from "./common/follow_links.js";
+import {APP_DATA} from "../jsm/common/app_data.js";
 import {showServerNote} from "../jsm/common/web_tools.js";
 import {getString} from "../jsm/common/string_tools.js";
 import {setSettingsHTML} from "../jsm/common/settings.js";
@@ -51,4 +52,18 @@ document.addEventListener("moroway-app-update-notification", function (event) {
         getString("appScreenFurtherInformation", "", "upper"),
         minHeight
     );
+});
+document.addEventListener("moroway-app-keep-screen-alive", function (event) {
+    const mode = getMode();
+    if (mode == "online" || mode == "demo") {
+        if (event.detail) {
+            try {
+                _keepScreenAlive.exec(event.detail.acquire);
+            } catch (error) {
+                if (APP_DATA.debug) {
+                    console.log("powerSaveBlocker-Error:", error);
+                }
+            }
+        }
+    }
 });

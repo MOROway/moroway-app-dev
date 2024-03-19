@@ -174,9 +174,9 @@
 	"helpScreenContactBackupLink": "Zu den Kontaktdaten",
 	"helpScreenContactBackupLinkNotification": "Kontaktdaten geöffnet",
 	"helpScreenContactFeedback": "Feedback {{0}}",
-	"helpScreenContactFeedbackBugs": "Bugreport",
+	"helpScreenContactFeedbackBugs": "Einen Fehler melden",
 	"helpScreenContactFeedbackPs": [
-		"Sie kennen uns unbekannte Bugs? Sie haben Vorschläge, Feedback, Lob, Kritik, Fragen oder ein anderes Anliegen, dass Sie kommunizieren möchten? Hier sind die Kontaktdaten."
+		"Sie haben einen Fehler gefunden bzw. Vorschläge, Feedback, Lob, Kritik, Fragen oder ein anderes Anliegen, das Sie kommunizieren möchten? Nutzen Sie einfach die untenstehenden Kontaktdaten."
 	],
 	"helpScreenContactFeedbackSend": "Feedback senden",
 	"helpScreenContactFeedbackSendNotification": "Feedback-Seite geöffnet",
@@ -263,10 +263,6 @@
 	"helpScreenLegalAppOCDialogsPs": [
 		"Die MOROway App OC Variante nutzt das „Dialogs Plugin“ erstellt von der Apache Software Foundation."
 	],
-	"helpScreenLegalAppOCInsomnia": "Insomnia",
-	"helpScreenLegalAppOCInsomniaPs": [
-		"Die MOROway App OC Variante nutzt das „Insomnia-PhoneGap-Plugin“ erstellt von Eddy Verbruggen."
-	],
 	"helpScreenLegalAppOCWebintent": "Webintent",
 	"helpScreenLegalAppOCWebintentPs": [
 		"Die MOROway App OC Variante nutzt das „WebIntent Android Plugin for Cordova“ erstellt von Boris Smus und Beitragenden."
@@ -279,16 +275,16 @@
 	"helpScreenLegalFonts": "Verwendete Schriften {{0}}",
 	"helpScreenLegalFontsMaterialIcons": "Material Symbols Font",
 	"helpScreenLegalFontsMaterialIconsPs": [
-		"Wir verwenden an einigen Stellen die „Material Symbols“-Schrift der Google Inc."
+		"Die MOROway App verwendet an einigen Stellen die Schriftart „Material Symbols“ der Google Inc."
 	],
 	"helpScreenLegalFontsRoboto": "Roboto",
 	"helpScreenLegalFontsRobotoPs": [
-		"Wir verwenden an einigen Stellen die Schriftart „Roboto“ der Google Inc."
+		"Die MOROway App verwendet an einigen Stellen die Schriftart „Roboto“ der Google Inc."
 	],
 	"helpScreenLegalLibraries": "Bibliotheken {{0}}",
 	"helpScreenLegalLibrariesThreeJs": "Three.js",
 	"helpScreenLegalLibrariesThreeJsPs": [
-		"Wir verwenden die 3D-Bibliothek „Three.js“."
+		"Die MOROway App verwendet die 3D-Bibliothek „Three.js“."
 	],
 	"helpScreenLegalMedia": "Medien {{0}}",
 	"helpScreenLegalMedia3DModels": "3D Modelle",
@@ -296,11 +292,11 @@
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "Allgemein",
 	"helpScreenLegalOwnCodePs": [
-		"Sie dürfen die MOROway App unter den Bedingungen der Apache License Version 2.0 weiterverwenden."
+		"Sie dürfen die MOROway App unter den Bedingungen der „Apache License Version 2.0“ weiterverwenden."
 	],
 	"helpScreenLegalOwnPics": "Medieninhalte",
 	"helpScreenLegalOwnPicsPs": [
-		"Sie dürfen unsere Medieninhalte auch unter der Creative Commons Attribution 4.0 International-Lizenz weiterverwenden."
+		"Sie dürfen die für die MOROway App erstellten Medieninhalte unter der „Creative Commons Attribution 4.0 International“-Lizenz weiterverwenden."
 	],
 	"helpScreenMOROmore": "Mehr über MOROway",
 	"helpScreenMOROmoreAbout": "Über MOROway {{0}}",

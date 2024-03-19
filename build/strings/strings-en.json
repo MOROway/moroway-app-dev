@@ -315,10 +315,6 @@
 		"The MOROway App OC variant uses the “Dialogs Plugin” by the Apache Software Foundation."
 	],
 	"helpScreenLegalAppOCIcon": "📱",
-	"helpScreenLegalAppOCInsomnia": "Insomnia (prevent screen sleep)",
-	"helpScreenLegalAppOCInsomniaPs": [
-		"The MOROway App OC variant uses the “Insomnia-PhoneGap-Plugin” by Eddy Verbruggen."
-	],
 	"helpScreenLegalAppOCWebintent": "cordova-webintent",
 	"helpScreenLegalAppOCWebintentPs": [
 		"The MOROway App OC variant uses the “WebIntent Android Plugin for Cordova” by Boris Smus and contributors."
@@ -333,17 +329,17 @@
 	"helpScreenLegalFontsIcon": "🌐",
 	"helpScreenLegalFontsMaterialIcons": "Material Symbols Font",
 	"helpScreenLegalFontsMaterialIconsPs": [
-		"This app uses the “Material Symbols” font by Google Inc."
+		"MOROway App uses the font “Material Symbols” by Google Inc."
 	],
 	"helpScreenLegalFontsRoboto": "Roboto",
 	"helpScreenLegalFontsRobotoPs": [
-		"This app uses “Roboto” font by Google Inc."
+		"MOROway App uses the font “Roboto” by Google Inc."
 	],
 	"helpScreenLegalLibraries": "Libraries {{0}}",
 	"helpScreenLegalLibrariesIcon": "🏗️",
 	"helpScreenLegalLibrariesThreeJs": "Three.js",
 	"helpScreenLegalLibrariesThreeJsPs": [
-		"This app uses the “Three.js” 3D library."
+		"MOROway App uses the “Three.js” 3D library."
 	],
 	"helpScreenLegalMedia": "Media {{0}}",
 	"helpScreenLegalMedia3DModels": "3D models",
@@ -363,12 +359,12 @@
 	"helpScreenLegalOwn": "MOROway App {{0}}",
 	"helpScreenLegalOwnCode": "General",
 	"helpScreenLegalOwnCodePs": [
-		"MOROway App is licensed under the Apache License Version 2.0."
+		"MOROway App is licensed under the “Apache License Version 2.0”."
 	],
 	"helpScreenLegalOwnIcon": "✌️",
 	"helpScreenLegalOwnPics": "Media files",
 	"helpScreenLegalOwnPicsPs": [
-		"Our media files are also licensed under the Creative Commons Attribution 4.0 International-License."
+		"Media files created for MOROway App are also licensed under the “Creative Commons Attribution 4.0 International”-license."
 	],
 	"helpScreenLegalStrLicenseCC0": "CC0 1.0 Universal",
 	"helpScreenLegalStrLicenseCCBy": "CC BY 4.0",
