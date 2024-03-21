@@ -4160,12 +4160,12 @@ var drawTimeout;
 
 var movingTimeOut;
 var clickTimeOut;
-var longTouchTime = 350;
-var longTouchWaitTime = longTouchTime + 50;
-var doubleTouchTime = 250;
-var doubleTouchWaitTime = doubleTouchTime + 50;
-var doubleClickTime = 200;
-var doubleClickWaitTime = doubleClickTime + 50;
+const longTouchTime = 350;
+const longTouchWaitTime = longTouchTime + 50;
+const doubleTouchTime = 250;
+const doubleTouchWaitTime = doubleTouchTime + 50;
+const doubleClickTime = 200;
+const doubleClickWaitTime = doubleClickTime + 50;
 
 var konamiState = 0;
 var konamiTimeOut;
@@ -5228,6 +5228,220 @@ window.onload = function () {
             }
         });
 
+        //Switches
+        if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && savedGameTrains != null && savedGameSwitches != null && savedGameBg != null) {
+            var savedSwitches = JSON.parse(savedGameSwitches);
+            Object.keys(savedSwitches).forEach(function (key) {
+                Object.keys(savedSwitches[key]).forEach(function (side) {
+                    switches[key][side].turned = savedSwitches[key][side];
+                });
+            });
+        } else if (gui.demo) {
+            Object.keys(switches).forEach(function (key) {
+                Object.keys(switches[key]).forEach(function (side) {
+                    if (key == "inner2outer" || key == "outer2inner") {
+                        switches[key][side].turned = false;
+                    } else {
+                        switches[key][side].turned = Math.random() > 0.4;
+                    }
+                });
+            });
+        }
+
+        //Three.js
+        three.scene = new THREE.Scene();
+        three.renderer = new THREE.WebGLRenderer({alpha: true});
+        THREE.ColorManagement.enabled = false;
+        three.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+        three.renderer.setClearColor(0xffffff, 0);
+        (document.querySelector("#game-gameplay") as HTMLElement).insertBefore(three.renderer.domElement, document.querySelector("#canvas-menus"));
+        three.renderer.domElement.id = "game-gameplay-three";
+
+        three.ambientLightNight = 0.25 * Math.PI;
+        three.ambientLightDay = 0.75 * Math.PI;
+        three.ambientLight = new THREE.AmbientLight(0xfffefe, three.night ? three.ambientLightNight : three.ambientLightDay);
+        three.scene.add(three.ambientLight);
+
+        three.directionalLight = new THREE.DirectionalLight(0xeedfdf, 0.45 * Math.PI);
+        three.directionalLight.position.set((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 1);
+        three.scene.add(three.directionalLight);
+
+        three.directionalLightXFac = Math.round(Math.random()) * 2 - 1;
+        three.directionalLightYFac = Math.round(Math.random()) * 2 - 1;
+        three.animateLights = function () {
+            var add = 0.001;
+            var addX = add * three.directionalLightXFac;
+            var addY = add * three.directionalLightYFac;
+            three.directionalLight.position.x += addX;
+            three.directionalLight.position.y += addY;
+            if (three.directionalLight.position.x >= 1) {
+                three.directionalLight.position.x = 1;
+                three.directionalLightXFac = -1;
+            } else if (three.directionalLight.position.x <= -1) {
+                three.directionalLight.position.x = -1;
+                three.directionalLightXFac = 1;
+            }
+            if (three.directionalLight.position.y >= 1) {
+                three.directionalLight.position.y = 1;
+                three.directionalLightYFac = -1;
+            } else if (three.directionalLight.position.y <= -1) {
+                three.directionalLight.position.y = -1;
+                three.directionalLightYFac = 1;
+            }
+            var add = 0.005 * Math.PI;
+            if (three.night) {
+                if (three.ambientLight.intensity > three.ambientLightNight) {
+                    three.ambientLight.intensity -= add;
+                }
+                if (three.ambientLight.intensity < three.ambientLightNight) {
+                    three.ambientLight.intensity = three.ambientLightNight;
+                }
+            } else {
+                if (three.ambientLight.intensity < three.ambientLightDay) {
+                    three.ambientLight.intensity += add;
+                }
+                if (three.ambientLight.intensity > three.ambientLightDay) {
+                    three.ambientLight.intensity = three.ambientLightDay;
+                }
+            }
+        };
+
+        const loaderTexture = new THREE.TextureLoader();
+        loaderTexture.load(background3D.flat.src, function (texture) {
+            const material: any = new THREE.MeshStandardMaterial({
+                map: texture,
+                roughness: 0.85,
+                metalness: 0.15
+            });
+            const geometry = new THREE.PlaneGeometry(1, background.height / background.width);
+            background3D.flat.mesh = new THREE.Mesh(geometry, material);
+            background3D.flat.resize = function () {
+                const scale = three.calcScale();
+                background3D.flat.mesh.scale.x = scale;
+                background3D.flat.mesh.scale.y = scale;
+                background3D.flat.mesh.position.set(0, three.calcPositionY(), 0);
+            };
+            background3D.flat.resize();
+            three.scene.add(background3D.flat.mesh);
+        });
+
+        var loaderGLTF: any = new GLTFLoader();
+        loaderGLTF.setPath("assets/3d/background-3d/").load(background3D.three.src, function (gltf) {
+            background3D.three.mesh = gltf.scene;
+            background3D.three.resize = function () {
+                const scale = three.calcScale();
+                background3D.three.mesh.scale.x = scale;
+                background3D.three.mesh.scale.y = scale;
+                background3D.three.mesh.scale.z = scale;
+                background3D.three.mesh.position.set(0, three.calcPositionY(), 0);
+            };
+            background3D.three.resize();
+            three.scene.add(background3D.three.mesh);
+        });
+
+        background3D.behind = document.getElementById("game-gameplay-three-bg") as HTMLCanvasElement;
+        background3D.animateBehind = function (reset = false) {
+            if (reset) {
+                background3D.behind.style.transform = "";
+                const behindCloneId = background3D.behind.id + "-clone";
+                const oldBehindClone = document.getElementById(behindCloneId);
+                if (oldBehindClone != null) {
+                    oldBehindClone.parentNode.removeChild(oldBehindClone);
+                }
+                background3D.animateBehindFac = 0;
+                background3D.animateBehindStars = [];
+                if (three.night) {
+                    const length = 200 + 100 * Math.random();
+                    const starBaseColor = 100;
+                    for (let i = 0; i < length; i++) {
+                        let alpha = konamiState < 0 ? 1 : 0.25 + Math.random() / 2;
+                        let starColorRed = konamiState < 0 ? Math.round(Math.random() * 255) : starBaseColor + Math.round((255 - starBaseColor) * Math.random());
+                        let starColorGreen = konamiState < 0 ? Math.round(Math.random() * 255) : Math.round(0.65 * starColorRed + 0.35 * starColorRed * Math.random());
+                        let starColorBlue = konamiState < 0 ? Math.round(Math.random() * 255) : starBaseColor;
+                        let left = Math.random() * background3D.behind.width;
+                        let top = Math.random() * background3D.behind.height;
+                        let radius = Math.min(background3D.behind.width, background3D.behind.height) / 1000 + (Math.random() * Math.min(background3D.behind.width, background3D.behind.height)) / 500;
+                        let fill = "rgba(" + starColorRed + "," + starColorGreen + "," + starColorBlue + "," + alpha + ")";
+                        background3D.animateBehindStars.push({left: left, top: top, radius: radius, fill: fill});
+                        background3D.animateBehindStars.push({left: left + background3D.behind.width, top: top, radius: radius, fill: fill});
+                    }
+                } else {
+                    const length = 15 + 15 * Math.random();
+                    const starBaseColor = 20;
+                    for (let i = 0; i < length; i++) {
+                        let alpha = Math.random() / 8;
+                        let starColorRed = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
+                        let starColorGreen = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
+                        let starColorBlue = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
+                        let left = Math.random() * background3D.behind.width;
+                        let top = Math.random() * background3D.behind.height;
+                        let radius = Math.min(background3D.behind.width, background3D.behind.height) / 3 + (Math.random() * Math.min(background3D.behind.width, background3D.behind.height)) / 3;
+                        let fill = "rgba(" + starColorRed + "," + starColorGreen + "," + starColorBlue + "," + alpha + ")";
+                        background3D.animateBehindStars.push({left: left, top: top, radius: radius, fill: fill});
+                    }
+                }
+                const behindContext = background3D.behind.getContext("2d");
+                behindContext.save();
+                if (konamiState < 0 && !three.night) {
+                    var bgGradient = behindContext.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
+                    bgGradient.addColorStop(0, "#550400");
+                    bgGradient.addColorStop(0.2, "#542400");
+                    bgGradient.addColorStop(0.4, "#442200");
+                    bgGradient.addColorStop(0.6, "#054000");
+                    bgGradient.addColorStop(0.8, "#040037");
+                    bgGradient.addColorStop(1, "#350037");
+                    behindContext.fillStyle = bgGradient;
+                } else {
+                    behindContext.fillStyle = "black";
+                }
+                behindContext.fillRect(0, 0, background3D.behind.width, background3D.behind.height);
+                for (let i = 0; i < background3D.animateBehindStars.length; i++) {
+                    behindContext.save();
+                    behindContext.fillStyle = background3D.animateBehindStars[i].fill;
+                    behindContext.translate(background3D.animateBehindStars[i].left, background3D.animateBehindStars[i].top);
+                    behindContext.beginPath();
+                    behindContext.arc(0, 0, background3D.animateBehindStars[i].radius, 0, 2 * Math.PI);
+                    behindContext.fill();
+                    behindContext.restore();
+                }
+                behindContext.restore();
+                if (three.night) {
+                    background3D.behindClone = background3D.behind.cloneNode() as HTMLCanvasElement;
+                    background3D.behindClone.id = behindCloneId;
+                    background3D.behind.parentNode.insertBefore(background3D.behindClone, background3D.behind);
+                    const behindCloneContext = background3D.behindClone.getContext("2d");
+                    behindCloneContext.drawImage(background3D.behind, 0, 0);
+                } else {
+                    background3D.behindClone = null;
+                }
+            }
+            if (three.night) {
+                background3D.animateBehindFac += 0.00025;
+                if (background3D.animateBehindFac >= 1) {
+                    background3D.animateBehindFac -= 1;
+                }
+                background3D.behind.style.transform = "translateX(" + -background3D.animateBehindFac * background3D.behind.offsetWidth + "px)";
+                background3D.behindClone.style.transform = "translateX(" + (1 - background3D.animateBehindFac) * background3D.behind.offsetWidth + "px)";
+            }
+        };
+
+        three.camera = new THREE.PerspectiveCamera(60, client.width / client.height, 0.1, 10);
+        three.camera.position.set(0, 0, 1);
+        three.camera.zoom = three.zoom;
+        three.camera.aspect = client.width / client.height;
+        three.camera.updateProjectionMatrix();
+
+        if (gui.demo) {
+            three.demoRotationFacX = Math.round(Math.random()) * 2 - 1;
+            three.demoRotationFacY = Math.round(Math.random()) * 2 - 1;
+        }
+
+        if (APP_DATA.debug && debug.paint) {
+            var axesHelper = new THREE.AxesHelper(15);
+            three.scene.add(axesHelper);
+        }
+
+        //Animate Worker
         animateWorker.onerror = function () {
             notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
             window.setTimeout(function () {
@@ -5272,6 +5486,7 @@ window.onload = function () {
             } else if (message.data.k == "setTrainParams") {
                 trainParams = message.data.trainParams;
             } else if (message.data.k == "ready") {
+                //Initialize trains
                 trains = message.data.trains;
                 trains.forEach(function (train, i) {
                     var trainCallback = function (downIntersects, upIntersects) {
@@ -5314,6 +5529,8 @@ window.onload = function () {
                             );
                         }
                     };
+
+                    //Three.js
                     trains3D[i] = {};
                     var loaderGLTF: any = new GLTFLoader();
                     loaderGLTF.setPath("assets/3d/").load(
@@ -5556,11 +5773,17 @@ window.onload = function () {
                         });
                     });
                 }
+
+                //Calc and show UI
                 calcClassicUIElements();
                 calcControlCenter();
                 drawOptionsMenu("show");
+
+                //Trigger resize
                 window.addEventListener("resize", requestResize);
                 requestResize();
+
+                //Initialize canvas
                 drawInterval = message.data.animateInterval;
                 drawObjects();
                 document.addEventListener("visibilitychange", function () {
@@ -5571,6 +5794,8 @@ window.onload = function () {
                         drawObjects();
                     }
                 });
+
+                //Gestures
                 if (gui.demo) {
                     window.setTimeout(function () {
                         if (carParams.autoModeRuns) {
@@ -5609,6 +5834,8 @@ window.onload = function () {
                     document.removeEventListener("keydown", preventKeyZoomDuringLoad);
                 }
                 document.removeEventListener("keyup", preventKeyZoomDuringLoad);
+
+                //Show everything
                 var timeWait = 0.5;
                 var timeLoad = 1.5;
                 if (gui.demo) {
@@ -5638,8 +5865,7 @@ window.onload = function () {
                         }, timeLoad * 900);
                     }
                 }, timeWait * 1000);
-            }
-            if (message.data.k == "setTrains") {
+            } else if (message.data.k == "setTrains") {
                 message.data.trains.forEach(function (train, i) {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
@@ -5785,25 +6011,6 @@ window.onload = function () {
                 debug.trainReady = true;
             }
         };
-        if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && savedGameTrains != null && savedGameSwitches != null && savedGameBg != null) {
-            var savedSwitches = JSON.parse(savedGameSwitches);
-            Object.keys(savedSwitches).forEach(function (key) {
-                Object.keys(savedSwitches[key]).forEach(function (side) {
-                    switches[key][side].turned = savedSwitches[key][side];
-                });
-            });
-        } else if (gui.demo) {
-            Object.keys(switches).forEach(function (key) {
-                Object.keys(switches[key]).forEach(function (side) {
-                    if (key == "inner2outer" || key == "outer2inner") {
-                        switches[key][side].turned = false;
-                    } else {
-                        switches[key][side].turned = Math.random() > 0.4;
-                    }
-                });
-            });
-        }
-
         animateWorker.postMessage({k: "start", background: background, switches: switches, online: onlineGame.enabled, onlineInterval: onlineGame.animateInterval, demo: gui.demo});
     }
     function resetForElem(parent, elem, to = "") {
@@ -5863,6 +6070,21 @@ window.onload = function () {
         onlineGame.enabled = false;
     }
 
+    //GUI State
+    var queryString3D = getQueryString("gui-3d");
+    if (queryString3D == "0" || queryString3D == "1") {
+        gui.three = getGuiState("3d", queryString3D == "1");
+    } else {
+        gui.three = getGuiState("3d");
+    }
+    var queryString3DNight = getQueryString("gui-3d-night");
+    if (queryString3DNight == "0" || queryString3DNight == "1") {
+        three.night = getGuiState("3d-night", queryString3DNight == "1");
+    } else {
+        three.night = getGuiState("3d-night");
+    }
+    three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
+
     //Initialize canvases and contexts
     canvas = document.querySelector("canvas#game-gameplay-main");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
@@ -5903,20 +6125,6 @@ window.onload = function () {
     } else {
         removeSavedGame();
     }
-    //THREE.JS
-    var queryString3D = getQueryString("gui-3d");
-    if (queryString3D == "0" || queryString3D == "1") {
-        gui.three = getGuiState("3d", queryString3D == "1");
-    } else {
-        gui.three = getGuiState("3d");
-    }
-    var queryString3DNight = getQueryString("gui-3d-night");
-    if (queryString3DNight == "0" || queryString3DNight == "1") {
-        three.night = getGuiState("3d-night", queryString3DNight == "1");
-    } else {
-        three.night = getGuiState("3d-night");
-    }
-    three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
 
     //Show progress bar if app loads slowly
     window.setTimeout(function () {
@@ -6637,197 +6845,6 @@ window.onload = function () {
                             animateWorker.postMessage({k: "resume"});
                         }
                     });
-                }
-                three.scene = new THREE.Scene();
-                three.renderer = new THREE.WebGLRenderer({alpha: true});
-                THREE.ColorManagement.enabled = false;
-                three.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-                three.renderer.setClearColor(0xffffff, 0);
-                (document.querySelector("#game-gameplay") as HTMLElement).insertBefore(three.renderer.domElement, document.querySelector("#canvas-menus"));
-                three.renderer.domElement.id = "game-gameplay-three";
-
-                three.ambientLightNight = 0.25 * Math.PI;
-                three.ambientLightDay = 0.75 * Math.PI;
-                three.ambientLight = new THREE.AmbientLight(0xfffefe, three.night ? three.ambientLightNight : three.ambientLightDay);
-                three.scene.add(three.ambientLight);
-
-                three.directionalLight = new THREE.DirectionalLight(0xeedfdf, 0.45 * Math.PI);
-                three.directionalLight.position.set((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 1);
-                three.scene.add(three.directionalLight);
-
-                three.directionalLightXFac = Math.round(Math.random()) * 2 - 1;
-                three.directionalLightYFac = Math.round(Math.random()) * 2 - 1;
-                three.animateLights = function () {
-                    var add = 0.001;
-                    var addX = add * three.directionalLightXFac;
-                    var addY = add * three.directionalLightYFac;
-                    three.directionalLight.position.x += addX;
-                    three.directionalLight.position.y += addY;
-                    if (three.directionalLight.position.x >= 1) {
-                        three.directionalLight.position.x = 1;
-                        three.directionalLightXFac = -1;
-                    } else if (three.directionalLight.position.x <= -1) {
-                        three.directionalLight.position.x = -1;
-                        three.directionalLightXFac = 1;
-                    }
-                    if (three.directionalLight.position.y >= 1) {
-                        three.directionalLight.position.y = 1;
-                        three.directionalLightYFac = -1;
-                    } else if (three.directionalLight.position.y <= -1) {
-                        three.directionalLight.position.y = -1;
-                        three.directionalLightYFac = 1;
-                    }
-                    var add = 0.005 * Math.PI;
-                    if (three.night) {
-                        if (three.ambientLight.intensity > three.ambientLightNight) {
-                            three.ambientLight.intensity -= add;
-                        }
-                        if (three.ambientLight.intensity < three.ambientLightNight) {
-                            three.ambientLight.intensity = three.ambientLightNight;
-                        }
-                    } else {
-                        if (three.ambientLight.intensity < three.ambientLightDay) {
-                            three.ambientLight.intensity += add;
-                        }
-                        if (three.ambientLight.intensity > three.ambientLightDay) {
-                            three.ambientLight.intensity = three.ambientLightDay;
-                        }
-                    }
-                };
-
-                const loaderTexture = new THREE.TextureLoader();
-                loaderTexture.load(background3D.flat.src, function (texture) {
-                    const material: any = new THREE.MeshStandardMaterial({
-                        map: texture,
-                        roughness: 0.85,
-                        metalness: 0.15
-                    });
-                    const geometry = new THREE.PlaneGeometry(1, background.height / background.width);
-                    background3D.flat.mesh = new THREE.Mesh(geometry, material);
-                    background3D.flat.resize = function () {
-                        const scale = three.calcScale();
-                        background3D.flat.mesh.scale.x = scale;
-                        background3D.flat.mesh.scale.y = scale;
-                        background3D.flat.mesh.position.set(0, three.calcPositionY(), 0);
-                    };
-                    background3D.flat.resize();
-                    three.scene.add(background3D.flat.mesh);
-                });
-
-                var loaderGLTF: any = new GLTFLoader();
-                loaderGLTF.setPath("assets/3d/background-3d/").load(background3D.three.src, function (gltf) {
-                    background3D.three.mesh = gltf.scene;
-                    background3D.three.resize = function () {
-                        const scale = three.calcScale();
-                        background3D.three.mesh.scale.x = scale;
-                        background3D.three.mesh.scale.y = scale;
-                        background3D.three.mesh.scale.z = scale;
-                        background3D.three.mesh.position.set(0, three.calcPositionY(), 0);
-                    };
-                    background3D.three.resize();
-                    three.scene.add(background3D.three.mesh);
-                });
-
-                background3D.behind = document.getElementById("game-gameplay-three-bg") as HTMLCanvasElement;
-                background3D.animateBehind = function (reset = false) {
-                    if (reset) {
-                        background3D.behind.style.transform = "";
-                        const behindCloneId = background3D.behind.id + "-clone";
-                        const oldBehindClone = document.getElementById(behindCloneId);
-                        if (oldBehindClone != null) {
-                            oldBehindClone.parentNode.removeChild(oldBehindClone);
-                        }
-                        background3D.animateBehindFac = 0;
-                        background3D.animateBehindStars = [];
-                        if (three.night) {
-                            const length = 200 + 100 * Math.random();
-                            const starBaseColor = 100;
-                            for (let i = 0; i < length; i++) {
-                                let alpha = konamiState < 0 ? 1 : 0.25 + Math.random() / 2;
-                                let starColorRed = konamiState < 0 ? Math.round(Math.random() * 255) : starBaseColor + Math.round((255 - starBaseColor) * Math.random());
-                                let starColorGreen = konamiState < 0 ? Math.round(Math.random() * 255) : Math.round(0.65 * starColorRed + 0.35 * starColorRed * Math.random());
-                                let starColorBlue = konamiState < 0 ? Math.round(Math.random() * 255) : starBaseColor;
-                                let left = Math.random() * background3D.behind.width;
-                                let top = Math.random() * background3D.behind.height;
-                                let radius = Math.min(background3D.behind.width, background3D.behind.height) / 1000 + (Math.random() * Math.min(background3D.behind.width, background3D.behind.height)) / 500;
-                                let fill = "rgba(" + starColorRed + "," + starColorGreen + "," + starColorBlue + "," + alpha + ")";
-                                background3D.animateBehindStars.push({left: left, top: top, radius: radius, fill: fill});
-                                background3D.animateBehindStars.push({left: left + background3D.behind.width, top: top, radius: radius, fill: fill});
-                            }
-                        } else {
-                            const length = 15 + 15 * Math.random();
-                            const starBaseColor = 20;
-                            for (let i = 0; i < length; i++) {
-                                let alpha = Math.random() / 8;
-                                let starColorRed = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
-                                let starColorGreen = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
-                                let starColorBlue = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
-                                let left = Math.random() * background3D.behind.width;
-                                let top = Math.random() * background3D.behind.height;
-                                let radius = Math.min(background3D.behind.width, background3D.behind.height) / 3 + (Math.random() * Math.min(background3D.behind.width, background3D.behind.height)) / 3;
-                                let fill = "rgba(" + starColorRed + "," + starColorGreen + "," + starColorBlue + "," + alpha + ")";
-                                background3D.animateBehindStars.push({left: left, top: top, radius: radius, fill: fill});
-                            }
-                        }
-                        const behindContext = background3D.behind.getContext("2d");
-                        behindContext.save();
-                        if (konamiState < 0 && !three.night) {
-                            var bgGradient = behindContext.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
-                            bgGradient.addColorStop(0, "#550400");
-                            bgGradient.addColorStop(0.2, "#542400");
-                            bgGradient.addColorStop(0.4, "#442200");
-                            bgGradient.addColorStop(0.6, "#054000");
-                            bgGradient.addColorStop(0.8, "#040037");
-                            bgGradient.addColorStop(1, "#350037");
-                            behindContext.fillStyle = bgGradient;
-                        } else {
-                            behindContext.fillStyle = "black";
-                        }
-                        behindContext.fillRect(0, 0, background3D.behind.width, background3D.behind.height);
-                        for (let i = 0; i < background3D.animateBehindStars.length; i++) {
-                            behindContext.save();
-                            behindContext.fillStyle = background3D.animateBehindStars[i].fill;
-                            behindContext.translate(background3D.animateBehindStars[i].left, background3D.animateBehindStars[i].top);
-                            behindContext.beginPath();
-                            behindContext.arc(0, 0, background3D.animateBehindStars[i].radius, 0, 2 * Math.PI);
-                            behindContext.fill();
-                            behindContext.restore();
-                        }
-                        behindContext.restore();
-                        if (three.night) {
-                            background3D.behindClone = background3D.behind.cloneNode() as HTMLCanvasElement;
-                            background3D.behindClone.id = behindCloneId;
-                            background3D.behind.parentNode.insertBefore(background3D.behindClone, background3D.behind);
-                            const behindCloneContext = background3D.behindClone.getContext("2d");
-                            behindCloneContext.drawImage(background3D.behind, 0, 0);
-                        } else {
-                            background3D.behindClone = null;
-                        }
-                    }
-                    if (three.night) {
-                        background3D.animateBehindFac += 0.00025;
-                        if (background3D.animateBehindFac >= 1) {
-                            background3D.animateBehindFac -= 1;
-                        }
-                        background3D.behind.style.transform = "translateX(" + -background3D.animateBehindFac * background3D.behind.offsetWidth + "px)";
-                        background3D.behindClone.style.transform = "translateX(" + (1 - background3D.animateBehindFac) * background3D.behind.offsetWidth + "px)";
-                    }
-                };
-
-                three.camera = new THREE.PerspectiveCamera(60, client.width / client.height, 0.1, 10);
-                three.camera.position.set(0, 0, 1);
-                three.camera.zoom = three.zoom;
-                three.camera.aspect = client.width / client.height;
-                three.camera.updateProjectionMatrix();
-
-                if (gui.demo) {
-                    three.demoRotationFacX = Math.round(Math.random()) * 2 - 1;
-                    three.demoRotationFacY = Math.round(Math.random()) * 2 - 1;
-                }
-
-                if (APP_DATA.debug && debug.paint) {
-                    var axesHelper = new THREE.AxesHelper(15);
-                    three.scene.add(axesHelper);
                 }
             }
         };
