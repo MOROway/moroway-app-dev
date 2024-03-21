@@ -5486,675 +5486,6 @@ window.onload = function () {
             } else if (message.data.k == "setTrainParams") {
                 trainParams = message.data.trainParams;
             } else if (message.data.k == "ready") {
-                //Initialize trains
-                trains = message.data.trains;
-                trains.forEach(function (train, i) {
-                    var trainCallback = function (downIntersects, upIntersects) {
-                        if (hardware.lastInputTouch < hardware.lastInputMouse) {
-                            hardware.mouse.isHold = false;
-                        }
-                        if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
-                            if (typeof clickTimeOut !== "undefined") {
-                                window.clearTimeout(clickTimeOut);
-                                clickTimeOut = null;
-                            }
-                            if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                                hardware.mouse.isHold = false;
-                            } else {
-                                hardware.mouse.lastClickDoubleClick = true;
-                            }
-                            if (trains[i].accelerationSpeed <= 0 && Math.abs(trains[i].accelerationSpeed) < 0.2) {
-                                trainActions.changeDirection(i, true);
-                            }
-                        } else {
-                            if (typeof clickTimeOut !== "undefined") {
-                                window.clearTimeout(clickTimeOut);
-                                clickTimeOut = null;
-                            }
-                            clickTimeOut = window.setTimeout(
-                                function () {
-                                    clickTimeOut = null;
-                                    if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                                        hardware.mouse.isHold = false;
-                                    }
-                                    if (!trains[i].crash) {
-                                        if (trains[i].move && trains[i].accelerationSpeed > 0) {
-                                            trainActions.stop(i);
-                                        } else {
-                                            trainActions.start(i, 50);
-                                        }
-                                    }
-                                },
-                                hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
-                            );
-                        }
-                    };
-
-                    //Three.js
-                    trains3D[i] = {};
-                    var loaderGLTF: any = new GLTFLoader();
-                    loaderGLTF.setPath("assets/3d/").load(
-                        "asset" + train.src + ".glb",
-                        function (gltf) {
-                            trains3D[i].mesh = gltf.scene;
-                            trains3D[i].resize = function () {
-                                const scale = three.calcScale();
-                                trains3D[i].mesh.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                                if (train.assetFlip) {
-                                    trains3D[i].mesh.scale.x *= -1;
-                                }
-                                trains3D[i].mesh.position.set(0, 0, 0);
-                                trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
-                            };
-                            trains3D[i].resize();
-                            trains3D[i].mesh.callback = trainCallback;
-                            three.scene.add(trains3D[i].mesh);
-                        },
-                        null,
-                        function () {
-                            var height3D = 0.0125;
-                            trains3D[i].resize = function () {
-                                if (three.scene.getObjectByName("train_" + i)) {
-                                    three.scene.remove(trains3D[i].mesh);
-                                }
-                                const scale = three.calcScale();
-                                trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
-                                trains3D[i].mesh.position.set(0, 0, 0);
-                                trains3D[i].positionZ = (scale * height3D) / 2;
-                                trains3D[i].mesh.callback = trainCallback;
-                                trains3D[i].mesh.name = "train_" + i;
-                                three.scene.add(trains3D[i].mesh);
-                            };
-                            trains3D[i].resize();
-                        }
-                    );
-                    trains3D[i].cars = [];
-                    train.cars.forEach(function (car, j) {
-                        trains3D[i].cars[j] = {};
-                        var loaderGLTF: any = new GLTFLoader();
-                        loaderGLTF.setPath("assets/3d/").load(
-                            "asset" + car.src + ".glb",
-                            function (gltf) {
-                                trains3D[i].cars[j].mesh = gltf.scene;
-                                trains3D[i].cars[j].resize = function () {
-                                    const scale = three.calcScale();
-                                    trains3D[i].cars[j].mesh.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                    if (car.assetFlip) {
-                                        trains3D[i].cars[j].mesh.scale.x *= -1;
-                                    }
-                                    trains3D[i].cars[j].mesh.position.set(0, 0, 0);
-                                    trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
-                                };
-                                trains3D[i].cars[j].resize();
-                                trains3D[i].cars[j].mesh.callback = trainCallback;
-                                three.scene.add(trains3D[i].cars[j].mesh);
-                            },
-                            null,
-                            function () {
-                                var height3D = 0.01;
-                                trains3D[i].cars[j].resize = function () {
-                                    if (three.scene.getObjectByName("train_" + i + "_car_" + j)) {
-                                        three.scene.remove(trains3D[i].cars[j].mesh);
-                                    }
-                                    const scale = three.calcScale();
-                                    trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
-                                    trains3D[i].cars[j].mesh.position.set(0, 0, 0);
-                                    trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
-                                    trains3D[i].cars[j].mesh.callback = trainCallback;
-                                    trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
-                                    three.scene.add(trains3D[i].cars[j].mesh);
-                                };
-                                trains3D[i].cars[j].resize();
-                            }
-                        );
-                    });
-                });
-                cars.forEach(function (car, i) {
-                    var carCallback = function (downIntersects, upIntersects) {
-                        if (hardware.lastInputTouch < hardware.lastInputMouse) {
-                            hardware.mouse.isHold = false;
-                        }
-                        if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
-                            if (typeof clickTimeOut !== "undefined") {
-                                window.clearTimeout(clickTimeOut);
-                                clickTimeOut = null;
-                            }
-                            if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                                hardware.mouse.isHold = false;
-                            } else {
-                                hardware.mouse.lastClickDoubleClick = true;
-                            }
-                            if (carParams.init) {
-                                carActions.auto.start();
-                            } else if (carParams.autoModeOff && !cars[i].move && cars[i].backwardsState === 0) {
-                                carActions.manual.backwards(i);
-                            }
-                        } else {
-                            if (typeof clickTimeOut !== "undefined") {
-                                window.clearTimeout(clickTimeOut);
-                                clickTimeOut = null;
-                            }
-                            clickTimeOut = window.setTimeout(
-                                function () {
-                                    clickTimeOut = null;
-                                    if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                                        hardware.mouse.isHold = false;
-                                    }
-                                    if (!carCollisionCourse(i, false)) {
-                                        if (carParams.autoModeRuns) {
-                                            carActions.auto.pause();
-                                        } else if (carParams.init || carParams.autoModeOff) {
-                                            if (cars[i].move) {
-                                                carActions.manual.stop(i);
-                                            } else {
-                                                carActions.manual.start(i);
-                                            }
-                                        } else {
-                                            carActions.auto.resume();
-                                        }
-                                    }
-                                },
-                                hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
-                            );
-                        }
-                    };
-                    cars3D[i] = {};
-                    var loaderGLTF: any = new GLTFLoader();
-                    loaderGLTF.setPath("assets/3d/").load(
-                        "asset" + car.src + ".glb",
-                        function (gltf) {
-                            cars3D[i].mesh = gltf.scene;
-                            cars3D[i].resize = function () {
-                                const scale = three.calcScale();
-                                cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
-                                cars3D[i].mesh.position.set(0, 0, 0);
-                                cars3D[i].positionZ = new THREE.Box3().setFromObject(cars3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
-                                cars3D[i].resizeParkingLot();
-                            };
-                            cars3D[i].resize();
-                            cars3D[i].mesh.callback = carCallback;
-                            three.scene.add(cars3D[i].mesh);
-                        },
-                        null,
-                        function () {
-                            var height3D = 0.005;
-                            cars3D[i].resize = function () {
-                                if (three.scene.getObjectByName("car_" + i)) {
-                                    three.scene.remove(cars3D[i].mesh);
-                                }
-                                const scale = three.calcScale();
-                                cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
-                                cars3D[i].mesh.position.set(0, 0, 0);
-                                cars3D[i].positionZ = (scale * height3D) / 2;
-                                cars3D[i].mesh.callback = carCallback;
-                                cars3D[i].mesh.name = "car_" + i;
-                                three.scene.add(cars3D[i].mesh);
-                                cars3D[i].resizeParkingLot();
-                            };
-                            cars3D[i].resize();
-                        }
-                    );
-                    var radius = 0.0036;
-                    var height3D = 0.0005;
-                    cars3D[i].meshParkingLot = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.5, transparent: true}));
-                    cars3D[i].meshParkingLot.rotation.x = Math.PI / 2;
-                    cars3D[i].resizeParkingLot = function () {
-                        const scale = three.calcScale();
-                        cars3D[i].meshParkingLot.scale.set(scale, scale, scale);
-                        cars3D[i].meshParkingLot.position.set(scale * ((carWays[i].start[cars[i].startFrame].x - background.width / 2) / background.width), scale * (-(carWays[i].start[cars[i].startFrame].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
-                    };
-                    cars3D[i].meshParkingLot.callback = function () {
-                        if (carParams.autoModeOff) {
-                            carActions.manual.park(i);
-                        } else {
-                            carActions.auto.end();
-                        }
-                    };
-                    cars3D[i].meshParkingLot.visible = false;
-                    cars3D[i].resizeParkingLot();
-                    three.scene.add(cars3D[i].meshParkingLot);
-                });
-                if (!gui.demo) {
-                    Object.keys(switches).forEach(function (key) {
-                        switches3D[key] = {};
-                        Object.keys(switches[key]).forEach(function (currentKey) {
-                            switches3D[key][currentKey] = {};
-
-                            const radius = 0.01;
-                            const length = radius * 1.25;
-                            const height3D = 0.0005;
-
-                            const meshCallback = function () {
-                                if (typeof clickTimeOut !== "undefined") {
-                                    window.clearTimeout(clickTimeOut);
-                                    clickTimeOut = null;
-                                }
-                                clickTimeOut = window.setTimeout(
-                                    function () {
-                                        clickTimeOut = null;
-                                        hardware.mouse.isHold = false;
-                                        switchActions.turn(key, currentKey);
-                                    },
-                                    hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
-                                );
-                            };
-
-                            switches3D[key][currentKey].circleMesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.25, transparent: true}));
-                            switches3D[key][currentKey].circleMesh.rotation.x = Math.PI / 2;
-                            switches3D[key][currentKey].circleMesh.callback = meshCallback;
-                            switches3D[key][currentKey].circleMeshSmall = new THREE.Mesh(new THREE.CylinderGeometry(radius / 8, radius / 8, radius / 4, 24), new THREE.MeshBasicMaterial({color: 0xffffff}));
-                            switches3D[key][currentKey].circleMeshSmall.rotation.x = Math.PI / 2;
-                            switches3D[key][currentKey].circleMeshSmall.callback = meshCallback;
-                            switches3D[key][currentKey].squareMeshHighlight = new THREE.Mesh(new THREE.BoxGeometry(length * 1.25, radius / 4, radius / 4), new THREE.MeshBasicMaterial({color: 0xffffff}));
-                            switches3D[key][currentKey].squareMeshHighlight.rotation.x = Math.PI / 2;
-                            switches3D[key][currentKey].squareMeshHighlight.callback = meshCallback;
-                            switches3D[key][currentKey].squareMeshNormal = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
-                            switches3D[key][currentKey].squareMeshNormal.rotation.x = Math.PI / 2;
-                            switches3D[key][currentKey].squareMeshNormal.callback = meshCallback;
-                            switches3D[key][currentKey].squareMeshTurned = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
-                            switches3D[key][currentKey].squareMeshTurned.rotation.x = Math.PI / 2;
-                            switches3D[key][currentKey].squareMeshTurned.callback = meshCallback;
-                            switches3D[key][currentKey].resize = function () {
-                                const scale = three.calcScale();
-                                switches3D[key][currentKey].circleMesh.scale.set(scale, scale, scale);
-                                switches3D[key][currentKey].circleMeshSmall.scale.set(scale, scale, scale);
-                                switches3D[key][currentKey].squareMeshHighlight.scale.set(scale, scale, scale);
-                                switches3D[key][currentKey].squareMeshNormal.scale.set(scale, scale, scale);
-                                switches3D[key][currentKey].squareMeshTurned.scale.set(scale, scale, scale);
-                                switches3D[key][currentKey].circleMesh.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
-                                switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
-                            };
-                            switches3D[key][currentKey].resize();
-                            three.scene.add(switches3D[key][currentKey].circleMesh);
-                            three.scene.add(switches3D[key][currentKey].circleMeshSmall);
-                            three.scene.add(switches3D[key][currentKey].squareMeshHighlight);
-                            three.scene.add(switches3D[key][currentKey].squareMeshNormal);
-                            three.scene.add(switches3D[key][currentKey].squareMeshTurned);
-                        });
-                    });
-                }
-
-                //Calc and show UI
-                calcClassicUIElements();
-                calcControlCenter();
-                drawOptionsMenu("show");
-
-                //Trigger resize
-                window.addEventListener("resize", requestResize);
-                requestResize();
-
-                //Initialize canvas
-                drawInterval = message.data.animateInterval;
-                drawObjects();
-                document.addEventListener("visibilitychange", function () {
-                    if (document.visibilityState != "hidden") {
-                        if (drawTimeout !== undefined && drawTimeout !== null) {
-                            window.clearTimeout(drawTimeout);
-                        }
-                        drawObjects();
-                    }
-                });
-
-                //Gestures
-                if (gui.demo) {
-                    window.setTimeout(function () {
-                        if (carParams.autoModeRuns) {
-                            window.sessionStorage.setItem("demoCars", JSON.stringify(cars));
-                            window.sessionStorage.setItem("demoCarParams", JSON.stringify(carParams));
-                            window.sessionStorage.setItem("demoBg", JSON.stringify(background));
-                        }
-                        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
-                    }, 90000);
-                    if (!demoMode.standalone) {
-                        document.addEventListener("keyup", function (event) {
-                            if (event.key == "Escape") {
-                                switchMode();
-                            }
-                        });
-                        document.addEventListener("touchstart", demoMode.leaveTimeoutStart, {passive: false});
-                        document.addEventListener("touchend", demoMode.leaveTimeoutEnd, {passive: false});
-                        document.addEventListener("mousedown", demoMode.leaveTimeoutStart, {passive: false});
-                        document.addEventListener("mouseup", demoMode.leaveTimeoutEnd, {passive: false});
-                    }
-                } else {
-                    canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
-                    canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
-                    canvasForeground.addEventListener("touchend", getTouchEnd, {passive: false});
-                    canvasForeground.addEventListener("touchcancel", getTouchCancel);
-                    canvasForeground.addEventListener("mousemove", onMouseMove);
-                    canvasForeground.addEventListener("mousedown", onMouseDown, {passive: false});
-                    canvasForeground.addEventListener("mouseup", onMouseUp, {passive: false});
-                    canvasForeground.addEventListener("mouseout", onMouseOut, {passive: false});
-                    canvasForeground.addEventListener("mouseenter", onMouseEnter);
-                    canvasForeground.addEventListener("contextmenu", onMouseRight, {passive: false});
-                    canvasForeground.addEventListener("wheel", onMouseWheel, {passive: false});
-                    document.addEventListener("keydown", onKeyDown);
-                    document.addEventListener("keyup", onKeyUp);
-                    document.removeEventListener("wheel", preventMouseZoomDuringLoad);
-                    document.removeEventListener("keydown", preventKeyZoomDuringLoad);
-                }
-                document.removeEventListener("keyup", preventKeyZoomDuringLoad);
-
-                //Show everything
-                var timeWait = 0.5;
-                var timeLoad = 1.5;
-                if (gui.demo) {
-                    window.clearInterval(loadingAnimElemChangingFilter);
-                }
-                window.setTimeout(function () {
-                    destroy([document.querySelector("#snake"), document.querySelector("#percent")]);
-                    const event = new CustomEvent("moroway-app-ready");
-                    document.dispatchEvent(event);
-                    var toHide = document.querySelector("#branding") as HTMLElement;
-                    if (toHide != null && !onlineGame.enabled) {
-                        toHide.style.transition = "opacity " + timeLoad + "s ease-in";
-                        toHide.style.opacity = "0";
-                        window.setTimeout(function () {
-                            var localAppData = getLocalAppDataCopy();
-                            if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.demo && !gui.three) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH, 3000, null, null, client.y + menus.outerContainer.height);
-                            } else if (localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor)) && !gui.demo) {
-                                const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
-                                document.dispatchEvent(event);
-                            } else if (!gui.demo) {
-                                const event = new CustomEvent("moroway-app-ready-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
-                                document.dispatchEvent(event);
-                            }
-                            setLocalAppDataCopy();
-                            destroy(toHide);
-                        }, timeLoad * 900);
-                    }
-                }, timeWait * 1000);
-            } else if (message.data.k == "setTrains") {
-                message.data.trains.forEach(function (train, i) {
-                    trains[i].x = train.x;
-                    trains[i].y = train.y;
-                    if (APP_DATA.debug) {
-                        trains[i].front.x = train.front.x;
-                        trains[i].front.y = train.front.y;
-                        trains[i].front.angle = train.front.angle;
-                        trains[i].back.x = train.back.x;
-                        trains[i].back.y = train.back.y;
-                        trains[i].back.angle = train.back.angle;
-                    }
-                    trains[i].width = train.width;
-                    trains[i].height = train.height;
-                    trains[i].displayAngle = train.displayAngle;
-                    trains[i].assetFlip = train.assetFlip;
-                    trains[i].circleFamily = train.circleFamily;
-                    trains[i].move = train.move;
-                    trains[i].lastDirectionChange = train.lastDirectionChange;
-                    trains[i].speedInPercent = train.speedInPercent;
-                    trains[i].currentSpeedInPercent = train.currentSpeedInPercent;
-                    trains[i].accelerationSpeed = train.accelerationSpeed;
-                    trains[i].accelerationSpeedCustom = train.accelerationSpeedCustom;
-                    trains[i].standardDirection = train.standardDirection;
-                    trains[i].crash = train.crash;
-                    trains[i].mute = train.mute;
-                    trains[i].volume = train.volume;
-                    trains[i].invisible = train.invisible;
-                    trains[i].opacity = train.opacity;
-                    train.cars.forEach(function (car, j) {
-                        trains[i].cars[j].x = car.x;
-                        trains[i].cars[j].y = car.y;
-                        trains[i].cars[j].width = car.width;
-                        trains[i].cars[j].height = car.height;
-                        trains[i].cars[j].displayAngle = car.displayAngle;
-                        trains[i].cars[j].assetFlip = car.assetFlip;
-                        trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
-                        trains[i].cars[j].invisible = car.invisible;
-                        trains[i].cars[j].opacity = car.opacity;
-                        if (APP_DATA.debug) {
-                            trains[i].cars[j].front.x = car.front.x;
-                            trains[i].cars[j].front.y = car.front.y;
-                            trains[i].cars[j].front.angle = car.front.angle;
-                            trains[i].cars[j].back.x = car.back.x;
-                            trains[i].cars[j].back.y = car.back.y;
-                            trains[i].cars[j].back.angle = car.back.angle;
-                        }
-                    });
-                    if (train.move && !train.mute && audio.active) {
-                        if (!existsAudio("train", i)) {
-                            startAudio("train", i, true);
-                        }
-                        if (train.currentSpeedInPercent == undefined) {
-                            train.currentSpeedInPercent = 0;
-                        }
-                        setAudioVolume("train", i, train.volume);
-                    } else if (existsAudio("train", i)) {
-                        stopAudio("train", i);
-                    }
-                });
-                if (message.data.resized) {
-                    trains3D.forEach(function (train) {
-                        if (train.resize) {
-                            train.resize();
-                        }
-                        train.cars.forEach(function (car) {
-                            if (car.resize) {
-                                car.resize();
-                            }
-                        });
-                    });
-                    if (!gui.demo) {
-                        Object.keys(switches).forEach(function (key) {
-                            Object.keys(switches[key]).forEach(function (currentKey) {
-                                switches3D[key][currentKey].resize();
-                            });
-                        });
-                    }
-                    if (onlineGame.enabled) {
-                        if (onlineGame.resizedTimeout != undefined && onlineGame.resizedTimeout != null) {
-                            window.clearTimeout(onlineGame.resizedTimeout);
-                        }
-                        onlineGame.resizedTimeout = window.setTimeout(function () {
-                            onlineGame.resized = false;
-                        }, 3000);
-                    }
-                    resized = false;
-                    if (APP_DATA.debug) {
-                        animateWorker.postMessage({k: "debug"});
-                    }
-                }
-            } else if (message.data.k == "trainCrash") {
-                actionSync("trains", message.data.i, [{move: false}, {accelerationSpeed: 0}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
-                actionSync("train-crash");
-                if (existsAudio("trainCrash")) {
-                    stopAudio("trainCrash");
-                }
-                if (audio.active) {
-                    startAudio("trainCrash", null, false);
-                }
-            } else if (message.data.k == "switches") {
-                switches = message.data.switches;
-            } else if (message.data.k == "sync-ready") {
-                trains = message.data.trains;
-                rotationPoints = message.data.rotationPoints;
-                teamplaySync("sync-ready");
-            } else if (message.data.k == "save-game") {
-                if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo) {
-                    try {
-                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
-                        var saveSwitches = {};
-                        Object.keys(switches).forEach(function (key) {
-                            saveSwitches[key] = {};
-                            Object.keys(switches[key]).forEach(function (side) {
-                                saveSwitches[key][side] = switches[key][side].turned;
-                            });
-                        });
-                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
-                        if (cars.length == carWays.length && cars.length > 0) {
-                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
-                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
-                        }
-                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
-                    } catch (e) {
-                        if (APP_DATA.debug) {
-                            console.log(e.name + "/" + e.message);
-                        }
-                        notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + menus.outerContainer.height);
-                    }
-                    animateWorker.postMessage({k: "game-saved"});
-                }
-            } else if (message.data.k == "debug") {
-                rotationPoints = message.data.rotationPoints;
-                switchesBeforeFac = message.data.switchesBeforeFac;
-                switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
-                if (!debug.trainReady) {
-                    console.log("Animate Interval:", message.data.animateInterval);
-                }
-                console.log("Trains: ", message.data.trains);
-            } else if (message.data.k == "debugDrawPoints") {
-                debug.drawPoints = message.data.p;
-                debug.drawPointsCrash = message.data.pC;
-                debug.trainCollisions = message.data.tC;
-                debug.trainReady = true;
-            }
-        };
-        animateWorker.postMessage({k: "start", background: background, switches: switches, online: onlineGame.enabled, onlineInterval: onlineGame.animateInterval, demo: gui.demo});
-    }
-    function resetForElem(parent, elem, to = "") {
-        var elements = parent.childNodes;
-        for (var i = 0; i < elements.length; i++) {
-            if (elements[i].nodeName.substr(0, 1) != "#") {
-                elements[i].style.display = elements[i] == elem ? to : "none";
-            }
-        }
-    }
-
-    function destroy(toDestroyElements) {
-        if (typeof toDestroyElements == "object") {
-            if (!Array.isArray(toDestroyElements)) {
-                toDestroyElements = [toDestroyElements];
-            }
-            toDestroyElements.forEach(function (toDestroy) {
-                if (toDestroy != null) {
-                    toDestroy.parentNode.removeChild(toDestroy);
-                }
-            });
-        }
-    }
-
-    function loadingImageAnimation() {
-        const loadingAnimElem = document.querySelector("#branding img") as HTMLElement;
-        const loadingAnimElemDefaultFilter = "blur(1px) saturate(5) sepia(1) hue-rotate({{0}}deg)";
-        loadingAnimElem.style.transition = "filter 0.08s";
-        loadingAnimElem.style.filter = formatJSString(loadingAnimElemDefaultFilter, Math.random() * 260 + 100);
-        return window.setInterval(function () {
-            loadingAnimElem.style.filter = formatJSString(loadingAnimElemDefaultFilter, Math.random() * 260 + 100);
-        }, 10);
-    }
-
-    function keepScreenAlive() {
-        const event = new CustomEvent("moroway-app-keep-screen-alive", {detail: {acquire: document.visibilityState == "visible"}});
-        document.dispatchEvent(event);
-    }
-
-    //Set mode: demo
-    gui.demo = getQueryString("mode") == "demo" || getQueryString("mode") == "demoStandalone" || (getSetting("startDemoMode") && getQueryString("mode") == "");
-    if (gui.demo) {
-        document.body.style.cursor = "none";
-        var loadingAnimElemChangingFilter = loadingImageAnimation();
-        demoMode.standalone = getQueryString("mode") == "demoStandalone";
-    }
-    //Set mode: multiplay
-    if (getQueryString("mode") == "multiplay") {
-        if ("WebSocket" in window) {
-            onlineGame.enabled = true;
-            var loadingAnimElemChangingFilter = loadingImageAnimation();
-        } else {
-            onlineGame.enabled = false;
-            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
-        }
-    } else {
-        onlineGame.enabled = false;
-    }
-
-    //GUI State
-    var queryString3D = getQueryString("gui-3d");
-    if (queryString3D == "0" || queryString3D == "1") {
-        gui.three = getGuiState("3d", queryString3D == "1");
-    } else {
-        gui.three = getGuiState("3d");
-    }
-    var queryString3DNight = getQueryString("gui-3d-night");
-    if (queryString3DNight == "0" || queryString3DNight == "1") {
-        three.night = getGuiState("3d-night", queryString3DNight == "1");
-    } else {
-        three.night = getGuiState("3d-night");
-    }
-    three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
-
-    //Initialize canvases and contexts
-    canvas = document.querySelector("canvas#game-gameplay-main");
-    canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
-    canvasBackground = document.querySelector("canvas#game-gameplay-bg");
-    canvasSemiForeground = document.querySelector("canvas#game-gameplay-sfg");
-    canvasForeground = document.querySelector("canvas#game-gameplay-fg");
-    context = canvas.getContext("2d");
-    contextGesture = canvasGesture.getContext("2d");
-    contextBackground = canvasBackground.getContext("2d");
-    contextSemiForeground = canvasSemiForeground.getContext("2d");
-    contextForeground = canvasForeground.getContext("2d");
-
-    //Input handling
-    hardware.lastInputMouse = hardware.lastInputTouch = 0;
-    document.addEventListener("wheel", preventMouseZoomDuringLoad, {passive: false});
-    document.addEventListener("keydown", preventKeyZoomDuringLoad, {passive: false});
-    document.addEventListener("keyup", preventKeyZoomDuringLoad, {passive: false});
-    //Visibility handling
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    onVisibilityChange();
-    document.addEventListener("visibilitychange", keepScreenAlive);
-    keepScreenAlive();
-
-    //Prepare game
-    if (!onlineGame.enabled) {
-        var elements = document.querySelectorAll("#content > *:not(#game), #game > *:not(#game-gameplay)");
-        for (var i = 0; i < elements.length; i++) {
-            (elements[i] as HTMLElement).style.display = "none";
-        }
-        elements = document.querySelectorAll("#content > #game, #game > #game-gameplay");
-        for (i = 0; i < elements.length; i++) {
-            (elements[i] as HTMLElement).style.display = "block";
-        }
-    }
-    measureViewSpace();
-    if (getSetting("saveGame")) {
-        updateSavedGame();
-    } else {
-        removeSavedGame();
-    }
-
-    //Show progress bar if app loads slowly
-    window.setTimeout(function () {
-        var toShowElements = [document.querySelector("#percent")];
-        toShowElements.forEach(function (toShow) {
-            if (toShow != null) {
-                (toShow as HTMLElement).style.display = "block";
-            }
-        });
-    }, 2500);
-
-    //Load app
-    var defaultPics = copyJSObject(pics);
-    var finalPicNo = defaultPics.length;
-    pics = [];
-    var loadNo = 0;
-    defaultPics.forEach(function (pic) {
-        pics[pic.id] = new Image();
-        pics[pic.id].src = "assets/asset" + pic.id + "." + pic.extension;
-        pics[pic.id].onload = function () {
-            loadNo++;
-            var cPercent = Math.round(100 * (loadNo / finalPicNo));
-            const elementPercentText = document.querySelector("#percent #percent-text");
-            const elementPercentProgress = document.querySelector("#percent #percent-progress") as HTMLElement;
-            if (elementPercentText != null && elementPercentProgress != null) {
-                elementPercentText.textContent = cPercent + "%";
-                elementPercentProgress.style.left = -100 + cPercent + "%";
-            }
-            if (loadNo == finalPicNo) {
-                initialDisplay();
                 if (onlineGame.enabled) {
                     const chatNotify = document.querySelector("#tp-chat-notifier") as HTMLElementNotify;
                     const chat = document.querySelector("#chat") as HTMLElementChat;
@@ -6846,6 +6177,676 @@ window.onload = function () {
                         }
                     });
                 }
+
+                //Initialize trains
+                trains = message.data.trains;
+                trains.forEach(function (train, i) {
+                    var trainCallback = function (downIntersects, upIntersects) {
+                        if (hardware.lastInputTouch < hardware.lastInputMouse) {
+                            hardware.mouse.isHold = false;
+                        }
+                        if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                            if (typeof clickTimeOut !== "undefined") {
+                                window.clearTimeout(clickTimeOut);
+                                clickTimeOut = null;
+                            }
+                            if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                hardware.mouse.isHold = false;
+                            } else {
+                                hardware.mouse.lastClickDoubleClick = true;
+                            }
+                            if (trains[i].accelerationSpeed <= 0 && Math.abs(trains[i].accelerationSpeed) < 0.2) {
+                                trainActions.changeDirection(i, true);
+                            }
+                        } else {
+                            if (typeof clickTimeOut !== "undefined") {
+                                window.clearTimeout(clickTimeOut);
+                                clickTimeOut = null;
+                            }
+                            clickTimeOut = window.setTimeout(
+                                function () {
+                                    clickTimeOut = null;
+                                    if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                        hardware.mouse.isHold = false;
+                                    }
+                                    if (!trains[i].crash) {
+                                        if (trains[i].move && trains[i].accelerationSpeed > 0) {
+                                            trainActions.stop(i);
+                                        } else {
+                                            trainActions.start(i, 50);
+                                        }
+                                    }
+                                },
+                                hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
+                            );
+                        }
+                    };
+
+                    //Three.js
+                    trains3D[i] = {};
+                    var loaderGLTF: any = new GLTFLoader();
+                    loaderGLTF.setPath("assets/3d/").load(
+                        "asset" + train.src + ".glb",
+                        function (gltf) {
+                            trains3D[i].mesh = gltf.scene;
+                            trains3D[i].resize = function () {
+                                const scale = three.calcScale();
+                                trains3D[i].mesh.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                if (train.assetFlip) {
+                                    trains3D[i].mesh.scale.x *= -1;
+                                }
+                                trains3D[i].mesh.position.set(0, 0, 0);
+                                trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
+                            };
+                            trains3D[i].resize();
+                            trains3D[i].mesh.callback = trainCallback;
+                            three.scene.add(trains3D[i].mesh);
+                        },
+                        null,
+                        function () {
+                            var height3D = 0.0125;
+                            trains3D[i].resize = function () {
+                                if (three.scene.getObjectByName("train_" + i)) {
+                                    three.scene.remove(trains3D[i].mesh);
+                                }
+                                const scale = three.calcScale();
+                                trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
+                                trains3D[i].mesh.position.set(0, 0, 0);
+                                trains3D[i].positionZ = (scale * height3D) / 2;
+                                trains3D[i].mesh.callback = trainCallback;
+                                trains3D[i].mesh.name = "train_" + i;
+                                three.scene.add(trains3D[i].mesh);
+                            };
+                            trains3D[i].resize();
+                        }
+                    );
+                    trains3D[i].cars = [];
+                    train.cars.forEach(function (car, j) {
+                        trains3D[i].cars[j] = {};
+                        var loaderGLTF: any = new GLTFLoader();
+                        loaderGLTF.setPath("assets/3d/").load(
+                            "asset" + car.src + ".glb",
+                            function (gltf) {
+                                trains3D[i].cars[j].mesh = gltf.scene;
+                                trains3D[i].cars[j].resize = function () {
+                                    const scale = three.calcScale();
+                                    trains3D[i].cars[j].mesh.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    if (car.assetFlip) {
+                                        trains3D[i].cars[j].mesh.scale.x *= -1;
+                                    }
+                                    trains3D[i].cars[j].mesh.position.set(0, 0, 0);
+                                    trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
+                                };
+                                trains3D[i].cars[j].resize();
+                                trains3D[i].cars[j].mesh.callback = trainCallback;
+                                three.scene.add(trains3D[i].cars[j].mesh);
+                            },
+                            null,
+                            function () {
+                                var height3D = 0.01;
+                                trains3D[i].cars[j].resize = function () {
+                                    if (three.scene.getObjectByName("train_" + i + "_car_" + j)) {
+                                        three.scene.remove(trains3D[i].cars[j].mesh);
+                                    }
+                                    const scale = three.calcScale();
+                                    trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
+                                    trains3D[i].cars[j].mesh.position.set(0, 0, 0);
+                                    trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
+                                    trains3D[i].cars[j].mesh.callback = trainCallback;
+                                    trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
+                                    three.scene.add(trains3D[i].cars[j].mesh);
+                                };
+                                trains3D[i].cars[j].resize();
+                            }
+                        );
+                    });
+                });
+                cars.forEach(function (car, i) {
+                    var carCallback = function (downIntersects, upIntersects) {
+                        if (hardware.lastInputTouch < hardware.lastInputMouse) {
+                            hardware.mouse.isHold = false;
+                        }
+                        if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                            if (typeof clickTimeOut !== "undefined") {
+                                window.clearTimeout(clickTimeOut);
+                                clickTimeOut = null;
+                            }
+                            if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                hardware.mouse.isHold = false;
+                            } else {
+                                hardware.mouse.lastClickDoubleClick = true;
+                            }
+                            if (carParams.init) {
+                                carActions.auto.start();
+                            } else if (carParams.autoModeOff && !cars[i].move && cars[i].backwardsState === 0) {
+                                carActions.manual.backwards(i);
+                            }
+                        } else {
+                            if (typeof clickTimeOut !== "undefined") {
+                                window.clearTimeout(clickTimeOut);
+                                clickTimeOut = null;
+                            }
+                            clickTimeOut = window.setTimeout(
+                                function () {
+                                    clickTimeOut = null;
+                                    if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                        hardware.mouse.isHold = false;
+                                    }
+                                    if (!carCollisionCourse(i, false)) {
+                                        if (carParams.autoModeRuns) {
+                                            carActions.auto.pause();
+                                        } else if (carParams.init || carParams.autoModeOff) {
+                                            if (cars[i].move) {
+                                                carActions.manual.stop(i);
+                                            } else {
+                                                carActions.manual.start(i);
+                                            }
+                                        } else {
+                                            carActions.auto.resume();
+                                        }
+                                    }
+                                },
+                                hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
+                            );
+                        }
+                    };
+                    cars3D[i] = {};
+                    var loaderGLTF: any = new GLTFLoader();
+                    loaderGLTF.setPath("assets/3d/").load(
+                        "asset" + car.src + ".glb",
+                        function (gltf) {
+                            cars3D[i].mesh = gltf.scene;
+                            cars3D[i].resize = function () {
+                                const scale = three.calcScale();
+                                cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
+                                cars3D[i].mesh.position.set(0, 0, 0);
+                                cars3D[i].positionZ = new THREE.Box3().setFromObject(cars3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
+                                cars3D[i].resizeParkingLot();
+                            };
+                            cars3D[i].resize();
+                            cars3D[i].mesh.callback = carCallback;
+                            three.scene.add(cars3D[i].mesh);
+                        },
+                        null,
+                        function () {
+                            var height3D = 0.005;
+                            cars3D[i].resize = function () {
+                                if (three.scene.getObjectByName("car_" + i)) {
+                                    three.scene.remove(cars3D[i].mesh);
+                                }
+                                const scale = three.calcScale();
+                                cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
+                                cars3D[i].mesh.position.set(0, 0, 0);
+                                cars3D[i].positionZ = (scale * height3D) / 2;
+                                cars3D[i].mesh.callback = carCallback;
+                                cars3D[i].mesh.name = "car_" + i;
+                                three.scene.add(cars3D[i].mesh);
+                                cars3D[i].resizeParkingLot();
+                            };
+                            cars3D[i].resize();
+                        }
+                    );
+                    var radius = 0.0036;
+                    var height3D = 0.0005;
+                    cars3D[i].meshParkingLot = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.5, transparent: true}));
+                    cars3D[i].meshParkingLot.rotation.x = Math.PI / 2;
+                    cars3D[i].resizeParkingLot = function () {
+                        const scale = three.calcScale();
+                        cars3D[i].meshParkingLot.scale.set(scale, scale, scale);
+                        cars3D[i].meshParkingLot.position.set(scale * ((carWays[i].start[cars[i].startFrame].x - background.width / 2) / background.width), scale * (-(carWays[i].start[cars[i].startFrame].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
+                    };
+                    cars3D[i].meshParkingLot.callback = function () {
+                        if (carParams.autoModeOff) {
+                            carActions.manual.park(i);
+                        } else {
+                            carActions.auto.end();
+                        }
+                    };
+                    cars3D[i].meshParkingLot.visible = false;
+                    cars3D[i].resizeParkingLot();
+                    three.scene.add(cars3D[i].meshParkingLot);
+                });
+                if (!gui.demo) {
+                    Object.keys(switches).forEach(function (key) {
+                        switches3D[key] = {};
+                        Object.keys(switches[key]).forEach(function (currentKey) {
+                            switches3D[key][currentKey] = {};
+
+                            const radius = 0.01;
+                            const length = radius * 1.25;
+                            const height3D = 0.0005;
+
+                            const meshCallback = function () {
+                                if (typeof clickTimeOut !== "undefined") {
+                                    window.clearTimeout(clickTimeOut);
+                                    clickTimeOut = null;
+                                }
+                                clickTimeOut = window.setTimeout(
+                                    function () {
+                                        clickTimeOut = null;
+                                        hardware.mouse.isHold = false;
+                                        switchActions.turn(key, currentKey);
+                                    },
+                                    hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
+                                );
+                            };
+
+                            switches3D[key][currentKey].circleMesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.25, transparent: true}));
+                            switches3D[key][currentKey].circleMesh.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].circleMesh.callback = meshCallback;
+                            switches3D[key][currentKey].circleMeshSmall = new THREE.Mesh(new THREE.CylinderGeometry(radius / 8, radius / 8, radius / 4, 24), new THREE.MeshBasicMaterial({color: 0xffffff}));
+                            switches3D[key][currentKey].circleMeshSmall.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].circleMeshSmall.callback = meshCallback;
+                            switches3D[key][currentKey].squareMeshHighlight = new THREE.Mesh(new THREE.BoxGeometry(length * 1.25, radius / 4, radius / 4), new THREE.MeshBasicMaterial({color: 0xffffff}));
+                            switches3D[key][currentKey].squareMeshHighlight.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].squareMeshHighlight.callback = meshCallback;
+                            switches3D[key][currentKey].squareMeshNormal = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
+                            switches3D[key][currentKey].squareMeshNormal.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].squareMeshNormal.callback = meshCallback;
+                            switches3D[key][currentKey].squareMeshTurned = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
+                            switches3D[key][currentKey].squareMeshTurned.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].squareMeshTurned.callback = meshCallback;
+                            switches3D[key][currentKey].resize = function () {
+                                const scale = three.calcScale();
+                                switches3D[key][currentKey].circleMesh.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].circleMeshSmall.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].squareMeshHighlight.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].squareMeshNormal.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].squareMeshTurned.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].circleMesh.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
+                                switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
+                            };
+                            switches3D[key][currentKey].resize();
+                            three.scene.add(switches3D[key][currentKey].circleMesh);
+                            three.scene.add(switches3D[key][currentKey].circleMeshSmall);
+                            three.scene.add(switches3D[key][currentKey].squareMeshHighlight);
+                            three.scene.add(switches3D[key][currentKey].squareMeshNormal);
+                            three.scene.add(switches3D[key][currentKey].squareMeshTurned);
+                        });
+                    });
+                }
+
+                //Calc and show UI
+                calcClassicUIElements();
+                calcControlCenter();
+                drawOptionsMenu("show");
+
+                //Trigger resize
+                window.addEventListener("resize", requestResize);
+                requestResize();
+
+                //Initialize canvas
+                drawInterval = message.data.animateInterval;
+                drawObjects();
+                document.addEventListener("visibilitychange", function () {
+                    if (document.visibilityState != "hidden") {
+                        if (drawTimeout !== undefined && drawTimeout !== null) {
+                            window.clearTimeout(drawTimeout);
+                        }
+                        drawObjects();
+                    }
+                });
+
+                //Gestures
+                if (gui.demo) {
+                    window.setTimeout(function () {
+                        if (carParams.autoModeRuns) {
+                            window.sessionStorage.setItem("demoCars", JSON.stringify(cars));
+                            window.sessionStorage.setItem("demoCarParams", JSON.stringify(carParams));
+                            window.sessionStorage.setItem("demoBg", JSON.stringify(background));
+                        }
+                        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
+                    }, 90000);
+                    if (!demoMode.standalone) {
+                        document.addEventListener("keyup", function (event) {
+                            if (event.key == "Escape") {
+                                switchMode();
+                            }
+                        });
+                        document.addEventListener("touchstart", demoMode.leaveTimeoutStart, {passive: false});
+                        document.addEventListener("touchend", demoMode.leaveTimeoutEnd, {passive: false});
+                        document.addEventListener("mousedown", demoMode.leaveTimeoutStart, {passive: false});
+                        document.addEventListener("mouseup", demoMode.leaveTimeoutEnd, {passive: false});
+                    }
+                } else {
+                    canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
+                    canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
+                    canvasForeground.addEventListener("touchend", getTouchEnd, {passive: false});
+                    canvasForeground.addEventListener("touchcancel", getTouchCancel);
+                    canvasForeground.addEventListener("mousemove", onMouseMove);
+                    canvasForeground.addEventListener("mousedown", onMouseDown, {passive: false});
+                    canvasForeground.addEventListener("mouseup", onMouseUp, {passive: false});
+                    canvasForeground.addEventListener("mouseout", onMouseOut, {passive: false});
+                    canvasForeground.addEventListener("mouseenter", onMouseEnter);
+                    canvasForeground.addEventListener("contextmenu", onMouseRight, {passive: false});
+                    canvasForeground.addEventListener("wheel", onMouseWheel, {passive: false});
+                    document.addEventListener("keydown", onKeyDown);
+                    document.addEventListener("keyup", onKeyUp);
+                    document.removeEventListener("wheel", preventMouseZoomDuringLoad);
+                    document.removeEventListener("keydown", preventKeyZoomDuringLoad);
+                }
+                document.removeEventListener("keyup", preventKeyZoomDuringLoad);
+
+                //Show everything
+                var timeWait = 0.5;
+                var timeLoad = 1.5;
+                if (gui.demo) {
+                    window.clearInterval(loadingAnimElemChangingFilter);
+                }
+                window.setTimeout(function () {
+                    destroy([document.querySelector("#snake"), document.querySelector("#percent")]);
+                    const event = new CustomEvent("moroway-app-ready");
+                    document.dispatchEvent(event);
+                    var toHide = document.querySelector("#branding") as HTMLElement;
+                    if (toHide != null && !onlineGame.enabled) {
+                        toHide.style.transition = "opacity " + timeLoad + "s ease-in";
+                        toHide.style.opacity = "0";
+                        window.setTimeout(function () {
+                            var localAppData = getLocalAppDataCopy();
+                            if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.demo && !gui.three) {
+                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH, 3000, null, null, client.y + menus.outerContainer.height);
+                            } else if (localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor)) && !gui.demo) {
+                                const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
+                                document.dispatchEvent(event);
+                            } else if (!gui.demo) {
+                                const event = new CustomEvent("moroway-app-ready-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
+                                document.dispatchEvent(event);
+                            }
+                            setLocalAppDataCopy();
+                            destroy(toHide);
+                        }, timeLoad * 900);
+                    }
+                }, timeWait * 1000);
+            } else if (message.data.k == "setTrains") {
+                message.data.trains.forEach(function (train, i) {
+                    trains[i].x = train.x;
+                    trains[i].y = train.y;
+                    if (APP_DATA.debug) {
+                        trains[i].front.x = train.front.x;
+                        trains[i].front.y = train.front.y;
+                        trains[i].front.angle = train.front.angle;
+                        trains[i].back.x = train.back.x;
+                        trains[i].back.y = train.back.y;
+                        trains[i].back.angle = train.back.angle;
+                    }
+                    trains[i].width = train.width;
+                    trains[i].height = train.height;
+                    trains[i].displayAngle = train.displayAngle;
+                    trains[i].assetFlip = train.assetFlip;
+                    trains[i].circleFamily = train.circleFamily;
+                    trains[i].move = train.move;
+                    trains[i].lastDirectionChange = train.lastDirectionChange;
+                    trains[i].speedInPercent = train.speedInPercent;
+                    trains[i].currentSpeedInPercent = train.currentSpeedInPercent;
+                    trains[i].accelerationSpeed = train.accelerationSpeed;
+                    trains[i].accelerationSpeedCustom = train.accelerationSpeedCustom;
+                    trains[i].standardDirection = train.standardDirection;
+                    trains[i].crash = train.crash;
+                    trains[i].mute = train.mute;
+                    trains[i].volume = train.volume;
+                    trains[i].invisible = train.invisible;
+                    trains[i].opacity = train.opacity;
+                    train.cars.forEach(function (car, j) {
+                        trains[i].cars[j].x = car.x;
+                        trains[i].cars[j].y = car.y;
+                        trains[i].cars[j].width = car.width;
+                        trains[i].cars[j].height = car.height;
+                        trains[i].cars[j].displayAngle = car.displayAngle;
+                        trains[i].cars[j].assetFlip = car.assetFlip;
+                        trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
+                        trains[i].cars[j].invisible = car.invisible;
+                        trains[i].cars[j].opacity = car.opacity;
+                        if (APP_DATA.debug) {
+                            trains[i].cars[j].front.x = car.front.x;
+                            trains[i].cars[j].front.y = car.front.y;
+                            trains[i].cars[j].front.angle = car.front.angle;
+                            trains[i].cars[j].back.x = car.back.x;
+                            trains[i].cars[j].back.y = car.back.y;
+                            trains[i].cars[j].back.angle = car.back.angle;
+                        }
+                    });
+                    if (train.move && !train.mute && audio.active) {
+                        if (!existsAudio("train", i)) {
+                            startAudio("train", i, true);
+                        }
+                        if (train.currentSpeedInPercent == undefined) {
+                            train.currentSpeedInPercent = 0;
+                        }
+                        setAudioVolume("train", i, train.volume);
+                    } else if (existsAudio("train", i)) {
+                        stopAudio("train", i);
+                    }
+                });
+                if (message.data.resized) {
+                    trains3D.forEach(function (train) {
+                        if (train.resize) {
+                            train.resize();
+                        }
+                        train.cars.forEach(function (car) {
+                            if (car.resize) {
+                                car.resize();
+                            }
+                        });
+                    });
+                    if (!gui.demo) {
+                        Object.keys(switches).forEach(function (key) {
+                            Object.keys(switches[key]).forEach(function (currentKey) {
+                                switches3D[key][currentKey].resize();
+                            });
+                        });
+                    }
+                    if (onlineGame.enabled) {
+                        if (onlineGame.resizedTimeout != undefined && onlineGame.resizedTimeout != null) {
+                            window.clearTimeout(onlineGame.resizedTimeout);
+                        }
+                        onlineGame.resizedTimeout = window.setTimeout(function () {
+                            onlineGame.resized = false;
+                        }, 3000);
+                    }
+                    resized = false;
+                    if (APP_DATA.debug) {
+                        animateWorker.postMessage({k: "debug"});
+                    }
+                }
+            } else if (message.data.k == "trainCrash") {
+                actionSync("trains", message.data.i, [{move: false}, {accelerationSpeed: 0}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
+                actionSync("train-crash");
+                if (existsAudio("trainCrash")) {
+                    stopAudio("trainCrash");
+                }
+                if (audio.active) {
+                    startAudio("trainCrash", null, false);
+                }
+            } else if (message.data.k == "switches") {
+                switches = message.data.switches;
+            } else if (message.data.k == "sync-ready") {
+                trains = message.data.trains;
+                rotationPoints = message.data.rotationPoints;
+                teamplaySync("sync-ready");
+            } else if (message.data.k == "save-game") {
+                if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo) {
+                    try {
+                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
+                        var saveSwitches = {};
+                        Object.keys(switches).forEach(function (key) {
+                            saveSwitches[key] = {};
+                            Object.keys(switches[key]).forEach(function (side) {
+                                saveSwitches[key][side] = switches[key][side].turned;
+                            });
+                        });
+                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
+                        if (cars.length == carWays.length && cars.length > 0) {
+                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
+                            window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
+                        }
+                        window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
+                    } catch (e) {
+                        if (APP_DATA.debug) {
+                            console.log(e.name + "/" + e.message);
+                        }
+                        notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + menus.outerContainer.height);
+                    }
+                    animateWorker.postMessage({k: "game-saved"});
+                }
+            } else if (message.data.k == "debug") {
+                rotationPoints = message.data.rotationPoints;
+                switchesBeforeFac = message.data.switchesBeforeFac;
+                switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
+                if (!debug.trainReady) {
+                    console.log("Animate Interval:", message.data.animateInterval);
+                }
+                console.log("Trains: ", message.data.trains);
+            } else if (message.data.k == "debugDrawPoints") {
+                debug.drawPoints = message.data.p;
+                debug.drawPointsCrash = message.data.pC;
+                debug.trainCollisions = message.data.tC;
+                debug.trainReady = true;
+            }
+        };
+        animateWorker.postMessage({k: "start", background: background, switches: switches, online: onlineGame.enabled, onlineInterval: onlineGame.animateInterval, demo: gui.demo});
+    }
+    function resetForElem(parent, elem, to = "") {
+        var elements = parent.childNodes;
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].nodeName.substr(0, 1) != "#") {
+                elements[i].style.display = elements[i] == elem ? to : "none";
+            }
+        }
+    }
+
+    function destroy(toDestroyElements) {
+        if (typeof toDestroyElements == "object") {
+            if (!Array.isArray(toDestroyElements)) {
+                toDestroyElements = [toDestroyElements];
+            }
+            toDestroyElements.forEach(function (toDestroy) {
+                if (toDestroy != null) {
+                    toDestroy.parentNode.removeChild(toDestroy);
+                }
+            });
+        }
+    }
+
+    function loadingImageAnimation() {
+        const loadingAnimElem = document.querySelector("#branding img") as HTMLElement;
+        const loadingAnimElemDefaultFilter = "blur(1px) saturate(5) sepia(1) hue-rotate({{0}}deg)";
+        loadingAnimElem.style.transition = "filter 0.08s";
+        loadingAnimElem.style.filter = formatJSString(loadingAnimElemDefaultFilter, Math.random() * 260 + 100);
+        return window.setInterval(function () {
+            loadingAnimElem.style.filter = formatJSString(loadingAnimElemDefaultFilter, Math.random() * 260 + 100);
+        }, 10);
+    }
+
+    function keepScreenAlive() {
+        const event = new CustomEvent("moroway-app-keep-screen-alive", {detail: {acquire: document.visibilityState == "visible"}});
+        document.dispatchEvent(event);
+    }
+
+    //Set mode: demo
+    gui.demo = getQueryString("mode") == "demo" || getQueryString("mode") == "demoStandalone" || (getSetting("startDemoMode") && getQueryString("mode") == "");
+    if (gui.demo) {
+        document.body.style.cursor = "none";
+        var loadingAnimElemChangingFilter = loadingImageAnimation();
+        demoMode.standalone = getQueryString("mode") == "demoStandalone";
+    }
+    //Set mode: multiplay
+    if (getQueryString("mode") == "multiplay") {
+        if ("WebSocket" in window) {
+            onlineGame.enabled = true;
+            var loadingAnimElemChangingFilter = loadingImageAnimation();
+        } else {
+            onlineGame.enabled = false;
+            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
+        }
+    } else {
+        onlineGame.enabled = false;
+    }
+
+    //GUI State
+    var queryString3D = getQueryString("gui-3d");
+    if (queryString3D == "0" || queryString3D == "1") {
+        gui.three = getGuiState("3d", queryString3D == "1");
+    } else {
+        gui.three = getGuiState("3d");
+    }
+    var queryString3DNight = getQueryString("gui-3d-night");
+    if (queryString3DNight == "0" || queryString3DNight == "1") {
+        three.night = getGuiState("3d-night", queryString3DNight == "1");
+    } else {
+        three.night = getGuiState("3d-night");
+    }
+    three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
+
+    //Initialize canvases and contexts
+    canvas = document.querySelector("canvas#game-gameplay-main");
+    canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
+    canvasBackground = document.querySelector("canvas#game-gameplay-bg");
+    canvasSemiForeground = document.querySelector("canvas#game-gameplay-sfg");
+    canvasForeground = document.querySelector("canvas#game-gameplay-fg");
+    context = canvas.getContext("2d");
+    contextGesture = canvasGesture.getContext("2d");
+    contextBackground = canvasBackground.getContext("2d");
+    contextSemiForeground = canvasSemiForeground.getContext("2d");
+    contextForeground = canvasForeground.getContext("2d");
+
+    //Input handling
+    hardware.lastInputMouse = hardware.lastInputTouch = 0;
+    document.addEventListener("wheel", preventMouseZoomDuringLoad, {passive: false});
+    document.addEventListener("keydown", preventKeyZoomDuringLoad, {passive: false});
+    document.addEventListener("keyup", preventKeyZoomDuringLoad, {passive: false});
+    //Visibility handling
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    onVisibilityChange();
+    document.addEventListener("visibilitychange", keepScreenAlive);
+    keepScreenAlive();
+
+    //Prepare game
+    if (!onlineGame.enabled) {
+        var elements = document.querySelectorAll("#content > *:not(#game), #game > *:not(#game-gameplay)");
+        for (var i = 0; i < elements.length; i++) {
+            (elements[i] as HTMLElement).style.display = "none";
+        }
+        elements = document.querySelectorAll("#content > #game, #game > #game-gameplay");
+        for (i = 0; i < elements.length; i++) {
+            (elements[i] as HTMLElement).style.display = "block";
+        }
+    }
+    measureViewSpace();
+    if (getSetting("saveGame")) {
+        updateSavedGame();
+    } else {
+        removeSavedGame();
+    }
+
+    //Show progress bar if app loads slowly
+    window.setTimeout(function () {
+        var toShowElements = [document.querySelector("#percent")];
+        toShowElements.forEach(function (toShow) {
+            if (toShow != null) {
+                (toShow as HTMLElement).style.display = "block";
+            }
+        });
+    }, 2500);
+
+    //Load app
+    var defaultPics = copyJSObject(pics);
+    var finalPicNo = defaultPics.length;
+    pics = [];
+    var loadNo = 0;
+    defaultPics.forEach(function (pic) {
+        pics[pic.id] = new Image();
+        pics[pic.id].src = "assets/asset" + pic.id + "." + pic.extension;
+        pics[pic.id].onload = function () {
+            loadNo++;
+            var cPercent = Math.round(100 * (loadNo / finalPicNo));
+            const elementPercentText = document.querySelector("#percent #percent-text");
+            const elementPercentProgress = document.querySelector("#percent #percent-progress") as HTMLElement;
+            if (elementPercentText != null && elementPercentProgress != null) {
+                elementPercentText.textContent = cPercent + "%";
+                elementPercentProgress.style.left = -100 + cPercent + "%";
+            }
+            if (loadNo == finalPicNo) {
+                initialDisplay();
             }
         };
         pics[pic.id].onerror = function () {
