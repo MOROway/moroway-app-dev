@@ -86,8 +86,9 @@ for platform in ${platforms[@]}; do
 		app_link_self=$(echo "$(get_conf "app_self_link" "$debug" "$platform")" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed 's/"/%22/g')
 		app_link_banner=$(echo "$(get_conf "app_banner_link" "$debug" "$platform")" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed 's/"/%22/g')
 		convert_audio=$(echo "$(get_conf "convert_audio" "$debug" "$platform")" | sed 's/[^a-zA-Z0-9]//g')
-		sound_file_extension="ogg"
-		if [[ "$convert_audio" == "mp3" ]]; then
+		if [[ -z "$convert_audio" ]] || [[ "$convert_audio" == "ogg" ]] || [[ "$convert_audio" == "0" ]]; then
+			sound_file_extension="ogg"
+		else
 			ffmpeg -h >/dev/null 2>&1 || logexit 9 "FFmpeg not installed, but audio conversion enabled by configuration"
 			sound_file_extension="$convert_audio"
 		fi
@@ -198,6 +199,7 @@ for platform in ${platforms[@]}; do
 		fi
 		shareserver=$(echo "$sharelink" | sed "s!.*:/\{2\}\([^/]*\).*!\1!")
 		sed -i "s!{{sharelink}}!$sharelink!;s!{{shareserver}}!$shareserver!;s!{{serverlink}}!$serverlink!;s/{{hypertextprotocol}}/$hypertextprotocol/;s/{{websocketprotocol}}/$websocketprotocol/" "$file"
+		# Game Screen
 		file="$to/src/jsm/scripting.ts"
 		sed -i "s/{{sound_file_extension}}/$sound_file_extension/" "$file"
 		# TS Content
@@ -268,7 +270,7 @@ for platform in ${platforms[@]}; do
 		if [[ "$sound_file_extension" != "ogg" ]]; then
 			for ogg_file in ${all_files[@]}; do
 				if [[ "$ogg_file" =~ .ogg$ ]]; then
-					ffmpeg -i "$to/$ogg_file" -fflags +bitexact "$(echo "$to/$ogg_file" | sed 's/.ogg$/.'"$sound_file_extension"'/')" >/dev/null 2>&1 || logexit 10 "FFmpeg error"
+					ffmpeg -i "$to/$ogg_file" -vn -fflags +bitexact "$(echo "$to/$ogg_file" | sed 's/.ogg$/.'"$sound_file_extension"'/')" >/dev/null 2>&1 || logexit 10 "FFmpeg error"
 					rm "$to/$ogg_file"
 				fi
 			done

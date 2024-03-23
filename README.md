@@ -52,12 +52,12 @@ MOROway App uses Weblate for translations.
   - Configuration files:
     - `conf` and `conf_local` (for local override)
       - `version`: MAJOR.MINOR.PATCH
-      - `beta`: 0 for release / beta off; 1,2,3,… for beta number
+      - `beta`: *0* for release / beta off; *1*,*2*,*3*,… for beta number
       - `sharelink`: Share link displayed to users when creating a multiplayer game
       - `serverlink`: Link to server backend without protocol
       - `app_self_link`: Link to app (currently used for Open Graph metadata)
       - `app_banner_link`: Link to app promotion image (currently used for Open Graph metadata)
-      - `convert_audio`: Convert ogg audios to specified file format (currently only supports mp3)
+      - `convert_audio`: Convert ogg audios to specified file format (unset, value *ogg* or value *0* = do not convert)
       - prefixes:
         - `debug`: Configuration only used for debug mode
         - `[platform]`: Configuration only used for specific platform
@@ -82,11 +82,11 @@ See file: [./ABOUT](./ABOUT).
 The following query parameters can be used with MOROway App (foremost web platform).
 
 - all modes
-  - `mode`: normal, demo, demoStandalone, multiplay (_app mode_)
-  - `gui-3d`: 0, 1 (_3D view_)
-  - `gui-3d-night`: 0, 1 (_3D night view_)
+  - `mode`: normal, demo, demoStandalone, multiplay (*app mode*)
+  - `gui-3d`: 0, 1 (*3D view*)
+  - `gui-3d-night`: 0, 1 (*3D night view*)
 - demo mode
-  - `gui-demo-3d-rotation-speed-percent`: 0-100 (_3D demo mode canvas rotation speed in percent_)
+  - `gui-demo-3d-rotation-speed-percent`: 0-100 (*3D demo mode canvas rotation speed in percent*)
 - multiplay mode
-  - `key`: _game key_
-  - `id`: _game id_
+  - `key`: *game key*
+  - `id`: *game id*
