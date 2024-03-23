@@ -669,7 +669,7 @@ function calcMenusAndBackground(state) {
     }
     function createTrainAudio(cTrainNumber) {
         try {
-            fetch("./assets/audio_asset_" + cTrainNumber + ".mp3")
+            fetch("./assets/audio_asset_" + cTrainNumber + "." + soundFileExtension)
                 .then(function (response) {
                     if (response.ok) {
                         return response.arrayBuffer();
@@ -744,6 +744,7 @@ function calcMenusAndBackground(state) {
             }
         }
     }
+    const soundFileExtension = "{{sound_file_extension}}";
     const elementNormalMode = document.querySelector("#canvas-single");
     const elementTeamMode = document.querySelector("#canvas-team");
     const elementDemoMode = document.querySelector("#canvas-demo-mode");
@@ -854,7 +855,7 @@ function calcMenusAndBackground(state) {
                     audio.source = {};
                     audio.source.train = [];
                     try {
-                        fetch("./assets/audio_asset_crash.mp3")
+                        fetch("./assets/audio_asset_crash." + soundFileExtension)
                             .then(function (response) {
                                 return response.arrayBuffer();
                             })
@@ -874,7 +875,7 @@ function calcMenusAndBackground(state) {
                         }
                     }
                     try {
-                        fetch("./assets/audio_asset_switch.mp3")
+                        fetch("./assets/audio_asset_switch." + soundFileExtension)
                             .then(function (response) {
                                 return response.arrayBuffer();
                             })

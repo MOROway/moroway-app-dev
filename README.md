@@ -40,7 +40,7 @@ MOROway App uses Weblate for translations.
   - `[PLATFORM]/core_excludes`: core files not used by platform.
   - `[PLATFORM]/sw_excludes`: files not used by service worker.
 - `build` = build script
-  - Linux-based OS, Bash, Typescript (tsc), FFmpeg, fonttools and common CLI-tools required
+  - Linux-based OS, Bash, Typescript (tsc), FFmpeg (if `convert_audio`-configuration option is used), fonttools and common CLI-tools required
   - Usage: `bash build.sh [ -p PLATFORM ] [ -d DEBUG ]`
     - -p (platform):
       - One of the platforms listed above.
@@ -49,7 +49,7 @@ MOROway App uses Weblate for translations.
       - Activate debug mode (-d 1).
       - Prefer conf options prefixed "debug:"
       - Use unencrypted connections (as this mode is designed for a local test setup)
-  - conf-files:
+  - Configuration files:
     - `conf` and `conf_local` (for local override)
       - `version`: MAJOR.MINOR.PATCH
       - `beta`: 0 for release / beta off; 1,2,3,… for beta number
@@ -57,6 +57,7 @@ MOROway App uses Weblate for translations.
       - `serverlink`: Link to server backend without protocol
       - `app_self_link`: Link to app (currently used for Open Graph metadata)
       - `app_banner_link`: Link to app promotion image (currently used for Open Graph metadata)
+      - `convert_audio`: Convert ogg audios to specified file format (currently only supports mp3)
       - prefixes:
         - `debug`: Configuration only used for debug mode
         - `[platform]`: Configuration only used for specific platform

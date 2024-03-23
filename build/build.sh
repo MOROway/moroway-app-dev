@@ -44,7 +44,6 @@ cd "$dir" || exit 3
 [[ ! -d ../out ]] && mkdir ../out
 
 tsc -v >/dev/null 2>&1 || logexit 5 "typescript not installed"
-ffmpeg -h >/dev/null 2>&1 || logexit 9 "FFmpeg not installed"
 fonttools -h >/dev/null 2>&1 || logexit 11 "fonttools not installed"
 
 platforms=$(ls "../app_platforms")
@@ -86,6 +85,12 @@ for platform in ${platforms[@]}; do
 		serverlink=$(echo "$(get_conf "serverlink" "$debug" "$platform")" | sed 's/!/\\!/g' | sed 's/&/\\&/g' | sed 's/"/%22/g')
 		app_link_self=$(echo "$(get_conf "app_self_link" "$debug" "$platform")" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed 's/"/%22/g')
 		app_link_banner=$(echo "$(get_conf "app_banner_link" "$debug" "$platform")" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed 's/"/%22/g')
+		convert_audio=$(echo "$(get_conf "convert_audio" "$debug" "$platform")" | sed 's/[^a-zA-Z0-9]//g')
+		sound_file_extension="ogg"
+		if [[ "$convert_audio" == "mp3" ]]; then
+			ffmpeg -h >/dev/null 2>&1 || logexit 9 "FFmpeg not installed, but audio conversion enabled by configuration"
+			sound_file_extension="$convert_audio"
+		fi
 
 		# Start build for platform
 		valid_platform=1
@@ -193,6 +198,8 @@ for platform in ${platforms[@]}; do
 		fi
 		shareserver=$(echo "$sharelink" | sed "s!.*:/\{2\}\([^/]*\).*!\1!")
 		sed -i "s!{{sharelink}}!$sharelink!;s!{{shareserver}}!$shareserver!;s!{{serverlink}}!$serverlink!;s/{{hypertextprotocol}}/$hypertextprotocol/;s/{{websocketprotocol}}/$websocketprotocol/" "$file"
+		file="$to/src/jsm/scripting.ts"
+		sed -i "s/{{sound_file_extension}}/$sound_file_extension/" "$file"
 		# TS Content
 		cp tsconfig.json "$to/tsconfig.json"
 		for ts_file in ${all_files[@]}; do
@@ -257,13 +264,16 @@ for platform in ${platforms[@]}; do
 			fi
 		done
 
-		# Media: OGG to MP3
-		for ogg_file in ${all_files[@]}; do
-			if [[ "$ogg_file" =~ .ogg$ ]]; then
-				ffmpeg -i "$to/$ogg_file" -fflags +bitexact "$(echo "$to/$ogg_file" | sed 's/.ogg$/.mp3/')" >/dev/null 2>&1 || logexit 10 "FFmpeg error"
-				rm "$to/$ogg_file"
-			fi
-		done
+		# Media: Convert OGG audios
+		if [[ "$sound_file_extension" != "ogg" ]]; then
+			for ogg_file in ${all_files[@]}; do
+				if [[ "$ogg_file" =~ .ogg$ ]]; then
+					ffmpeg -i "$to/$ogg_file" -fflags +bitexact "$(echo "$to/$ogg_file" | sed 's/.ogg$/.'"$sound_file_extension"'/')" >/dev/null 2>&1 || logexit 10 "FFmpeg error"
+					rm "$to/$ogg_file"
+				fi
+			done
+		fi
+
 		# Generate fonts
 		fontBasePath="$to/src/lib/open_fonts"
 		fontPath="$fontBasePath/google/MaterialSymbols"
