@@ -6,11 +6,11 @@ var APP_DATA = {
         major: 9,
         minor: 1,
         patch: 5,
-        beta: 1,
+        beta: 3,
         date: {
             year: 2024,
             month: 3,
-            day: 19
+            day: 30
         }
     },
     platform: "android",
