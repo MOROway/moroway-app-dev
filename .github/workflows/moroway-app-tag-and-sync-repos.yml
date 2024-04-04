@@ -51,7 +51,6 @@ jobs:
                       repo: moroway-app
                       branch: master
                       subdir: .
-                      redirectdocs: 1
         steps:
             - uses: actions/checkout@v4
             - uses: FedericoCarboni/setup-ffmpeg@v3
@@ -73,7 +72,6 @@ jobs:
                   REPO: ${{ matrix.repo }}
                   REPO_BRANCH: ${{ matrix.branch }}
                   REPO_DIR: ${{ matrix.subdir }}
-                  REDIRECT_DOCS: ${{ matrix.redirectdocs }}
                   TAG: ${{ needs.tag.outputs.tag }}
                   VERSION: ${{ needs.tag.outputs.version }}
               run: |
@@ -99,10 +97,6 @@ jobs:
                   rm -r publish-$PLATFORM/$REPO_DIR/*
                   cp -r $PLATFORM/latest/* publish-$PLATFORM/$REPO_DIR
                   cd publish-$PLATFORM/
-                  if [[ $REDIRECT_DOCS == 1 ]]; then
-                    mkdir docs
-                    echo '<!DOCTYPE html><title>Redirect to "MOROway App"-GitHub-Page</title><meta http-equiv="refresh" content="0; URL=../moroway-app-dev">' > docs/index.html
-                  fi
                   msg="Auto update MOROway App to new version v$VERSION"
                   git add .
                   exitcode=$(git diff-index --quiet HEAD -- && echo 0 || echo $?)
