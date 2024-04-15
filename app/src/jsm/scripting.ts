@@ -2113,6 +2113,63 @@ function drawObjects() {
         }
     }
 
+    function trainInContinueTrackElement(state) {
+        for (let i = 0; i < trains.length; i++) {
+            if ((trains[i].front.state == state || trains[i].back.state == state) && trains[i].opacity < 1) {
+                return true;
+            }
+            for (let j = 0; j < trains[i].cars.length; j++) {
+                if ((trains[i].cars[j].front.state == state || trains[i].cars[j].back.state == state) && trains[i].cars[j].opacity < 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    function removeContinueTrackElement(name) {
+        if (three.scene.getObjectByName("continue_track_" + name + "_a")) {
+            three.scene.remove(three.scene.getObjectByName("continue_track_" + name + "_a"));
+        }
+        if (three.scene.getObjectByName("continue_track_" + name + "_b")) {
+            three.scene.remove(three.scene.getObjectByName("continue_track_" + name + "_b"));
+        }
+    }
+    function drawContinueTrackElement(name, geometry, corrFac) {
+        if (corrFac == -1) {
+            name += "_neg";
+        }
+        removeContinueTrackElement(name);
+        const material = new THREE.LineBasicMaterial({color: three.night ? 0x541e03 : 0x963c0e});
+        const objectA = new THREE.Line(geometry, material);
+        objectA.name = "continue_track_" + name + "_a";
+        objectA.translateX((-corrFac * background.width) / 990000);
+        objectA.translateY(-background.width / 990000);
+        objectA.translateZ(-background.width / 1000000);
+        three.scene.add(objectA);
+        const objectB = new THREE.Line(geometry, material);
+        objectB.name = "continue_track_" + name + "_b";
+        objectB.translateX((corrFac * background.width) / 990000);
+        objectB.translateY(background.width / 990000);
+        objectB.translateZ(-background.width / 1000000);
+        three.scene.add(objectB);
+    }
+    function drawContinueTrackLine(lineName, corrFac = 1) {
+        const points = [];
+        points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        drawContinueTrackElement(lineName, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+    }
+    function drawContinueTrackCurve(curveName, corrFac = 1) {
+        const curve = new THREE.CubicBezierCurve3(
+            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0),
+            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0),
+            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[2] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[2] - background.height / 2) / background.width) + three.calcPositionY(), -0),
+            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[3] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[3] - background.height / 2) / background.width) + three.calcPositionY(), -0)
+        );
+        const points = curve.getPoints(30);
+        drawContinueTrackElement(curveName, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+    }
+
     function calcCars() {
         function calcCarsAutoMode() {
             function carAutoModeIsFutureCollision(i, k, stop = -1, j = 0) {
@@ -2650,7 +2707,7 @@ function drawObjects() {
                         trains3D[i].mesh.position.z -= (trains3D[i].positionZ / 5) * Math.random();
                     }
                 }
-                trains3D[i].mesh.visible = !train.invisible;
+                trains3D[i].mesh.visible = true; //Never truly invisible
                 setMaterialTransparent(trains3D[i].mesh, train.opacity);
                 trains3D[i].mesh.rotation.z = -train.displayAngle;
             }
@@ -2664,7 +2721,7 @@ function drawObjects() {
                             trains3D[i].cars[j].mesh.position.z -= (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
                         }
                     }
-                    trains3D[i].cars[j].mesh.visible = !car.invisible;
+                    trains3D[i].cars[j].mesh.visible = true; //Never truly invisible
                     setMaterialTransparent(trains3D[i].cars[j].mesh, car.opacity);
                     trains3D[i].cars[j].mesh.rotation.z = -car.displayAngle;
                 }
@@ -2680,6 +2737,16 @@ function drawObjects() {
                 cars3D[i].meshParkingLot.material.color.setHex(carParams.autoModeOff ? cars[i].hexColor : "0xffeeef");
             }
         });
+
+        removeContinueTrackElement("end_neg");
+        removeContinueTrackElement("continueCurve0_neg");
+        removeContinueTrackElement("continueLine0_neg");
+        removeContinueTrackElement("continueLine0");
+        removeContinueTrackElement("continueCurve1");
+        removeContinueTrackElement("continueLine1");
+        removeContinueTrackElement("continueLine1_neg");
+        removeContinueTrackElement("continueCurve2_neg");
+        removeContinueTrackElement("rejoin_neg");
 
         if (gui.demo) {
             var rotation = (Math.random() / 500) * (three.demoRotationSpeedFac / 100);
@@ -2777,6 +2844,31 @@ function drawObjects() {
                 }
             }
         }
+
+        if (trainInContinueTrackElement(212)) {
+            drawContinueTrackLine("end", -1);
+        }
+        if (trainInContinueTrackElement(213)) {
+            drawContinueTrackCurve("continueCurve0", -1);
+        }
+        if (trainInContinueTrackElement(214)) {
+            drawContinueTrackLine("continueLine0", -1);
+            drawContinueTrackLine("continueLine0");
+        }
+        if (trainInContinueTrackElement(215)) {
+            drawContinueTrackCurve("continueCurve1");
+        }
+        if (trainInContinueTrackElement(216)) {
+            drawContinueTrackLine("continueLine1");
+            drawContinueTrackLine("continueLine1", -1);
+        }
+        if (trainInContinueTrackElement(217)) {
+            drawContinueTrackCurve("continueCurve2", -1);
+        }
+        if (trainInContinueTrackElement(218)) {
+            drawContinueTrackLine("rejoin", -1);
+        }
+
         three.animateLights();
         three.renderer.render(three.scene, three.camera);
     } else {
@@ -6180,6 +6272,7 @@ window.onload = function () {
                 }
 
                 //Initialize trains
+                rotationPoints = message.data.rotationPoints;
                 trains = message.data.trains;
                 trains.forEach(function (train, i) {
                     var trainCallback = function (downIntersects, upIntersects) {
@@ -6559,9 +6652,14 @@ window.onload = function () {
                     }
                 }, timeWait * 1000);
             } else if (message.data.k == "setTrains") {
+                rotationPoints = message.data.rotationPoints;
                 message.data.trains.forEach(function (train, i) {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
+                    trains[i].front.state = train.front.state;
+                    trains[i].front.state = train.front.state;
+                    trains[i].back.state = train.back.state;
+                    trains[i].back.state = train.back.state;
                     if (APP_DATA.debug) {
                         trains[i].front.x = train.front.x;
                         trains[i].front.y = train.front.y;
@@ -6597,6 +6695,10 @@ window.onload = function () {
                         trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
                         trains[i].cars[j].invisible = car.invisible;
                         trains[i].cars[j].opacity = car.opacity;
+                        trains[i].cars[j].front.state = car.front.state;
+                        trains[i].cars[j].front.state = car.front.state;
+                        trains[i].cars[j].back.state = car.back.state;
+                        trains[i].cars[j].back.state = car.back.state;
                         if (APP_DATA.debug) {
                             trains[i].cars[j].front.x = car.front.x;
                             trains[i].cars[j].front.y = car.front.y;
@@ -6661,8 +6763,8 @@ window.onload = function () {
             } else if (message.data.k == "switches") {
                 switches = message.data.switches;
             } else if (message.data.k == "sync-ready") {
-                trains = message.data.trains;
                 rotationPoints = message.data.rotationPoints;
+                trains = message.data.trains;
                 teamplaySync("sync-ready");
             } else if (message.data.k == "save-game") {
                 if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo) {
@@ -6690,7 +6792,6 @@ window.onload = function () {
                     animateWorker.postMessage({k: "game-saved"});
                 }
             } else if (message.data.k == "debug") {
-                rotationPoints = message.data.rotationPoints;
                 switchesBeforeFac = message.data.switchesBeforeFac;
                 switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
                 if (!debug.trainReady) {
