@@ -128,6 +128,7 @@ interface Three {
     scene?: any;
     renderer?: any;
     camera?: any;
+    mainGroup?: any;
     night?: boolean;
     ambientLight?: any;
     ambientLightDay?: any;
@@ -2126,40 +2127,26 @@ function drawObjects() {
         }
         return false;
     }
-    function removeContinueTrackElement(name) {
-        if (three.scene.getObjectByName("continue_track_" + name + "_a")) {
-            three.scene.remove(three.scene.getObjectByName("continue_track_" + name + "_a"));
-        }
-        if (three.scene.getObjectByName("continue_track_" + name + "_b")) {
-            three.scene.remove(three.scene.getObjectByName("continue_track_" + name + "_b"));
-        }
-    }
-    function drawContinueTrackElement(name, geometry, corrFac) {
-        if (corrFac == -1) {
-            name += "_neg";
-        }
-        removeContinueTrackElement(name);
+    function drawContinueTrackElement(group, geometry, corrFac) {
         const material = new THREE.LineBasicMaterial({color: three.night ? 0x541e03 : 0x963c0e});
         const objectA = new THREE.Line(geometry, material);
-        objectA.name = "continue_track_" + name + "_a";
         objectA.translateX((-corrFac * background.width) / 990000);
         objectA.translateY(-background.width / 990000);
         objectA.translateZ(-background.width / 1000000);
-        three.scene.add(objectA);
+        group.add(objectA);
         const objectB = new THREE.Line(geometry, material);
-        objectB.name = "continue_track_" + name + "_b";
         objectB.translateX((corrFac * background.width) / 990000);
         objectB.translateY(background.width / 990000);
         objectB.translateZ(-background.width / 1000000);
-        three.scene.add(objectB);
+        group.add(objectB);
     }
-    function drawContinueTrackLine(lineName, corrFac = 1) {
+    function drawContinueTrackLine(group, lineName, corrFac = 1) {
         const points = [];
         points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0));
         points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0));
-        drawContinueTrackElement(lineName, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+        drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
     }
-    function drawContinueTrackCurve(curveName, corrFac = 1) {
+    function drawContinueTrackCurve(group, curveName, corrFac = 1) {
         const curve = new THREE.CubicBezierCurve3(
             new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0),
             new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0),
@@ -2167,7 +2154,7 @@ function drawObjects() {
             new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[3] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[3] - background.height / 2) / background.width) + three.calcPositionY(), -0)
         );
         const points = curve.getPoints(30);
-        drawContinueTrackElement(curveName, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+        drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
     }
 
     function calcCars() {
@@ -2738,16 +2725,6 @@ function drawObjects() {
             }
         });
 
-        removeContinueTrackElement("end_neg");
-        removeContinueTrackElement("continueCurve0_neg");
-        removeContinueTrackElement("continueLine0_neg");
-        removeContinueTrackElement("continueLine0");
-        removeContinueTrackElement("continueCurve1");
-        removeContinueTrackElement("continueLine1");
-        removeContinueTrackElement("continueLine1_neg");
-        removeContinueTrackElement("continueCurve2_neg");
-        removeContinueTrackElement("rejoin_neg");
-
         if (gui.demo) {
             var rotation = (Math.random() / 500) * (three.demoRotationSpeedFac / 100);
             three.scene.rotation.x += three.demoRotationFacX * rotation;
@@ -2817,10 +2794,10 @@ function drawObjects() {
                 mouseUp.x = (hardware.mouse.upX / client.devicePixelRatio / three.renderer.domElement.clientWidth) * 2 - 1;
                 mouseUp.y = (-hardware.mouse.upY / client.devicePixelRatio / three.renderer.domElement.clientHeight) * 2 + 1;
                 raycasterUp.setFromCamera(mouseUp, three.camera);
-                var intersects = raycasterMove.intersectObjects(three.scene.children);
+                var intersects = raycasterMove.intersectObjects(three.mainGroup.children);
                 if (intersects.length > 0) {
                     var parent = intersects[0].object;
-                    while (parent.parent.type != "Scene") {
+                    while (parent.parent.name != "main_group") {
                         parent = parent.parent;
                     }
                     if (parent && parent.visible && parent.callback) {
@@ -2831,7 +2808,7 @@ function drawObjects() {
                             hardware.mouse.cursor = "pointer";
                         }
                     }
-                } else if (hardware.mouse.isHold && raycasterDown.intersectObjects(three.scene.children).length == 0 && ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick && raycasterUp.intersectObjects(three.scene.children).length == 0) || (hardware.lastInputTouch > hardware.lastInputMouse && Date.now() - hardware.mouse.downTime > longTouchTime))) {
+                } else if (hardware.mouse.isHold && raycasterDown.intersectObjects(three.mainGroup.children).length == 0 && ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick && raycasterUp.intersectObjects(three.mainGroup.children).length == 0) || (hardware.lastInputTouch > hardware.lastInputMouse && Date.now() - hardware.mouse.downTime > longTouchTime))) {
                     if (typeof clickTimeOut !== "undefined") {
                         window.clearTimeout(clickTimeOut);
                         clickTimeOut = null;
@@ -2845,29 +2822,37 @@ function drawObjects() {
             }
         }
 
+        const continueTrackGroupName = "continue_track_group";
+        const continueTrackOldObject = three.scene.getObjectByName(continueTrackGroupName);
+        if (continueTrackOldObject) {
+            three.scene.remove(continueTrackOldObject);
+        }
+        const continueTrackNewObject = new THREE.Group();
+        continueTrackNewObject.name = continueTrackGroupName;
         if (trainInContinueTrackElement(212)) {
-            drawContinueTrackLine("end", -1);
+            drawContinueTrackLine(continueTrackNewObject, "end", -1);
         }
         if (trainInContinueTrackElement(213)) {
-            drawContinueTrackCurve("continueCurve0", -1);
+            drawContinueTrackCurve(continueTrackNewObject, "continueCurve0", -1);
         }
         if (trainInContinueTrackElement(214)) {
-            drawContinueTrackLine("continueLine0", -1);
-            drawContinueTrackLine("continueLine0");
+            drawContinueTrackLine(continueTrackNewObject, "continueLine0", -1);
+            drawContinueTrackLine(continueTrackNewObject, "continueLine0");
         }
         if (trainInContinueTrackElement(215)) {
-            drawContinueTrackCurve("continueCurve1");
+            drawContinueTrackCurve(continueTrackNewObject, "continueCurve1");
         }
         if (trainInContinueTrackElement(216)) {
-            drawContinueTrackLine("continueLine1");
-            drawContinueTrackLine("continueLine1", -1);
+            drawContinueTrackLine(continueTrackNewObject, "continueLine1");
+            drawContinueTrackLine(continueTrackNewObject, "continueLine1", -1);
         }
         if (trainInContinueTrackElement(217)) {
-            drawContinueTrackCurve("continueCurve2", -1);
+            drawContinueTrackCurve(continueTrackNewObject, "continueCurve2", -1);
         }
         if (trainInContinueTrackElement(218)) {
-            drawContinueTrackLine("rejoin", -1);
+            drawContinueTrackLine(continueTrackNewObject, "rejoin", -1);
         }
+        three.scene.add(continueTrackNewObject);
 
         three.animateLights();
         three.renderer.render(three.scene, three.camera);
@@ -5343,6 +5328,9 @@ window.onload = function () {
 
         //Three.js
         three.scene = new THREE.Scene();
+        three.mainGroup = new THREE.Group();
+        three.mainGroup.name = "main_group";
+        three.scene.add(three.mainGroup);
         three.renderer = new THREE.WebGLRenderer({alpha: true});
         THREE.ColorManagement.enabled = false;
         three.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -5415,7 +5403,7 @@ window.onload = function () {
                 background3D.flat.mesh.position.set(0, three.calcPositionY(), 0);
             };
             background3D.flat.resize();
-            three.scene.add(background3D.flat.mesh);
+            three.mainGroup.add(background3D.flat.mesh);
         });
 
         var loaderGLTF: any = new GLTFLoader();
@@ -5429,7 +5417,7 @@ window.onload = function () {
                 background3D.three.mesh.position.set(0, three.calcPositionY(), 0);
             };
             background3D.three.resize();
-            three.scene.add(background3D.three.mesh);
+            three.mainGroup.add(background3D.three.mesh);
         });
 
         background3D.behind = document.getElementById("game-gameplay-three-bg") as HTMLCanvasElement;
@@ -6334,14 +6322,14 @@ window.onload = function () {
                             };
                             trains3D[i].resize();
                             trains3D[i].mesh.callback = trainCallback;
-                            three.scene.add(trains3D[i].mesh);
+                            three.mainGroup.add(trains3D[i].mesh);
                         },
                         null,
                         function () {
                             var height3D = 0.0125;
                             trains3D[i].resize = function () {
-                                if (three.scene.getObjectByName("train_" + i)) {
-                                    three.scene.remove(trains3D[i].mesh);
+                                if (three.mainGroup.getObjectByName("train_" + i)) {
+                                    three.mainGroup.remove(trains3D[i].mesh);
                                 }
                                 const scale = three.calcScale();
                                 trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
@@ -6349,7 +6337,7 @@ window.onload = function () {
                                 trains3D[i].positionZ = (scale * height3D) / 2;
                                 trains3D[i].mesh.callback = trainCallback;
                                 trains3D[i].mesh.name = "train_" + i;
-                                three.scene.add(trains3D[i].mesh);
+                                three.mainGroup.add(trains3D[i].mesh);
                             };
                             trains3D[i].resize();
                         }
@@ -6373,14 +6361,14 @@ window.onload = function () {
                                 };
                                 trains3D[i].cars[j].resize();
                                 trains3D[i].cars[j].mesh.callback = trainCallback;
-                                three.scene.add(trains3D[i].cars[j].mesh);
+                                three.mainGroup.add(trains3D[i].cars[j].mesh);
                             },
                             null,
                             function () {
                                 var height3D = 0.01;
                                 trains3D[i].cars[j].resize = function () {
-                                    if (three.scene.getObjectByName("train_" + i + "_car_" + j)) {
-                                        three.scene.remove(trains3D[i].cars[j].mesh);
+                                    if (three.mainGroup.getObjectByName("train_" + i + "_car_" + j)) {
+                                        three.mainGroup.remove(trains3D[i].cars[j].mesh);
                                     }
                                     const scale = three.calcScale();
                                     trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
@@ -6388,7 +6376,7 @@ window.onload = function () {
                                     trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
                                     trains3D[i].cars[j].mesh.callback = trainCallback;
                                     trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
-                                    three.scene.add(trains3D[i].cars[j].mesh);
+                                    three.mainGroup.add(trains3D[i].cars[j].mesh);
                                 };
                                 trains3D[i].cars[j].resize();
                             }
@@ -6459,14 +6447,14 @@ window.onload = function () {
                             };
                             cars3D[i].resize();
                             cars3D[i].mesh.callback = carCallback;
-                            three.scene.add(cars3D[i].mesh);
+                            three.mainGroup.add(cars3D[i].mesh);
                         },
                         null,
                         function () {
                             var height3D = 0.005;
                             cars3D[i].resize = function () {
-                                if (three.scene.getObjectByName("car_" + i)) {
-                                    three.scene.remove(cars3D[i].mesh);
+                                if (three.mainGroup.getObjectByName("car_" + i)) {
+                                    three.mainGroup.remove(cars3D[i].mesh);
                                 }
                                 const scale = three.calcScale();
                                 cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
@@ -6474,7 +6462,7 @@ window.onload = function () {
                                 cars3D[i].positionZ = (scale * height3D) / 2;
                                 cars3D[i].mesh.callback = carCallback;
                                 cars3D[i].mesh.name = "car_" + i;
-                                three.scene.add(cars3D[i].mesh);
+                                three.mainGroup.add(cars3D[i].mesh);
                                 cars3D[i].resizeParkingLot();
                             };
                             cars3D[i].resize();
@@ -6498,7 +6486,7 @@ window.onload = function () {
                     };
                     cars3D[i].meshParkingLot.visible = false;
                     cars3D[i].resizeParkingLot();
-                    three.scene.add(cars3D[i].meshParkingLot);
+                    three.mainGroup.add(cars3D[i].meshParkingLot);
                 });
                 if (!gui.demo) {
                     Object.keys(switches).forEach(function (key) {
@@ -6551,11 +6539,11 @@ window.onload = function () {
                                 switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
                             };
                             switches3D[key][currentKey].resize();
-                            three.scene.add(switches3D[key][currentKey].circleMesh);
-                            three.scene.add(switches3D[key][currentKey].circleMeshSmall);
-                            three.scene.add(switches3D[key][currentKey].squareMeshHighlight);
-                            three.scene.add(switches3D[key][currentKey].squareMeshNormal);
-                            three.scene.add(switches3D[key][currentKey].squareMeshTurned);
+                            three.mainGroup.add(switches3D[key][currentKey].circleMesh);
+                            three.mainGroup.add(switches3D[key][currentKey].circleMeshSmall);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshHighlight);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshNormal);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshTurned);
                         });
                     });
                 }
