@@ -239,3 +239,12 @@ Bugfixes.
 
 ---
 
+
+
+9.1.5
+
+3D-view: visualize hidden track.
+
+
+---
+

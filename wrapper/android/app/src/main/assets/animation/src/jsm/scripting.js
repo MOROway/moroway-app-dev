@@ -1986,6 +1986,45 @@ function drawObjects() {
             drawTrain(i);
         }
     }
+    function trainInTrackElement(state) {
+        for (var i_1 = 0; i_1 < trains.length; i_1++) {
+            if ((trains[i_1].front.state == state || trains[i_1].back.state == state) && trains[i_1].opacity < 1) {
+                return true;
+            }
+            for (var j = 0; j < trains[i_1].cars.length; j++) {
+                if ((trains[i_1].cars[j].front.state == state || trains[i_1].cars[j].back.state == state) && trains[i_1].cars[j].opacity < 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    function drawContinueTrackElement(group, geometry, corrFac) {
+        var material = new THREE.LineBasicMaterial({ color: three.night ? 0x541e03 : 0x963c0e });
+        var objectA = new THREE.Line(geometry, material);
+        objectA.translateX((-corrFac * background.width) / 990000);
+        objectA.translateY(-background.width / 990000);
+        objectA.translateZ(-background.width / 1000000);
+        group.add(objectA);
+        var objectB = new THREE.Line(geometry, material);
+        objectB.translateX((corrFac * background.width) / 990000);
+        objectB.translateY(background.width / 990000);
+        objectB.translateZ(-background.width / 1000000);
+        group.add(objectB);
+    }
+    function drawContinueTrackLine(group, lineName, corrFac) {
+        if (corrFac === void 0) { corrFac = 1; }
+        var points = [];
+        points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+    }
+    function drawContinueTrackCurve(group, curveName, corrFac) {
+        if (corrFac === void 0) { corrFac = 1; }
+        var curve = new THREE.CubicBezierCurve3(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0), new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0), new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[2] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[2] - background.height / 2) / background.width) + three.calcPositionY(), -0), new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[3] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[3] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        var points = curve.getPoints(30);
+        drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+    }
     function calcCars() {
         function calcCarsAutoMode() {
             function carAutoModeIsFutureCollision(i, k, stop, j) {
@@ -2542,7 +2581,7 @@ function drawObjects() {
                         trains3D[i].mesh.position.z -= (trains3D[i].positionZ / 5) * Math.random();
                     }
                 }
-                trains3D[i].mesh.visible = !train.invisible;
+                trains3D[i].mesh.visible = true; //Never truly invisible
                 setMaterialTransparent(trains3D[i].mesh, train.opacity);
                 trains3D[i].mesh.rotation.z = -train.displayAngle;
             }
@@ -2557,7 +2596,7 @@ function drawObjects() {
                             trains3D[i].cars[j].mesh.position.z -= (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
                         }
                     }
-                    trains3D[i].cars[j].mesh.visible = !car.invisible;
+                    trains3D[i].cars[j].mesh.visible = true; //Never truly invisible
                     setMaterialTransparent(trains3D[i].cars[j].mesh, car.opacity);
                     trains3D[i].cars[j].mesh.rotation.z = -car.displayAngle;
                 }
@@ -2641,10 +2680,10 @@ function drawObjects() {
                 mouseUp.x = (hardware.mouse.upX / client.devicePixelRatio / three.renderer.domElement.clientWidth) * 2 - 1;
                 mouseUp.y = (-hardware.mouse.upY / client.devicePixelRatio / three.renderer.domElement.clientHeight) * 2 + 1;
                 raycasterUp.setFromCamera(mouseUp, three.camera);
-                var intersects = raycasterMove.intersectObjects(three.scene.children);
+                var intersects = raycasterMove.intersectObjects(three.mainGroup.children);
                 if (intersects.length > 0) {
                     var parent = intersects[0].object;
-                    while (parent.parent.type != "Scene") {
+                    while (parent.parent.name != "main_group") {
                         parent = parent.parent;
                     }
                     if (parent && parent.visible && parent.callback) {
@@ -2656,7 +2695,7 @@ function drawObjects() {
                         }
                     }
                 }
-                else if (hardware.mouse.isHold && raycasterDown.intersectObjects(three.scene.children).length == 0 && ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick && raycasterUp.intersectObjects(three.scene.children).length == 0) || (hardware.lastInputTouch > hardware.lastInputMouse && Date.now() - hardware.mouse.downTime > longTouchTime))) {
+                else if (hardware.mouse.isHold && raycasterDown.intersectObjects(three.mainGroup.children).length == 0 && ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick && raycasterUp.intersectObjects(three.mainGroup.children).length == 0) || (hardware.lastInputTouch > hardware.lastInputMouse && Date.now() - hardware.mouse.downTime > longTouchTime))) {
                     if (typeof clickTimeOut !== "undefined") {
                         window.clearTimeout(clickTimeOut);
                         clickTimeOut = null;
@@ -2669,6 +2708,37 @@ function drawObjects() {
                 }
             }
         }
+        var continueTrackGroupName = "continue_track_group";
+        var continueTrackOldObject = three.scene.getObjectByName(continueTrackGroupName);
+        if (continueTrackOldObject) {
+            three.scene.remove(continueTrackOldObject);
+        }
+        var continueTrackNewObject = new THREE.Group();
+        continueTrackNewObject.name = continueTrackGroupName;
+        if (trainInTrackElement(212)) {
+            drawContinueTrackLine(continueTrackNewObject, "end", -1);
+        }
+        if (trainInTrackElement(213)) {
+            drawContinueTrackCurve(continueTrackNewObject, "continueCurve0", -1);
+        }
+        if (trainInTrackElement(214)) {
+            drawContinueTrackLine(continueTrackNewObject, "continueLine0", -1);
+            drawContinueTrackLine(continueTrackNewObject, "continueLine0");
+        }
+        if (trainInTrackElement(215)) {
+            drawContinueTrackCurve(continueTrackNewObject, "continueCurve1");
+        }
+        if (trainInTrackElement(216)) {
+            drawContinueTrackLine(continueTrackNewObject, "continueLine1");
+            drawContinueTrackLine(continueTrackNewObject, "continueLine1", -1);
+        }
+        if (trainInTrackElement(217)) {
+            drawContinueTrackCurve(continueTrackNewObject, "continueCurve2", -1);
+        }
+        if (trainInTrackElement(218)) {
+            drawContinueTrackLine(continueTrackNewObject, "rejoin", -1);
+        }
+        three.scene.add(continueTrackNewObject);
         three.animateLights();
         three.renderer.render(three.scene, three.camera);
     }
@@ -5188,6 +5258,9 @@ window.onload = function () {
         }
         //Three.js
         three.scene = new THREE.Scene();
+        three.mainGroup = new THREE.Group();
+        three.mainGroup.name = "main_group";
+        three.scene.add(three.mainGroup);
         three.renderer = new THREE.WebGLRenderer({ alpha: true });
         THREE.ColorManagement.enabled = false;
         three.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
@@ -5259,7 +5332,7 @@ window.onload = function () {
                 background3D.flat.mesh.position.set(0, three.calcPositionY(), 0);
             };
             background3D.flat.resize();
-            three.scene.add(background3D.flat.mesh);
+            three.mainGroup.add(background3D.flat.mesh);
         });
         var loaderGLTF = new GLTFLoader();
         loaderGLTF.setPath("assets/3d/background-3d/").load(background3D.three.src, function (gltf) {
@@ -5272,7 +5345,7 @@ window.onload = function () {
                 background3D.three.mesh.position.set(0, three.calcPositionY(), 0);
             };
             background3D.three.resize();
-            three.scene.add(background3D.three.mesh);
+            three.mainGroup.add(background3D.three.mesh);
         });
         background3D.behind = document.getElementById("game-gameplay-three-bg");
         background3D.animateBehind = function (reset) {
@@ -5289,7 +5362,7 @@ window.onload = function () {
                 if (three.night) {
                     var length_1 = 200 + 100 * Math.random();
                     var starBaseColor = 100;
-                    for (var i_1 = 0; i_1 < length_1; i_1++) {
+                    for (var i_2 = 0; i_2 < length_1; i_2++) {
                         var alpha = konamiState < 0 ? 1 : 0.25 + Math.random() / 2;
                         var starColorRed = konamiState < 0 ? Math.round(Math.random() * 255) : starBaseColor + Math.round((255 - starBaseColor) * Math.random());
                         var starColorGreen = konamiState < 0 ? Math.round(Math.random() * 255) : Math.round(0.65 * starColorRed + 0.35 * starColorRed * Math.random());
@@ -5305,7 +5378,7 @@ window.onload = function () {
                 else {
                     var length_2 = 15 + 15 * Math.random();
                     var starBaseColor = 20;
-                    for (var i_2 = 0; i_2 < length_2; i_2++) {
+                    for (var i_3 = 0; i_3 < length_2; i_3++) {
                         var alpha = Math.random() / 8;
                         var starColorRed = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
                         var starColorGreen = starBaseColor + Math.round((120 - starBaseColor) * Math.random());
@@ -5333,12 +5406,12 @@ window.onload = function () {
                     behindContext.fillStyle = "black";
                 }
                 behindContext.fillRect(0, 0, background3D.behind.width, background3D.behind.height);
-                for (var i_3 = 0; i_3 < background3D.animateBehindStars.length; i_3++) {
+                for (var i_4 = 0; i_4 < background3D.animateBehindStars.length; i_4++) {
                     behindContext.save();
-                    behindContext.fillStyle = background3D.animateBehindStars[i_3].fill;
-                    behindContext.translate(background3D.animateBehindStars[i_3].left, background3D.animateBehindStars[i_3].top);
+                    behindContext.fillStyle = background3D.animateBehindStars[i_4].fill;
+                    behindContext.translate(background3D.animateBehindStars[i_4].left, background3D.animateBehindStars[i_4].top);
                     behindContext.beginPath();
-                    behindContext.arc(0, 0, background3D.animateBehindStars[i_3].radius, 0, 2 * Math.PI);
+                    behindContext.arc(0, 0, background3D.animateBehindStars[i_4].radius, 0, 2 * Math.PI);
                     behindContext.fill();
                     behindContext.restore();
                 }
@@ -6081,6 +6154,7 @@ window.onload = function () {
                     });
                 }
                 //Initialize trains
+                rotationPoints = message.data.rotationPoints;
                 trains = message.data.trains;
                 trains.forEach(function (train, i) {
                     var trainCallback = function (downIntersects, upIntersects) {
@@ -6139,12 +6213,12 @@ window.onload = function () {
                         };
                         trains3D[i].resize();
                         trains3D[i].mesh.callback = trainCallback;
-                        three.scene.add(trains3D[i].mesh);
+                        three.mainGroup.add(trains3D[i].mesh);
                     }, null, function () {
                         var height3D = 0.0125;
                         trains3D[i].resize = function () {
-                            if (three.scene.getObjectByName("train_" + i)) {
-                                three.scene.remove(trains3D[i].mesh);
+                            if (three.mainGroup.getObjectByName("train_" + i)) {
+                                three.mainGroup.remove(trains3D[i].mesh);
                             }
                             var scale = three.calcScale();
                             trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({ color: 0x00aa00, transparent: true, opacity: 0.5 }));
@@ -6152,7 +6226,7 @@ window.onload = function () {
                             trains3D[i].positionZ = (scale * height3D) / 2;
                             trains3D[i].mesh.callback = trainCallback;
                             trains3D[i].mesh.name = "train_" + i;
-                            three.scene.add(trains3D[i].mesh);
+                            three.mainGroup.add(trains3D[i].mesh);
                         };
                         trains3D[i].resize();
                     });
@@ -6173,12 +6247,12 @@ window.onload = function () {
                             };
                             trains3D[i].cars[j].resize();
                             trains3D[i].cars[j].mesh.callback = trainCallback;
-                            three.scene.add(trains3D[i].cars[j].mesh);
+                            three.mainGroup.add(trains3D[i].cars[j].mesh);
                         }, null, function () {
                             var height3D = 0.01;
                             trains3D[i].cars[j].resize = function () {
-                                if (three.scene.getObjectByName("train_" + i + "_car_" + j)) {
-                                    three.scene.remove(trains3D[i].cars[j].mesh);
+                                if (three.mainGroup.getObjectByName("train_" + i + "_car_" + j)) {
+                                    three.mainGroup.remove(trains3D[i].cars[j].mesh);
                                 }
                                 var scale = three.calcScale();
                                 trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({ color: 0xaa0000, transparent: true, opacity: 0.5 }));
@@ -6186,7 +6260,7 @@ window.onload = function () {
                                 trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
                                 trains3D[i].cars[j].mesh.callback = trainCallback;
                                 trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
-                                three.scene.add(trains3D[i].cars[j].mesh);
+                                three.mainGroup.add(trains3D[i].cars[j].mesh);
                             };
                             trains3D[i].cars[j].resize();
                         });
@@ -6257,12 +6331,12 @@ window.onload = function () {
                         };
                         cars3D[i].resize();
                         cars3D[i].mesh.callback = carCallback;
-                        three.scene.add(cars3D[i].mesh);
+                        three.mainGroup.add(cars3D[i].mesh);
                     }, null, function () {
                         var height3D = 0.005;
                         cars3D[i].resize = function () {
-                            if (three.scene.getObjectByName("car_" + i)) {
-                                three.scene.remove(cars3D[i].mesh);
+                            if (three.mainGroup.getObjectByName("car_" + i)) {
+                                three.mainGroup.remove(cars3D[i].mesh);
                             }
                             var scale = three.calcScale();
                             cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({ color: 0xaaaa00, transparent: true, opacity: 0.5 }));
@@ -6270,7 +6344,7 @@ window.onload = function () {
                             cars3D[i].positionZ = (scale * height3D) / 2;
                             cars3D[i].mesh.callback = carCallback;
                             cars3D[i].mesh.name = "car_" + i;
-                            three.scene.add(cars3D[i].mesh);
+                            three.mainGroup.add(cars3D[i].mesh);
                             cars3D[i].resizeParkingLot();
                         };
                         cars3D[i].resize();
@@ -6294,7 +6368,7 @@ window.onload = function () {
                     };
                     cars3D[i].meshParkingLot.visible = false;
                     cars3D[i].resizeParkingLot();
-                    three.scene.add(cars3D[i].meshParkingLot);
+                    three.mainGroup.add(cars3D[i].meshParkingLot);
                 });
                 if (!gui.demo) {
                     Object.keys(switches).forEach(function (key) {
@@ -6341,11 +6415,11 @@ window.onload = function () {
                                 switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
                             };
                             switches3D[key][currentKey].resize();
-                            three.scene.add(switches3D[key][currentKey].circleMesh);
-                            three.scene.add(switches3D[key][currentKey].circleMeshSmall);
-                            three.scene.add(switches3D[key][currentKey].squareMeshHighlight);
-                            three.scene.add(switches3D[key][currentKey].squareMeshNormal);
-                            three.scene.add(switches3D[key][currentKey].squareMeshTurned);
+                            three.mainGroup.add(switches3D[key][currentKey].circleMesh);
+                            three.mainGroup.add(switches3D[key][currentKey].circleMeshSmall);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshHighlight);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshNormal);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshTurned);
                         });
                     });
                 }
@@ -6441,9 +6515,14 @@ window.onload = function () {
                 }, timeWait * 1000);
             }
             else if (message.data.k == "setTrains") {
+                rotationPoints = message.data.rotationPoints;
                 message.data.trains.forEach(function (train, i) {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
+                    trains[i].front.state = train.front.state;
+                    trains[i].front.state = train.front.state;
+                    trains[i].back.state = train.back.state;
+                    trains[i].back.state = train.back.state;
                     if (APP_DATA.debug) {
                         trains[i].front.x = train.front.x;
                         trains[i].front.y = train.front.y;
@@ -6479,6 +6558,10 @@ window.onload = function () {
                         trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
                         trains[i].cars[j].invisible = car.invisible;
                         trains[i].cars[j].opacity = car.opacity;
+                        trains[i].cars[j].front.state = car.front.state;
+                        trains[i].cars[j].front.state = car.front.state;
+                        trains[i].cars[j].back.state = car.back.state;
+                        trains[i].cars[j].back.state = car.back.state;
                         if (APP_DATA.debug) {
                             trains[i].cars[j].front.x = car.front.x;
                             trains[i].cars[j].front.y = car.front.y;
@@ -6547,8 +6630,8 @@ window.onload = function () {
                 switches = message.data.switches;
             }
             else if (message.data.k == "sync-ready") {
-                trains = message.data.trains;
                 rotationPoints = message.data.rotationPoints;
+                trains = message.data.trains;
                 teamplaySync("sync-ready");
             }
             else if (message.data.k == "save-game") {
@@ -6579,7 +6662,6 @@ window.onload = function () {
                 }
             }
             else if (message.data.k == "debug") {
-                rotationPoints = message.data.rotationPoints;
                 switchesBeforeFac = message.data.switchesBeforeFac;
                 switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
                 if (!debug.trainReady) {
