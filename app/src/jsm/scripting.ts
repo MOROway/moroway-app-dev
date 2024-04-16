@@ -2114,7 +2114,7 @@ function drawObjects() {
         }
     }
 
-    function trainInContinueTrackElement(state) {
+    function trainInTrackElement(state) {
         for (let i = 0; i < trains.length; i++) {
             if ((trains[i].front.state == state || trains[i].back.state == state) && trains[i].opacity < 1) {
                 return true;
@@ -2127,6 +2127,7 @@ function drawObjects() {
         }
         return false;
     }
+
     function drawContinueTrackElement(group, geometry, corrFac) {
         const material = new THREE.LineBasicMaterial({color: three.night ? 0x541e03 : 0x963c0e});
         const objectA = new THREE.Line(geometry, material);
@@ -2829,27 +2830,27 @@ function drawObjects() {
         }
         const continueTrackNewObject = new THREE.Group();
         continueTrackNewObject.name = continueTrackGroupName;
-        if (trainInContinueTrackElement(212)) {
+        if (trainInTrackElement(212)) {
             drawContinueTrackLine(continueTrackNewObject, "end", -1);
         }
-        if (trainInContinueTrackElement(213)) {
+        if (trainInTrackElement(213)) {
             drawContinueTrackCurve(continueTrackNewObject, "continueCurve0", -1);
         }
-        if (trainInContinueTrackElement(214)) {
+        if (trainInTrackElement(214)) {
             drawContinueTrackLine(continueTrackNewObject, "continueLine0", -1);
             drawContinueTrackLine(continueTrackNewObject, "continueLine0");
         }
-        if (trainInContinueTrackElement(215)) {
+        if (trainInTrackElement(215)) {
             drawContinueTrackCurve(continueTrackNewObject, "continueCurve1");
         }
-        if (trainInContinueTrackElement(216)) {
+        if (trainInTrackElement(216)) {
             drawContinueTrackLine(continueTrackNewObject, "continueLine1");
             drawContinueTrackLine(continueTrackNewObject, "continueLine1", -1);
         }
-        if (trainInContinueTrackElement(217)) {
+        if (trainInTrackElement(217)) {
             drawContinueTrackCurve(continueTrackNewObject, "continueCurve2", -1);
         }
-        if (trainInContinueTrackElement(218)) {
+        if (trainInTrackElement(218)) {
             drawContinueTrackLine(continueTrackNewObject, "rejoin", -1);
         }
         three.scene.add(continueTrackNewObject);
