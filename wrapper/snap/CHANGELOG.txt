@@ -248,3 +248,12 @@ Bugfixes.
 
 ---
 
+
+
+9.1.6
+
+Switch build tool (Cordova Electron -> Electron Builder).
+
+
+---
+

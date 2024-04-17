@@ -13,6 +13,8 @@ function loop() {
 domain=$(cat "$(dirname "$0")/../app_domain.txt")
 odir="$(dirname "$0")/../moroway-snapp"
 dir="$(dirname "$0")/../www"
-rm -r "$dir"/*
+[[ -d "$dir" ]] && rm -r "$dir"
+mkdir "$dir"
 cp -pr "$odir"/* "$dir"
+cp -pr "$(dirname "$0")/../build/"* "$dir"
 $(loop "$dir")

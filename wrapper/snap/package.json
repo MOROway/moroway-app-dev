@@ -1,17 +1,41 @@
 {
+    "name": "moroway-app",
     "license": "Apache-2.0",
-    "cordova": {
-        "plugins": {},
-        "platforms": [
-            "electron"
-        ]
-    },
-    "overrides": {
-        "cordova-electron": {
-            "electron": "^30.0.0"
+    "version": "9.1.6",
+    "description": "Play with the MORO model railroad!",
+    "author": "Jonathan Herrmann-Engel",
+    "build": {
+        "appId": "moroway-app",
+        "productName": "MOROway App",
+        "files": [
+            "www"
+        ],
+        "linux": {
+            "icon": "icon.png",
+            "category": "Game",
+            "target": [
+                {
+                    "target": "snap",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        },
+        "snap": {
+            "plugs": [
+                "default",
+                "screen-inhibit-control"
+            ],
+            "allowNativeWayland": true
         }
     },
+    "scripts": {
+        "dist": "./scripts/insert_html.bash && electron-builder && ./scripts/cleanup_html.bash"
+    },
     "devDependencies": {
-        "cordova-electron": "^4.0.0"
-    }
+        "electron": "^30.0.0",
+        "electron-builder": "^24.13.3"
+    },
+    "main": "www/app.js"
 }

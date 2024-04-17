@@ -50,4 +50,10 @@ fi
 echo $(echo "$link" | sed 's!^\(.*//\)*\([^/]*\).*$!\2!') >app_domain.txt
 
 # Set App Version
-sed -i "s/version=\"[0-9]\+\.[0-9]\+\.[0-9]\+\"/version=\"$version\"/" config.xml
+sed -i 's/\("version":\s*\)".*"/\1"'"$version"'"/' package.json
+description="$(cat "$working_dir_build/metadata/default/description-short.txt")"
+sed -i 's/\("description":\s*\)".*"/\1"'"$description"'"/' package.json
+author="$(cat "$working_dir_build/metadata/default/author.txt")"
+sed -i 's/\("author":\s*\)".*"/\1"'"$author"'"/' package.json
+productName="$(cat "$working_dir_build/metadata/default/application-name.txt")"
+sed -i 's/\("productName":\s*\)".*"/\1"'"$productName"'"/' package.json

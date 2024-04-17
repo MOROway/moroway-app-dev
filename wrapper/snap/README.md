@@ -17,10 +17,11 @@ The MOROway snApp ("snap App") wrapper app brings the MOROway App to Linux. MORO
 
 See [here](./moroway-snapp/src/lib/README.md).
 
-### MOROway snApp: Cordova Electron development framework
+### MOROway snApp: Electron Builder development framework
 
-Apache Cordova: [Apache License 2.0](https://github.com/apache/cordova-electron/blob/master/LICENSE)
+electron-builder: [MIT](https://github.com/electron-userland/electron-builder/blob/master/LICENSE)
+electron: [MIT](https://github.com/electron/electron/blob/main/LICENSE)
 
 ## Build
 
-Install Cordova, add platform Electron and build with Cordova (requires Linux-based OS and Bash)
+npm run-script dist (requires Linux-based OS and Bash)

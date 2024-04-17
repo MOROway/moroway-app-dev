@@ -320,10 +320,8 @@
 		"The MOROway App OC variant uses the “WebIntent Android Plugin for Cordova” by Boris Smus and contributors."
 	],
 	"helpScreenLegalAppSnap": "MOROway snApp {{0}}",
-	"helpScreenLegalAppSnapCordova": "Apache Cordova",
-	"helpScreenLegalAppSnapCordovaPs": [
-		"The MOROway “snApp” variant is based upon Apache Cordova with platform Electron by The Apache Software Foundation."
-	],
+	"helpScreenLegalAppSnapElectron": "Electron",
+	"helpScreenLegalAppSnapElectronBuilder": "Electron Builder",
 	"helpScreenLegalAppSnapIcon": "💻",
 	"helpScreenLegalFonts": "Fonts {{0}}",
 	"helpScreenLegalFontsIcon": "🌐",
