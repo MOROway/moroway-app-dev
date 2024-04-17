@@ -19,9 +19,9 @@ See [here](./moroway-snapp/src/lib/README.md).
 
 ### MOROway snApp: Electron Builder development framework
 
-electron-builder: [MIT](https://github.com/electron-userland/electron-builder/blob/master/LICENSE)
-electron: [MIT](https://github.com/electron/electron/blob/main/LICENSE)
+* electron-builder: [MIT](https://github.com/electron-userland/electron-builder/blob/master/LICENSE)
+* electron: [MIT](https://github.com/electron/electron/blob/main/LICENSE)
 
 ## Build
 
-npm run-script dist (requires Linux-based OS and Bash)
+`npm run-script dist` (requires Linux-based OS and Bash)
