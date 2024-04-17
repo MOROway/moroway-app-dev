@@ -5,8 +5,8 @@ var APP_DATA = {
     version: {
         major: 9,
         minor: 1,
-        patch: 6,
-        beta: 0,
+        patch: 7,
+        beta: 1,
         date: {
             year: 2024,
             month: 4,

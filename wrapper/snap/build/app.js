@@ -1,27 +1,40 @@
 const {app, ipcMain, BrowserWindow} = require("electron");
+const process = require("process");
 const path = require("path");
 const url = require("url");
 
-const windowOptions = {
-    fullscreen: true,
-    autoHideMenuBar: true,
-    icon: path.join(__dirname, "icon.png"),
-    webPreferences: {
-        nativeWindowOpen: true,
-        devTools: false,
-        sandbox: false,
-        preload: path.join(__dirname, "preload.js")
-    }
-};
 var wakeLockId;
 
 function newWindow(urlToLoad) {
+    const windowOptions = {
+        fullscreen: true,
+        autoHideMenuBar: true,
+        icon: path.join(__dirname, "icon.png"),
+        webPreferences: {
+            nativeWindowOpen: true,
+            devTools: false,
+            sandbox: false,
+            preload: path.join(__dirname, "preload.js")
+        }
+    };
     const win = new BrowserWindow(windowOptions);
+    var targetString = "";
+    var queryString = "";
+    if (urlToLoad.indexOf("#") > -1) {
+        targetString = urlToLoad.replace(/^.*[#]/, "");
+        urlToLoad = urlToLoad.replace(/[#].*/, "");
+    }
+    if (urlToLoad.indexOf("?") > -1) {
+        queryString = urlToLoad.replace(/^.*[?]/, "");
+        urlToLoad = urlToLoad.replace(/[?].*/, "");
+    }
     win.loadURL(
         url.format({
             pathname: path.join(__dirname, urlToLoad),
             protocol: "file:",
-            slashes: true
+            slashes: true,
+            search: queryString,
+            hash: targetString
         })
     );
 }
@@ -60,5 +73,14 @@ ipcMain.handle("keepScreenAlive", async (event, arg) => {
 });
 
 app.on("ready", function () {
-    newWindow("index.html");
+    const urlSearchParams = new URLSearchParams();
+    process.argv.forEach((arg) => {
+        if (arg.startsWith("--") && arg.indexOf("=") > -1) {
+            const key = arg.replace(/^--/, "").replace(/=.*$/, "");
+            const value = arg.replace(/^.*=/, "");
+            urlSearchParams.append(key, value);
+        }
+    });
+    const queryString = "?" + urlSearchParams.toString();
+    newWindow("index.html" + queryString);
 });
