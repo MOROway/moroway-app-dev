@@ -1,11 +1,8 @@
 const {app, ipcMain, BrowserWindow} = require("electron");
-const process = require("process");
-const path = require("path");
-const url = require("url");
-
 var wakeLockId;
 
 function newWindow(urlToLoad) {
+    const path = require("path");
     const windowOptions = {
         fullscreen: true,
         autoHideMenuBar: true,
@@ -18,26 +15,10 @@ function newWindow(urlToLoad) {
         }
     };
     const win = new BrowserWindow(windowOptions);
-    var targetString = "";
-    var queryString = "";
-    if (urlToLoad.indexOf("#") > -1) {
-        targetString = urlToLoad.replace(/^.*[#]/, "");
-        urlToLoad = urlToLoad.replace(/[#].*/, "");
-    }
-    if (urlToLoad.indexOf("?") > -1) {
-        queryString = urlToLoad.replace(/^.*[?]/, "");
-        urlToLoad = urlToLoad.replace(/[?].*/, "");
-    }
-    win.loadURL(
-        url.format({
-            pathname: path.join(__dirname, urlToLoad),
-            protocol: "file:",
-            slashes: true,
-            search: queryString,
-            hash: targetString
-        })
-    );
+    const url = new URL("file://" + path.join(__dirname, urlToLoad));
+    win.loadURL(url.toString());
 }
+
 function resolveArg(arg) {
     return new Promise((resolve) => {
         resolve(arg);
@@ -62,8 +43,8 @@ ipcMain.handle("exitApp", async (event) => {
     app.quit();
 });
 ipcMain.handle("keepScreenAlive", async (event, arg) => {
-    const acquire = await resolveArg(arg);
     const {powerSaveBlocker} = require("electron");
+    const acquire = await resolveArg(arg);
     if (wakeLockId != undefined) {
         powerSaveBlocker.stop(wakeLockId);
     }
@@ -73,6 +54,7 @@ ipcMain.handle("keepScreenAlive", async (event, arg) => {
 });
 
 app.on("ready", function () {
+    const process = require("process");
     const urlSearchParams = new URLSearchParams();
     process.argv.forEach((arg) => {
         if (arg.startsWith("--") && arg.indexOf("=") > -1) {
