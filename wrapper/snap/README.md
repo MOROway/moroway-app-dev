@@ -24,4 +24,9 @@ See [here](./moroway-snapp/src/lib/README.md).
 
 ## Build
 
-`npm run-script dist` (requires Linux-based OS and Bash)
+```
+npm install
+npm run-script dist
+```
+
+Requires Linux-based OS and Bash for pre- and post-build-scripts.
