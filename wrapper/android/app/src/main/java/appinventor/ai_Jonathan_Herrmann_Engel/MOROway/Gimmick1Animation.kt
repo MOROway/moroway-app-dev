@@ -5,8 +5,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build.VERSION.SDK_INT
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -130,9 +132,17 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
         return width * srcHeight / srcWidth
     }
 
+    private fun decodeBitmap(resId: Int): Bitmap {
+        return if (SDK_INT >= 28) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(resources, resId))
+        } else {
+            BitmapFactory.decodeResource(resources, resId)
+        }
+    }
+
     override fun onDraw(hedgehogCanvas: Canvas) {
         if (firstRun) {
-            val unscaledSnail = BitmapFactory.decodeResource(resources, R.drawable.gimmick1_4)
+            val unscaledSnail = decodeBitmap(R.drawable.gimmick1_4)
             val scaledSnailWidth = width / 8
             val scaledSnail = Bitmap.createScaledBitmap(
                 unscaledSnail,
@@ -141,8 +151,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
                 false
             )
             snail = BitmapDrawable(resources, scaledSnail)
-            val unscaledHedgehog =
-                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_0)
+            val unscaledHedgehog = decodeBitmap(R.drawable.gimmick1_0)
             val scaledHedgehogWidth = width / 3
             val scaledHedgehog = Bitmap.createScaledBitmap(
                 unscaledHedgehog,
@@ -152,8 +161,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             )
             hedgehog = BitmapDrawable(resources, scaledHedgehog)
             val scaledSmallHedgehogWidth = width / 8
-            val unscaledSmallHedgehog1 =
-                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_1)
+            val unscaledSmallHedgehog1 = decodeBitmap(R.drawable.gimmick1_1)
             val scaledSmallHedgehog1 = Bitmap.createScaledBitmap(
                 unscaledSmallHedgehog1,
                 scaledSmallHedgehogWidth,
@@ -165,8 +173,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
                 false
             )
             smallHedgehog1 = BitmapDrawable(resources, scaledSmallHedgehog1)
-            val unscaledSmallHedgehog2 =
-                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_2)
+            val unscaledSmallHedgehog2 = decodeBitmap(R.drawable.gimmick1_2)
             val scaledSmallHedgehog2 = Bitmap.createScaledBitmap(
                 unscaledSmallHedgehog2,
                 scaledSmallHedgehogWidth,
@@ -178,8 +185,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
                 false
             )
             smallHedgehog2 = BitmapDrawable(resources, scaledSmallHedgehog2)
-            val unscaledSmallHedgehog3 =
-                BitmapFactory.decodeResource(resources, R.drawable.gimmick1_3)
+            val unscaledSmallHedgehog3 = decodeBitmap(R.drawable.gimmick1_3)
             val scaledSmallHedgehog3 = Bitmap.createScaledBitmap(
                 unscaledSmallHedgehog3,
                 scaledSmallHedgehogWidth,
@@ -191,7 +197,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
                 false
             )
             smallHedgehog3 = BitmapDrawable(resources, scaledSmallHedgehog3)
-            val unscaledApple = BitmapFactory.decodeResource(resources, R.drawable.gimmick1_5)
+            val unscaledApple = decodeBitmap(R.drawable.gimmick1_5)
             val scaledAppleWidth = width / 14
             val scaledApple = Bitmap.createScaledBitmap(
                 unscaledApple,
@@ -201,7 +207,8 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
             )
             apple = BitmapDrawable(resources, scaledApple)
             replay = Paint()
-            replay!!.textSize = (height / 5f).coerceAtMost((width / resources.getString(R.string.a_g1_again).length).toFloat())
+            replay!!.textSize =
+                (height / 5f).coerceAtMost((width / resources.getString(R.string.a_g1_again).length).toFloat())
             replay!!.textAlign = Paint.Align.CENTER
             reset()
             firstRun = false
