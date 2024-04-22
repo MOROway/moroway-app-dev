@@ -38,7 +38,7 @@
 		"Wechsel der Zug-Fahrtrichtung"
 	],
 	"appScreenHasLoaded": "Anwendung geladen",
-	"appScreenIsFail": "Ein Fehler ist aufgetreten",
+	"generalIsFail": "Ein Fehler ist aufgetreten",
 	"appScreenKonami": "Super - Sie haben den Konamicode geknackt",
 	"appScreenNoCanvas": "Bitte aktualisieren Sie Ihren Browser",
 	"appScreenObjectChangesDirection": "{{0}}: Richtung gewechselt",
@@ -308,6 +308,7 @@
 	"helpScreenPrivacyStatementBackupLink": "Datenschutzerklärung öffnen",
 	"helpScreenPrivacyStatementBackupLinkNotification": "Link geöffnet",
 	"langName": "Deutsch",
+	"licenseScreenNotFound": "Lizenztext nicht gefunden.",
 	"optApply": "Einstellungen aktualisiert",
 	"optButton_morowayApp_reduceOptMenuHide3DViewNightToggle": "3D-Ansicht Tag/Nacht",
 	"optButton_morowayApp_reduceOptMenuHide3DViewToggle": "3D-Ansicht",

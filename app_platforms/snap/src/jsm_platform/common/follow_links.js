@@ -30,13 +30,9 @@ export function followLink(input1, input2, input3) {
         case LINK_STATE_INTERNAL_LICENSE:
             followLink("license/?license-file=" + input1, input2, LINK_STATE_INTERNAL_HTML);
             break;
-        case LINK_STATE_INTERNAL_LICENSE_FILE:
-            window.open(input1, "_blank", "frame=false");
-            break;
     }
 }
 
 export const LINK_STATE_NORMAL = 0;
 export const LINK_STATE_INTERNAL_HTML = 1;
-export const LINK_STATE_INTERNAL_LICENSE_FILE = 2;
 export const LINK_STATE_INTERNAL_LICENSE = 3;

@@ -25,10 +25,6 @@ export function followLink(input1, input2, input3) {
         case LINK_STATE_INTERNAL_LICENSE:
             input1 = "./license/index.html?license-file=" + input1;
             break;
-        case LINK_STATE_INTERNAL_LICENSE_FILE:
-            history.replaceState(null, "", input1);
-            location.reload();
-            return;
     }
     if (followLink) {
         window.open(input1, input2);
@@ -37,5 +33,4 @@ export function followLink(input1, input2, input3) {
 
 export const LINK_STATE_NORMAL = 0;
 export const LINK_STATE_INTERNAL_HTML = 1;
-export const LINK_STATE_INTERNAL_LICENSE_FILE = 2;
 export const LINK_STATE_INTERNAL_LICENSE = 3;

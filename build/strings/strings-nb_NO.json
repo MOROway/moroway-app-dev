@@ -26,7 +26,7 @@
 		"Toghastighet",
 		"Start/stopp tog"
 	],
-	"appScreenIsFail": "En feil inntraff",
+	"generalIsFail": "En feil inntraff",
 	"appScreenObjectHasCrashed": "Krasj mellom {{0}} og {{1}}",
 	"appScreenObjectStarts": "{{0}} starter",
 	"appScreenObjectStops": "{{0}} stopper",

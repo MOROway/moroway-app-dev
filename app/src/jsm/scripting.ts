@@ -5529,7 +5529,7 @@ window.onload = function () {
 
         //Animate Worker
         animateWorker.onerror = function () {
-            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
+            notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
             window.setTimeout(function () {
                 followLink("error#animate", "_self", LINK_STATE_INTERNAL_HTML);
             }, 1000);
@@ -6837,15 +6837,16 @@ window.onload = function () {
         document.dispatchEvent(event);
     }
 
+    const queryStringMode = getQueryString("mode");
     //Set mode: demo
-    gui.demo = getQueryString("mode") == "demo" || getQueryString("mode") == "demoStandalone" || (getSetting("startDemoMode") && getQueryString("mode") == "");
+    gui.demo = queryStringMode == "demo" || queryStringMode == "demoStandalone" || (getSetting("startDemoMode") && queryStringMode == "");
     if (gui.demo) {
         document.body.style.cursor = "none";
         var loadingAnimElemChangingFilter = loadingImageAnimation();
-        demoMode.standalone = getQueryString("mode") == "demoStandalone";
+        demoMode.standalone = queryStringMode == "demoStandalone";
     }
     //Set mode: multiplay
-    if (getQueryString("mode") == "multiplay") {
+    if (queryStringMode == "multiplay") {
         if ("WebSocket" in window) {
             onlineGame.enabled = true;
             var loadingAnimElemChangingFilter = loadingImageAnimation();
@@ -6858,13 +6859,13 @@ window.onload = function () {
     }
 
     //GUI State
-    var queryString3D = getQueryString("gui-3d");
+    const queryString3D = getQueryString("gui-3d");
     if (queryString3D == "0" || queryString3D == "1") {
         gui.three = getGuiState("3d", queryString3D == "1");
     } else {
         gui.three = getGuiState("3d");
     }
-    var queryString3DNight = getQueryString("gui-3d-night");
+    const queryString3DNight = getQueryString("gui-3d-night");
     if (queryString3DNight == "0" || queryString3DNight == "1") {
         three.night = getGuiState("3d-night", queryString3DNight == "1");
     } else {
@@ -6945,7 +6946,7 @@ window.onload = function () {
             }
         };
         pics[pic.id].onerror = function () {
-            notify("#canvas-notifier", getString("appScreenIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
+            notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
             window.setTimeout(function () {
                 followLink("error#pic", "_self", LINK_STATE_INTERNAL_HTML);
             }, 1000);

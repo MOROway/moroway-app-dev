@@ -43,7 +43,7 @@
 		"Change train direction"
 	],
 	"appScreenHasLoaded": "app ready",
-	"appScreenIsFail": "An error occurred",
+	"generalIsFail": "An error occurred",
 	"appScreenKonami": "You cracked the Konami Code",
 	"appScreenKonamiAnimals": [
 		"🐢",
@@ -195,7 +195,6 @@
 	"generalStartGame": "Play",
 	"generalStartGameDemoMode": "Start demo mode",
 	"generalStartGameDemoMode3DNight": "3D: night",
-	"generalTitle": "MOROway App",
 	"generalTitleDemoMode": "Demo mode",
 	"generalTitleErrorScreen": "Known issues",
 	"generalTitleHelpScreen": "Help / Legal",
@@ -382,6 +381,7 @@
 	"helpScreenPrivacyStatementBackupLinkNotification": "Link opened",
 	"helpScreenPrivacyStatementIcon": "🦮",
 	"langName": "English",
+	"licenseScreenNotFound": "License text not found.",
 	"optApply": "New configuration saved",
 	"optButton_morowayApp_reduceOptMenuHide3DViewNightToggle": "3D-view day/night",
 	"optButton_morowayApp_reduceOptMenuHide3DViewToggle": "3D-view",
