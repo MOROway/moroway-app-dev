@@ -10,11 +10,15 @@ function loop() {
 		fi
 	done
 }
-domain=$(cat "$(dirname "$0")/../app_domain.txt")
-odir="$(dirname "$0")/../moroway-snapp"
-dir="$(dirname "$0")/../www"
+
+cd "$(dirname "$0")"/.. || exit 1
+
+domain=$(cat "app_domain.txt")
+app_dir="moroway-snapp"
+build_dir="build"
+dir="www"
 [[ -d "$dir" ]] && rm -r "$dir"
 mkdir "$dir"
-cp -pr "$odir"/* "$dir"
-cp -pr "$(dirname "$0")/../build/"* "$dir"
+cp -pr "$app_dir"/* "$dir"
+cp -pr "$build_dir"/* "$dir"
 $(loop "$dir")

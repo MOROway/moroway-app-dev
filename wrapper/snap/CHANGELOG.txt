@@ -257,3 +257,13 @@ Switch build tool (Cordova Electron -> Electron Builder).
 
 ---
 
+
+
+9.1.7
+
+Minor background 3D improvements.
+Allow passing query parameters as CLI options (e.g. --mode=normal).
+
+
+---
+

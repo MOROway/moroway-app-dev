@@ -2581,7 +2581,9 @@ function drawObjects() {
                         trains3D[i].mesh.position.z -= (trains3D[i].positionZ / 5) * Math.random();
                     }
                 }
-                trains3D[i].mesh.visible = true; //Never truly invisible
+                /* UPDATE: v9.1.5 */
+                trains3D[i].mesh.visible = true;
+                /* END UPDATE: v9.1.5 */
                 setMaterialTransparent(trains3D[i].mesh, train.opacity);
                 trains3D[i].mesh.rotation.z = -train.displayAngle;
             }
@@ -2596,7 +2598,9 @@ function drawObjects() {
                             trains3D[i].cars[j].mesh.position.z -= (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
                         }
                     }
-                    trains3D[i].cars[j].mesh.visible = true; //Never truly invisible
+                    /* UPDATE: v9.1.5 */
+                    trains3D[i].cars[j].mesh.visible = true;
+                    /* END UPDATE: v9.1.5 */
                     setMaterialTransparent(trains3D[i].cars[j].mesh, car.opacity);
                     trains3D[i].cars[j].mesh.rotation.z = -car.displayAngle;
                 }

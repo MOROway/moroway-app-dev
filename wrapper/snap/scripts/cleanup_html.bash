@@ -1,4 +1,6 @@
 #!/bin/bash
 
-dir=$(dirname "$0")"/../www"
-rm -r "$dir"
+cd "$(dirname "$0")"/.. || exit 1
+
+dir="www"
+[[ -d "$dir" ]] && rm -r "$dir"
