@@ -13,7 +13,7 @@ document.addEventListener("moroway-app-after-calc-options-menu-load", function (
 
 document.addEventListener("moroway-app-ready", function () {
     if (getMode() == "normal") {
-        showServerNote();
+        showServerNote(document.querySelector("#server-note"));
     }
     setSettingsHTML(document.querySelector("#settings-inner"), false);
 });

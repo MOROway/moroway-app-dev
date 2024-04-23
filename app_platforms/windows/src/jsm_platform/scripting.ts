@@ -9,7 +9,7 @@ import {getMode} from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-ready", function () {
     if (getMode() == "normal") {
-        showServerNote();
+        showServerNote(document.querySelector("#server-note") as HTMLElement);
     }
     setSettingsHTML(document.querySelector("#settings-inner"), false);
 });

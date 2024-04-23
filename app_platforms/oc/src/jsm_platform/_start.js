@@ -77,7 +77,7 @@ document.addEventListener("deviceready", function () {
             [getString("platformOcAppUpdateYes"), getString("platformOcAppUpdateNo")]
         );
     } else {
-        showServerNote();
+        showServerNote(document.querySelector("#server-note"));
     }
     setLocalAppDataCopy();
 });
