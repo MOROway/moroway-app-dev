@@ -24,7 +24,7 @@ export function getString(prop, punctuationMark = "", caseType = "", lang = CURR
 
 export function formatJSString(str: string, ...replaces: (string | number)[]) {
     for (var i = 0; i < replaces.length; i++) {
-        if (str.indexOf("{{" + i + "}}") !== -1) {
+        if (str.includes("{{" + i + "}}")) {
             var toReplace = new RegExp("{{[" + i + "]}}", "g");
             str = str.replace(toReplace, replaces[i].toString());
         }

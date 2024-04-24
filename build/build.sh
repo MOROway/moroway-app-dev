@@ -202,6 +202,15 @@ for platform in ${platforms[@]}; do
 		# Game Screen
 		file="$to/src/jsm/scripting.ts"
 		sed -i "s/{{sound_file_extension}}/$sound_file_extension/" "$file"
+		# JS License Header
+		for js_file in ${all_files[@]}; do
+			if [[ "$js_file" =~ .([t]|[j])s$ ]] && [[ ! "$js_file" =~ ^src/lib ]]; then
+				license_header=("\\ */" "\\ * SPDX-License-Identifier: $(cat "metadata/default/license.txt" | sed 's!/!!g')" "\\ * Copyright $(date "+%Y") $(cat "metadata/default/author.txt" | sed 's!/!!g')" "/**")
+				for line in "${license_header[@]}"; do
+					sed -i "1i$line" "$to/$js_file"
+				done
+			fi
+		done
 		# TS Content
 		cp tsconfig.json "$to/tsconfig.json"
 		for ts_file in ${all_files[@]}; do

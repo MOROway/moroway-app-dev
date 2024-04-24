@@ -7,11 +7,11 @@ export function followLink(input1, input2, input3) {
             break;
         case LINK_STATE_INTERNAL_HTML:
             var hash, queryString;
-            if (input1.indexOf("#") != -1) {
+            if (input1.includes("#")) {
                 hash = input1.substr(input1.indexOf("#"));
                 input1 = input1.substr(0, input1.length - (input1.length - input1.indexOf("#")));
             }
-            if (input1.indexOf("?") != -1) {
+            if (input1.includes("?")) {
                 queryString = input1.substr(input1.indexOf("?"));
                 input1 = input1.substr(0, input1.length - (input1.length - input1.indexOf("?")));
             }

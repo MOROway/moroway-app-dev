@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const elementContent = document.querySelector("#license-content");
     if (elementTitle && elementContent) {
         const file = getQueryString("license-file");
-        if ((file.startsWith(document.baseURI) || (!file.startsWith("/") && file.indexOf("://") == -1)) && (file.endsWith(".txt") || file.match(/([/]|^)[^.]+$/)) && !file.endsWith("/")) {
+        if ((file.startsWith(document.baseURI) || (!file.startsWith("/") && !file.includes("://"))) && (file.endsWith(".txt") || file.match(/([/]|^)[^.]+$/)) && !file.endsWith("/")) {
             fetch(file)
                 .then(function (response) {
                     if (response.ok && response.status == 200) {

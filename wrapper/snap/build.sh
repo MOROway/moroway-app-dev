@@ -49,8 +49,10 @@ fi
 # Set App Domain
 echo $(echo "$link" | sed 's!^\(.*//\)*\([^/]*\).*$!\2!') >app_domain.txt
 
-# Set App Version
+# Set package.json
 sed -i 's/\("version":\s*\)".*"/\1"'"$version"'"/' package.json
+license="$(cat "$working_dir_build/metadata/default/license.txt")"
+sed -i 's/\("license":\s*\)".*"/\1"'"$license"'"/' package.json
 description="$(cat "$working_dir_build/metadata/default/description-short.txt")"
 sed -i 's/\("description":\s*\)".*"/\1"'"$description"'"/' package.json
 author="$(cat "$working_dir_build/metadata/default/author.txt")"

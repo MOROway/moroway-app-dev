@@ -4607,11 +4607,11 @@ const textControl: any = {
     },
     execute: function (command, args) {
         var commandNames = Object.keys(this.commands);
-        if (commandNames.indexOf(command) == -1) {
+        if (!commandNames.includes(command)) {
             commandNames.shift();
             return formatJSString(getString("appScreenTextCommandsGeneralCommands"), "", commandNames.join(", "));
         }
-        if (typeof args == "object" && args.length > 0 && this.getSubcommandNames(command).indexOf(args[0]) != -1) {
+        if (typeof args == "object" && args.length > 0 && this.getSubcommandNames(command).includes(args[0])) {
             if (this.validateSubcommand(command, args)) {
                 return this.commands[command].subcommands[args[0]].execute(args);
             }
@@ -5304,7 +5304,7 @@ window.onload = function () {
                 var commands = commandsInput.split(" ");
                 var command = commands.shift();
                 textControl.elements.input.value = "";
-                if (Object.keys(textControl.commands).indexOf(command) == -1) {
+                if (!Object.keys(textControl.commands).includes(command)) {
                     command = "/";
                 }
                 textControl.elements.output.textContent = textControl.commands[command].action(commands);
