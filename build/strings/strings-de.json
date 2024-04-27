@@ -255,32 +255,24 @@
 	"helpScreenLegal": "Lizenzen",
 	"helpScreenLegalAppAndroid": "MOROway App für Android {{0}}",
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
-	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [
 		"Die MOROway App OC Variante basiert auf Apache Cordova erstellt von der Apache Software Foundation."
 	],
-	"helpScreenLegalAppOCDialogs": "cordova-plugin-dialogs",
 	"helpScreenLegalAppOCDialogsPs": [
 		"Die MOROway App OC Variante nutzt das „Dialogs Plugin“ erstellt von der Apache Software Foundation."
 	],
-	"helpScreenLegalAppOCWebintent": "Webintent",
 	"helpScreenLegalAppOCWebintentPs": [
 		"Die MOROway App OC Variante nutzt das „WebIntent Android Plugin for Cordova“ erstellt von Boris Smus und Beitragenden."
 	],
 	"helpScreenLegalAppSnap": "MOROway snApp {{0}}",
-	"helpScreenLegalAppSnapElectron": "Electron",
-	"helpScreenLegalAppSnapElectronBuilder": "Electron Builder",
 	"helpScreenLegalFonts": "Verwendete Schriften {{0}}",
-	"helpScreenLegalFontsMaterialIcons": "Material Symbols Font",
 	"helpScreenLegalFontsMaterialIconsPs": [
 		"Die MOROway App verwendet an einigen Stellen die Schriftart „Material Symbols“ der Google Inc."
 	],
-	"helpScreenLegalFontsRoboto": "Roboto",
 	"helpScreenLegalFontsRobotoPs": [
 		"Die MOROway App verwendet an einigen Stellen die Schriftart „Roboto“ der Google Inc."
 	],
 	"helpScreenLegalLibraries": "Bibliotheken {{0}}",
-	"helpScreenLegalLibrariesThreeJs": "Three.js",
 	"helpScreenLegalLibrariesThreeJsPs": [
 		"Die MOROway App verwendet die 3D-Bibliothek „Three.js“."
 	],
