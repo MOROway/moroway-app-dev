@@ -1,3 +1,7 @@
+/**
+ * Copyright 2024 Jonathan Herrmann-Engel
+ * SPDX-License-Identifier: Apache-2.0
+ */
 "use strict";
 import {followLink, LINK_STATE_INTERNAL_LICENSE} from "./common/follow_links.js";
 document.addEventListener("DOMContentLoaded", function () {

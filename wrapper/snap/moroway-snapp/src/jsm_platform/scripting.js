@@ -1,3 +1,7 @@
+/**
+ * Copyright 2024 Jonathan Herrmann-Engel
+ * SPDX-License-Identifier: Apache-2.0
+ */
 "use strict";
 import {followLink, LINK_STATE_INTERNAL_HTML} from "./common/follow_links.js";
 import {APP_DATA} from "../jsm/common/app_data.js";
@@ -13,7 +17,7 @@ document.addEventListener("moroway-app-after-calc-options-menu-load", function (
 
 document.addEventListener("moroway-app-ready", function () {
     if (getMode() == "normal") {
-        showServerNote();
+        showServerNote(document.querySelector("#server-note"));
     }
     setSettingsHTML(document.querySelector("#settings-inner"), false);
 });
