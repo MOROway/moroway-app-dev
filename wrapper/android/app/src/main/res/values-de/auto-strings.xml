@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="generalIsFail">Ein Fehler ist aufgetreten</string>
   <string name="general3DView">3D-Ansicht</string>
   <string name="generalBack">Zurück</string>
   <string name="generalClose">schließen</string>

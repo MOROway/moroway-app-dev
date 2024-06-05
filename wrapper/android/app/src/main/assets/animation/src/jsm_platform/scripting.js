@@ -1,3 +1,7 @@
+/**
+ * Copyright 2024 Jonathan Herrmann-Engel
+ * SPDX-License-Identifier: Apache-2.0
+ */
 "use strict";
 import {APP_DATA} from "../jsm/common/app_data.js";
 import {getSetting} from "../jsm/common/settings.js";

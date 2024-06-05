@@ -267,3 +267,12 @@ Allow passing query parameters as CLI options (e.g. --mode=normal).
 
 ---
 
+
+
+9.1.9
+
+Update dependencies.
+
+
+---
+

@@ -1,3 +1,7 @@
+/**
+ * Copyright 2024 Jonathan Herrmann-Engel
+ * SPDX-License-Identifier: Apache-2.0
+ */
 "use strict";
 import {getSetting, getSettings, setSetting} from "../jsm/common/settings.js";
 import {getServerNote, getServerRedirectLink} from "../jsm/common/web_tools.js";

@@ -1,3 +1,7 @@
+/**
+ * Copyright 2024 Jonathan Herrmann-Engel
+ * SPDX-License-Identifier: Apache-2.0
+ */
 "use strict";
 document.addEventListener("DOMContentLoaded", function () {
     const elem = document.getElementById("backOption"),

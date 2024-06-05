@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="generalIsFail">An error occurred</string>
   <string name="general3DView">3D-view</string>
   <string name="generalBack">back</string>
   <string name="generalClose">close</string>
@@ -20,7 +21,6 @@
   <string name="generalStartGame">Play</string>
   <string name="generalStartGameDemoMode">Start demo mode</string>
   <string name="generalStartGameDemoMode3DNight">3D: night</string>
-  <string name="generalTitle">MOROway App</string>
   <string name="generalTitleDemoMode">Demo mode</string>
   <string name="generalTitleErrorScreen">Known issues</string>
   <string name="generalTitleHelpScreen">Help / Legal</string>

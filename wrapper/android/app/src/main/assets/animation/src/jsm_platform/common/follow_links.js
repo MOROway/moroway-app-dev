@@ -1,3 +1,7 @@
+/**
+ * Copyright 2024 Jonathan Herrmann-Engel
+ * SPDX-License-Identifier: Apache-2.0
+ */
 "use strict";
 export function followLink(input1, input2, input3) {
     var followLink = true;
@@ -6,11 +10,11 @@ export function followLink(input1, input2, input3) {
             break;
         case LINK_STATE_INTERNAL_HTML:
             var hash, queryString;
-            if (input1.indexOf("#") != -1) {
+            if (input1.includes("#")) {
                 hash = input1.substr(input1.indexOf("#"));
                 input1 = input1.substr(0, input1.length - (input1.length - input1.indexOf("#")));
             }
-            if (input1.indexOf("?") != -1) {
+            if (input1.includes("?")) {
                 queryString = input1.substr(input1.indexOf("?"));
                 input1 = input1.substr(0, input1.length - (input1.length - input1.indexOf("?")));
             }
@@ -25,10 +29,6 @@ export function followLink(input1, input2, input3) {
         case LINK_STATE_INTERNAL_LICENSE:
             input1 = "./license/index.html?license-file=" + input1;
             break;
-        case LINK_STATE_INTERNAL_LICENSE_FILE:
-            history.replaceState(null, "", input1);
-            location.reload();
-            return;
     }
     if (followLink) {
         window.open(input1, input2);
@@ -37,5 +37,4 @@ export function followLink(input1, input2, input3) {
 
 export const LINK_STATE_NORMAL = 0;
 export const LINK_STATE_INTERNAL_HTML = 1;
-export const LINK_STATE_INTERNAL_LICENSE_FILE = 2;
 export const LINK_STATE_INTERNAL_LICENSE = 3;

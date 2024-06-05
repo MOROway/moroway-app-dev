@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="generalIsFail">En feil inntraff</string>
   <string name="generalBack">Tilbake</string>
   <string name="generalClose">lukk</string>
   <string name="generalLeaveAndDestroyGameNo">Fortsett</string>
