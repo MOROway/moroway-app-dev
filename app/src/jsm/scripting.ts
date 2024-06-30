@@ -10,7 +10,7 @@ import {getLocalAppDataCopy, setLocalAppDataCopy, APP_DATA} from "./common/app_d
 import {formatJSString, getString, setHTMLStrings} from "./common/string_tools.js";
 import {getQueryString, getServerLink, getShareLink, PROTOCOL_WS} from "./common/web_tools.js";
 import {getSetting} from "./common/settings.js";
-import {notify, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT, NOTIFICATION_CHANNEL_TRAIN_SWITCHES, NOTIFICATION_PRIO_DEFAULT, NOTIFICATION_PRIO_LOW, NOTIFICATION_PRIO_HIGH} from "./common/notify.js";
+import {notify, NOTIFICATION_CHANNEL_3D_CAMERA, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT, NOTIFICATION_CHANNEL_TRAIN_SWITCHES, NOTIFICATION_PRIO_DEFAULT, NOTIFICATION_PRIO_LOW, NOTIFICATION_PRIO_HIGH} from "./common/notify.js";
 import {copyJSObject} from "./common/js_objects.js";
 import {copy} from "./common/copy_paste.js";
 import {getGuiState, setGuiState} from "./common/gui_state.js";
@@ -45,6 +45,8 @@ interface Car {
     backwardsState?: number;
     hexColor: string;
     lastDirectionChange?: number;
+    outerX?: number;
+    outerY?: number;
 }
 interface CarWays {
     start?: any;
@@ -127,7 +129,11 @@ interface Three {
     zoom: number;
     scene?: any;
     renderer?: any;
+    cameraMode?: "birds-eye" | "follow-train" | "follow-car";
+    activeCamera?: any;
     camera?: any;
+    followCamera?: any;
+    followObject?: number;
     mainGroup?: any;
     night?: boolean;
     ambientLight?: any;
@@ -736,6 +742,7 @@ function calcMenusAndBackground(state) {
                 element3DViewToggle.querySelector("i")!.textContent = "2d";
                 element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
             }
+            element3DViewCameraSwitcher?.classList.remove("gui-hidden");
         } else {
             elementInfoToggle?.classList.remove("gui-hidden");
             element3DViewNightToggle?.classList.add("gui-hidden");
@@ -743,6 +750,7 @@ function calcMenusAndBackground(state) {
                 element3DViewToggle.querySelector("i")!.textContent = "view_in_ar";
                 element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
             }
+            element3DViewCameraSwitcher?.classList.add("gui-hidden");
         }
     }
     const soundFileExtension = "{{sound_file_extension}}";
@@ -755,6 +763,7 @@ function calcMenusAndBackground(state) {
     const elementSoundToggle = document.querySelector("#canvas-sound-toggle") as HTMLElement;
     const element3DViewToggle = document.querySelector("#canvas-3d-view-toggle") as HTMLElement;
     const element3DViewNightToggle = document.querySelector("#canvas-3d-view-day-night");
+    const element3DViewCameraSwitcher = document.querySelector("#canvas-3d-view-camera-switcher");
     const elementControlCenterTrains = document.querySelector("#canvas-control-center");
     const elementControlCenterCars = document.querySelector("#canvas-car-control-center");
     const elementTeamChat = document.querySelector("#canvas-chat-open");
@@ -814,6 +823,13 @@ function calcMenusAndBackground(state) {
             element3DViewNightToggle.classList.add("settings-hidden");
         } else {
             element3DViewNightToggle.classList.remove("settings-hidden");
+        }
+    }
+    if (element3DViewCameraSwitcher != null) {
+        if (getSetting("reduceOptMenuHide3DViewCameraSwitcher")) {
+            element3DViewCameraSwitcher.classList.add("settings-hidden");
+        } else {
+            element3DViewCameraSwitcher.classList.remove("settings-hidden");
         }
     }
     if (state == "load") {
@@ -998,6 +1014,37 @@ function calcMenusAndBackground(state) {
             background3D.animateBehind(true);
             setGuiState("3d-night", three.night);
         });
+        element3DViewCameraSwitcher?.addEventListener("click", function () {
+            commonOnOptionsMenuClick();
+            if (three.cameraMode == "follow-car") {
+                if (three.followObject < cars.length - 1) {
+                    three.followObject++;
+                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+                } else {
+                    three.cameraMode = "birds-eye";
+                    three.activeCamera = three.camera;
+                }
+            } else if (three.cameraMode == "follow-train") {
+                if (three.followObject < trains.length - 1) {
+                    three.followObject++;
+                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+                } else {
+                    three.followObject = 0;
+                    three.cameraMode = "follow-car";
+                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+                }
+            } else {
+                three.followObject = 0;
+                three.cameraMode = "follow-train";
+                three.activeCamera = three.followCamera;
+                notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+            }
+            setGuiState("3d-cam-mode", three.cameraMode);
+            setGuiState("3d-follow-object", three.followObject);
+            resetScale();
+            resetTilt();
+            calcMenusAndBackground("resize");
+        });
         set3DItems();
     }
     menus.floating = false;
@@ -1034,13 +1081,22 @@ function calcMenusAndBackground(state) {
         menus.outerContainer.element.style.justifyContent = "";
     }
     menus.outerContainer.element.style.width = menus.outerContainer.width + "px";
-    menus.outerContainer.element.style.height = availableHeight + "px";
+    if (!gui.three || three.cameraMode == "birds-eye") {
+        menus.outerContainer.element.style.height = availableHeight + "px";
+    } else {
+        menus.outerContainer.element.style.height = menus.itemDefaultSize + "px";
+    }
     if (menus.floating) {
         menus.outerContainer.element.style.background = "transparent";
-        menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
     } else {
         menus.outerContainer.element.style.background = gui.three ? "transparent" : "";
+    }
+    if (!gui.three || three.cameraMode == "birds-eye") {
         menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
+        menus.outerContainer.element.style.bottom = "unset";
+    } else {
+        menus.outerContainer.element.style.top = "unset";
+        menus.outerContainer.element.style.bottom = "0px";
     }
     menus.outerContainer.element.style.left = client.x + "px";
 
@@ -1086,7 +1142,7 @@ export function optionsMenuEditorHide(id) {
  ******************************************/
 
 function getGesture(gesture) {
-    if (!gui.controlCenter && !resized) {
+    if (!gui.controlCenter && !resized && (!gui.three || three.cameraMode == undefined || three.cameraMode == "birds-eye")) {
         switch (gesture.type) {
             case "doubletap":
                 if (client.zoomAndTilt.realScale != 1) {
@@ -1836,6 +1892,8 @@ function requestResize() {
 
         three.camera.aspect = client.width / client.height;
         three.camera.updateProjectionMatrix();
+        three.followCamera.aspect = client.width / client.height;
+        three.followCamera.updateProjectionMatrix();
 
         background3D.behind.width = client.width * client.devicePixelRatio;
         background3D.behind.height = client.height * client.devicePixelRatio;
@@ -2403,6 +2461,9 @@ function drawObjects() {
                 currentObject.y = carWays[input1][currentObject.cType][currentObject.counter].y;
                 currentObject.displayAngle = carWays[input1][currentObject.cType][currentObject.counter].angle;
             }
+            const isFront = (!carParams.autoModeOff && !carParams.isBackToRoot) || (carParams.autoModeOff && !currentObject.backToInit && (currentObject.backwardsState === undefined || currentObject.backwardsState === 0));
+            currentObject.outerX = currentObject.x + Math.cos(currentObject.displayAngle) * ((currentObject.width * 1.05) / 2) * (isFront ? 1 : -1);
+            currentObject.outerY = currentObject.y + Math.sin(currentObject.displayAngle) * ((currentObject.width * 1.05) / 2) * (isFront ? 1 : -1);
         }
         if ((carParams.autoModeRuns && frameNo % carParams.wayNo === 0) || carParams.autoModeInit) {
             calcCarsAutoMode();
@@ -2774,31 +2835,120 @@ function drawObjects() {
                     const scale = three.calcScale();
                     switches3D[key][currentKey].squareMeshHighlight.material.color.setHex(hexSquare);
                     switches3D[key][currentKey].squareMeshHighlight.rotation.y = -angle - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshHighlight.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshHighlight.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshHighlight.rotation.y)) + three.calcPositionY(), switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.depth / 2);
+                    switches3D[key][currentKey].squareMeshHighlight.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshHighlight.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshHighlight.rotation.y)) + three.calcPositionY(), new THREE.Box3().setFromObject(switches3D[key][currentKey].squareMeshHighlight).getSize(new THREE.Vector3()).z / 2);
 
                     switches3D[key][currentKey].squareMeshNormal.rotation.y = -switches[key][currentKey].angles.normal - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshNormal.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshNormal.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshNormal.rotation.y)) + three.calcPositionY(), switches3D[key][currentKey].squareMeshNormal.geometry.parameters.depth / 2);
+                    switches3D[key][currentKey].squareMeshNormal.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshNormal.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshNormal.rotation.y)) + three.calcPositionY(), new THREE.Box3().setFromObject(switches3D[key][currentKey].squareMeshNormal).getSize(new THREE.Vector3()).z / 2);
 
                     switches3D[key][currentKey].squareMeshTurned.rotation.y = -switches[key][currentKey].angles.turned - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), switches3D[key][currentKey].squareMeshTurned.geometry.parameters.depth / 2);
+                    switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), new THREE.Box3().setFromObject(switches3D[key][currentKey].squareMeshTurned).getSize(new THREE.Vector3()).z / 2);
                 });
             });
+
+            if (three.cameraMode == "follow-car") {
+                if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
+                    three.followObject = 0;
+                }
+                three.followCamera.position.set(three.calcScale() * ((cars[three.followObject].outerX - background.width / 2) / background.width), three.calcScale() * (-(cars[three.followObject].outerY - background.height / 2) / background.width) + three.calcPositionY(), cars3D[three.followObject].positionZ == undefined ? 0 : cars3D[three.followObject].positionZ);
+                three.followCamera.rotation.set(0, 0, 0);
+                three.followCamera.rotation.z = -cars[three.followObject].displayAngle;
+                if ((!carParams.autoModeOff && carParams.isBackToRoot) || (carParams.autoModeOff && (cars[three.followObject].backToInit || cars[three.followObject].backwardsState > 0))) {
+                    three.followCamera.rotation.z += Math.PI;
+                }
+                var axis = new THREE.Vector3(0, 0, 1);
+                var rad = -Math.PI / 2;
+                three.followCamera.rotateOnAxis(axis, rad);
+                var axis = new THREE.Vector3(1, 0, 0);
+                var rad = Math.PI / 2;
+                three.followCamera.rotateOnAxis(axis, rad);
+                three.renderer.render(three.scene, three.followCamera);
+            } else if (three.cameraMode == "follow-train") {
+                if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > trains.length - 1) {
+                    three.followObject = 0;
+                }
+                var object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
+                three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[three.followObject].positionZ == undefined ? 0 : trains3D[three.followObject].positionZ);
+                three.followCamera.rotation.set(0, 0, 0);
+                three.followCamera.rotation.z = -object.displayAngle;
+                if (!trains[three.followObject].standardDirection) {
+                    three.followCamera.rotation.z += Math.PI;
+                }
+                var axis = new THREE.Vector3(0, 0, 1);
+                var rad = -Math.PI / 2;
+                three.followCamera.rotateOnAxis(axis, rad);
+                var axis = new THREE.Vector3(1, 0, 0);
+                var rad = Math.PI / 2;
+                three.followCamera.rotateOnAxis(axis, rad);
+
+                const controlWidth = Math.min(200, client.width / 25) * client.devicePixelRatio;
+                const controlPadding = controlWidth / 5;
+                const controlHeight = ((client.height - menus.outerContainer.height) / 2) * client.devicePixelRatio;
+                const controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
+                const controlY = controlPadding;
+                const controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
+                const controlTextSize = parseInt(controlFont.replace("px", ""), 10);
+                contextForeground.save();
+                contextForeground.translate(controlX, controlY);
+                contextForeground.fillStyle = "rgba(255,255,255,0.2)";
+                contextForeground.fillRect(0, 0, controlWidth, controlHeight);
+                contextForeground.strokeStyle = "white";
+                contextForeground.lineWidth = controlPadding / 10;
+                contextForeground.strokeRect(0, 0, controlWidth, controlHeight);
+                contextForeground.restore();
+                contextForeground.save();
+                contextForeground.translate(client.width * client.devicePixelRatio - controlWidth - controlPadding, controlPadding);
+                contextForeground.fillStyle = "rgba(255,255,255,0.3)";
+                const currentSpeed = (trains[three.followObject].currentSpeedInPercent == undefined || !trains[three.followObject].move || trains[three.followObject].accelerationSpeed < 0 ? 0 : Math.round(trains[three.followObject].currentSpeedInPercent)) / 100;
+                contextForeground.fillRect(0, controlHeight * (1 - currentSpeed), controlWidth, controlHeight * currentSpeed);
+                contextForeground.restore();
+                contextForeground.save();
+                contextForeground.font = controlFont;
+                contextForeground.fillStyle = "white";
+                contextForeground.fillText("speed", controlX, controlY + controlTextSize);
+                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2) {
+                    contextForeground.fillText("sync_alt", controlX, controlY + controlHeight + controlPadding + controlTextSize);
+                }
+                contextForeground.restore();
+                if (!trains[three.followObject].crash && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlHeight) {
+                    hardware.mouse.cursor = "pointer";
+                    if (hardware.mouse.isHold) {
+                        var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - controlY) / controlHeight) * 100);
+                        if (newSpeedByUser < minTrainSpeed && trains[three.followObject].move && trains[three.followObject].accelerationSpeed > 0) {
+                            newSpeedByUser = 0;
+                        } else if (newSpeedByUser < minTrainSpeed) {
+                            newSpeedByUser = minTrainSpeed;
+                        }
+                        if (newSpeedByUser > 95) {
+                            newSpeedByUser = 100;
+                        }
+                        hardware.mouse.isHold = false;
+                        trainActions.setSpeed(three.followObject, newSpeedByUser, true);
+                    }
+                }
+                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlHeight + controlPadding && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlY + controlHeight + controlPadding + controlTextSize) {
+                    hardware.mouse.cursor = "pointer";
+                    if (hardware.mouse.isHold) {
+                        hardware.mouse.isHold = false;
+                        trainActions.changeDirection(three.followObject, true);
+                    }
+                }
+            }
             if (!gui.controlCenter) {
                 var raycasterMove = new THREE.Raycaster();
                 var mouseMove = new THREE.Vector2();
                 mouseMove.x = (hardware.mouse.moveX / client.devicePixelRatio / three.renderer.domElement.clientWidth) * 2 - 1;
                 mouseMove.y = (-hardware.mouse.moveY / client.devicePixelRatio / three.renderer.domElement.clientHeight) * 2 + 1;
-                raycasterMove.setFromCamera(mouseMove, three.camera);
+                raycasterMove.setFromCamera(mouseMove, three.activeCamera);
                 var raycasterDown = new THREE.Raycaster();
                 var mouseDown = new THREE.Vector2();
                 mouseDown.x = (hardware.mouse.downX / client.devicePixelRatio / three.renderer.domElement.clientWidth) * 2 - 1;
                 mouseDown.y = (-hardware.mouse.downY / client.devicePixelRatio / three.renderer.domElement.clientHeight) * 2 + 1;
-                raycasterDown.setFromCamera(mouseDown, three.camera);
+                raycasterDown.setFromCamera(mouseDown, three.activeCamera);
                 var raycasterUp = new THREE.Raycaster();
                 var mouseUp = new THREE.Vector2();
                 mouseUp.x = (hardware.mouse.upX / client.devicePixelRatio / three.renderer.domElement.clientWidth) * 2 - 1;
                 mouseUp.y = (-hardware.mouse.upY / client.devicePixelRatio / three.renderer.domElement.clientHeight) * 2 + 1;
-                raycasterUp.setFromCamera(mouseUp, three.camera);
+                raycasterUp.setFromCamera(mouseUp, three.activeCamera);
                 var intersects = raycasterMove.intersectObjects(three.mainGroup.children);
                 if (intersects.length > 0) {
                     var parent = intersects[0].object;
@@ -2860,7 +3010,7 @@ function drawObjects() {
         three.scene.add(continueTrackNewObject);
 
         three.animateLights();
-        three.renderer.render(three.scene, three.camera);
+        three.renderer.render(three.scene, three.activeCamera);
     } else {
         /////CLASSIC UI/////
         var classicUISavedMouseHold;
@@ -3714,6 +3864,13 @@ function drawObjects() {
                     context.fill();
                     context.restore();
                 }
+                context.save();
+                context.translate(trains[debugTrain].outerX, trains[debugTrain].outerY);
+                context.beginPath();
+                context.arc(0, 0, background.width / 100, 0, 2 * Math.PI);
+                context.fillStyle = "green";
+                context.fill();
+                context.restore();
             }
             debug.drawPointsCrash.forEach(function (point) {
                 context.fillStyle = "rgb(" + Math.round(100 + Math.random() * 155) + "," + Math.round(100 + Math.random() * 155) + "," + Math.round(100 + Math.random() * 155) + ")";
@@ -5517,6 +5674,12 @@ window.onload = function () {
         three.camera.aspect = client.width / client.height;
         three.camera.updateProjectionMatrix();
 
+        three.followCamera = new THREE.PerspectiveCamera(45, client.width / client.height, 0.001, 1);
+        three.followCamera.zoom = 1;
+        three.followCamera.updateProjectionMatrix();
+
+        three.activeCamera = three.cameraMode == "birds-eye" ? three.camera : three.followCamera;
+
         if (gui.demo) {
             three.demoRotationFacX = Math.round(Math.random()) * 2 - 1;
             three.demoRotationFacY = Math.round(Math.random()) * 2 - 1;
@@ -6650,8 +6813,6 @@ window.onload = function () {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
                     trains[i].front.state = train.front.state;
-                    trains[i].front.state = train.front.state;
-                    trains[i].back.state = train.back.state;
                     trains[i].back.state = train.back.state;
                     if (APP_DATA.debug) {
                         trains[i].front.x = train.front.x;
@@ -6664,6 +6825,8 @@ window.onload = function () {
                     trains[i].width = train.width;
                     trains[i].height = train.height;
                     trains[i].displayAngle = train.displayAngle;
+                    trains[i].outerX = train.outerX;
+                    trains[i].outerY = train.outerY;
                     trains[i].assetFlip = train.assetFlip;
                     trains[i].circleFamily = train.circleFamily;
                     trains[i].move = train.move;
@@ -6689,8 +6852,6 @@ window.onload = function () {
                         trains[i].cars[j].invisible = car.invisible;
                         trains[i].cars[j].opacity = car.opacity;
                         trains[i].cars[j].front.state = car.front.state;
-                        trains[i].cars[j].front.state = car.front.state;
-                        trains[i].cars[j].back.state = car.back.state;
                         trains[i].cars[j].back.state = car.back.state;
                         if (APP_DATA.debug) {
                             trains[i].cars[j].front.x = car.front.x;
@@ -6871,6 +7032,10 @@ window.onload = function () {
     } else {
         three.night = getGuiState("3d-night");
     }
+    const queryString3DCamMode = getQueryString("gui-3d-cam-mode");
+    three.cameraMode = getGuiState("3d-cam-mode", queryString3DCamMode);
+    const queryString3DFollowObject = getQueryString("gui-3d-follow-object");
+    three.followObject = getGuiState("3d-follow-object", parseInt(queryString3DFollowObject, 10));
     three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
 
     //Initialize canvases and contexts

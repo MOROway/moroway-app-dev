@@ -85,6 +85,8 @@ The following query parameters can be used with MOROway App (foremost web platfo
   - `mode`: normal, demo, demoStandalone, multiplay (*app mode*)
   - `gui-3d`: 0, 1 (*3D view*)
   - `gui-3d-night`: 0, 1 (*3D night view*)
+  - `gui-3d-cam-mode`: birds-eye, follow-train, follow-car (*3D camera mode*)
+  - `gui-3d-follow-object`: 0, 1, 2, … (*3D object to follow in camera modes follow-train and follow-car*)
 - demo mode
   - `gui-demo-3d-rotation-speed-percent`: 0-100 (*3D demo mode canvas rotation speed in percent*)
 - multiplay mode

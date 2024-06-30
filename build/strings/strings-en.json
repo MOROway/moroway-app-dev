@@ -1,4 +1,6 @@
 {
+	"appScreen3DViewCameraNotify": "Camera: {{0}}",
+	"appScreen3DViewCameraSwitcher": "Switch camera",
 	"appScreen3DViewDayNight": "Switch day and night mode.",
 	"appScreenAMillionFrames": "{{0}} million frames shown",
 	"appScreenCarAutoModeChange": "Automatic car control {{0}}",
@@ -383,6 +385,7 @@
 	"langName": "English",
 	"licenseScreenNotFound": "License text not found.",
 	"optApply": "New configuration saved",
+	"optButton_morowayApp_reduceOptMenuHide3DViewCameraSwitcher": "3D-view switch camera",
 	"optButton_morowayApp_reduceOptMenuHide3DViewNightToggle": "3D-view day/night",
 	"optButton_morowayApp_reduceOptMenuHide3DViewToggle": "3D-view",
 	"optButton_morowayApp_reduceOptMenuHideAudioToggle": "Sound effects",
