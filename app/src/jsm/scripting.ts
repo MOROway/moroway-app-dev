@@ -361,7 +361,7 @@ function showConfirmDialogEnterDemoMode() {
         const confirmDialogParams = confirmDialog.querySelector("#confirm-dialog-params") as HTMLElement;
         confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
         confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
-        if (gui.three) {
+        if (gui.three && (three.cameraMode == undefined || three.cameraMode == "birds-eye")) {
             confirmDialogParams.style.display = "block";
             var elementSpan = document.createElement("span");
             elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
@@ -2791,11 +2791,175 @@ function drawObjects() {
             }
         });
 
-        if (gui.demo) {
+        const controlWidth = Math.min(50, client.width / 15) * client.devicePixelRatio;
+        const controlPadding = controlWidth / 3;
+        const controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
+        const controlTextSize = parseInt(controlFont.replace("px", ""), 10);
+        const controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
+        const controlY = controlPadding;
+        if (three.cameraMode == "follow-car") {
+            if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
+                three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
+            }
+            three.followCamera.position.set(three.calcScale() * ((cars[three.followObject].outerX - background.width / 2) / background.width), three.calcScale() * (-(cars[three.followObject].outerY - background.height / 2) / background.width) + three.calcPositionY(), cars3D[three.followObject].positionZ == undefined ? 0 : cars3D[three.followObject].positionZ);
+            three.followCamera.rotation.set(0, 0, 0);
+            three.followCamera.rotation.z = -cars[three.followObject].displayAngle;
+            if ((!carParams.autoModeOff && carParams.isBackToRoot) || (carParams.autoModeOff && (cars[three.followObject].backToInit || cars[three.followObject].backwardsState > 0))) {
+                three.followCamera.rotation.z += Math.PI;
+            }
+            var axis = new THREE.Vector3(0, 0, 1);
+            var rad = -Math.PI / 2;
+            three.followCamera.rotateOnAxis(axis, rad);
+            var axis = new THREE.Vector3(1, 0, 0);
+            var rad = Math.PI / 2;
+            three.followCamera.rotateOnAxis(axis, rad);
+            three.renderer.render(three.scene, three.followCamera);
+
+            if (!gui.demo && !gui.controlCenter) {
+                contextForeground.save();
+                contextForeground.translate(controlX, controlY + controlTextSize);
+                contextForeground.font = controlFont;
+                contextForeground.fillStyle = "white";
+                if (carParams.init) {
+                    contextForeground.fillText("motion_photos_auto", 0, 0);
+                    contextForeground.fillText("power_settings_new", 0, controlPadding + controlTextSize);
+                } else if (carParams.autoModeOff) {
+                    contextForeground.fillText("power_settings_new", 0, 0);
+                    if (!cars[three.followObject].move && !cars[three.followObject].parking) {
+                        contextForeground.fillText("west", 0, controlPadding + controlTextSize);
+                        contextForeground.fillText("cottage", 0, 2 * (controlPadding + controlTextSize));
+                    }
+                } else {
+                    contextForeground.fillText("play_pause", 0, 0);
+                    contextForeground.fillText("cottage", 0, controlPadding + controlTextSize);
+                }
+                contextForeground.restore();
+                if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlTextSize) {
+                    hardware.mouse.cursor = "pointer";
+                    if (hardware.mouse.isHold) {
+                        if (carParams.init) {
+                            carActions.auto.start();
+                        } else if (carParams.autoModeOff) {
+                            if (cars[three.followObject].move) {
+                                carActions.manual.stop(three.followObject);
+                            } else {
+                                carActions.manual.start(three.followObject);
+                            }
+                        } else {
+                            if (carParams.autoModeRuns) {
+                                carActions.auto.pause();
+                            } else {
+                                carActions.auto.resume();
+                            }
+                        }
+                        hardware.mouse.isHold = false;
+                    }
+                } else if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlPadding + controlTextSize && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlPadding + controlTextSize * 2) {
+                    if (carParams.init) {
+                        hardware.mouse.cursor = "pointer";
+                        if (hardware.mouse.isHold) {
+                            carActions.manual.start(three.followObject);
+                            hardware.mouse.isHold = false;
+                        }
+                    } else if (carParams.autoModeOff) {
+                        if (!cars[three.followObject].move && !cars[three.followObject].parking) {
+                            hardware.mouse.cursor = "pointer";
+                            if (hardware.mouse.isHold) {
+                                carActions.manual.backwards(three.followObject);
+                                hardware.mouse.isHold = false;
+                            }
+                        }
+                    } else {
+                        hardware.mouse.cursor = "pointer";
+                        if (hardware.mouse.isHold) {
+                            carActions.auto.end();
+                            hardware.mouse.isHold = false;
+                        }
+                    }
+                } else if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlPadding * 2 + controlTextSize * 2 && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlPadding * 2 + controlTextSize * 3) {
+                    if (!carParams.init && carParams.autoModeOff && !cars[three.followObject].move && !cars[three.followObject].parking) {
+                        hardware.mouse.cursor = "pointer";
+                        if (hardware.mouse.isHold) {
+                            carActions.manual.park(three.followObject);
+                            hardware.mouse.isHold = false;
+                        }
+                    }
+                }
+            }
+        } else if (three.cameraMode == "follow-train") {
+            if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > trains.length - 1) {
+                three.followObject = gui.demo ? Math.floor(Math.random() * trains.length) : 0;
+            }
+            var object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
+            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[three.followObject].positionZ == undefined ? 0 : trains3D[three.followObject].positionZ);
+            three.followCamera.rotation.set(0, 0, 0);
+            three.followCamera.rotation.z = -object.displayAngle;
+            if (!trains[three.followObject].standardDirection) {
+                three.followCamera.rotation.z += Math.PI;
+            }
+            var axis = new THREE.Vector3(0, 0, 1);
+            var rad = -Math.PI / 2;
+            three.followCamera.rotateOnAxis(axis, rad);
+            var axis = new THREE.Vector3(1, 0, 0);
+            var rad = Math.PI / 2;
+            three.followCamera.rotateOnAxis(axis, rad);
+
+            if (!gui.demo && !gui.controlCenter) {
+                const controlHeight = Math.min(250, (client.height - menus.outerContainer.height) / 2) * client.devicePixelRatio;
+                contextForeground.save();
+                contextForeground.translate(controlX, controlY);
+                contextForeground.fillStyle = trains[three.followObject].crash ? "rgba(255,150,150,0.2)" : "rgba(255,255,255,0.2)";
+                contextForeground.fillRect(0, 0, controlWidth, controlHeight);
+                contextForeground.strokeStyle = "white";
+                contextForeground.lineWidth = controlPadding / 10;
+                contextForeground.strokeRect(0, 0, controlWidth, controlHeight);
+                contextForeground.restore();
+                contextForeground.save();
+                contextForeground.translate(client.width * client.devicePixelRatio - controlWidth - controlPadding, controlPadding);
+                contextForeground.fillStyle = "rgba(255,255,255,0.3)";
+                const currentSpeed = (trains[three.followObject].currentSpeedInPercent == undefined || !trains[three.followObject].move || trains[three.followObject].accelerationSpeed < 0 ? 0 : Math.round(trains[three.followObject].currentSpeedInPercent)) / 100;
+                contextForeground.fillRect(0, controlHeight * (1 - currentSpeed), controlWidth, controlHeight * currentSpeed);
+                contextForeground.restore();
+                contextForeground.save();
+                contextForeground.font = controlFont;
+                contextForeground.fillStyle = "white";
+                contextForeground.fillText("speed", controlX, controlY + controlTextSize);
+                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2) {
+                    contextForeground.fillText("sync_alt", controlX, controlY + controlHeight + controlPadding + controlTextSize);
+                }
+                contextForeground.restore();
+                if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlHeight) {
+                    hardware.mouse.cursor = "pointer";
+                    if (hardware.mouse.isHold) {
+                        if (!trains[three.followObject].crash) {
+                            var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - controlY) / controlHeight) * 100);
+                            if (newSpeedByUser < minTrainSpeed && trains[three.followObject].move && trains[three.followObject].accelerationSpeed > 0) {
+                                newSpeedByUser = 0;
+                            } else if (newSpeedByUser < minTrainSpeed) {
+                                newSpeedByUser = minTrainSpeed;
+                            }
+                            if (newSpeedByUser > 95) {
+                                newSpeedByUser = 100;
+                            }
+                            trainActions.setSpeed(three.followObject, newSpeedByUser, true);
+                        }
+                        hardware.mouse.isHold = false;
+                    }
+                }
+                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlHeight + controlPadding && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlY + controlHeight + controlPadding + controlTextSize) {
+                    hardware.mouse.cursor = "pointer";
+                    if (hardware.mouse.isHold) {
+                        trainActions.changeDirection(three.followObject, true);
+                        hardware.mouse.isHold = false;
+                    }
+                }
+            }
+        } else if (gui.demo) {
             var rotation = (Math.random() / 500) * (three.demoRotationSpeedFac / 100);
             three.scene.rotation.x += three.demoRotationFacX * rotation;
             three.scene.rotation.y += three.demoRotationFacY * rotation;
-        } else {
+        }
+        if (!gui.demo) {
             Object.keys(switches).forEach(function (key) {
                 Object.keys(switches[key]).forEach(function (currentKey) {
                     function getFadeColor(fadeProgress, maxColor = 255) {
@@ -2844,95 +3008,6 @@ function drawObjects() {
                     switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), new THREE.Box3().setFromObject(switches3D[key][currentKey].squareMeshTurned).getSize(new THREE.Vector3()).z / 2);
                 });
             });
-
-            if (three.cameraMode == "follow-car") {
-                if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
-                    three.followObject = 0;
-                }
-                three.followCamera.position.set(three.calcScale() * ((cars[three.followObject].outerX - background.width / 2) / background.width), three.calcScale() * (-(cars[three.followObject].outerY - background.height / 2) / background.width) + three.calcPositionY(), cars3D[three.followObject].positionZ == undefined ? 0 : cars3D[three.followObject].positionZ);
-                three.followCamera.rotation.set(0, 0, 0);
-                three.followCamera.rotation.z = -cars[three.followObject].displayAngle;
-                if ((!carParams.autoModeOff && carParams.isBackToRoot) || (carParams.autoModeOff && (cars[three.followObject].backToInit || cars[three.followObject].backwardsState > 0))) {
-                    three.followCamera.rotation.z += Math.PI;
-                }
-                var axis = new THREE.Vector3(0, 0, 1);
-                var rad = -Math.PI / 2;
-                three.followCamera.rotateOnAxis(axis, rad);
-                var axis = new THREE.Vector3(1, 0, 0);
-                var rad = Math.PI / 2;
-                three.followCamera.rotateOnAxis(axis, rad);
-                three.renderer.render(three.scene, three.followCamera);
-            } else if (three.cameraMode == "follow-train") {
-                if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > trains.length - 1) {
-                    three.followObject = 0;
-                }
-                var object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
-                three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[three.followObject].positionZ == undefined ? 0 : trains3D[three.followObject].positionZ);
-                three.followCamera.rotation.set(0, 0, 0);
-                three.followCamera.rotation.z = -object.displayAngle;
-                if (!trains[three.followObject].standardDirection) {
-                    three.followCamera.rotation.z += Math.PI;
-                }
-                var axis = new THREE.Vector3(0, 0, 1);
-                var rad = -Math.PI / 2;
-                three.followCamera.rotateOnAxis(axis, rad);
-                var axis = new THREE.Vector3(1, 0, 0);
-                var rad = Math.PI / 2;
-                three.followCamera.rotateOnAxis(axis, rad);
-
-                const controlWidth = Math.min(200, client.width / 25) * client.devicePixelRatio;
-                const controlPadding = controlWidth / 5;
-                const controlHeight = ((client.height - menus.outerContainer.height) / 2) * client.devicePixelRatio;
-                const controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
-                const controlY = controlPadding;
-                const controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
-                const controlTextSize = parseInt(controlFont.replace("px", ""), 10);
-                contextForeground.save();
-                contextForeground.translate(controlX, controlY);
-                contextForeground.fillStyle = "rgba(255,255,255,0.2)";
-                contextForeground.fillRect(0, 0, controlWidth, controlHeight);
-                contextForeground.strokeStyle = "white";
-                contextForeground.lineWidth = controlPadding / 10;
-                contextForeground.strokeRect(0, 0, controlWidth, controlHeight);
-                contextForeground.restore();
-                contextForeground.save();
-                contextForeground.translate(client.width * client.devicePixelRatio - controlWidth - controlPadding, controlPadding);
-                contextForeground.fillStyle = "rgba(255,255,255,0.3)";
-                const currentSpeed = (trains[three.followObject].currentSpeedInPercent == undefined || !trains[three.followObject].move || trains[three.followObject].accelerationSpeed < 0 ? 0 : Math.round(trains[three.followObject].currentSpeedInPercent)) / 100;
-                contextForeground.fillRect(0, controlHeight * (1 - currentSpeed), controlWidth, controlHeight * currentSpeed);
-                contextForeground.restore();
-                contextForeground.save();
-                contextForeground.font = controlFont;
-                contextForeground.fillStyle = "white";
-                contextForeground.fillText("speed", controlX, controlY + controlTextSize);
-                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2) {
-                    contextForeground.fillText("sync_alt", controlX, controlY + controlHeight + controlPadding + controlTextSize);
-                }
-                contextForeground.restore();
-                if (!trains[three.followObject].crash && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlHeight) {
-                    hardware.mouse.cursor = "pointer";
-                    if (hardware.mouse.isHold) {
-                        var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - controlY) / controlHeight) * 100);
-                        if (newSpeedByUser < minTrainSpeed && trains[three.followObject].move && trains[three.followObject].accelerationSpeed > 0) {
-                            newSpeedByUser = 0;
-                        } else if (newSpeedByUser < minTrainSpeed) {
-                            newSpeedByUser = minTrainSpeed;
-                        }
-                        if (newSpeedByUser > 95) {
-                            newSpeedByUser = 100;
-                        }
-                        hardware.mouse.isHold = false;
-                        trainActions.setSpeed(three.followObject, newSpeedByUser, true);
-                    }
-                }
-                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlHeight + controlPadding && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlY + controlHeight + controlPadding + controlTextSize) {
-                    hardware.mouse.cursor = "pointer";
-                    if (hardware.mouse.isHold) {
-                        hardware.mouse.isHold = false;
-                        trainActions.changeDirection(three.followObject, true);
-                    }
-                }
-            }
             if (!gui.controlCenter) {
                 var raycasterMove = new THREE.Raycaster();
                 var mouseMove = new THREE.Vector2();
@@ -7035,7 +7110,7 @@ window.onload = function () {
     const queryString3DCamMode = getQueryString("gui-3d-cam-mode");
     three.cameraMode = getGuiState("3d-cam-mode", queryString3DCamMode);
     const queryString3DFollowObject = getQueryString("gui-3d-follow-object");
-    three.followObject = getGuiState("3d-follow-object", parseInt(queryString3DFollowObject, 10));
+    three.followObject = gui.demo ? -1 : getGuiState("3d-follow-object", parseInt(queryString3DFollowObject, 10));
     three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
 
     //Initialize canvases and contexts

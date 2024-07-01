@@ -292,11 +292,13 @@ class HomeActivity : MOROwayActivity() {
             } else {
                 binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_3)
             }
+
             2 -> if (portraitPictureBig) {
                 binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_2_big)
             } else {
                 binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_2)
             }
+
             1 -> binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_1)
             else -> if (portraitPictureBig) {
                 binding.bigStylePictures!!.setImageResource(R.drawable.home_portrait_0_big)

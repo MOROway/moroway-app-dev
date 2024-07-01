@@ -17,6 +17,10 @@
   <string name="generalServerNoteButtonGo">Learn more</string>
   <string name="generalServerNoteButtonLater">show again</string>
   <string name="generalServerNoteInfoLater">Only works if this message remains valid.</string>
+  <string name="generalStartDemoMode3DCameraMode">3D: camera mode</string>
+  <string name="generalStartDemoMode3DCameraModeBirdsEye">bird\'s-eye</string>
+  <string name="generalStartDemoMode3DCameraModeFollowCar">follow car</string>
+  <string name="generalStartDemoMode3DCameraModeFollowTrain">follow train</string>
   <string name="generalStartDemoMode3DRotationSpeed">3D: rotation speed</string>
   <string name="generalStartGame">Play</string>
   <string name="generalStartGameDemoMode">Start demo mode</string>

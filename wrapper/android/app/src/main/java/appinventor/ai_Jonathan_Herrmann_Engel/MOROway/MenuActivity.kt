@@ -65,8 +65,26 @@ class MenuActivity : MOROwayActivity() {
                     View.GONE
                 }
             }
+            demoModeDialogBinding.demoMode3dCameraModeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+                when (checkedId) {
+                    R.id.demo_mode_3d_camera_mode_radio_birdseye -> {
+                        demoModeDialogBinding.demoMode3dCameraBirdseyeOnly.visibility =
+                            View.VISIBLE
+                    }
+
+                    else -> {
+                        demoModeDialogBinding.demoMode3dCameraBirdseyeOnly.visibility = View.GONE
+                    }
+                }
+            }
             demoModeDialogBinding.demoMode3dOnly.visibility =
                 if (demoModeDialogBinding.demoMode3d.isChecked) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            demoModeDialogBinding.demoMode3dCameraBirdseyeOnly.visibility =
+                if (demoModeDialogBinding.demoMode3dCameraModeRadioBirdseye.isChecked) {
                     View.VISIBLE
                 } else {
                     View.GONE
@@ -83,7 +101,11 @@ class MenuActivity : MOROwayActivity() {
                         1
                     } else {
                         0
-                    }) + "&gui-demo-3d-rotation-speed-percent=" + demoModeDialogBinding.dDemoMode3dRotationSpeed.progress
+                    }) + "&gui-demo-3d-rotation-speed-percent=" + demoModeDialogBinding.dDemoMode3dRotationSpeed.progress + "&gui-3d-cam-mode=" + when (demoModeDialogBinding.demoMode3dCameraModeRadioGroup.checkedRadioButtonId) {
+                        R.id.demo_mode_3d_camera_mode_radio_follow_train -> "follow-train"
+                        R.id.demo_mode_3d_camera_mode_radio_follow_car -> "follow-car"
+                        else -> "birds-eye"
+                    }
                 )
                 demoModeDialog.dismiss()
                 startActivity(intent)

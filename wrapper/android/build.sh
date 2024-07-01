@@ -78,5 +78,5 @@ for string_file in "$working_dir_build"/strings/*; do
 		--xml-proc-inst-prefix "+p_" \
 		--xml-attribute-prefix "+@" \
 		--input-format json \
-		--output-format xml >"$out"
+		--output-format xml | sed "s/&#34;/\&quot;/g;s/&#39;/\\\\'/g" >"$out"
 done

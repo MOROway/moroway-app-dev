@@ -952,6 +952,12 @@ function setCOPosCorr(cO, isFront, input1, currentObject, i) {
         cO.y -= (supposedDistance - distance) * Math.sin(calcAngle);
     } while (Math.abs(supposedDistance - distance) > 0.001 && --maxRepeatNo > 0);
 }
+function setTrainOuterPos(input1) {
+    var isFront = trains[input1].standardDirection;
+    var carObject = isFront || trains[input1].cars.length == 0 ? trains[input1] : trains[input1].cars[trains[input1].cars.length - 1];
+    trains[input1].outerX = carObject.x + Math.cos(carObject.displayAngle) * ((carObject.width * 1.05) / 2) * (isFront ? 1 : -1);
+    trains[input1].outerY = carObject.y + Math.sin(carObject.displayAngle) * ((carObject.width * 1.05) / 2) * (isFront ? 1 : -1);
+}
 function setCurrentObjectDisplayAngle(input1, currentObject) {
     function adjustAngle() {
         while (currentObject.displayAngle < 0) {
@@ -1762,6 +1768,7 @@ function animateObjects() {
                 trains[input1].accelerationSpeed = 0;
                 trains[input1].accelerationSpeedCustom = 1;
             }
+            setTrainOuterPos(input1);
         }
         for (var i = -1; i < trains[input1].cars.length; i++) {
             animateTrain(i);

@@ -54,6 +54,18 @@ var items = {
             return typeof test == "boolean";
         }
     },
+    "3d-cam-mode": {
+        default: "birds-eye",
+        validate: function (test) {
+            return (typeof test == "string" && test == "birds-eye") || test == "follow-train" || test == "follow-car";
+        }
+    },
+    "3d-follow-object": {
+        default: 0,
+        validate: function (test) {
+            return typeof test == "number" && Number.isInteger(test) && test >= 0;
+        }
+    },
     "3d-rotation-speed": {
         default: 50,
         validate: function (test) {
