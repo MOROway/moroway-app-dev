@@ -126,6 +126,7 @@ interface Debug {
 interface Three {
     calcScale(): number;
     calcPositionY(): number;
+    switchCamera(forwards: boolean): void;
     zoom: number;
     scene?: any;
     renderer?: any;
@@ -742,7 +743,8 @@ function calcMenusAndBackground(state) {
                 element3DViewToggle.querySelector("i")!.textContent = "2d";
                 element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
             }
-            element3DViewCameraSwitcher?.classList.remove("gui-hidden");
+            element3DViewCameraSwitcherBackwards?.classList.remove("gui-hidden");
+            element3DViewCameraSwitcherForwards?.classList.remove("gui-hidden");
         } else {
             elementInfoToggle?.classList.remove("gui-hidden");
             element3DViewNightToggle?.classList.add("gui-hidden");
@@ -750,7 +752,8 @@ function calcMenusAndBackground(state) {
                 element3DViewToggle.querySelector("i")!.textContent = "view_in_ar";
                 element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
             }
-            element3DViewCameraSwitcher?.classList.add("gui-hidden");
+            element3DViewCameraSwitcherBackwards?.classList.add("gui-hidden");
+            element3DViewCameraSwitcherForwards?.classList.add("gui-hidden");
         }
     }
     const soundFileExtension = "{{sound_file_extension}}";
@@ -763,7 +766,8 @@ function calcMenusAndBackground(state) {
     const elementSoundToggle = document.querySelector("#canvas-sound-toggle") as HTMLElement;
     const element3DViewToggle = document.querySelector("#canvas-3d-view-toggle") as HTMLElement;
     const element3DViewNightToggle = document.querySelector("#canvas-3d-view-day-night");
-    const element3DViewCameraSwitcher = document.querySelector("#canvas-3d-view-camera-switcher");
+    const element3DViewCameraSwitcherBackwards = document.querySelector("#canvas-3d-view-camera-switcher-backwards");
+    const element3DViewCameraSwitcherForwards = document.querySelector("#canvas-3d-view-camera-switcher-forwards");
     const elementControlCenterTrains = document.querySelector("#canvas-control-center");
     const elementControlCenterCars = document.querySelector("#canvas-car-control-center");
     const elementTeamChat = document.querySelector("#canvas-chat-open");
@@ -825,11 +829,13 @@ function calcMenusAndBackground(state) {
             element3DViewNightToggle.classList.remove("settings-hidden");
         }
     }
-    if (element3DViewCameraSwitcher != null) {
+    if (element3DViewCameraSwitcherBackwards != null && element3DViewCameraSwitcherForwards != null) {
         if (getSetting("reduceOptMenuHide3DViewCameraSwitcher")) {
-            element3DViewCameraSwitcher.classList.add("settings-hidden");
+            element3DViewCameraSwitcherBackwards.classList.add("settings-hidden");
+            element3DViewCameraSwitcherForwards.classList.add("settings-hidden");
         } else {
-            element3DViewCameraSwitcher.classList.remove("settings-hidden");
+            element3DViewCameraSwitcherBackwards.classList.remove("settings-hidden");
+            element3DViewCameraSwitcherForwards.classList.remove("settings-hidden");
         }
     }
     if (state == "load") {
@@ -1014,36 +1020,13 @@ function calcMenusAndBackground(state) {
             background3D.animateBehind(true);
             setGuiState("3d-night", three.night);
         });
-        element3DViewCameraSwitcher?.addEventListener("click", function () {
+        element3DViewCameraSwitcherBackwards?.addEventListener("click", function () {
             commonOnOptionsMenuClick();
-            if (three.cameraMode == "follow-car") {
-                if (three.followObject < cars.length - 1) {
-                    three.followObject++;
-                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-                } else {
-                    three.cameraMode = "birds-eye";
-                    three.activeCamera = three.camera;
-                }
-            } else if (three.cameraMode == "follow-train") {
-                if (three.followObject < trains.length - 1) {
-                    three.followObject++;
-                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-                } else {
-                    three.followObject = 0;
-                    three.cameraMode = "follow-car";
-                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-                }
-            } else {
-                three.followObject = 0;
-                three.cameraMode = "follow-train";
-                three.activeCamera = three.followCamera;
-                notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-            }
-            setGuiState("3d-cam-mode", three.cameraMode);
-            setGuiState("3d-follow-object", three.followObject);
-            resetScale();
-            resetTilt();
-            calcMenusAndBackground("resize");
+            three.switchCamera(false);
+        });
+        element3DViewCameraSwitcherForwards?.addEventListener("click", function () {
+            commonOnOptionsMenuClick();
+            three.switchCamera(true);
         });
         set3DItems();
     }
@@ -1594,21 +1577,21 @@ function onKeyDown(event) {
     if (event.key == "Tab" || event.key == "Enter") {
         event.preventDefault();
     }
-    if (event.key == "/" && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
+    if (event.key == "/" && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && !gui.sidebarRight && !gui.textControl) {
         event.preventDefault();
-        if (!gui.sidebarRight && !gui.textControl) {
-            gui.textControl = true;
-            if (gui.infoOverlay) {
-                drawInfoOverlayMenu("hide-outer");
-            } else {
-                drawOptionsMenu("hide-outer");
-            }
-            textControl.elements.output.textContent = textControl.execute();
-            textControl.elements.root.style.display = "block";
-            textControl.elements.input.focus();
+        gui.textControl = true;
+        if (gui.infoOverlay) {
+            drawInfoOverlayMenu("hide-outer");
+        } else {
+            drawOptionsMenu("hide-outer");
         }
-    }
-    if (event.ctrlKey && event.key == "0" && client.zoomAndTilt.realScale > 1) {
+        textControl.elements.output.textContent = textControl.execute();
+        textControl.elements.root.style.display = "block";
+        textControl.elements.input.focus();
+    } else if ((event.key == "c" || event.key == "C") && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && gui.three) {
+        event.preventDefault();
+        three.switchCamera(event.key == "c");
+    } else if (event.ctrlKey && event.key == "0" && client.zoomAndTilt.realScale > 1) {
         event.preventDefault();
         getGesture({type: "doubletap", deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
     } else if (event.ctrlKey && (event.key == "+" || event.key == "-")) {
@@ -5081,6 +5064,59 @@ const three: Three = {
     },
     calcPositionY: function () {
         return ((client.height - (background.y * 2 + background.height) / client.devicePixelRatio) / client.height) * (background.height / background.width / 2);
+    },
+    switchCamera: function (forwards = true) {
+        if (forwards) {
+            if (three.cameraMode == "follow-car") {
+                if (three.followObject < cars.length - 1) {
+                    three.followObject++;
+                } else {
+                    three.cameraMode = "birds-eye";
+                    three.activeCamera = three.camera;
+                }
+            } else if (three.cameraMode == "follow-train") {
+                if (three.followObject < trains.length - 1) {
+                    three.followObject++;
+                } else {
+                    three.followObject = 0;
+                    three.cameraMode = "follow-car";
+                }
+            } else {
+                three.followObject = 0;
+                three.cameraMode = "follow-train";
+                three.activeCamera = three.followCamera;
+            }
+        } else {
+            if (three.cameraMode == "follow-car") {
+                if (three.followObject == 0) {
+                    three.followObject = trains.length - 1;
+                    three.cameraMode = "follow-train";
+                } else {
+                    three.followObject--;
+                }
+            } else if (three.cameraMode == "follow-train") {
+                if (three.followObject == 0) {
+                    three.cameraMode = "birds-eye";
+                    three.activeCamera = three.camera;
+                } else {
+                    three.followObject--;
+                }
+            } else {
+                three.followObject = cars.length - 1;
+                three.cameraMode = "follow-car";
+                three.activeCamera = three.followCamera;
+            }
+        }
+        if (three.cameraMode == "follow-car") {
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+        } else if (three.cameraMode == "follow-train") {
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+        }
+        setGuiState("3d-cam-mode", three.cameraMode);
+        setGuiState("3d-follow-object", three.followObject);
+        resetScale();
+        resetTilt();
+        calcMenusAndBackground("resize");
     },
     zoom: 3
 };
