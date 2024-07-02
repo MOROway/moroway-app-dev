@@ -223,7 +223,8 @@
 		"Sie können die drei links neben dem Bahnhof geparkten Autos (gelbes Cabrio, rotes Cabrio, weißer VW-Bus) jeweils per Klick auf das Fahrzeug zum Fahren bringen. Um alle Autos automatisch fahren zu lassen, aktivieren Sie durch Touchen und halten bzw. Doppelklicken eines Autos den automatischen Modus.",
 		"Sofern sie den automatischen Modus nicht aktiviert haben lassen sich die Autos getrennt per Klick starten und stoppen. Starten Sie mehrere Autos, riskieren Sie einen Frontalzusammenstoß. Um die betroffenen Autos hiernach erneut starten zu können, setzten Sie ein Auto durch Touchen und halten bzw. Doppelklicken des Autos zurück.",
 		"Touchen oder Klicken auf den leeren Parkplatz eines angehaltenen Autos bringt es dorthin zurück.",
-		"Sie können ein Autokontrollzentrum aufrufen durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund des Zugkontrollzentrums. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden."
+		"Sie können ein Autokontrollzentrum aufrufen durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund des Zugkontrollzentrums. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden.",
+		"Im „Auto folgen“ Kameramodus der 3D-Ansicht können Sie automatischen oder manuellen Modus auswählen, den automatischen Modus pausieren bzw. beenden oder das aktuelle Auto im manuellen Modus steuern mit den Schaltflächen in der Ecke oben rechts."
 	],
 	"helpScreenGeneralGestures": "Gesten {{0}}",
 	"helpScreenGeneralGesturesPs": [
@@ -231,7 +232,8 @@
 		"Um den gezoomten Bildausschnitt zu ändern, können Sie die Pfeiltasten nutzen oder auf den Hintergrund der Anlage klicken / touchen, halten und bewegen.",
 		"Um den Zoom-Faktor zurückzusetzen können Sie die „Steuerungstaste“ + „0“ oder einen Doppel-Touch auf den Hintergrund der Anlage nutzen.",
 		"In der 3D-Ansicht können Sie die Anlage auch neigen mit „Steuerungstaste“ + einer Pfeiltaste, Mausrad klicken und halten + Maus bewegen oder der parallelen Bewegung zweier Finger (nur Touch).",
-		"In der 3D-Ansicht können Sie die Neigung zurücksetzen mit einem Doppelklick oder langem Touch auf den schwarzen Bereich neben der Anlage."
+		"In der 3D-Ansicht können Sie die Neigung zurücksetzen mit einem Doppelklick oder langem Touch auf den schwarzen Bereich neben der Anlage.",
+		"In der 3D-Ansicht sind alle Gesten nur in der Vogelperspektive verfügbar."
 	],
 	"helpScreenGeneralTeamplay": "Mehrspielermodus {{0}}",
 	"helpScreenGeneralTeamplayPs": [
@@ -244,12 +246,13 @@
 	"helpScreenGeneralTrains": "Eisenbahnen {{0}}",
 	"helpScreenGeneralTrainsPs": [
 		"Sie können zur Zeit sieben Züge steuern: Eine Dampflok, einen TGV Duplex, einen Schienen-Straßen-Bus, einen Thalys, einen Regionalzug, eine Straßenbahn und einen amerikanischen Güterzug. Das Starten bzw. Stoppen eines Zuges erfolgt durch Touch bzw. Klick auf den gewünschten Zug oder mit Hilfe der ausblendbaren klassischen Steuerelemente. Um einen Zug zu wenden, halten Sie den Zug an und touchen und halten bzw. doppelklicken Sie ihn.",
-		"Um mittels der klassischen Steuerelemente zu fahren, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im App-Bildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im App-Bildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
+		"Um mittels der klassischen Steuerelemente (nur 2D-Ansicht) zu steuern, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im App-Bildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im App-Bildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
 		"Wenn Sie einen größeren Bildschirm verwenden, so können Sie die Geschwindigkeit des Zuges beeinflussen, indem Sie den Regler des Transformators an die gewünschte Position ziehen, ihn an unterschiedlichen Stellen anklicken oder über ihm am Mausrad drehen. Auf kleinen Bildschirmen wird unabhängig hiervon eine mittlere Geschwindigkeit eingestellt. Sie können diese Beschränkung durch Heranzoomen des Transformators umgehen.",
 		"Um die Richtung des jeweils ausgewählten Zuges am Transformator zu ändern, klicken Sie auf das Symbol mit den gespiegelten Pfeilen unten rechts im Transformator an. Die ausgewählte Richtung wird relativ zu den unteren Gleisen hervorgehoben. Wenn der Zug nicht komplett angehalten ist, kann die Richtung nicht gewechselt werden und das Pfeilsymbol ist ausgeblichen. Auf kleineren Bildschirmen kann die Richtung hier nicht verändert werden.",
 		"Bei über die Wendeschleife gewendeten Zügen ist die Richtungsanzeige an allen Stellen umgekehrt zu interpretieren.",
 		"Auch können Sie einige Weichen stellen. Das Stellen einer Weiche erfolgt durch Klick auf das farbige Symbol der jeweiligen Weiche. Die Position der Symbole kann durch langen Klick bzw. Touch auf den Hintergrund der Anlage ermittelt werden. Der Zug befährt immer den rot oder grün eingefärbten Weg.",
-		"Sie können durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund ein Zugkontrollzentrum aufrufen. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden."
+		"Sie können durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund ein Zugkontrollzentrum aufrufen. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden.",
+		"Im „Zug folgen“ Kameramodus der 3D-Ansicht können Sie den aktuellen Zug mit den Schaltflächen in der Ecke oben rechts steuern."
 	],
 	"helpScreenGeneralWelcome": "Willkommen {{0}}",
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Neuigkeiten",

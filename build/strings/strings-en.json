@@ -45,7 +45,6 @@
 		"Change train direction"
 	],
 	"appScreenHasLoaded": "app ready",
-	"generalIsFail": "An error occurred",
 	"appScreenKonami": "You cracked the Konami Code",
 	"appScreenKonamiAnimals": [
 		"🐢",
@@ -180,6 +179,7 @@
 	"general3DView": "3D-view",
 	"generalBack": "back",
 	"generalClose": "close",
+	"generalIsFail": "An error occurred",
 	"generalLeaveAndDestroyGame": "Leave and destroy game?",
 	"generalLeaveAndDestroyGameNo": "Continue game",
 	"generalLeaveAndDestroyGameTitle": "Are you sure?",
@@ -263,7 +263,8 @@
 		"By touching / clicking one of the three cars left to the main station it starts. By touching and holding / double-clicking one of them they enter automatic mode, which means they navigate automatically.",
 		"If you haven't enabled automatic mode and operate more than one car, you risk a head-on collision. If this happens touch and hold / double-click one of the involved cars to move it back.",
 		"Touching or clicking on a stopped car's parking lot will navigate it back there.",
-		"You may access a car control center by touching with three fingers / right-clicking the background of the train control center. Alternatively you may use the options menu icon below the virtual model railroad."
+		"You may access a car control center by touching with three fingers / right-clicking the background of the train control center. Alternatively you may use the options menu icon below the virtual model railroad.",
+		"In the “follow car” 3D-view camera mode you can select automatic or manual mode, pause / end the automatic mode or control the current car in manual mode with the controls in the upper right hand corner."
 	],
 	"helpScreenGeneralGestures": "Gestures {{0}}",
 	"helpScreenGeneralGesturesIcon": "🖼️",
@@ -272,7 +273,8 @@
 		"To change the zoom display detail you may use the arrow keys or click/touch the background, hold and move.",
 		"The reset the zoom factor you may use the “control”-key + “0” or double-touch on the background.",
 		"In the 3D-view you can also tilt the view by using the “control”-key + an “arrow”-key, click and hold the mouse wheel + move the mouse or moving two fingers parallel (touch only).",
-		"In the 3D-view you can reset the tilt by double-click or touch and hold on the black area next to the game."
+		"In the 3D-view you can reset the tilt by double-click or touch and hold on the black area next to the game.",
+		"In the 3D-view all gestures are only available in the bird's-eye camera mode."
 	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
 	"helpScreenGeneralTeamplayIcon": "🎮",
@@ -287,12 +289,13 @@
 	"helpScreenGeneralTrainsIcon": "🚂",
 	"helpScreenGeneralTrainsPs": [
 		"You may operate seven trains: a steam engine, two high speed trains, a railbus, a local train, a street car and an American freight train. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
-		"To navigate by using “Classic UI”, select a train by touching / clicking on the button on the lower-left side. Start or stop the selected train by operating the transformer.",
+		"To navigate by using “Classic UI” (only 2D-view), select a train by touching / clicking on the button on the lower-left side. Start or stop the selected train by operating the transformer.",
 		"On larger devices you are also able to control the trains's speed using the transformer. Small devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
 		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on small devices.",
 		"For trains turned around using the turning loop the direction display needs to be read inverted everywhere.",
 		"You may turn some switches. Touch / click and hold the background to located the switches. Touch / click on a switch to turn it. The train takes the red or green colored way.",
-		"You may access a train control center by touching with three fingers / right-clicking the background. Alternatively you may use the options menu icon below the virtual model railroad."
+		"You may access a train control center by touching with three fingers / right-clicking the background. Alternatively you may use the options menu icon below the virtual model railroad.",
+		"In the “follow train” 3D-view camera mode you can control the current train with the controls in the upper right hand corner."
 	],
 	"helpScreenGeneralWelcome": "Welcome {{0}}",
 	"helpScreenGeneralWelcomeButtonWhatsNew": "Changelog",
