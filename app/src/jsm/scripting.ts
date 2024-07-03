@@ -2814,7 +2814,9 @@ function drawObjects() {
                     }
                 } else {
                     contextForeground.fillText("play_pause", 0, 0);
-                    contextForeground.fillText("cottage", 0, controlPadding + controlTextSize);
+                    if (!carParams.isBackToRoot) {
+                        contextForeground.fillText("cottage", 0, controlPadding + controlTextSize);
+                    }
                 }
                 contextForeground.restore();
                 if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlTextSize) {
@@ -2853,10 +2855,12 @@ function drawObjects() {
                             }
                         }
                     } else {
-                        hardware.mouse.cursor = "pointer";
-                        if (hardware.mouse.isHold) {
-                            carActions.auto.end();
-                            hardware.mouse.isHold = false;
+                        if (!carParams.isBackToRoot) {
+                            hardware.mouse.cursor = "pointer";
+                            if (hardware.mouse.isHold) {
+                                carActions.auto.end();
+                                hardware.mouse.isHold = false;
+                            }
                         }
                     }
                 } else if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlPadding * 2 + controlTextSize * 2 && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlPadding * 2 + controlTextSize * 3) {
