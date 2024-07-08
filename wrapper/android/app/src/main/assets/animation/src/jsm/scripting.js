@@ -11,7 +11,7 @@ import { getSetting } from "./common/settings.js";
 import { notify, NOTIFICATION_CHANNEL_3D_CAMERA, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT, NOTIFICATION_CHANNEL_TRAIN_SWITCHES, NOTIFICATION_PRIO_DEFAULT, NOTIFICATION_PRIO_LOW, NOTIFICATION_PRIO_HIGH } from "./common/notify.js";
 import { copyJSObject } from "./common/js_objects.js";
 import { copy } from "./common/copy_paste.js";
-import { getGuiState, setGuiState } from "./common/gui_state.js";
+import { ThreeCameraModes, getGuiState, setGuiState } from "./common/gui_state.js";
 import { getVersionCode, updateSavedGame, removeSavedGame } from "./common/saved_game.js";
 import { initTooltip, initTooltips } from "./common/tooltip.js";
 import * as THREE from "../lib/open_code/jsm/three.js/three.module.min.js";
@@ -36,11 +36,17 @@ function drawImage(pic, x, y, width, height, cxt, sx, sy, sWidth, sHeight) {
     if (sy === void 0) { sy = undefined; }
     if (sWidth === void 0) { sWidth = undefined; }
     if (sHeight === void 0) { sHeight = undefined; }
+    function floorIfBigEnough(num) {
+        if (client.isTiny) {
+            return num;
+        }
+        return Math.floor(num);
+    }
     if (sx === undefined || sy === undefined || sWidth === undefined || sHeight === undefined) {
-        cxt.drawImage(pic, Math.floor(x), Math.floor(y), Math.floor(width), Math.floor(height));
+        cxt.drawImage(pic, floorIfBigEnough(x), floorIfBigEnough(y), floorIfBigEnough(width), floorIfBigEnough(height));
     }
     else {
-        cxt.drawImage(pic, Math.floor(sx), Math.floor(sy), Math.floor(sWidth), Math.floor(sHeight), Math.floor(x), Math.floor(y), Math.floor(width), Math.floor(height));
+        cxt.drawImage(pic, floorIfBigEnough(sx), floorIfBigEnough(sy), floorIfBigEnough(sWidth), floorIfBigEnough(sHeight), floorIfBigEnough(x), floorIfBigEnough(y), floorIfBigEnough(width), floorIfBigEnough(height));
     }
 }
 function resetGestures() {
@@ -217,22 +223,35 @@ function showConfirmDialogEnterDemoMode() {
         var confirmDialogParams = confirmDialog.querySelector("#confirm-dialog-params");
         confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
         confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
-        if (gui.three && (three.cameraMode == undefined || three.cameraMode == "birds-eye")) {
-            confirmDialogParams.style.display = "block";
+        confirmDialogParams.style.display = "block";
+        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
+            var elemDiv = document.createElement("div");
             var elementSpan = document.createElement("span");
             elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
-            confirmDialogParams.appendChild(elementSpan);
+            elemDiv.appendChild(elementSpan);
             var elementBr = document.createElement("br");
-            confirmDialogParams.appendChild(elementBr);
+            elemDiv.appendChild(elementBr);
             var elementInput = document.createElement("input");
             elementInput.id = "confirm-dialog-params-3d-rotation-speed";
             elementInput.type = "range";
             elementInput.min = "0";
             elementInput.max = "100";
             elementInput.value = getGuiState("3d-rotation-speed");
-            elementInput.style.accentColor = "rgb(210, 120, 27)";
-            confirmDialogParams.appendChild(elementInput);
+            elemDiv.appendChild(elementInput);
+            confirmDialogParams.appendChild(elemDiv);
         }
+        var confirmDialogRandomId = "confirm-dialog-params-demo-random";
+        var confirmDialogRandomContainer = document.createElement("div");
+        var confirmDialogRandom_1 = document.createElement("input");
+        confirmDialogRandom_1.id = confirmDialogRandomId;
+        confirmDialogRandom_1.type = "checkbox";
+        confirmDialogRandom_1.checked = getGuiState("demo-random");
+        var confirmDialogRandomLabel = document.createElement("label");
+        confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
+        confirmDialogRandomLabel.textContent = getString("generalStartDemoModeRandom");
+        confirmDialogRandomContainer.appendChild(confirmDialogRandom_1);
+        confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
+        confirmDialogParams.appendChild(confirmDialogRandomContainer);
         var confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes");
         if (confirmDialogYes != null) {
             confirmDialogYes.onclick = function () {
@@ -240,6 +259,7 @@ function showConfirmDialogEnterDemoMode() {
                 if (param3DRotationSpeedElem != null) {
                     setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
                 }
+                setGuiState("demo-random", confirmDialogRandom_1.checked);
                 switchMode("demo");
                 closeConfirmDialog();
             };
@@ -600,7 +620,8 @@ function calcMenusAndBackground(state) {
                 element3DViewToggle.querySelector("i").textContent = "2d";
                 element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
             }
-            element3DViewCameraSwitcher === null || element3DViewCameraSwitcher === void 0 ? void 0 : element3DViewCameraSwitcher.classList.remove("gui-hidden");
+            element3DViewCameraSwitcherBackwards === null || element3DViewCameraSwitcherBackwards === void 0 ? void 0 : element3DViewCameraSwitcherBackwards.classList.remove("gui-hidden");
+            element3DViewCameraSwitcherForwards === null || element3DViewCameraSwitcherForwards === void 0 ? void 0 : element3DViewCameraSwitcherForwards.classList.remove("gui-hidden");
         }
         else {
             elementInfoToggle === null || elementInfoToggle === void 0 ? void 0 : elementInfoToggle.classList.remove("gui-hidden");
@@ -609,7 +630,8 @@ function calcMenusAndBackground(state) {
                 element3DViewToggle.querySelector("i").textContent = "view_in_ar";
                 element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
             }
-            element3DViewCameraSwitcher === null || element3DViewCameraSwitcher === void 0 ? void 0 : element3DViewCameraSwitcher.classList.add("gui-hidden");
+            element3DViewCameraSwitcherBackwards === null || element3DViewCameraSwitcherBackwards === void 0 ? void 0 : element3DViewCameraSwitcherBackwards.classList.add("gui-hidden");
+            element3DViewCameraSwitcherForwards === null || element3DViewCameraSwitcherForwards === void 0 ? void 0 : element3DViewCameraSwitcherForwards.classList.add("gui-hidden");
         }
     }
     var soundFileExtension = "ogg";
@@ -622,7 +644,8 @@ function calcMenusAndBackground(state) {
     var elementSoundToggle = document.querySelector("#canvas-sound-toggle");
     var element3DViewToggle = document.querySelector("#canvas-3d-view-toggle");
     var element3DViewNightToggle = document.querySelector("#canvas-3d-view-day-night");
-    var element3DViewCameraSwitcher = document.querySelector("#canvas-3d-view-camera-switcher");
+    var element3DViewCameraSwitcherBackwards = document.querySelector("#canvas-3d-view-camera-switcher-backwards");
+    var element3DViewCameraSwitcherForwards = document.querySelector("#canvas-3d-view-camera-switcher-forwards");
     var elementControlCenterTrains = document.querySelector("#canvas-control-center");
     var elementControlCenterCars = document.querySelector("#canvas-car-control-center");
     var elementTeamChat = document.querySelector("#canvas-chat-open");
@@ -691,12 +714,14 @@ function calcMenusAndBackground(state) {
             element3DViewNightToggle.classList.remove("settings-hidden");
         }
     }
-    if (element3DViewCameraSwitcher != null) {
+    if (element3DViewCameraSwitcherBackwards != null && element3DViewCameraSwitcherForwards != null) {
         if (getSetting("reduceOptMenuHide3DViewCameraSwitcher")) {
-            element3DViewCameraSwitcher.classList.add("settings-hidden");
+            element3DViewCameraSwitcherBackwards.classList.add("settings-hidden");
+            element3DViewCameraSwitcherForwards.classList.add("settings-hidden");
         }
         else {
-            element3DViewCameraSwitcher.classList.remove("settings-hidden");
+            element3DViewCameraSwitcherBackwards.classList.remove("settings-hidden");
+            element3DViewCameraSwitcherForwards.classList.remove("settings-hidden");
         }
     }
     if (state == "load") {
@@ -882,40 +907,13 @@ function calcMenusAndBackground(state) {
             background3D.animateBehind(true);
             setGuiState("3d-night", three.night);
         });
-        element3DViewCameraSwitcher === null || element3DViewCameraSwitcher === void 0 ? void 0 : element3DViewCameraSwitcher.addEventListener("click", function () {
+        element3DViewCameraSwitcherBackwards === null || element3DViewCameraSwitcherBackwards === void 0 ? void 0 : element3DViewCameraSwitcherBackwards.addEventListener("click", function () {
             commonOnOptionsMenuClick();
-            if (three.cameraMode == "follow-car") {
-                if (three.followObject < cars.length - 1) {
-                    three.followObject++;
-                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-                }
-                else {
-                    three.cameraMode = "birds-eye";
-                    three.activeCamera = three.camera;
-                }
-            }
-            else if (three.cameraMode == "follow-train") {
-                if (three.followObject < trains.length - 1) {
-                    three.followObject++;
-                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-                }
-                else {
-                    three.followObject = 0;
-                    three.cameraMode = "follow-car";
-                    notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-                }
-            }
-            else {
-                three.followObject = 0;
-                three.cameraMode = "follow-train";
-                three.activeCamera = three.followCamera;
-                notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-            }
-            setGuiState("3d-cam-mode", three.cameraMode);
-            setGuiState("3d-follow-object", three.followObject);
-            resetScale();
-            resetTilt();
-            calcMenusAndBackground("resize");
+            three.switchCamera(false);
+        });
+        element3DViewCameraSwitcherForwards === null || element3DViewCameraSwitcherForwards === void 0 ? void 0 : element3DViewCameraSwitcherForwards.addEventListener("click", function () {
+            commonOnOptionsMenuClick();
+            three.switchCamera(true);
         });
         set3DItems();
     }
@@ -956,7 +954,7 @@ function calcMenusAndBackground(state) {
         menus.outerContainer.element.style.justifyContent = "";
     }
     menus.outerContainer.element.style.width = menus.outerContainer.width + "px";
-    if (!gui.three || three.cameraMode == "birds-eye") {
+    if (!gui.three || three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
         menus.outerContainer.element.style.height = availableHeight + "px";
     }
     else {
@@ -968,7 +966,7 @@ function calcMenusAndBackground(state) {
     else {
         menus.outerContainer.element.style.background = gui.three ? "transparent" : "";
     }
-    if (!gui.three || three.cameraMode == "birds-eye") {
+    if (!gui.three || three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
         menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
         menus.outerContainer.element.style.bottom = "unset";
     }
@@ -1017,7 +1015,7 @@ export function optionsMenuEditorHide(id) {
  *     Mouse, touch and key functions      *
  ******************************************/
 function getGesture(gesture) {
-    if (!gui.controlCenter && !resized && (!gui.three || three.cameraMode == undefined || three.cameraMode == "birds-eye")) {
+    if (!gui.controlCenter && !resized && (!gui.three || three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
         switch (gesture.type) {
             case "doubletap":
                 if (client.zoomAndTilt.realScale != 1) {
@@ -1475,22 +1473,24 @@ function onKeyDown(event) {
     if (event.key == "Tab" || event.key == "Enter") {
         event.preventDefault();
     }
-    if (event.key == "/" && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
+    if (event.key == "/" && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && !gui.sidebarRight && !gui.textControl) {
         event.preventDefault();
-        if (!gui.sidebarRight && !gui.textControl) {
-            gui.textControl = true;
-            if (gui.infoOverlay) {
-                drawInfoOverlayMenu("hide-outer");
-            }
-            else {
-                drawOptionsMenu("hide-outer");
-            }
-            textControl.elements.output.textContent = textControl.execute();
-            textControl.elements.root.style.display = "block";
-            textControl.elements.input.focus();
+        gui.textControl = true;
+        if (gui.infoOverlay) {
+            drawInfoOverlayMenu("hide-outer");
         }
+        else {
+            drawOptionsMenu("hide-outer");
+        }
+        textControl.elements.output.textContent = textControl.execute();
+        textControl.elements.root.style.display = "block";
+        textControl.elements.input.focus();
     }
-    if (event.ctrlKey && event.key == "0" && client.zoomAndTilt.realScale > 1) {
+    else if ((event.key == "c" || event.key == "C") && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && gui.three) {
+        event.preventDefault();
+        three.switchCamera(event.key == "c");
+    }
+    else if (event.ctrlKey && event.key == "0" && client.zoomAndTilt.realScale > 1) {
         event.preventDefault();
         getGesture({ type: "doubletap", deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY });
     }
@@ -1914,12 +1914,12 @@ function drawObjects() {
     function drawTrains(input1) {
         function drawTrain(i) {
             var currentObject = i < 0 ? trains[input1] : trains[input1].cars[i];
-            context.save();
-            context.translate(currentObject.x, currentObject.y);
-            context.rotate(currentObject.displayAngle);
             var flickerDuration = 3;
+            var flickerZoom = 1.01;
             if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 6 && !trains[input1].move && Math.random() > 0.7 && (i < 0 || i == trains[input1].cars.length - 1)) {
                 context.save();
+                context.translate(currentObject.x, currentObject.y);
+                context.rotate(currentObject.displayAngle);
                 context.strokeStyle = "rgba(255,255,224," + (client.isSmall ? 1 : 0.5) + ")";
                 context.lineWidth = client.isTiny ? 1 : 3;
                 if (i == -1 && trains[input1].standardDirection) {
@@ -1954,6 +1954,83 @@ function drawObjects() {
                 }
                 context.restore();
             }
+            if (currentObject.wheelFront2DSrc && konamiState >= 0) {
+                var wheelWidthFront = currentObject.width * (pics[currentObject.wheelFront2DSrc].width / pics[currentObject.src].width);
+                var wheelHeightFront = currentObject.height * (pics[currentObject.wheelFront2DSrc].height / pics[currentObject.src].height);
+                context.save();
+                context.translate(currentObject.wheelFrontLeftX, currentObject.wheelFrontLeftY);
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    var xMove = currentObject.wheelMoveX * (flickerZoom - 1);
+                    var yMove = currentObject.wheelMoveY * (flickerZoom - 1);
+                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                }
+                context.rotate(currentObject.front.angle);
+                if (currentObject.assetFlip) {
+                    context.scale(-1, 1);
+                }
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    context.scale(flickerZoom, flickerZoom);
+                }
+                drawImage(pics[currentObject.wheelFront2DSrc], -wheelWidthFront / 2, -wheelHeightFront / 2, wheelWidthFront, wheelHeightFront);
+                context.restore();
+                context.save();
+                context.translate(currentObject.wheelFrontRightX, currentObject.wheelFrontRightY);
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    var xMove = currentObject.wheelMoveX * (flickerZoom - 1);
+                    var yMove = -currentObject.wheelMoveY * (flickerZoom - 1);
+                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                }
+                context.rotate(currentObject.front.angle);
+                if (currentObject.assetFlip) {
+                    context.scale(-1, 1);
+                }
+                context.scale(1, -1);
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    context.scale(flickerZoom, flickerZoom);
+                }
+                drawImage(pics[currentObject.wheelFront2DSrc], -wheelWidthFront / 2, 0, wheelWidthFront, wheelHeightFront);
+                context.restore();
+            }
+            if (currentObject.wheelBack2DSrc && konamiState >= 0) {
+                var wheelWidthBack = currentObject.width * (pics[currentObject.wheelBack2DSrc].width / pics[currentObject.src].width);
+                var wheelHeightBack = currentObject.height * (pics[currentObject.wheelBack2DSrc].height / pics[currentObject.src].height);
+                context.save();
+                context.translate(currentObject.wheelBackLeftX, currentObject.wheelBackLeftY);
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    var xMove = -currentObject.wheelMoveX * (flickerZoom - 1);
+                    var yMove = currentObject.wheelMoveY * (flickerZoom - 1);
+                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                }
+                context.rotate(currentObject.back.angle);
+                if (currentObject.assetFlip) {
+                    context.scale(-1, 1);
+                }
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    context.scale(flickerZoom, flickerZoom);
+                }
+                drawImage(pics[currentObject.wheelBack2DSrc], -wheelWidthBack / 2, -wheelHeightBack / 2, wheelWidthBack, wheelHeightBack);
+                context.restore();
+                context.save();
+                context.translate(currentObject.wheelBackRightX, currentObject.wheelBackRightY);
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    var xMove = -currentObject.wheelMoveX * (flickerZoom - 1);
+                    var yMove = -currentObject.wheelMoveY * (flickerZoom - 1);
+                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                }
+                context.rotate(currentObject.back.angle);
+                if (currentObject.assetFlip) {
+                    context.scale(-1, 1);
+                }
+                context.scale(1, -1);
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    context.scale(flickerZoom, flickerZoom);
+                }
+                drawImage(pics[currentObject.wheelBack2DSrc], -wheelWidthBack / 2, 0, wheelWidthBack, wheelHeightBack);
+                context.restore();
+            }
+            context.save();
+            context.translate(currentObject.x, currentObject.y);
+            context.rotate(currentObject.displayAngle);
             context.save();
             if (currentObject.assetFlip) {
                 context.scale(-1, 1);
@@ -1967,10 +2044,10 @@ function drawObjects() {
                 context.scale(1, currentObject.height / getFontSize(context.font, "px"));
                 context.fillText(icon, 0, 0);
             }
-            else if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                drawImage(pics[currentObject.src], (-currentObject.width * 1.01) / 2, (-currentObject.height * 1.01) / 2, currentObject.width * 1.01, currentObject.height * 1.01);
-            }
             else {
+                if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
+                    context.scale(flickerZoom, flickerZoom);
+                }
                 drawImage(pics[currentObject.src], -currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             }
             context.restore();
@@ -2524,7 +2601,7 @@ function drawObjects() {
         contextForeground.beginPath();
         contextForeground.moveTo(0, 0);
         contextForeground.lineTo(radius + (konamiState < 0 ? Math.random() * 0.3 * radius : 0), radius + (konamiState < 0 ? Math.random() * 0.3 * radius : 0));
-        contextForeground.closePath();
+        contextForeground.lineWidth = background.width / 333;
         contextForeground.strokeStyle = style;
         contextForeground.stroke();
         contextForeground.restore();
@@ -2639,12 +2716,37 @@ function drawObjects() {
             var flickerDuration = 3;
             if (trains3D[i] && trains3D[i].mesh) {
                 trains3D[i].mesh.position.set((three.calcScale() * (train.x - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                if (trains3D[i].meshFront) {
+                    trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheelFrontLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelFrontLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshFront.right.position.set((three.calcScale() * (train.wheelFrontRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelFrontRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                }
+                if (trains3D[i].meshBack) {
+                    trains3D[i].meshBack.left.position.set((three.calcScale() * (train.wheelBackLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelBackLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshBack.right.position.set((three.calcScale() * (train.wheelBackRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelBackRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                }
                 if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
+                    var flickerRandom = (trains3D[i].positionZ / 5) * Math.random();
                     if (frameNo <= train.lastDirectionChange + flickerDuration || frameNo > train.lastDirectionChange + flickerDuration * 2) {
-                        trains3D[i].mesh.position.z += (trains3D[i].positionZ / 5) * Math.random();
+                        trains3D[i].mesh.position.z += flickerRandom;
+                        if (trains3D[i].meshFront) {
+                            trains3D[i].meshFront.left.position.z += flickerRandom;
+                            trains3D[i].meshFront.right.position.z += flickerRandom;
+                        }
+                        if (trains3D[i].meshBack) {
+                            trains3D[i].meshBack.left.position.z += flickerRandom;
+                            trains3D[i].meshBack.right.position.z += flickerRandom;
+                        }
                     }
                     else {
-                        trains3D[i].mesh.position.z -= (trains3D[i].positionZ / 5) * Math.random();
+                        trains3D[i].mesh.position.z -= flickerRandom;
+                        if (trains3D[i].meshFront) {
+                            trains3D[i].meshFront.left.position.z -= flickerRandom;
+                            trains3D[i].meshFront.right.position.z -= flickerRandom;
+                        }
+                        if (trains3D[i].meshBack) {
+                            trains3D[i].meshBack.left.position.z -= flickerRandom;
+                            trains3D[i].meshBack.right.position.z -= flickerRandom;
+                        }
                     }
                 }
                 /* UPDATE: v9.1.5 */
@@ -2652,16 +2754,53 @@ function drawObjects() {
                 /* END UPDATE: v9.1.5 */
                 setMaterialTransparent(trains3D[i].mesh, train.opacity);
                 trains3D[i].mesh.rotation.z = -train.displayAngle;
+                if (trains3D[i].meshFront) {
+                    setMaterialTransparent(trains3D[i].meshFront.left, train.opacity);
+                    setMaterialTransparent(trains3D[i].meshFront.right, train.opacity);
+                    trains3D[i].meshFront.left.rotation.z = -train.front.angle;
+                    trains3D[i].meshFront.right.rotation.z = -train.front.angle;
+                }
+                if (trains3D[i].meshBack) {
+                    setMaterialTransparent(trains3D[i].meshBack.left, train.opacity);
+                    setMaterialTransparent(trains3D[i].meshBack.right, train.opacity);
+                    trains3D[i].meshBack.left.rotation.z = -train.back.angle;
+                    trains3D[i].meshBack.right.rotation.z = -train.back.angle;
+                }
             }
             train.cars.forEach(function (car, j) {
                 if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
                     trains3D[i].cars[j].mesh.position.set(three.calcScale() * ((car.x - background.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                    if (trains3D[i].cars[j].meshFront) {
+                        trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheelFrontLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelFrontLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshFront.right.position.set((three.calcScale() * (car.wheelFrontRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelFrontRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                    }
+                    if (trains3D[i].cars[j].meshBack) {
+                        trains3D[i].cars[j].meshBack.left.position.set((three.calcScale() * (car.wheelBackLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelBackLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshBack.right.position.set((three.calcScale() * (car.wheelBackRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelBackRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                    }
                     if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
+                        var flickerRandom = (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
                         if (frameNo <= train.lastDirectionChange + flickerDuration || frameNo > train.lastDirectionChange + flickerDuration * 2) {
-                            trains3D[i].cars[j].mesh.position.z += (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
+                            trains3D[i].cars[j].mesh.position.z += flickerRandom;
+                            if (trains3D[i].cars[j].meshFront) {
+                                trains3D[i].cars[j].meshFront.left.position.z += flickerRandom;
+                                trains3D[i].cars[j].meshFront.right.position.z += flickerRandom;
+                            }
+                            if (trains3D[i].cars[j].meshBack) {
+                                trains3D[i].cars[j].meshBack.left.position.z += flickerRandom;
+                                trains3D[i].cars[j].meshBack.right.position.z += flickerRandom;
+                            }
                         }
                         else {
-                            trains3D[i].cars[j].mesh.position.z -= (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
+                            trains3D[i].cars[j].mesh.position.z -= flickerRandom;
+                            if (trains3D[i].cars[j].meshFront) {
+                                trains3D[i].cars[j].meshFront.left.position.z -= flickerRandom;
+                                trains3D[i].cars[j].meshFront.right.position.z -= flickerRandom;
+                            }
+                            if (trains3D[i].cars[j].meshBack) {
+                                trains3D[i].cars[j].meshBack.left.position.z -= flickerRandom;
+                                trains3D[i].cars[j].meshBack.right.position.z -= flickerRandom;
+                            }
                         }
                     }
                     /* UPDATE: v9.1.5 */
@@ -2669,6 +2808,18 @@ function drawObjects() {
                     /* END UPDATE: v9.1.5 */
                     setMaterialTransparent(trains3D[i].cars[j].mesh, car.opacity);
                     trains3D[i].cars[j].mesh.rotation.z = -car.displayAngle;
+                    if (trains3D[i].cars[j].meshFront) {
+                        setMaterialTransparent(trains3D[i].cars[j].meshFront.left, car.opacity);
+                        setMaterialTransparent(trains3D[i].cars[j].meshFront.right, car.opacity);
+                        trains3D[i].cars[j].meshFront.left.rotation.z = -car.front.angle;
+                        trains3D[i].cars[j].meshFront.right.rotation.z = -car.front.angle;
+                    }
+                    if (trains3D[i].cars[j].meshBack) {
+                        setMaterialTransparent(trains3D[i].cars[j].meshBack.left, car.opacity);
+                        setMaterialTransparent(trains3D[i].cars[j].meshBack.right, car.opacity);
+                        trains3D[i].cars[j].meshBack.left.rotation.z = -car.back.angle;
+                        trains3D[i].cars[j].meshBack.right.rotation.z = -car.back.angle;
+                    }
                 }
             });
         });
@@ -2688,7 +2839,7 @@ function drawObjects() {
         var controlTextSize = parseInt(controlFont.replace("px", ""), 10);
         var controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
         var controlY = controlPadding;
-        if (three.cameraMode == "follow-car") {
+        if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
             }
@@ -2723,7 +2874,9 @@ function drawObjects() {
                 }
                 else {
                     contextForeground.fillText("play_pause", 0, 0);
-                    contextForeground.fillText("cottage", 0, controlPadding + controlTextSize);
+                    if (!carParams.isBackToRoot) {
+                        contextForeground.fillText("cottage", 0, controlPadding + controlTextSize);
+                    }
                 }
                 contextForeground.restore();
                 if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlTextSize) {
@@ -2769,10 +2922,12 @@ function drawObjects() {
                         }
                     }
                     else {
-                        hardware.mouse.cursor = "pointer";
-                        if (hardware.mouse.isHold) {
-                            carActions.auto.end();
-                            hardware.mouse.isHold = false;
+                        if (!carParams.isBackToRoot) {
+                            hardware.mouse.cursor = "pointer";
+                            if (hardware.mouse.isHold) {
+                                carActions.auto.end();
+                                hardware.mouse.isHold = false;
+                            }
                         }
                     }
                 }
@@ -2787,7 +2942,7 @@ function drawObjects() {
                 }
             }
         }
-        else if (three.cameraMode == "follow-train") {
+        else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > trains.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * trains.length) : 0;
             }
@@ -2901,11 +3056,11 @@ function drawObjects() {
                     var scale = three.calcScale();
                     switches3D[key][currentKey].squareMeshHighlight.material.color.setHex(hexSquare);
                     switches3D[key][currentKey].squareMeshHighlight.rotation.y = -angle - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshHighlight.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshHighlight.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshHighlight.rotation.y)) + three.calcPositionY(), new THREE.Box3().setFromObject(switches3D[key][currentKey].squareMeshHighlight).getSize(new THREE.Vector3()).z / 2);
+                    switches3D[key][currentKey].squareMeshHighlight.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshHighlight.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshHighlight.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.depth / 2));
                     switches3D[key][currentKey].squareMeshNormal.rotation.y = -switches[key][currentKey].angles.normal - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshNormal.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshNormal.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshNormal.rotation.y)) + three.calcPositionY(), new THREE.Box3().setFromObject(switches3D[key][currentKey].squareMeshNormal).getSize(new THREE.Vector3()).z / 2);
+                    switches3D[key][currentKey].squareMeshNormal.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshNormal.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshNormal.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.depth / 2));
                     switches3D[key][currentKey].squareMeshTurned.rotation.y = -switches[key][currentKey].angles.turned - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), new THREE.Box3().setFromObject(switches3D[key][currentKey].squareMeshTurned).getSize(new THREE.Vector3()).z / 2);
+                    switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.depth / 2));
                 });
             });
             if (!gui.controlCenter) {
@@ -3832,6 +3987,45 @@ function drawObjects() {
                 context.arc(0, trains[debugTrain].height / 2, background.width / 200, 0, 2 * Math.PI);
                 context.fill();
                 context.restore();
+                context.save();
+                context.translate(trains[debugTrain].x, trains[debugTrain].y);
+                context.rotate(trains[debugTrain].displayAngle);
+                context.translate(trains[debugTrain].width / 2, 0);
+                context.beginPath();
+                context.moveTo(0, -(background.width * (trainParams.trackWidth / 2)));
+                context.lineTo(0, background.width * (trainParams.trackWidth / 2));
+                context.lineWidth = background.width / 150;
+                context.strokeStyle = "orange";
+                context.stroke();
+                context.restore();
+                context.save();
+                context.translate(trains[debugTrain].wheelFrontLeftX, trains[debugTrain].wheelFrontLeftY);
+                context.beginPath();
+                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                context.fillStyle = "#ffff00";
+                context.fill();
+                context.restore();
+                context.save();
+                context.translate(trains[debugTrain].wheelFrontRightX, trains[debugTrain].wheelFrontRightY);
+                context.beginPath();
+                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                context.fillStyle = "#dddd00";
+                context.fill();
+                context.restore();
+                context.save();
+                context.translate(trains[debugTrain].wheelBackLeftX, trains[debugTrain].wheelBackLeftY);
+                context.beginPath();
+                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                context.fillStyle = "#bbbb00";
+                context.fill();
+                context.restore();
+                context.save();
+                context.translate(trains[debugTrain].wheelBackRightX, trains[debugTrain].wheelBackRightY);
+                context.beginPath();
+                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                context.fillStyle = "#999900";
+                context.fill();
+                context.restore();
                 for (var debugTrainCar in trains[debugTrain].cars) {
                     context.save();
                     context.translate(trains[debugTrain].cars[debugTrainCar].x, trains[debugTrain].cars[debugTrainCar].y);
@@ -3854,6 +4048,34 @@ function drawObjects() {
                     context.arc(0, -trains[debugTrain].cars[debugTrainCar].height / 2, background.width / 200, 0, 2 * Math.PI);
                     context.arc(0, 0, background.width / 200, 0, 2 * Math.PI);
                     context.arc(0, trains[debugTrain].cars[debugTrainCar].height / 2, background.width / 200, 0, 2 * Math.PI);
+                    context.fill();
+                    context.restore();
+                    context.save();
+                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelFrontLeftX, trains[debugTrain].cars[debugTrainCar].wheelFrontLeftY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#ffff00";
+                    context.fill();
+                    context.restore();
+                    context.save();
+                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelFrontRightX, trains[debugTrain].cars[debugTrainCar].wheelFrontRightY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#dddd00";
+                    context.fill();
+                    context.restore();
+                    context.save();
+                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelBackLeftX, trains[debugTrain].cars[debugTrainCar].wheelBackLeftY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#bbbb00";
+                    context.fill();
+                    context.restore();
+                    context.save();
+                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelBackRightX, trains[debugTrain].cars[debugTrainCar].wheelBackRightY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#999900";
                     context.fill();
                     context.restore();
                 }
@@ -4459,7 +4681,8 @@ var pics = [
     { id: 34, extension: "png" },
     { id: 35, extension: "png" },
     { id: 36, extension: "png" },
-    { id: 37, extension: "png" }
+    { id: 37, extension: "png" },
+    { id: 38, extension: "png" }
 ];
 var background = { src: 9, secondLayer: 10 };
 var oldBackground;
@@ -4995,7 +5218,7 @@ var textControl = {
         }
     }
 };
-var onlineGame = { animateInterval: 40, syncInterval: 10000, excludeFromSync: { t: ["src", "trainSwitchSrc", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], tc: ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"] }, chatSticker: 7, resized: false };
+var onlineGame = { animateInterval: 40, syncInterval: 10000, excludeFromSync: { t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "wheelFront2DSrc", "wheelFront3D", "wheelBack2DSrc", "wheelBack3D", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "wheelFront2DSrc", "wheelFront3D", "wheelBack2DSrc", "wheelBack3D", "fac", "bogieDistance"] }, chatSticker: 7, resized: false };
 var onlineConnection = { serverURI: getServerLink(PROTOCOL_WS) + "/multiplay" };
 var resizeTimeout;
 var resized = false;
@@ -5022,6 +5245,70 @@ var three = {
     },
     calcPositionY: function () {
         return ((client.height - (background.y * 2 + background.height) / client.devicePixelRatio) / client.height) * (background.height / background.width / 2);
+    },
+    switchCamera: function (forwards) {
+        if (forwards === void 0) { forwards = true; }
+        if (forwards) {
+            if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
+                if (three.followObject < cars.length - 1) {
+                    three.followObject++;
+                }
+                else {
+                    three.cameraMode = ThreeCameraModes.BIRDS_EYE;
+                    three.activeCamera = three.camera;
+                }
+            }
+            else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
+                if (three.followObject < trains.length - 1) {
+                    three.followObject++;
+                }
+                else {
+                    three.followObject = 0;
+                    three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
+                }
+            }
+            else {
+                three.followObject = 0;
+                three.cameraMode = ThreeCameraModes.FOLLOW_TRAIN;
+                three.activeCamera = three.followCamera;
+            }
+        }
+        else {
+            if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
+                if (three.followObject == 0) {
+                    three.followObject = trains.length - 1;
+                    three.cameraMode = ThreeCameraModes.FOLLOW_TRAIN;
+                }
+                else {
+                    three.followObject--;
+                }
+            }
+            else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
+                if (three.followObject == 0) {
+                    three.cameraMode = ThreeCameraModes.BIRDS_EYE;
+                    three.activeCamera = three.camera;
+                }
+                else {
+                    three.followObject--;
+                }
+            }
+            else {
+                three.followObject = cars.length - 1;
+                three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
+                three.activeCamera = three.followCamera;
+            }
+        }
+        if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+        }
+        else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+        }
+        setGuiState("3d-cam-mode", three.cameraMode);
+        setGuiState("3d-follow-object", three.followObject);
+        resetScale();
+        resetTilt();
+        calcMenusAndBackground("resize");
     },
     zoom: 3
 };
@@ -5695,7 +5982,7 @@ window.onload = function () {
         three.followCamera = new THREE.PerspectiveCamera(45, client.width / client.height, 0.001, 1);
         three.followCamera.zoom = 1;
         three.followCamera.updateProjectionMatrix();
-        three.activeCamera = three.cameraMode == "birds-eye" ? three.camera : three.followCamera;
+        three.activeCamera = three.cameraMode == ThreeCameraModes.BIRDS_EYE ? three.camera : three.followCamera;
         if (gui.demo) {
             three.demoRotationFacX = Math.round(Math.random()) * 2 - 1;
             three.demoRotationFacY = Math.round(Math.random()) * 2 - 1;
@@ -6464,11 +6751,51 @@ window.onload = function () {
                                 trains3D[i].mesh.scale.x *= -1;
                             }
                             trains3D[i].mesh.position.set(0, 0, 0);
+                            if (trains3D[i].meshFront) {
+                                trains3D[i].meshFront.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                trains3D[i].meshFront.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                if (train.assetFlip) {
+                                    trains3D[i].meshFront.left.scale.x *= -1;
+                                    trains3D[i].meshFront.right.scale.x *= -1;
+                                }
+                            }
+                            if (trains3D[i].meshBack) {
+                                trains3D[i].meshBack.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                trains3D[i].meshBack.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                if (train.assetFlip) {
+                                    trains3D[i].meshBack.left.scale.x *= -1;
+                                    trains3D[i].meshBack.right.scale.x *= -1;
+                                }
+                            }
                             trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
                         };
                         trains3D[i].resize();
                         trains3D[i].mesh.callback = trainCallback;
                         three.mainGroup.add(trains3D[i].mesh);
+                        if (train.wheelFront3D) {
+                            loaderGLTF.setPath("assets/3d/").load("asset" + train.src + "_front.glb", function (gltf) {
+                                trains3D[i].meshFront = {};
+                                trains3D[i].meshFront.left = gltf.scene;
+                                trains3D[i].meshFront.right = trains3D[i].meshFront.left.clone();
+                                trains3D[i].resize();
+                                trains3D[i].meshFront.left.callback = trainCallback;
+                                trains3D[i].meshFront.right.callback = trainCallback;
+                                three.mainGroup.add(trains3D[i].meshFront.left);
+                                three.mainGroup.add(trains3D[i].meshFront.right);
+                            });
+                        }
+                        if (train.wheelBack3D) {
+                            loaderGLTF.setPath("assets/3d/").load("asset" + train.src + "_back.glb", function (gltf) {
+                                trains3D[i].meshBack = {};
+                                trains3D[i].meshBack.left = gltf.scene;
+                                trains3D[i].meshBack.right = trains3D[i].meshBack.left.clone();
+                                trains3D[i].resize();
+                                trains3D[i].meshBack.left.callback = trainCallback;
+                                trains3D[i].meshBack.right.callback = trainCallback;
+                                three.mainGroup.add(trains3D[i].meshBack.left);
+                                three.mainGroup.add(trains3D[i].meshBack.right);
+                            });
+                        }
                     }, null, function () {
                         var height3D = 0.0125;
                         trains3D[i].resize = function () {
@@ -6498,11 +6825,51 @@ window.onload = function () {
                                     trains3D[i].cars[j].mesh.scale.x *= -1;
                                 }
                                 trains3D[i].cars[j].mesh.position.set(0, 0, 0);
+                                if (trains3D[i].cars[j].meshFront) {
+                                    trains3D[i].cars[j].meshFront.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    trains3D[i].cars[j].meshFront.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    if (car.assetFlip) {
+                                        trains3D[i].cars[j].meshFront.left.scale.x *= -1;
+                                        trains3D[i].cars[j].meshFront.right.scale.x *= -1;
+                                    }
+                                }
+                                if (trains3D[i].cars[j].meshBack) {
+                                    trains3D[i].cars[j].meshBack.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    trains3D[i].cars[j].meshBack.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    if (car.assetFlip) {
+                                        trains3D[i].cars[j].meshBack.left.scale.x *= -1;
+                                        trains3D[i].cars[j].meshBack.right.scale.x *= -1;
+                                    }
+                                }
                                 trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
                             };
                             trains3D[i].cars[j].resize();
                             trains3D[i].cars[j].mesh.callback = trainCallback;
                             three.mainGroup.add(trains3D[i].cars[j].mesh);
+                            if (car.wheelFront3D) {
+                                loaderGLTF.setPath("assets/3d/").load("asset" + car.src + "_front.glb", function (gltf) {
+                                    trains3D[i].cars[j].meshFront = {};
+                                    trains3D[i].cars[j].meshFront.left = gltf.scene;
+                                    trains3D[i].cars[j].meshFront.right = trains3D[i].cars[j].meshFront.left.clone();
+                                    trains3D[i].cars[j].resize();
+                                    trains3D[i].cars[j].meshFront.left.callback = trainCallback;
+                                    trains3D[i].cars[j].meshFront.right.callback = trainCallback;
+                                    three.mainGroup.add(trains3D[i].cars[j].meshFront.left);
+                                    three.mainGroup.add(trains3D[i].cars[j].meshFront.right);
+                                });
+                            }
+                            if (car.wheelBack3D) {
+                                loaderGLTF.setPath("assets/3d/").load("asset" + car.src + "_back.glb", function (gltf) {
+                                    trains3D[i].cars[j].meshBack = {};
+                                    trains3D[i].cars[j].meshBack.left = gltf.scene;
+                                    trains3D[i].cars[j].meshBack.right = trains3D[i].cars[j].meshBack.left.clone();
+                                    trains3D[i].cars[j].resize();
+                                    trains3D[i].cars[j].meshBack.left.callback = trainCallback;
+                                    trains3D[i].cars[j].meshBack.right.callback = trainCallback;
+                                    three.mainGroup.add(trains3D[i].cars[j].meshBack.left);
+                                    three.mainGroup.add(trains3D[i].cars[j].meshBack.right);
+                                });
+                            }
                         }, null, function () {
                             var height3D = 0.01;
                             trains3D[i].cars[j].resize = function () {
@@ -6776,14 +7143,12 @@ window.onload = function () {
                     trains[i].y = train.y;
                     trains[i].front.state = train.front.state;
                     trains[i].back.state = train.back.state;
-                    if (APP_DATA.debug) {
-                        trains[i].front.x = train.front.x;
-                        trains[i].front.y = train.front.y;
-                        trains[i].front.angle = train.front.angle;
-                        trains[i].back.x = train.back.x;
-                        trains[i].back.y = train.back.y;
-                        trains[i].back.angle = train.back.angle;
-                    }
+                    trains[i].front.x = train.front.x;
+                    trains[i].front.y = train.front.y;
+                    trains[i].front.angle = train.front.angle;
+                    trains[i].back.x = train.back.x;
+                    trains[i].back.y = train.back.y;
+                    trains[i].back.angle = train.back.angle;
                     trains[i].width = train.width;
                     trains[i].height = train.height;
                     trains[i].displayAngle = train.displayAngle;
@@ -6803,6 +7168,20 @@ window.onload = function () {
                     trains[i].volume = train.volume;
                     trains[i].invisible = train.invisible;
                     trains[i].opacity = train.opacity;
+                    trains[i].wheelFront2DSrc = train.wheelFront2DSrc;
+                    trains[i].wheelBack2DSrc = train.wheelBack2DSrc;
+                    trains[i].wheelFront3D = train.wheelFront3D;
+                    trains[i].wheelMoveX = train.wheelMoveX;
+                    trains[i].wheelMoveY = train.wheelMoveY;
+                    trains[i].wheelFrontLeftX = train.wheelFrontLeftX;
+                    trains[i].wheelFrontLeftY = train.wheelFrontLeftY;
+                    trains[i].wheelFrontRightX = train.wheelFrontRightX;
+                    trains[i].wheelFrontRightY = train.wheelFrontRightY;
+                    trains[i].wheelBack3D = train.wheelBack3D;
+                    trains[i].wheelBackLeftX = train.wheelBackLeftX;
+                    trains[i].wheelBackLeftY = train.wheelBackLeftY;
+                    trains[i].wheelBackRightX = train.wheelBackRightX;
+                    trains[i].wheelBackRightY = train.wheelBackRightY;
                     train.cars.forEach(function (car, j) {
                         trains[i].cars[j].x = car.x;
                         trains[i].cars[j].y = car.y;
@@ -6815,14 +7194,26 @@ window.onload = function () {
                         trains[i].cars[j].opacity = car.opacity;
                         trains[i].cars[j].front.state = car.front.state;
                         trains[i].cars[j].back.state = car.back.state;
-                        if (APP_DATA.debug) {
-                            trains[i].cars[j].front.x = car.front.x;
-                            trains[i].cars[j].front.y = car.front.y;
-                            trains[i].cars[j].front.angle = car.front.angle;
-                            trains[i].cars[j].back.x = car.back.x;
-                            trains[i].cars[j].back.y = car.back.y;
-                            trains[i].cars[j].back.angle = car.back.angle;
-                        }
+                        trains[i].cars[j].front.x = car.front.x;
+                        trains[i].cars[j].front.y = car.front.y;
+                        trains[i].cars[j].front.angle = car.front.angle;
+                        trains[i].cars[j].back.x = car.back.x;
+                        trains[i].cars[j].back.y = car.back.y;
+                        trains[i].cars[j].back.angle = car.back.angle;
+                        trains[i].cars[j].wheelFront2DSrc = car.wheelFront2DSrc;
+                        trains[i].cars[j].wheelBack2DSrc = car.wheelBack2DSrc;
+                        trains[i].cars[j].wheelFront3D = car.wheelFront3D;
+                        trains[i].cars[j].wheelMoveX = car.wheelMoveX;
+                        trains[i].cars[j].wheelMoveY = car.wheelMoveY;
+                        trains[i].cars[j].wheelFrontLeftX = car.wheelFrontLeftX;
+                        trains[i].cars[j].wheelFrontLeftY = car.wheelFrontLeftY;
+                        trains[i].cars[j].wheelFrontRightX = car.wheelFrontRightX;
+                        trains[i].cars[j].wheelFrontRightY = car.wheelFrontRightY;
+                        trains[i].cars[j].wheelBack3D = car.wheelBack3D;
+                        trains[i].cars[j].wheelBackLeftX = car.wheelBackLeftX;
+                        trains[i].cars[j].wheelBackLeftY = car.wheelBackLeftY;
+                        trains[i].cars[j].wheelBackRightX = car.wheelBackRightX;
+                        trains[i].cars[j].wheelBackRightY = car.wheelBackRightY;
                     });
                     if (train.move && !train.mute && audio.active) {
                         if (!existsAudio("train", i)) {
@@ -7007,6 +7398,22 @@ window.onload = function () {
     var queryString3DFollowObject = getQueryString("gui-3d-follow-object");
     three.followObject = gui.demo ? -1 : getGuiState("3d-follow-object", parseInt(queryString3DFollowObject, 10));
     three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
+    if (gui.demo) {
+        var queryStringDemoRandom = getQueryString("gui-demo-random");
+        var randomDemoMode;
+        if (queryStringDemoRandom == "0" || queryStringDemoRandom == "1") {
+            randomDemoMode = getGuiState("demo-random", queryStringDemoRandom == "1");
+        }
+        else {
+            randomDemoMode = getGuiState("demo-random");
+        }
+        if (randomDemoMode) {
+            gui.three = Math.random() < 0.5;
+            three.night = Math.random() < 0.5;
+            three.cameraMode = Object.values(ThreeCameraModes)[Math.floor(Math.random() * Object.values(ThreeCameraModes).length)];
+            three.demoRotationSpeedFac = Math.floor(Math.random() * 101);
+        }
+    }
     //Initialize canvases and contexts
     canvas = document.querySelector("canvas#game-gameplay-main");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");

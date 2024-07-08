@@ -1696,38 +1696,6 @@ function animateObjects() {
             var currentObject = i < 0 ? trains[input1] : trains[input1].cars[i];
             if (trains[input1].move) {
                 //Calc train position
-                if (i == -1) {
-                    //Calc acceleration
-                    if (trains[input1].accelerationSpeed === 0) {
-                        trains[input1].accelerationSpeed = trains[input1].accelerationSpeedStartFac;
-                    }
-                    if (trains[input1].accelerationSpeed > 0 && trains[input1].accelerationSpeed < 1) {
-                        trains[input1].accelerationSpeed *= trains[input1].accelerationSpeedFac;
-                        if (trains[input1].accelerationSpeed >= 1) {
-                            trains[input1].accelerationSpeed = 1;
-                        }
-                    }
-                    else if (trains[input1].accelerationSpeed < 0 && trains[input1].accelerationSpeed >= -1) {
-                        trains[input1].accelerationSpeed /= trains[input1].accelerationSpeedFac;
-                        if (trains[input1].accelerationSpeed >= -trains[input1].accelerationSpeedStartFac) {
-                            trains[input1].accelerationSpeed = 0;
-                            trains[input1].move = false;
-                        }
-                    }
-                    if (trains[input1].accelerationSpeedCustom < 1) {
-                        trains[input1].accelerationSpeedCustom *= trains[input1].accelerationSpeedFac;
-                        if (trains[input1].accelerationSpeedCustom >= 1) {
-                            trains[input1].accelerationSpeedCustom = 1;
-                        }
-                    }
-                    else {
-                        trains[input1].accelerationSpeedCustom /= trains[input1].accelerationSpeedFac;
-                        if (trains[input1].accelerationSpeedCustom <= 1) {
-                            trains[input1].accelerationSpeedCustom = 1;
-                        }
-                    }
-                    trains[input1].currentSpeedInPercent = trains[input1].accelerationSpeedCustom * trains[input1].speedInPercent;
-                }
                 var speed = Math.abs(trains[input1].speed * trains[input1].accelerationSpeed);
                 var customSpeed = trains[input1].currentSpeedInPercent / 100;
                 changeCOSection(currentObject.front, true, input1, currentObject, i);
@@ -1753,26 +1721,68 @@ function animateObjects() {
                 else if (currentObject.opacity > 1) {
                     currentObject.opacity = 1;
                 }
-                if (trains[input1].volumeCustom == undefined) {
-                    trains[input1].volumeCustom = 1;
+            }
+            currentObject.wheelMoveX = currentObject.width / 2 - currentObject.bogieDistance * currentObject.width;
+            currentObject.wheelMoveY = (trainParams.trackWidth / 2) * background.width;
+            currentObject.wheelFrontLeftX = currentObject.x + currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelFrontLeftY = currentObject.y + currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelFrontRightX = currentObject.x + currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelFrontRightY = currentObject.y + currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackLeftX = currentObject.x - currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackLeftY = currentObject.y - currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackRightX = currentObject.x - currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackRightY = currentObject.y - currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+        }
+        if (trains[input1].move) {
+            //Calc acceleration
+            if (trains[input1].accelerationSpeed === 0) {
+                trains[input1].accelerationSpeed = trains[input1].accelerationSpeedStartFac;
+            }
+            if (trains[input1].accelerationSpeed > 0 && trains[input1].accelerationSpeed < 1) {
+                trains[input1].accelerationSpeed *= trains[input1].accelerationSpeedFac;
+                if (trains[input1].accelerationSpeed >= 1) {
+                    trains[input1].accelerationSpeed = 1;
                 }
-                else if (trains[input1].volumeCustom < 0) {
-                    trains[input1].volumeCustom = 0;
+            }
+            else if (trains[input1].accelerationSpeed < 0 && trains[input1].accelerationSpeed >= -1) {
+                trains[input1].accelerationSpeed /= trains[input1].accelerationSpeedFac;
+                if (trains[input1].accelerationSpeed >= -trains[input1].accelerationSpeedStartFac) {
+                    trains[input1].accelerationSpeed = 0;
+                    trains[input1].move = false;
                 }
-                else if (trains[input1].volumeCustom > 1) {
-                    trains[input1].volumeCustom = 1;
+            }
+            if (trains[input1].accelerationSpeedCustom < 1) {
+                trains[input1].accelerationSpeedCustom *= trains[input1].accelerationSpeedFac;
+                if (trains[input1].accelerationSpeedCustom >= 1) {
+                    trains[input1].accelerationSpeedCustom = 1;
                 }
-                trains[input1].volume = Math.abs(trains[input1].accelerationSpeed) * trains[input1].currentSpeedInPercent * trains[input1].volumeCustom;
             }
             else {
-                trains[input1].accelerationSpeed = 0;
-                trains[input1].accelerationSpeedCustom = 1;
+                trains[input1].accelerationSpeedCustom /= trains[input1].accelerationSpeedFac;
+                if (trains[input1].accelerationSpeedCustom <= 1) {
+                    trains[input1].accelerationSpeedCustom = 1;
+                }
             }
-            setTrainOuterPos(input1);
+            trains[input1].currentSpeedInPercent = trains[input1].accelerationSpeedCustom * trains[input1].speedInPercent;
+            trains[input1].volume = Math.abs(trains[input1].accelerationSpeed) * trains[input1].currentSpeedInPercent * trains[input1].volumeCustom;
+        }
+        else {
+            trains[input1].accelerationSpeed = 0;
+            trains[input1].accelerationSpeedCustom = 1;
         }
         for (var i = -1; i < trains[input1].cars.length; i++) {
             animateTrain(i);
         }
+        if (trains[input1].volumeCustom == undefined) {
+            trains[input1].volumeCustom = 1;
+        }
+        else if (trains[input1].volumeCustom < 0) {
+            trains[input1].volumeCustom = 0;
+        }
+        else if (trains[input1].volumeCustom > 1) {
+            trains[input1].volumeCustom = 1;
+        }
+        setTrainOuterPos(input1);
     }
     var starttime = Date.now();
     /////TRAINS/////
@@ -1848,7 +1858,7 @@ var trains = [
             { src: 2, fac: 0.06, bogieDistance: 0.15 },
             { src: 2, fac: 0.06, bogieDistance: 0.15 },
             { src: 2, fac: 0.06, bogieDistance: 0.15 },
-            { src: 3, fac: 0.044, bogieDistance: 0.15 }
+            { src: 3, fac: 0.044, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true }
         ]
     },
     {
@@ -1871,7 +1881,7 @@ var trains = [
             { src: 4, fac: 0.093, bogieDistance: 0.15, assetFlip: true, konamiUseTrainIcon: true }
         ]
     },
-    { src: 8, fac: 0.068, speedFac: 1 / 375, accelerationSpeedStartFac: 0.04, accelerationSpeedFac: 1.01, circle: rotationPoints.inner.wide, circleFamily: rotationPoints.inner, circleStartPosDiv: 0.8, standardDirectionStartValue: true, bogieDistance: 0.15, state: 121, flickerFacFront: 2.4, flickerFacBack: 2.3, flickerFacFrontOffset: 2.82, flickerFacBackOffset: 2.75, trainSwitchSrc: 27, cars: [] },
+    { src: 8, fac: 0.068, speedFac: 1 / 375, accelerationSpeedStartFac: 0.04, accelerationSpeedFac: 1.01, circle: rotationPoints.inner.wide, circleFamily: rotationPoints.inner, circleStartPosDiv: 0.8, standardDirectionStartValue: true, bogieDistance: 0.04, state: 121, flickerFacFront: 2.4, flickerFacBack: 2.3, flickerFacFrontOffset: 2.82, flickerFacBackOffset: 2.75, trainSwitchSrc: 27, wheelFront2DSrc: 38, wheelBack2DSrc: 38, wheelFront3D: true, wheelBack3D: true, cars: [] },
     {
         src: 7,
         fac: 0.1,
@@ -1929,9 +1939,11 @@ var trains = [
         state: 131,
         margin: 500,
         trainSwitchSrc: 30,
+        wheelFront3D: true,
+        wheelBack3D: true,
         cars: [
-            { src: 19, fac: 0.08, bogieDistance: 0.15 },
-            { src: 18, fac: 0.093, bogieDistance: 0.19, assetFlip: true, konamiUseTrainIcon: true }
+            { src: 19, fac: 0.08, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true },
+            { src: 18, fac: 0.093, bogieDistance: 0.19, assetFlip: true, konamiUseTrainIcon: true, wheelFront3D: true, wheelBack3D: true }
         ]
     },
     {
@@ -1958,7 +1970,7 @@ var trains = [
     }
 ];
 var trainPics;
-var trainParams = { selected: Math.floor(Math.random() * trains.length), margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3 };
+var trainParams = { selected: Math.floor(Math.random() * trains.length), margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066 };
 var switches;
 var switchesBeforeAddSidings;
 var background;
@@ -2183,6 +2195,21 @@ onmessage = function (message) {
                 }
             }
             /* END UPDATE: v8.0.0 */
+            /* UPDATE: v10.0.0 */
+            trains[0].cars[3].wheelFront3D = true;
+            trains[0].cars[3].wheelBack3D = true;
+            trains[2].bogieDistance = 0.04;
+            trains[2].wheelFront2DSrc = 38;
+            trains[2].wheelBack2DSrc = 38;
+            trains[2].wheelFront3D = true;
+            trains[2].wheelBack3D = true;
+            trains[5].wheelFront3D = true;
+            trains[5].wheelBack3D = true;
+            trains[5].cars[0].wheelFront3D = true;
+            trains[5].cars[0].wheelBack3D = true;
+            trains[5].cars[1].wheelFront3D = true;
+            trains[5].cars[1].wheelBack3D = true;
+            /* END UPDATE: v10.0.0 */
         }
         else {
             placeTrainsAtInitialPositions();

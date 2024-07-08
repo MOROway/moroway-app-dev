@@ -4,6 +4,12 @@
  */
 "use strict";
 //GUI STATE
+export var ThreeCameraModes;
+(function (ThreeCameraModes) {
+    ThreeCameraModes["BIRDS_EYE"] = "birds-eye";
+    ThreeCameraModes["FOLLOW_TRAIN"] = "follow-train";
+    ThreeCameraModes["FOLLOW_CAR"] = "follow-car";
+})(ThreeCameraModes || (ThreeCameraModes = {}));
 function validateGuiState(item, test) {
     if (items.hasOwnProperty(item)) {
         return items[item].validate(test);
@@ -55,9 +61,9 @@ var items = {
         }
     },
     "3d-cam-mode": {
-        default: "birds-eye",
+        default: ThreeCameraModes.BIRDS_EYE,
         validate: function (test) {
-            return (typeof test == "string" && test == "birds-eye") || test == "follow-train" || test == "follow-car";
+            return Object.values(ThreeCameraModes).includes(test);
         }
     },
     "3d-follow-object": {
@@ -70,6 +76,12 @@ var items = {
         default: 50,
         validate: function (test) {
             return typeof test == "number" && !Number.isNaN(test) && test >= 0 && test <= 100;
+        }
+    },
+    "demo-random": {
+        default: false,
+        validate: function (test) {
+            return typeof test == "boolean";
         }
     }
 };

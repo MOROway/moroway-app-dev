@@ -13,7 +13,7 @@ import {getSetting} from "./common/settings.js";
 import {notify, NOTIFICATION_CHANNEL_3D_CAMERA, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT, NOTIFICATION_CHANNEL_TRAIN_SWITCHES, NOTIFICATION_PRIO_DEFAULT, NOTIFICATION_PRIO_LOW, NOTIFICATION_PRIO_HIGH} from "./common/notify.js";
 import {copyJSObject} from "./common/js_objects.js";
 import {copy} from "./common/copy_paste.js";
-import {getGuiState, setGuiState} from "./common/gui_state.js";
+import {ThreeCameraModes, getGuiState, setGuiState} from "./common/gui_state.js";
 import {getVersionCode, updateSavedGame, removeSavedGame} from "./common/saved_game.js";
 import {initTooltip, initTooltips} from "./common/tooltip.js";
 import * as THREE from "../lib/open_code/jsm/three.js/three.module.min.js";
@@ -134,7 +134,7 @@ interface Three {
     zoom: number;
     scene?: any;
     renderer?: any;
-    cameraMode?: "birds-eye" | "follow-train" | "follow-car";
+    cameraMode?: ThreeCameraModes;
     activeCamera?: any;
     camera?: any;
     followCamera?: any;
@@ -372,22 +372,35 @@ function showConfirmDialogEnterDemoMode() {
         const confirmDialogParams = confirmDialog.querySelector("#confirm-dialog-params") as HTMLElement;
         confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
         confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
-        if (gui.three && (three.cameraMode == undefined || three.cameraMode == "birds-eye")) {
-            confirmDialogParams.style.display = "block";
-            var elementSpan = document.createElement("span");
+        confirmDialogParams.style.display = "block";
+        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
+            const elemDiv = document.createElement("div");
+            const elementSpan = document.createElement("span");
             elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
-            confirmDialogParams.appendChild(elementSpan);
-            var elementBr = document.createElement("br");
-            confirmDialogParams.appendChild(elementBr);
-            var elementInput = document.createElement("input");
+            elemDiv.appendChild(elementSpan);
+            const elementBr = document.createElement("br");
+            elemDiv.appendChild(elementBr);
+            const elementInput = document.createElement("input");
             elementInput.id = "confirm-dialog-params-3d-rotation-speed";
             elementInput.type = "range";
             elementInput.min = "0";
             elementInput.max = "100";
             elementInput.value = getGuiState("3d-rotation-speed");
-            elementInput.style.accentColor = "rgb(210, 120, 27)";
-            confirmDialogParams.appendChild(elementInput);
+            elemDiv.appendChild(elementInput);
+            confirmDialogParams.appendChild(elemDiv);
         }
+        const confirmDialogRandomId = "confirm-dialog-params-demo-random";
+        const confirmDialogRandomContainer = document.createElement("div");
+        const confirmDialogRandom = document.createElement("input");
+        confirmDialogRandom.id = confirmDialogRandomId;
+        confirmDialogRandom.type = "checkbox";
+        confirmDialogRandom.checked = getGuiState("demo-random");
+        const confirmDialogRandomLabel = document.createElement("label");
+        confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
+        confirmDialogRandomLabel.textContent = getString("generalStartDemoModeRandom");
+        confirmDialogRandomContainer.appendChild(confirmDialogRandom);
+        confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
+        confirmDialogParams.appendChild(confirmDialogRandomContainer);
         const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes") as HTMLElement;
         if (confirmDialogYes != null) {
             confirmDialogYes.onclick = function () {
@@ -395,6 +408,7 @@ function showConfirmDialogEnterDemoMode() {
                 if (param3DRotationSpeedElem != null) {
                     setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
                 }
+                setGuiState("demo-random", confirmDialogRandom.checked);
                 switchMode("demo");
                 closeConfirmDialog();
             };
@@ -1074,7 +1088,7 @@ function calcMenusAndBackground(state) {
         menus.outerContainer.element.style.justifyContent = "";
     }
     menus.outerContainer.element.style.width = menus.outerContainer.width + "px";
-    if (!gui.three || three.cameraMode == "birds-eye") {
+    if (!gui.three || three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
         menus.outerContainer.element.style.height = availableHeight + "px";
     } else {
         menus.outerContainer.element.style.height = menus.itemDefaultSize + "px";
@@ -1084,7 +1098,7 @@ function calcMenusAndBackground(state) {
     } else {
         menus.outerContainer.element.style.background = gui.three ? "transparent" : "";
     }
-    if (!gui.three || three.cameraMode == "birds-eye") {
+    if (!gui.three || three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
         menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
         menus.outerContainer.element.style.bottom = "unset";
     } else {
@@ -1135,7 +1149,7 @@ export function optionsMenuEditorHide(id) {
  ******************************************/
 
 function getGesture(gesture) {
-    if (!gui.controlCenter && !resized && (!gui.three || three.cameraMode == undefined || three.cameraMode == "birds-eye")) {
+    if (!gui.controlCenter && !resized && (!gui.three || three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
         switch (gesture.type) {
             case "doubletap":
                 if (client.zoomAndTilt.realScale != 1) {
@@ -2943,7 +2957,7 @@ function drawObjects() {
         const controlTextSize = parseInt(controlFont.replace("px", ""), 10);
         const controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
         const controlY = controlPadding;
-        if (three.cameraMode == "follow-car") {
+        if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
             }
@@ -3036,7 +3050,7 @@ function drawObjects() {
                     }
                 }
             }
-        } else if (three.cameraMode == "follow-train") {
+        } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > trains.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * trains.length) : 0;
             }
@@ -5302,49 +5316,49 @@ const three: Three = {
     },
     switchCamera: function (forwards = true) {
         if (forwards) {
-            if (three.cameraMode == "follow-car") {
+            if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
                 if (three.followObject < cars.length - 1) {
                     three.followObject++;
                 } else {
-                    three.cameraMode = "birds-eye";
+                    three.cameraMode = ThreeCameraModes.BIRDS_EYE;
                     three.activeCamera = three.camera;
                 }
-            } else if (three.cameraMode == "follow-train") {
+            } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
                 if (three.followObject < trains.length - 1) {
                     three.followObject++;
                 } else {
                     three.followObject = 0;
-                    three.cameraMode = "follow-car";
+                    three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
                 }
             } else {
                 three.followObject = 0;
-                three.cameraMode = "follow-train";
+                three.cameraMode = ThreeCameraModes.FOLLOW_TRAIN;
                 three.activeCamera = three.followCamera;
             }
         } else {
-            if (three.cameraMode == "follow-car") {
+            if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
                 if (three.followObject == 0) {
                     three.followObject = trains.length - 1;
-                    three.cameraMode = "follow-train";
+                    three.cameraMode = ThreeCameraModes.FOLLOW_TRAIN;
                 } else {
                     three.followObject--;
                 }
-            } else if (three.cameraMode == "follow-train") {
+            } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
                 if (three.followObject == 0) {
-                    three.cameraMode = "birds-eye";
+                    three.cameraMode = ThreeCameraModes.BIRDS_EYE;
                     three.activeCamera = three.camera;
                 } else {
                     three.followObject--;
                 }
             } else {
                 three.followObject = cars.length - 1;
-                three.cameraMode = "follow-car";
+                three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
                 three.activeCamera = three.followCamera;
             }
         }
-        if (three.cameraMode == "follow-car") {
+        if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
             notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
-        } else if (three.cameraMode == "follow-train") {
+        } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
             notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
         }
         setGuiState("3d-cam-mode", three.cameraMode);
@@ -6024,7 +6038,7 @@ window.onload = function () {
         three.followCamera.zoom = 1;
         three.followCamera.updateProjectionMatrix();
 
-        three.activeCamera = three.cameraMode == "birds-eye" ? three.camera : three.followCamera;
+        three.activeCamera = three.cameraMode == ThreeCameraModes.BIRDS_EYE ? three.camera : three.followCamera;
 
         if (gui.demo) {
             three.demoRotationFacX = Math.round(Math.random()) * 2 - 1;
@@ -7487,6 +7501,23 @@ window.onload = function () {
     const queryString3DFollowObject = getQueryString("gui-3d-follow-object");
     three.followObject = gui.demo ? -1 : getGuiState("3d-follow-object", parseInt(queryString3DFollowObject, 10));
     three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryString("gui-demo-3d-rotation-speed-percent"), 10));
+
+    if (gui.demo) {
+        const queryStringDemoRandom = getQueryString("gui-demo-random");
+        var randomDemoMode;
+        if (queryStringDemoRandom == "0" || queryStringDemoRandom == "1") {
+            randomDemoMode = getGuiState("demo-random", queryStringDemoRandom == "1");
+        } else {
+            randomDemoMode = getGuiState("demo-random");
+        }
+        if (randomDemoMode) {
+            gui.three = Math.random() < 0.6;
+            three.night = Math.random() < 0.5;
+            const cameraModes = Object.values(ThreeCameraModes);
+            three.cameraMode = cameraModes[Math.floor(Math.random() * cameraModes.length)];
+            three.demoRotationSpeedFac = Math.floor(Math.random() * 101);
+        }
+    }
 
     //Initialize canvases and contexts
     canvas = document.querySelector("canvas#game-gameplay-main");

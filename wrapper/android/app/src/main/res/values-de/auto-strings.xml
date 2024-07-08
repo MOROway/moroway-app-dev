@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="generalIsFail">Ein Fehler ist aufgetreten</string>
   <string name="general3DView">3D-Ansicht</string>
   <string name="generalBack">Zurück</string>
   <string name="generalClose">schließen</string>
+  <string name="generalIsFail">Ein Fehler ist aufgetreten</string>
   <string name="generalLeaveAndDestroyGame">Verlassen und Spiel zerstören?</string>
   <string name="generalLeaveAndDestroyGameNo">Spiel fortführen</string>
   <string name="generalLeaveAndDestroyGameTitle">Sind Sie sich sicher?</string>
@@ -17,6 +17,10 @@
   <string name="generalServerNoteButtonGo">Mehr erfahren</string>
   <string name="generalServerNoteButtonLater">Nochmals einblenden</string>
   <string name="generalServerNoteInfoLater">Funktioniert nur, wenn diese Nachricht gültig bleibt.</string>
+  <string name="generalStartDemoMode3DCameraMode">3D: Kameramodus</string>
+  <string name="generalStartDemoMode3DCameraModeBirdsEye">Vogelperspektive</string>
+  <string name="generalStartDemoMode3DCameraModeFollowCar">Auto folgen</string>
+  <string name="generalStartDemoMode3DCameraModeFollowTrain">Zug folgen</string>
   <string name="generalStartDemoMode3DRotationSpeed">3D: Rotationsgeschwindigkeit</string>
   <string name="generalStartGame">Spielen</string>
   <string name="generalStartGameDemoMode">Demo-Modus starten</string>

@@ -10,7 +10,7 @@ android {
         minSdk 24
         targetSdk 34
         versionCode 902049
-        versionName '9.2.0'
+        versionName '10.0.0'
     }
     buildTypes {
         release {

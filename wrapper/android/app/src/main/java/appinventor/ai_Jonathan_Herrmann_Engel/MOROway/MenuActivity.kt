@@ -58,6 +58,13 @@ class MenuActivity : MOROwayActivity() {
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT
                 )
+            demoModeDialogBinding.demoModeRandom.setOnCheckedChangeListener { _, isChecked ->
+                demoModeDialogBinding.demoModeManualOnly.visibility = if (isChecked) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+            }
             demoModeDialogBinding.demoMode3d.setOnCheckedChangeListener { _, isChecked ->
                 demoModeDialogBinding.demoMode3dOnly.visibility = if (isChecked) {
                     View.VISIBLE
@@ -77,6 +84,12 @@ class MenuActivity : MOROwayActivity() {
                     }
                 }
             }
+            demoModeDialogBinding.demoModeManualOnly.visibility =
+                if (demoModeDialogBinding.demoModeRandom.isChecked) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
             demoModeDialogBinding.demoMode3dOnly.visibility =
                 if (demoModeDialogBinding.demoMode3d.isChecked) {
                     View.VISIBLE
@@ -105,7 +118,11 @@ class MenuActivity : MOROwayActivity() {
                         R.id.demo_mode_3d_camera_mode_radio_follow_train -> "follow-train"
                         R.id.demo_mode_3d_camera_mode_radio_follow_car -> "follow-car"
                         else -> "birds-eye"
-                    }
+                    } + "&gui-demo-random=" + (if (demoModeDialogBinding.demoModeRandom.isChecked) {
+                        1
+                    } else {
+                        0
+                    })
                 )
                 demoModeDialog.dismiss()
                 startActivity(intent)

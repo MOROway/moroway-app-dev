@@ -90,6 +90,7 @@ The following query parameters can be used with MOROway App (foremost web platfo
   - `gui-3d-follow-object`: 0, 1, 2, … (*3D object to follow in camera modes follow-train and follow-car*)
 - only demo or demoStandalone mode
   - `gui-demo-3d-rotation-speed-percent`: 0-100 (*3D demo mode canvas rotation speed in percent*)
+  - `gui-demo-random`: 0, 1 (*Overrides all other GUI-related query parameters by random values*)
 - only multiplay mode
   - `key`: *game key*
   - `id`: *game id*

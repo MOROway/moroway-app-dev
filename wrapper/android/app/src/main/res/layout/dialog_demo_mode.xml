@@ -18,112 +18,130 @@
             android:layout_height="wrap_content">
 
             <CheckBox
-                android:id="@+id/demo_mode_3d"
+                android:id="@+id/demo_mode_random"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:button="@drawable/checkbox"
                 android:padding="11dp"
-                android:text="@string/general3DView"
+                android:text="@string/generalStartDemoModeRandom"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
             <RelativeLayout
-                android:id="@+id/demo_mode_3d_only"
+                android:id="@+id/demo_mode_manual_only"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/demo_mode_3d">
+                android:layout_below="@id/demo_mode_random">
 
                 <CheckBox
-                    android:id="@+id/demo_mode_3d_night"
+                    android:id="@+id/demo_mode_3d"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
                     android:button="@drawable/checkbox"
                     android:padding="11dp"
-                    android:text="@string/generalStartGameDemoMode3DNight"
+                    android:text="@string/general3DView"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/d_demo_mode_3d_camera_mode_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/demo_mode_3d_night"
-                    android:layout_margin="20dp"
-                    android:text="@string/generalStartDemoMode3DCameraMode"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <RadioGroup
-                    android:id="@+id/demo_mode_3d_camera_mode_radio_group"
-                    android:layout_width="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/d_demo_mode_3d_camera_mode_text">
-
-                    <RadioButton
-                        android:id="@+id/demo_mode_3d_camera_mode_radio_birdseye"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:button="@drawable/radio"
-                        android:checked="true"
-                        android:padding="11dp"
-                        android:text="@string/generalStartDemoMode3DCameraModeBirdsEye" />
-
-                    <RadioButton
-                        android:id="@+id/demo_mode_3d_camera_mode_radio_follow_train"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:button="@drawable/radio"
-                        android:padding="11dp"
-                        android:text="@string/generalStartDemoMode3DCameraModeFollowTrain" />
-
-                    <RadioButton
-                        android:id="@+id/demo_mode_3d_camera_mode_radio_follow_car"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:button="@drawable/radio"
-                        android:padding="11dp"
-                        android:text="@string/generalStartDemoMode3DCameraModeFollowCar" />
-                </RadioGroup>
 
                 <RelativeLayout
-                    android:id="@+id/demo_mode_3d_camera_birdseye_only"
+                    android:id="@+id/demo_mode_3d_only"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/demo_mode_3d_camera_mode_radio_group">
+                    android:layout_below="@id/demo_mode_3d">
 
-                    <TextView
-                        android:id="@+id/d_demo_mode_3d_rotation_speed_text"
+                    <CheckBox
+                        android:id="@+id/demo_mode_3d_night"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
-                        android:text="@string/generalStartDemoMode3DRotationSpeed"
+                        android:button="@drawable/checkbox"
+                        android:padding="11dp"
+                        android:text="@string/generalStartGameDemoMode3DNight"
                         android:textColor="@color/white"
                         android:textSize="20sp" />
 
-                    <SeekBar
-                        android:id="@+id/d_demo_mode_3d_rotation_speed"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/d_demo_mode_3d_camera_mode_text"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/d_demo_mode_3d_rotation_speed_text"
+                        android:layout_below="@id/demo_mode_3d_night"
+                        android:layout_margin="20dp"
+                        android:text="@string/generalStartDemoMode3DCameraMode"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+
+                    <RadioGroup
+                        android:id="@+id/demo_mode_3d_camera_mode_radio_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/d_demo_mode_3d_camera_mode_text"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="0dp"
                         android:layout_marginRight="20dp"
-                        android:layout_marginBottom="20dp"
-                        android:background="@android:color/transparent"
-                        android:color="@color/moro_color_highlight"
-                        android:max="100"
-                        android:padding="11dp"
-                        android:progress="50"
-                        android:progressBackgroundTint="@color/moro_color_highlight"
-                        android:progressTint="@color/moro_color_highlight"
-                        android:thumbTint="@color/moro_color_highlight" />
+                        android:layout_marginBottom="20dp">
 
+                        <RadioButton
+                            android:id="@+id/demo_mode_3d_camera_mode_radio_birdseye"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/radio"
+                            android:checked="true"
+                            android:padding="11dp"
+                            android:text="@string/generalStartDemoMode3DCameraModeBirdsEye" />
+
+                        <RadioButton
+                            android:id="@+id/demo_mode_3d_camera_mode_radio_follow_train"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/radio"
+                            android:padding="11dp"
+                            android:text="@string/generalStartDemoMode3DCameraModeFollowTrain" />
+
+                        <RadioButton
+                            android:id="@+id/demo_mode_3d_camera_mode_radio_follow_car"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/radio"
+                            android:padding="11dp"
+                            android:text="@string/generalStartDemoMode3DCameraModeFollowCar" />
+                    </RadioGroup>
+
+                    <RelativeLayout
+                        android:id="@+id/demo_mode_3d_camera_birdseye_only"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/demo_mode_3d_camera_mode_radio_group">
+
+                        <TextView
+                            android:id="@+id/d_demo_mode_3d_rotation_speed_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:text="@string/generalStartDemoMode3DRotationSpeed"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                        <SeekBar
+                            android:id="@+id/d_demo_mode_3d_rotation_speed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/d_demo_mode_3d_rotation_speed_text"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@android:color/transparent"
+                            android:color="@color/moro_color_highlight"
+                            android:max="100"
+                            android:padding="11dp"
+                            android:progress="50"
+                            android:progressBackgroundTint="@color/moro_color_highlight"
+                            android:progressTint="@color/moro_color_highlight"
+                            android:thumbTint="@color/moro_color_highlight" />
+
+                    </RelativeLayout>
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -131,7 +149,7 @@
                 android:id="@+id/d_demo_mode_go"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/demo_mode_3d_only"
+                android:layout_below="@id/demo_mode_manual_only"
                 android:layout_margin="20dp"
                 android:background="@android:color/transparent"
                 android:text="@string/generalStartGameDemoMode"

@@ -1,6 +1,12 @@
 "use strict";
 //GUI STATE
 
+export enum ThreeCameraModes {
+    BIRDS_EYE = "birds-eye",
+    FOLLOW_TRAIN = "follow-train",
+    FOLLOW_CAR = "follow-car"
+}
+
 function validateGuiState(item, test) {
     if (items.hasOwnProperty(item)) {
         return items[item].validate(test);
@@ -52,9 +58,9 @@ const items = {
         }
     },
     "3d-cam-mode": {
-        default: "birds-eye",
+        default: ThreeCameraModes.BIRDS_EYE,
         validate: function (test) {
-            return (typeof test == "string" && test == "birds-eye") || test == "follow-train" || test == "follow-car";
+            return Object.values(ThreeCameraModes).includes(test);
         }
     },
     "3d-follow-object": {
@@ -67,6 +73,12 @@ const items = {
         default: 50,
         validate: function (test) {
             return typeof test == "number" && !Number.isNaN(test) && test >= 0 && test <= 100;
+        }
+    },
+    "demo-random": {
+        default: false,
+        validate: function (test) {
+            return typeof test == "boolean";
         }
     }
 };
