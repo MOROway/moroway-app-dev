@@ -5357,9 +5357,9 @@ const three: Three = {
             }
         }
         if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 2500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
         } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 2500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
         }
         setGuiState("3d-cam-mode", three.cameraMode);
         setGuiState("3d-follow-object", three.followObject);
