@@ -2706,7 +2706,7 @@ function drawObjects() {
         contextForeground.beginPath();
         contextForeground.moveTo(0, 0);
         contextForeground.lineTo(radius + (konamiState < 0 ? Math.random() * 0.3 * radius : 0), radius + (konamiState < 0 ? Math.random() * 0.3 * radius : 0));
-        contextForeground.closePath();
+        contextForeground.lineWidth = background.width / 333;
         contextForeground.strokeStyle = style;
         contextForeground.stroke();
         contextForeground.restore();
