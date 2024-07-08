@@ -186,10 +186,16 @@ function measureViewSpace() {
 }
 
 function drawImage(pic, x, y, width, height, cxt = context, sx: number | undefined = undefined, sy: number | undefined = undefined, sWidth: number | undefined = undefined, sHeight: number | undefined = undefined) {
+    function floorIfBigEnough(num) {
+        if (client.isTiny) {
+            return num;
+        }
+        return Math.floor(num);
+    }
     if (sx === undefined || sy === undefined || sWidth === undefined || sHeight === undefined) {
-        cxt.drawImage(pic, Math.floor(x), Math.floor(y), Math.floor(width), Math.floor(height));
+        cxt.drawImage(pic, floorIfBigEnough(x), floorIfBigEnough(y), floorIfBigEnough(width), floorIfBigEnough(height));
     } else {
-        cxt.drawImage(pic, Math.floor(sx), Math.floor(sy), Math.floor(sWidth), Math.floor(sHeight), Math.floor(x), Math.floor(y), Math.floor(width), Math.floor(height));
+        cxt.drawImage(pic, floorIfBigEnough(sx), floorIfBigEnough(sy), floorIfBigEnough(sWidth), floorIfBigEnough(sHeight), floorIfBigEnough(x), floorIfBigEnough(y), floorIfBigEnough(width), floorIfBigEnough(height));
     }
 }
 
