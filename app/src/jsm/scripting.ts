@@ -5268,7 +5268,7 @@ const textControl: any = {
     }
 };
 
-const onlineGame: any = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {t: ["src", "trainSwitchSrc", "assetFlip", "fac", "speedFac", "accelerationSpeedStartFac", "accelerationSpeedFac", "lastDirectionChange", "bogieDistance", "width", "height", "speed", "crash", "flickerFacBack", "flickerFacBackOffset", "flickerFacFront", "flickerFacFrontOffset", "margin", "cars"], tc: ["src", "assetFlip", "fac", "bogieDistance", "width", "height", "konamiUseTrainIcon"]}, chatSticker: 7, resized: false};
+const onlineGame: any = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "wheelFront2DSrc", "wheelFront3D", "wheelBack2DSrc", "wheelBack3D", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "wheelFront2DSrc", "wheelFront3D", "wheelBack2DSrc", "wheelBack3D", "fac", "bogieDistance"]}, chatSticker: 7, resized: false};
 const onlineConnection: any = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
 
 var resizeTimeout;

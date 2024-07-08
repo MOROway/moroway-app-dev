@@ -1781,18 +1781,16 @@ function animateObjects() {
                     currentObject.opacity = 1;
                 }
             }
-            const xMove = currentObject.width / 2 - currentObject.bogieDistance * currentObject.width;
-            const yMove = (trainParams.trackWidth / 2) * background.width;
-            currentObject.wheelMoveX = xMove;
-            currentObject.wheelMoveY = yMove;
-            currentObject.wheelFrontLeftX = currentObject.x + xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
-            currentObject.wheelFrontLeftY = currentObject.y + xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
-            currentObject.wheelFrontRightX = currentObject.x + xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
-            currentObject.wheelFrontRightY = currentObject.y + xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
-            currentObject.wheelBackLeftX = currentObject.x - xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
-            currentObject.wheelBackLeftY = currentObject.y - xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
-            currentObject.wheelBackRightX = currentObject.x - xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
-            currentObject.wheelBackRightY = currentObject.y - xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelMoveX = currentObject.width / 2 - currentObject.bogieDistance * currentObject.width;
+            currentObject.wheelMoveY = (trainParams.trackWidth / 2) * background.width;
+            currentObject.wheelFrontLeftX = currentObject.x + currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelFrontLeftY = currentObject.y + currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelFrontRightX = currentObject.x + currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelFrontRightY = currentObject.y + currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackLeftX = currentObject.x - currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackLeftY = currentObject.y - currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackRightX = currentObject.x - currentObject.wheelMoveX * Math.sin(Math.PI / 2 - currentObject.displayAngle) + currentObject.wheelMoveY * Math.cos(-Math.PI / 2 - currentObject.displayAngle);
+            currentObject.wheelBackRightY = currentObject.y - currentObject.wheelMoveX * Math.cos(Math.PI / 2 - currentObject.displayAngle) - currentObject.wheelMoveY * Math.sin(-Math.PI / 2 - currentObject.displayAngle);
         }
         if (trains[input1].move) {
             //Calc acceleration
