@@ -1933,10 +1933,12 @@ var trains: TrainCalc[] = [
         flickerFacFront: 2.1,
         flickerFacBack: 2.1,
         trainSwitchSrc: 26,
+        wheelFront3D: true,
+        wheelBack3D: true,
         cars: [
-            {src: 5, fac: 0.11, bogieDistance: 0.15},
-            {src: 5, fac: 0.11, bogieDistance: 0.15, assetFlip: true},
-            {src: 4, fac: 0.093, bogieDistance: 0.15, assetFlip: true, konamiUseTrainIcon: true}
+            {src: 5, fac: 0.11, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 5, fac: 0.11, bogieDistance: 0.15, assetFlip: true, wheelFront3D: true, wheelBack3D: true},
+            {src: 4, fac: 0.093, bogieDistance: 0.15, assetFlip: true, konamiUseTrainIcon: true, wheelFront3D: true, wheelBack3D: true}
         ]
     },
     {src: 8, fac: 0.068, speedFac: 1 / 375, accelerationSpeedStartFac: 0.04, accelerationSpeedFac: 1.01, circle: rotationPoints.inner.wide, circleFamily: rotationPoints.inner, circleStartPosDiv: 0.8, standardDirectionStartValue: true, bogieDistance: 0.04, state: 121, flickerFacFront: 2.4, flickerFacBack: 2.3, flickerFacFrontOffset: 2.82, flickerFacBackOffset: 2.75, trainSwitchSrc: 27, wheelFront2DSrc: 38, wheelBack2DSrc: 38, wheelFront3D: true, wheelBack3D: true, cars: []},
@@ -1956,10 +1958,12 @@ var trains: TrainCalc[] = [
         flickerFacFront: 2.1,
         flickerFacBack: 2.1,
         trainSwitchSrc: 28,
+        wheelFront3D: true,
+        wheelBack3D: true,
         cars: [
-            {src: 6, fac: 0.1, bogieDistance: 0.15},
-            {src: 6, fac: 0.1, bogieDistance: 0.15, assetFlip: true},
-            {src: 7, fac: 0.1, bogieDistance: 0.15, assetFlip: true, konamiUseTrainIcon: true}
+            {src: 6, fac: 0.1, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 6, fac: 0.1, bogieDistance: 0.15, assetFlip: true, wheelFront3D: true, wheelBack3D: true},
+            {src: 7, fac: 0.1, bogieDistance: 0.15, assetFlip: true, konamiUseTrainIcon: true, wheelFront3D: true, wheelBack3D: true}
         ]
     },
     {
@@ -2255,11 +2259,27 @@ onmessage = function (message) {
             /* UPDATE: v10.0.0 */
             trains[0].cars[3].wheelFront3D = true;
             trains[0].cars[3].wheelBack3D = true;
+            trains[1].wheelFront3D = true;
+            trains[1].wheelBack3D = true;
+            trains[1].cars[0].wheelFront3D = true;
+            trains[1].cars[0].wheelBack3D = true;
+            trains[1].cars[1].wheelFront3D = true;
+            trains[1].cars[1].wheelBack3D = true;
+            trains[1].cars[2].wheelFront3D = true;
+            trains[1].cars[2].wheelBack3D = true;
             trains[2].bogieDistance = 0.04;
             trains[2].wheelFront2DSrc = 38;
             trains[2].wheelBack2DSrc = 38;
             trains[2].wheelFront3D = true;
             trains[2].wheelBack3D = true;
+            trains[3].wheelFront3D = true;
+            trains[3].wheelBack3D = true;
+            trains[3].cars[0].wheelFront3D = true;
+            trains[3].cars[0].wheelBack3D = true;
+            trains[3].cars[1].wheelFront3D = true;
+            trains[3].cars[1].wheelBack3D = true;
+            trains[3].cars[2].wheelFront3D = true;
+            trains[3].cars[2].wheelBack3D = true;
             trains[5].wheelFront3D = true;
             trains[5].wheelBack3D = true;
             trains[5].cars[0].wheelFront3D = true;

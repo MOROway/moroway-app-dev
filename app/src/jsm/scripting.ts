@@ -373,27 +373,17 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
         confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
         confirmDialogParams.style.display = "block";
-        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
-            const elemDiv = document.createElement("div");
-            const elementSpan = document.createElement("span");
-            elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
-            elemDiv.appendChild(elementSpan);
-            const elementBr = document.createElement("br");
-            elemDiv.appendChild(elementBr);
-            const elementInput = document.createElement("input");
-            elementInput.id = "confirm-dialog-params-3d-rotation-speed";
-            elementInput.type = "range";
-            elementInput.min = "0";
-            elementInput.max = "100";
-            elementInput.value = getGuiState("3d-rotation-speed");
-            elemDiv.appendChild(elementInput);
-            confirmDialogParams.appendChild(elemDiv);
-        }
         const confirmDialogRandomId = "confirm-dialog-params-demo-random";
         const confirmDialogRandomContainer = document.createElement("div");
         const confirmDialogRandom = document.createElement("input");
         confirmDialogRandom.id = confirmDialogRandomId;
         confirmDialogRandom.type = "checkbox";
+        confirmDialogRandom.onchange = function (event) {
+            const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container") as HTMLElement;
+            if (param3DRotationSpeedElem != null) {
+                param3DRotationSpeedElem.style.display = confirmDialogRandom.checked ? "none" : "";
+            }
+        };
         confirmDialogRandom.checked = getGuiState("demo-random");
         const confirmDialogRandomLabel = document.createElement("label");
         confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
@@ -401,10 +391,28 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogRandomContainer.appendChild(confirmDialogRandom);
         confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
         confirmDialogParams.appendChild(confirmDialogRandomContainer);
+        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
+            const elemDiv = document.createElement("div");
+            elemDiv.id = "confirm-dialog-params-3d-rotation-speed-container";
+            elemDiv.style.display = confirmDialogRandom.checked ? "none" : "";
+            const elementSpan = document.createElement("span");
+            elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
+            elemDiv.appendChild(elementSpan);
+            const elementBr = document.createElement("br");
+            elemDiv.appendChild(elementBr);
+            const elementInput = document.createElement("input");
+            elementInput.id = "confirm-dialog-params-3d-rotation-speed-input";
+            elementInput.type = "range";
+            elementInput.min = "0";
+            elementInput.max = "100";
+            elementInput.value = getGuiState("3d-rotation-speed");
+            elemDiv.appendChild(elementInput);
+            confirmDialogParams.appendChild(elemDiv);
+        }
         const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes") as HTMLElement;
         if (confirmDialogYes != null) {
             confirmDialogYes.onclick = function () {
-                const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed") as HTMLInputElement;
+                const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input") as HTMLInputElement;
                 if (param3DRotationSpeedElem != null) {
                     setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
                 }
@@ -6845,7 +6853,6 @@ window.onload = function () {
                                 if (train.assetFlip) {
                                     trains3D[i].mesh.scale.x *= -1;
                                 }
-                                trains3D[i].mesh.position.set(0, 0, 0);
                                 if (trains3D[i].meshFront) {
                                     trains3D[i].meshFront.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
                                     trains3D[i].meshFront.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
@@ -6862,6 +6869,7 @@ window.onload = function () {
                                         trains3D[i].meshBack.right.scale.x *= -1;
                                     }
                                 }
+                                trains3D[i].mesh.position.set(0, 0, 0);
                                 trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
                             };
                             trains3D[i].resize();
@@ -6924,7 +6932,6 @@ window.onload = function () {
                                     if (car.assetFlip) {
                                         trains3D[i].cars[j].mesh.scale.x *= -1;
                                     }
-                                    trains3D[i].cars[j].mesh.position.set(0, 0, 0);
                                     if (trains3D[i].cars[j].meshFront) {
                                         trains3D[i].cars[j].meshFront.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
                                         trains3D[i].cars[j].meshFront.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
@@ -6941,6 +6948,7 @@ window.onload = function () {
                                             trains3D[i].cars[j].meshBack.right.scale.x *= -1;
                                         }
                                     }
+                                    trains3D[i].cars[j].mesh.position.set(0, 0, 0);
                                     trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
                                 };
                                 trains3D[i].cars[j].resize();
