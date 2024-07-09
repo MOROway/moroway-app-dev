@@ -1913,9 +1913,9 @@ var trains: TrainCalc[] = [
         flickerFacFront: 2.5,
         trainSwitchSrc: 25,
         cars: [
-            {src: 2, fac: 0.06, bogieDistance: 0.15},
-            {src: 2, fac: 0.06, bogieDistance: 0.15},
-            {src: 2, fac: 0.06, bogieDistance: 0.15},
+            {src: 2, fac: 0.06, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 2, fac: 0.06, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 2, fac: 0.06, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
             {src: 3, fac: 0.044, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true}
         ]
     },
@@ -2026,10 +2026,10 @@ var trains: TrainCalc[] = [
         flickerFacFront: 2.1,
         trainSwitchSrc: 32,
         cars: [
-            {src: 34, fac: 0.054, bogieDistance: 0.15},
-            {src: 35, fac: 0.054, bogieDistance: 0.15},
-            {src: 36, fac: 0.064, bogieDistance: 0.15},
-            {src: 37, fac: 0.045, bogieDistance: 0.15}
+            {src: 34, fac: 0.054, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 35, fac: 0.054, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 36, fac: 0.064, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 37, fac: 0.045, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true}
         ]
     }
 ];
@@ -2259,6 +2259,12 @@ onmessage = function (message) {
             }
             /* END UPDATE: v8.0.0 */
             /* UPDATE: v10.0.0 */
+            trains[0].cars[0].wheelFront3D = true;
+            trains[0].cars[0].wheelBack3D = true;
+            trains[0].cars[1].wheelFront3D = true;
+            trains[0].cars[1].wheelBack3D = true;
+            trains[0].cars[2].wheelFront3D = true;
+            trains[0].cars[2].wheelBack3D = true;
             trains[0].cars[3].wheelFront3D = true;
             trains[0].cars[3].wheelBack3D = true;
             trains[1].wheelFront3D = true;
@@ -2294,6 +2300,14 @@ onmessage = function (message) {
             trains[5].cars[0].wheelBack3D = true;
             trains[5].cars[1].wheelFront3D = true;
             trains[5].cars[1].wheelBack3D = true;
+            trains[6].cars[0].wheelFront3D = true;
+            trains[6].cars[0].wheelBack3D = true;
+            trains[6].cars[1].wheelFront3D = true;
+            trains[6].cars[1].wheelBack3D = true;
+            trains[6].cars[2].wheelFront3D = true;
+            trains[6].cars[2].wheelBack3D = true;
+            trains[6].cars[3].wheelFront3D = true;
+            trains[6].cars[3].wheelBack3D = true;
             /* END UPDATE: v10.0.0 */
         } else {
             placeTrainsAtInitialPositions();
