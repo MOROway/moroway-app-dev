@@ -1982,9 +1982,11 @@ var trains: TrainCalc[] = [
         flickerFacFront: 2.1,
         flickerFacBack: 2.1,
         trainSwitchSrc: 29,
+        wheelFront3D: true,
+        wheelBack3D: true,
         cars: [
-            {src: 21, fac: 0.043, bogieDistance: 0.15},
-            {src: 22, fac: 0.055, bogieDistance: 0.15}
+            {src: 21, fac: 0.043, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true},
+            {src: 22, fac: 0.055, bogieDistance: 0.15, wheelFront3D: true, wheelBack3D: true}
         ]
     },
     {
@@ -2280,6 +2282,12 @@ onmessage = function (message) {
             trains[3].cars[1].wheelBack3D = true;
             trains[3].cars[2].wheelFront3D = true;
             trains[3].cars[2].wheelBack3D = true;
+            trains[4].wheelFront3D = true;
+            trains[4].wheelBack3D = true;
+            trains[4].cars[0].wheelFront3D = true;
+            trains[4].cars[0].wheelBack3D = true;
+            trains[4].cars[1].wheelFront3D = true;
+            trains[4].cars[1].wheelBack3D = true;
             trains[5].wheelFront3D = true;
             trains[5].wheelBack3D = true;
             trains[5].cars[0].wheelFront3D = true;
