@@ -1100,6 +1100,7 @@ function calcMenusAndBackground(state) {
         menus.outerContainer.element.style.height = availableHeight + "px";
     } else {
         menus.outerContainer.element.style.height = menus.itemDefaultSize + "px";
+        menus.outerContainer.height = menus.itemDefaultSize;
     }
     if (menus.floating) {
         menus.outerContainer.element.style.background = "transparent";
@@ -2959,12 +2960,21 @@ function drawObjects() {
             }
         });
 
-        const controlWidth = Math.min(50, client.width / 15) * client.devicePixelRatio;
-        const controlPadding = controlWidth / 3;
-        const controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
-        const controlTextSize = parseInt(controlFont.replace("px", ""), 10);
-        const controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
-        const controlY = controlPadding;
+        var controlWidth = Math.min(50, client.width / 15) * client.devicePixelRatio;
+        var controlHeight = 0;
+        var controlPadding = controlWidth / 3;
+        var controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
+        var controlTextSize = parseFloat(controlFont.replace(/^([0-9.]+)px.*$/, "$1"));
+        var controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
+        var controlY = controlPadding;
+        if ("windowControlsOverlay" in navigator) {
+            const windowControlsOverlayRect = (navigator.windowControlsOverlay as any).getTitlebarAreaRect();
+            //TODO: Remove cast once TS is ready
+            if (windowControlsOverlayRect.top === 0) {
+                controlY += windowControlsOverlayRect.height * client.devicePixelRatio;
+            }
+        }
+        const controlMaxHeight = (client.height - menus.outerContainer.height) * client.devicePixelRatio - controlY;
         if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
@@ -2984,6 +2994,16 @@ function drawObjects() {
             three.renderer.render(three.scene, three.followCamera);
 
             if (!gui.demo && !gui.controlCenter) {
+                const maxSymbolsInUse = 3;
+                controlHeight = controlPadding * (maxSymbolsInUse - 1) + controlTextSize * maxSymbolsInUse;
+                if (controlHeight > controlMaxHeight) {
+                    const controlWidthOld = controlWidth;
+                    controlWidth *= 1 - (1 - controlMaxHeight / controlHeight);
+                    controlX += controlWidthOld - controlWidth;
+                    controlPadding *= 1 - (1 - controlMaxHeight / controlHeight);
+                    controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
+                    controlTextSize = parseFloat(controlFont.replace(/^([0-9.]+)px.*$/, "$1"));
+                }
                 contextForeground.save();
                 contextForeground.translate(controlX, controlY + controlTextSize);
                 contextForeground.font = controlFont;
@@ -3077,34 +3097,45 @@ function drawObjects() {
             three.followCamera.rotateOnAxis(axis, rad);
 
             if (!gui.demo && !gui.controlCenter) {
-                const controlHeight = Math.min(250, (client.height - menus.outerContainer.height) / 2) * client.devicePixelRatio;
+                const maxSymbolsInUse = 1;
+                var controlHeightSpeed = Math.max(controlTextSize, Math.min(250, (client.height - menus.outerContainer.height) / 2) * client.devicePixelRatio);
+                controlHeight = controlHeightSpeed + controlPadding * maxSymbolsInUse + controlTextSize * maxSymbolsInUse;
+                if (controlHeight > controlMaxHeight) {
+                    const controlWidthOld = controlWidth;
+                    controlWidth *= 1 - (1 - controlMaxHeight / controlHeight);
+                    controlX += controlWidthOld - controlWidth;
+                    controlHeightSpeed *= 1 - (1 - controlMaxHeight / controlHeight);
+                    controlPadding *= 1 - (1 - controlMaxHeight / controlHeight);
+                    controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
+                    controlTextSize = parseFloat(controlFont.replace(/^([0-9.]+)px.*$/, "$1"));
+                }
                 contextForeground.save();
                 contextForeground.translate(controlX, controlY);
                 contextForeground.fillStyle = trains[three.followObject].crash ? "rgba(255,150,150,0.2)" : "rgba(255,255,255,0.2)";
-                contextForeground.fillRect(0, 0, controlWidth, controlHeight);
+                contextForeground.fillRect(0, 0, controlWidth, controlHeightSpeed);
                 contextForeground.strokeStyle = "white";
                 contextForeground.lineWidth = controlPadding / 10;
-                contextForeground.strokeRect(0, 0, controlWidth, controlHeight);
+                contextForeground.strokeRect(0, 0, controlWidth, controlHeightSpeed);
                 contextForeground.restore();
                 contextForeground.save();
-                contextForeground.translate(client.width * client.devicePixelRatio - controlWidth - controlPadding, controlPadding);
+                contextForeground.translate(controlX, controlY);
                 contextForeground.fillStyle = "rgba(255,255,255,0.3)";
                 const currentSpeed = (trains[three.followObject].currentSpeedInPercent == undefined || !trains[three.followObject].move || trains[three.followObject].accelerationSpeed < 0 ? 0 : Math.round(trains[three.followObject].currentSpeedInPercent)) / 100;
-                contextForeground.fillRect(0, controlHeight * (1 - currentSpeed), controlWidth, controlHeight * currentSpeed);
+                contextForeground.fillRect(0, controlHeightSpeed * (1 - currentSpeed), controlWidth, controlHeightSpeed * currentSpeed);
                 contextForeground.restore();
                 contextForeground.save();
                 contextForeground.font = controlFont;
                 contextForeground.fillStyle = "white";
                 contextForeground.fillText("speed", controlX, controlY + controlTextSize);
                 if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2) {
-                    contextForeground.fillText("sync_alt", controlX, controlY + controlHeight + controlPadding + controlTextSize);
+                    contextForeground.fillText("sync_alt", controlX, controlY + controlHeightSpeed + controlPadding + controlTextSize);
                 }
                 contextForeground.restore();
-                if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlHeight) {
+                if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlHeightSpeed) {
                     hardware.mouse.cursor = "pointer";
                     if (hardware.mouse.isHold) {
                         if (!trains[three.followObject].crash) {
-                            var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - controlY) / controlHeight) * 100);
+                            var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - controlY) / controlHeightSpeed) * 100);
                             if (newSpeedByUser < minTrainSpeed && trains[three.followObject].move && trains[three.followObject].accelerationSpeed > 0) {
                                 newSpeedByUser = 0;
                             } else if (newSpeedByUser < minTrainSpeed) {
@@ -3118,7 +3149,7 @@ function drawObjects() {
                         hardware.mouse.isHold = false;
                     }
                 }
-                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlHeight + controlPadding && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlY + controlHeight + controlPadding + controlTextSize) {
+                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlHeightSpeed + controlPadding && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlY + controlHeightSpeed + controlPadding + controlTextSize) {
                     hardware.mouse.cursor = "pointer";
                     if (hardware.mouse.isHold) {
                         trainActions.changeDirection(three.followObject, true);
