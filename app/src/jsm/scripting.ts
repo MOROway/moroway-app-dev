@@ -1909,6 +1909,7 @@ function requestResize() {
         three.camera.aspect = client.width / client.height;
         three.camera.updateProjectionMatrix();
         three.followCamera.aspect = client.width / client.height;
+        three.followCamera.fov = client.width / client.height > 6 ? 15 : client.width / client.height > 3 ? 30 : 45;
         three.followCamera.updateProjectionMatrix();
 
         background3D.behind.width = client.width * client.devicePixelRatio;
@@ -4212,7 +4213,7 @@ function drawObjects() {
                 context.save();
                 context.translate(trains[debugTrain].outerX, trains[debugTrain].outerY);
                 context.beginPath();
-                context.arc(0, 0, background.width / 100, 0, 2 * Math.PI);
+                context.arc(0, 0, background.width / 450, 0, 2 * Math.PI);
                 context.fillStyle = "green";
                 context.fill();
                 context.restore();
