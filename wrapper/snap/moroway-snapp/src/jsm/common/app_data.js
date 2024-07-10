@@ -7,14 +7,14 @@ import { deepFreeze } from "./js_objects.js";
 //Placeholders are set by build-script, type error is therefore intentional
 var APP_DATA = {
     version: {
-        major: 9,
-        minor: 1,
-        patch: 9,
-        beta: 0,
+        major: 10,
+        minor: 0,
+        patch: 0,
+        beta: 19,
         date: {
             year: 2024,
-            month: 6,
-            day: 5
+            month: 7,
+            day: 10
         }
     },
     platform: "snap",

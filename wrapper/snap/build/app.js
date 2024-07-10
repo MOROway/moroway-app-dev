@@ -5,7 +5,9 @@ function newWindow(urlToLoad) {
     const path = require("path");
     const windowOptions = {
         fullscreen: true,
-        autoHideMenuBar: true,
+        menuBarVisible: false,
+        titleBarStyle: "hidden",
+        frame: false,
         icon: path.join(__dirname, "icon.png"),
         webPreferences: {
             nativeWindowOpen: true,
@@ -25,24 +27,24 @@ function resolveArg(arg) {
     });
 }
 
-ipcMain.handle("openExternalLink", async (event, arg) => {
+ipcMain.handle("openExternalLink", async (_event, arg) => {
     const url = await resolveArg(arg);
     require("electron").shell.openExternal(url);
 });
-ipcMain.handle("openNormalLink", async (event, arg) => {
+ipcMain.handle("openNormalLink", async (_event, arg) => {
     const urlToLoad = await resolveArg(arg);
     newWindow(urlToLoad);
 });
-ipcMain.handle("canGoBack", async (event, arg) => {
+ipcMain.handle("canGoBack", async () => {
     return BrowserWindow.getFocusedWindow().webContents.canGoBack();
 });
-ipcMain.handle("goBack", async (event, arg) => {
+ipcMain.handle("goBack", async () => {
     BrowserWindow.getFocusedWindow().webContents.goBack();
 });
-ipcMain.handle("exitApp", async (event) => {
+ipcMain.handle("exitApp", async () => {
     app.quit();
 });
-ipcMain.handle("keepScreenAlive", async (event, arg) => {
+ipcMain.handle("keepScreenAlive", async (_event, arg) => {
     const {powerSaveBlocker} = require("electron");
     const acquire = await resolveArg(arg);
     if (wakeLockId != undefined) {

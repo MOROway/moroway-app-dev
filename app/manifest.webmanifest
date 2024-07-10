@@ -117,6 +117,7 @@
         }
     ],
     "display": "fullscreen",
+    "display_override": ["fullscreen", "window-controls-overlay", "standalone"],
     "orientation": "landscape",
     "theme_color": "#000000",
     "background_color": "#000000",

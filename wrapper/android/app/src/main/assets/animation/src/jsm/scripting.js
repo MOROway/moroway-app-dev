@@ -224,27 +224,17 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
         confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
         confirmDialogParams.style.display = "block";
-        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
-            var elemDiv = document.createElement("div");
-            var elementSpan = document.createElement("span");
-            elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
-            elemDiv.appendChild(elementSpan);
-            var elementBr = document.createElement("br");
-            elemDiv.appendChild(elementBr);
-            var elementInput = document.createElement("input");
-            elementInput.id = "confirm-dialog-params-3d-rotation-speed";
-            elementInput.type = "range";
-            elementInput.min = "0";
-            elementInput.max = "100";
-            elementInput.value = getGuiState("3d-rotation-speed");
-            elemDiv.appendChild(elementInput);
-            confirmDialogParams.appendChild(elemDiv);
-        }
         var confirmDialogRandomId = "confirm-dialog-params-demo-random";
         var confirmDialogRandomContainer = document.createElement("div");
         var confirmDialogRandom_1 = document.createElement("input");
         confirmDialogRandom_1.id = confirmDialogRandomId;
         confirmDialogRandom_1.type = "checkbox";
+        confirmDialogRandom_1.onchange = function (event) {
+            var param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container");
+            if (param3DRotationSpeedElem != null) {
+                param3DRotationSpeedElem.style.display = confirmDialogRandom_1.checked ? "none" : "";
+            }
+        };
         confirmDialogRandom_1.checked = getGuiState("demo-random");
         var confirmDialogRandomLabel = document.createElement("label");
         confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
@@ -252,10 +242,28 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogRandomContainer.appendChild(confirmDialogRandom_1);
         confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
         confirmDialogParams.appendChild(confirmDialogRandomContainer);
+        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
+            var elemDiv = document.createElement("div");
+            elemDiv.id = "confirm-dialog-params-3d-rotation-speed-container";
+            elemDiv.style.display = confirmDialogRandom_1.checked ? "none" : "";
+            var elementSpan = document.createElement("span");
+            elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
+            elemDiv.appendChild(elementSpan);
+            var elementBr = document.createElement("br");
+            elemDiv.appendChild(elementBr);
+            var elementInput = document.createElement("input");
+            elementInput.id = "confirm-dialog-params-3d-rotation-speed-input";
+            elementInput.type = "range";
+            elementInput.min = "0";
+            elementInput.max = "100";
+            elementInput.value = getGuiState("3d-rotation-speed");
+            elemDiv.appendChild(elementInput);
+            confirmDialogParams.appendChild(elemDiv);
+        }
         var confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes");
         if (confirmDialogYes != null) {
             confirmDialogYes.onclick = function () {
-                var param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed");
+                var param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
                 if (param3DRotationSpeedElem != null) {
                     setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
                 }
@@ -5299,10 +5307,10 @@ var three = {
             }
         }
         if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 2500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
         }
         else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 2500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
         }
         setGuiState("3d-cam-mode", three.cameraMode);
         setGuiState("3d-follow-object", three.followObject);
@@ -6750,7 +6758,6 @@ window.onload = function () {
                             if (train.assetFlip) {
                                 trains3D[i].mesh.scale.x *= -1;
                             }
-                            trains3D[i].mesh.position.set(0, 0, 0);
                             if (trains3D[i].meshFront) {
                                 trains3D[i].meshFront.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
                                 trains3D[i].meshFront.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
@@ -6767,6 +6774,7 @@ window.onload = function () {
                                     trains3D[i].meshBack.right.scale.x *= -1;
                                 }
                             }
+                            trains3D[i].mesh.position.set(0, 0, 0);
                             trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
                         };
                         trains3D[i].resize();
@@ -6824,7 +6832,6 @@ window.onload = function () {
                                 if (car.assetFlip) {
                                     trains3D[i].cars[j].mesh.scale.x *= -1;
                                 }
-                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
                                 if (trains3D[i].cars[j].meshFront) {
                                     trains3D[i].cars[j].meshFront.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
                                     trains3D[i].cars[j].meshFront.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
@@ -6841,6 +6848,7 @@ window.onload = function () {
                                         trains3D[i].cars[j].meshBack.right.scale.x *= -1;
                                     }
                                 }
+                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
                                 trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
                             };
                             trains3D[i].cars[j].resize();
@@ -7408,9 +7416,10 @@ window.onload = function () {
             randomDemoMode = getGuiState("demo-random");
         }
         if (randomDemoMode) {
-            gui.three = Math.random() < 0.5;
+            gui.three = Math.random() < 0.6;
             three.night = Math.random() < 0.5;
-            three.cameraMode = Object.values(ThreeCameraModes)[Math.floor(Math.random() * Object.values(ThreeCameraModes).length)];
+            var cameraModes = Object.values(ThreeCameraModes);
+            three.cameraMode = cameraModes[Math.floor(Math.random() * cameraModes.length)];
             three.demoRotationSpeedFac = Math.floor(Math.random() * 101);
         }
     }

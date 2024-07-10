@@ -586,6 +586,12 @@ canvas {
     display: none;
     padding: 20px;
 }
+#confirm-dialog-params > div {
+    padding: 10px;
+}
+#confirm-dialog-params input {
+    accent-color: rgb(210, 120, 27);
+}
 #confirm-dialog-buttons-wrapper {
     display: flex;
 }
