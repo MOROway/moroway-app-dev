@@ -1909,7 +1909,7 @@ function requestResize() {
         three.camera.aspect = client.width / client.height;
         three.camera.updateProjectionMatrix();
         three.followCamera.aspect = client.width / client.height;
-        three.followCamera.fov = client.width / client.height > 6 ? 15 : client.width / client.height > 3 ? 30 : 45;
+        three.followCamera.fov = Math.min(45, 45 / (client.width / client.height / 2));
         three.followCamera.updateProjectionMatrix();
 
         background3D.behind.width = client.width * client.devicePixelRatio;
