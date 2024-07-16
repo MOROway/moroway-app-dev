@@ -3130,7 +3130,7 @@ function drawObjects() {
                 contextForeground.beginPath();
                 const currentSpeed = (trains[three.followObject].currentSpeedInPercent == undefined || !trains[three.followObject].move || trains[three.followObject].accelerationSpeed < 0 ? 0 : Math.round(trains[three.followObject].currentSpeedInPercent)) / 100;
                 if (contextForeground.roundRect) {
-                    contextForeground.roundRect(0, controlHeightSpeed * (1 - currentSpeed), controlWidth, controlHeightSpeed * currentSpeed, [0, 0, controlHeightSpeedRadius, controlHeightSpeedRadius]);
+                    contextForeground.roundRect(0, controlHeightSpeed * (1 - currentSpeed), controlWidth, controlHeightSpeed * currentSpeed, [currentSpeed < 1 ? 0 : controlHeightSpeedRadius, currentSpeed < 1 ? 0 : controlHeightSpeedRadius, controlHeightSpeedRadius, controlHeightSpeedRadius]);
                 } else {
                     contextForeground.rect(0, controlHeightSpeed * (1 - currentSpeed), controlWidth, controlHeightSpeed * currentSpeed);
                 }
