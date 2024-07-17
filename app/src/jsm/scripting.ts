@@ -3454,7 +3454,7 @@ function drawObjects() {
             if (classicUISavedMouseHold != undefined && classicUISavedMouseDrag != undefined) {
                 hardware.mouse.isHold = classicUISavedMouseHold;
                 hardware.mouse.isDrag = classicUISavedMouseDrag;
-                hardware.mouse.cursor = "default";
+                hardware.mouse.cursor = hardware.mouse.isDrag ? "move" : "default";
             }
             if (classicUISavedWheelScroll != undefined) {
                 hardware.mouse.wheelScrolls = classicUISavedWheelScroll;
