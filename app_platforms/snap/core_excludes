@@ -1,3 +1,5 @@
 icons
+settings
+src/jsm/settings.ts
 sw.js
 manifest.webmanifest
