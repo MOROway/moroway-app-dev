@@ -127,11 +127,27 @@ interface Debug {
     drawPointsCrash?: TrainPoint[];
     trainCollisions?: any;
 }
+interface ThreeFollowCamControls {
+    recalc(): void;
+    dragging: boolean;
+    draggingReadyForChange: boolean;
+    width?: number;
+    height?: number;
+    maxHeight?: number;
+    draggingAreaHeight?: number;
+    draggingAreaRadius?: number;
+    x?: number;
+    y?: number;
+    padding?: number;
+    textSize?: number;
+    font?: string;
+}
 interface Three {
     calcScale(): number;
     calcPositionY(): number;
     switchCamera(forwards: boolean): void;
     zoom: number;
+    followCamControls: ThreeFollowCamControls;
     scene?: any;
     renderer?: any;
     cameraMode?: ThreeCameraModes;
@@ -200,7 +216,8 @@ function drawImage(pic, x, y, width, height, cxt = context, sx: number | undefin
 }
 
 function resetGestures() {
-    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = false;
+    hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = three.followCamControls.dragging = false;
+    three.followCamControls.draggingReadyForChange = true;
 }
 
 function resetScale() {
@@ -1110,11 +1127,14 @@ function calcMenusAndBackground(state) {
     if (!gui.three || three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
         menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
         menus.outerContainer.element.style.bottom = "unset";
+        menus.outerContainer.element.style.left = client.x + "px";
+        menus.outerContainer.element.style.right = "unset";
     } else {
         menus.outerContainer.element.style.top = "unset";
         menus.outerContainer.element.style.bottom = "0px";
+        menus.outerContainer.element.style.left = "unset";
+        menus.outerContainer.element.style.right = "0px";
     }
-    menus.outerContainer.element.style.left = client.x + "px";
 
     if (state != "load" && gui.infoOverlay) {
         drawInfoOverlayMenu(state);
@@ -1753,7 +1773,7 @@ function calcClassicUIElements() {
             longestName = i;
         }
     }
-    classicUI.trainSwitch.selectedTrainDisplay.fontFamily = "sans-serif";
+    classicUI.trainSwitch.selectedTrainDisplay.fontFamily = "Roboto, sans-serif";
     var heightMultiply = 1.6;
     var widthMultiply = 1.2;
     var wantedWidth = ((menus.small ? 0.35 : 0.9) * background.width) / 4 / widthMultiply;
@@ -1956,6 +1976,8 @@ function requestResize() {
 
         calcClassicUIElements();
         calcControlCenter();
+        three.followCamControls.recalc();
+
         if (background3D.flat && background3D.flat.resize) background3D.flat.resize();
         if (background3D.three && background3D.three.resize) background3D.three.resize();
         cars3D.forEach(function (car) {
@@ -2841,6 +2863,7 @@ function drawObjects() {
 
     if (gui.three) {
         /////THREE.JS/////
+        var raycasterActive = true;
         trains.forEach(function (train, i) {
             const flickerDuration = 3;
             if (trains3D[i] && trains3D[i].mesh) {
@@ -2961,21 +2984,6 @@ function drawObjects() {
             }
         });
 
-        var controlWidth = Math.min(50, client.width / 10) * client.devicePixelRatio;
-        var controlHeight = 0;
-        var controlPadding = controlWidth / 3;
-        var controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
-        var controlTextSize = parseFloat(controlFont.replace(/^([0-9.]+)px.*$/, "$1"));
-        var controlX = client.width * client.devicePixelRatio - controlWidth - controlPadding;
-        var controlY = Math.min(controlPadding, (client.height * client.devicePixelRatio) / 5);
-        if ("windowControlsOverlay" in navigator) {
-            const windowControlsOverlayRect = (navigator.windowControlsOverlay as any).getTitlebarAreaRect();
-            //TODO: Remove cast once TS is ready
-            if (windowControlsOverlayRect.top === 0) {
-                controlY += windowControlsOverlayRect.height * client.devicePixelRatio;
-            }
-        }
-        const controlMaxHeight = (client.height - menus.outerContainer.height) * client.devicePixelRatio - controlY * 2;
         if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
@@ -2995,37 +3003,28 @@ function drawObjects() {
             three.renderer.render(three.scene, three.followCamera);
 
             if (!gui.demo && !gui.controlCenter) {
-                const maxSymbolsInUse = 3;
-                controlHeight = controlPadding * (maxSymbolsInUse - 1) + controlTextSize * maxSymbolsInUse;
-                if (controlHeight > controlMaxHeight) {
-                    const controlWidthOld = controlWidth;
-                    controlWidth *= 1 - (1 - controlMaxHeight / controlHeight);
-                    controlX += controlWidthOld - controlWidth;
-                    controlPadding *= 1 - (1 - controlMaxHeight / controlHeight);
-                    controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
-                    controlTextSize = parseFloat(controlFont.replace(/^([0-9.]+)px.*$/, "$1"));
-                }
                 contextForeground.save();
-                contextForeground.translate(controlX, controlY + controlTextSize);
-                contextForeground.font = controlFont;
+                contextForeground.translate(three.followCamControls.x, three.followCamControls.y + three.followCamControls.textSize);
+                contextForeground.font = three.followCamControls.font;
                 contextForeground.fillStyle = "white";
                 if (carParams.init) {
                     contextForeground.fillText("motion_photos_auto", 0, 0);
-                    contextForeground.fillText("power_settings_new", 0, controlPadding + controlTextSize);
+                    contextForeground.fillText("power_settings_new", 0, three.followCamControls.padding + three.followCamControls.textSize);
                 } else if (carParams.autoModeOff) {
                     contextForeground.fillText("power_settings_new", 0, 0);
                     if (!cars[three.followObject].move && !cars[three.followObject].parking) {
-                        contextForeground.fillText("west", 0, controlPadding + controlTextSize);
-                        contextForeground.fillText("cottage", 0, 2 * (controlPadding + controlTextSize));
+                        contextForeground.fillText("west", 0, three.followCamControls.padding + three.followCamControls.textSize);
+                        contextForeground.fillText("cottage", 0, 2 * (three.followCamControls.padding + three.followCamControls.textSize));
                     }
                 } else {
                     contextForeground.fillText("play_pause", 0, 0);
                     if (!carParams.isBackToRoot) {
-                        contextForeground.fillText("cottage", 0, controlPadding + controlTextSize);
+                        contextForeground.fillText("cottage", 0, three.followCamControls.padding + three.followCamControls.textSize);
                     }
                 }
                 contextForeground.restore();
-                if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlTextSize) {
+                if (hardware.mouse.moveX > three.followCamControls.x && hardware.mouse.moveY > three.followCamControls.y && hardware.mouse.moveX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.moveY < three.followCamControls.y + three.followCamControls.textSize) {
+                    raycasterActive = false;
                     hardware.mouse.cursor = "pointer";
                     if (hardware.mouse.isHold) {
                         if (carParams.init) {
@@ -3045,8 +3044,9 @@ function drawObjects() {
                         }
                         hardware.mouse.isHold = false;
                     }
-                } else if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlPadding + controlTextSize && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlPadding + controlTextSize * 2) {
+                } else if (hardware.mouse.moveX > three.followCamControls.x && hardware.mouse.moveY > three.followCamControls.y + three.followCamControls.padding + three.followCamControls.textSize && hardware.mouse.moveX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.moveY < three.followCamControls.y + three.followCamControls.padding + three.followCamControls.textSize * 2) {
                     if (carParams.init) {
+                        raycasterActive = false;
                         hardware.mouse.cursor = "pointer";
                         if (hardware.mouse.isHold) {
                             carActions.manual.start(three.followObject);
@@ -3054,6 +3054,7 @@ function drawObjects() {
                         }
                     } else if (carParams.autoModeOff) {
                         if (!cars[three.followObject].move && !cars[three.followObject].parking) {
+                            raycasterActive = false;
                             hardware.mouse.cursor = "pointer";
                             if (hardware.mouse.isHold) {
                                 carActions.manual.backwards(three.followObject);
@@ -3062,6 +3063,7 @@ function drawObjects() {
                         }
                     } else {
                         if (!carParams.isBackToRoot) {
+                            raycasterActive = false;
                             hardware.mouse.cursor = "pointer";
                             if (hardware.mouse.isHold) {
                                 carActions.auto.end();
@@ -3069,8 +3071,9 @@ function drawObjects() {
                             }
                         }
                     }
-                } else if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlPadding * 2 + controlTextSize * 2 && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlPadding * 2 + controlTextSize * 3) {
+                } else if (hardware.mouse.moveX > three.followCamControls.x && hardware.mouse.moveY > three.followCamControls.y + three.followCamControls.padding * 2 + three.followCamControls.textSize * 2 && hardware.mouse.moveX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.moveY < three.followCamControls.y + three.followCamControls.padding * 2 + three.followCamControls.textSize * 3) {
                     if (!carParams.init && carParams.autoModeOff && !cars[three.followObject].move && !cars[three.followObject].parking) {
+                        raycasterActive = false;
                         hardware.mouse.cursor = "pointer";
                         if (hardware.mouse.isHold) {
                             carActions.manual.park(three.followObject);
@@ -3098,72 +3101,83 @@ function drawObjects() {
             three.followCamera.rotateOnAxis(axis, rad);
 
             if (!gui.demo && !gui.controlCenter) {
-                const maxSymbolsInUse = 1;
-                var controlHeightSpeed = Math.max(controlTextSize, Math.min(controlWidth * 8, Math.min(250, (client.height - menus.outerContainer.height) / 2) * client.devicePixelRatio));
-                controlHeight = controlHeightSpeed + controlPadding * maxSymbolsInUse + controlTextSize * maxSymbolsInUse;
-                if (controlHeight > controlMaxHeight) {
-                    const controlWidthOld = controlWidth;
-                    controlWidth *= 1 - (1 - controlMaxHeight / controlHeight);
-                    controlX += controlWidthOld - controlWidth;
-                    controlHeightSpeed *= 1 - (1 - controlMaxHeight / controlHeight);
-                    controlPadding *= 1 - (1 - controlMaxHeight / controlHeight);
-                    controlFont = measureFontSize("speed", "Material Icons", 20, controlWidth, 5, 1.2);
-                    controlTextSize = parseFloat(controlFont.replace(/^([0-9.]+)px.*$/, "$1"));
-                }
-                const controlHeightSpeedRadius = controlWidth / 4;
                 contextForeground.save();
-                contextForeground.translate(controlX, controlY);
+                contextForeground.translate(three.followCamControls.x, three.followCamControls.y);
                 contextForeground.beginPath();
                 if (contextForeground.roundRect) {
-                    contextForeground.roundRect(0, 0, controlWidth, controlHeightSpeed, controlHeightSpeedRadius);
+                    contextForeground.roundRect(0, 0, three.followCamControls.width, three.followCamControls.draggingAreaHeight, three.followCamControls.draggingAreaRadius);
                 } else {
-                    contextForeground.rect(0, 0, controlWidth, controlHeightSpeed);
+                    contextForeground.rect(0, 0, three.followCamControls.width, three.followCamControls.draggingAreaHeight);
                 }
                 contextForeground.fillStyle = trains[three.followObject].crash ? "rgba(255,150,150,0.2)" : "rgba(255,255,255,0.2)";
                 contextForeground.fill();
                 contextForeground.strokeStyle = "white";
-                contextForeground.lineWidth = controlPadding / 10;
+                contextForeground.lineWidth = three.followCamControls.padding / 10;
                 contextForeground.stroke();
                 contextForeground.restore();
                 contextForeground.save();
-                contextForeground.translate(controlX, controlY);
+                contextForeground.translate(three.followCamControls.x, three.followCamControls.y);
                 contextForeground.beginPath();
                 const currentSpeed = (trains[three.followObject].currentSpeedInPercent == undefined || !trains[three.followObject].move || trains[three.followObject].accelerationSpeed < 0 ? 0 : Math.round(trains[three.followObject].currentSpeedInPercent)) / 100;
                 if (contextForeground.roundRect) {
-                    contextForeground.roundRect(0, controlHeightSpeed * (1 - currentSpeed), controlWidth, controlHeightSpeed * currentSpeed, [currentSpeed < 1 ? 0 : controlHeightSpeedRadius, currentSpeed < 1 ? 0 : controlHeightSpeedRadius, controlHeightSpeedRadius, controlHeightSpeedRadius]);
+                    contextForeground.roundRect(0, three.followCamControls.draggingAreaHeight * (1 - currentSpeed), three.followCamControls.width, three.followCamControls.draggingAreaHeight * currentSpeed, [currentSpeed < 1 ? 0 : three.followCamControls.draggingAreaRadius, currentSpeed < 1 ? 0 : three.followCamControls.draggingAreaRadius, three.followCamControls.draggingAreaRadius, three.followCamControls.draggingAreaRadius]);
                 } else {
-                    contextForeground.rect(0, controlHeightSpeed * (1 - currentSpeed), controlWidth, controlHeightSpeed * currentSpeed);
+                    contextForeground.rect(0, three.followCamControls.draggingAreaHeight * (1 - currentSpeed), three.followCamControls.width, three.followCamControls.draggingAreaHeight * currentSpeed);
                 }
                 contextForeground.fillStyle = "rgba(255,255,255,0.3)";
                 contextForeground.fill();
                 contextForeground.restore();
                 contextForeground.save();
-                contextForeground.font = controlFont;
+                contextForeground.font = three.followCamControls.font;
                 contextForeground.fillStyle = "white";
-                contextForeground.fillText("speed", controlX, controlY + controlTextSize);
+                contextForeground.fillText("speed", three.followCamControls.x, three.followCamControls.y + three.followCamControls.textSize);
+                if (trains[three.followObject].accelerationSpeed > 0) {
+                    contextForeground.save();
+                    const controlSpeedText = trains[three.followObject].speedInPercent + "%";
+                    contextForeground.font = measureFontSize(controlSpeedText, "Roboto, sans-serif", 20, three.followCamControls.width * 0.7, 5, 1.2);
+                    const controlSpeedTextMetrics = contextForeground.measureText(controlSpeedText);
+                    if (three.followCamControls.draggingAreaHeight - three.followCamControls.padding - three.followCamControls.textSize > parseInt(contextForeground.font.replace(/^([0-9.]+)px.*$/, "$1"), 10)) {
+                        contextForeground.fillText(controlSpeedText, three.followCamControls.x + (three.followCamControls.width - controlSpeedTextMetrics.width) / 2, three.followCamControls.y + three.followCamControls.draggingAreaHeight - three.followCamControls.padding);
+                    }
+                    contextForeground.restore();
+                }
                 if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2) {
-                    contextForeground.fillText("sync_alt", controlX, controlY + controlHeightSpeed + controlPadding + controlTextSize);
+                    contextForeground.fillText("sync_alt", three.followCamControls.x, three.followCamControls.y + three.followCamControls.draggingAreaHeight + three.followCamControls.padding + three.followCamControls.textSize);
                 }
                 contextForeground.restore();
-                if (hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlHeightSpeed) {
-                    hardware.mouse.cursor = "pointer";
-                    if (hardware.mouse.isHold) {
+                if (hardware.mouse.moveX > three.followCamControls.x && hardware.mouse.moveY > three.followCamControls.y && hardware.mouse.moveX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.moveY < three.followCamControls.y + three.followCamControls.draggingAreaHeight) {
+                    raycasterActive = false;
+                    hardware.mouse.cursor = three.followCamControls.dragging ? "grabbing" : trains[three.followObject].crash ? "default" : "pointer";
+                    if (hardware.mouse.isHold || three.followCamControls.dragging) {
                         if (!trains[three.followObject].crash) {
-                            var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - controlY) / controlHeightSpeed) * 100);
-                            if (newSpeedByUser < minTrainSpeed && trains[three.followObject].move && trains[three.followObject].accelerationSpeed > 0) {
+                            three.followCamControls.dragging = true;
+                            var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - three.followCamControls.y) / three.followCamControls.draggingAreaHeight) * 100);
+                            if (newSpeedByUser < minTrainSpeed && trains[three.followObject].move && trains[three.followObject].accelerationSpeed > 0 && three.followCamControls.draggingReadyForChange) {
                                 newSpeedByUser = 0;
+                                three.followCamControls.dragging = false;
+                                three.followCamControls.draggingReadyForChange = true;
                             } else if (newSpeedByUser < minTrainSpeed) {
                                 newSpeedByUser = minTrainSpeed;
+                                three.followCamControls.draggingReadyForChange = false;
+                            } else {
+                                three.followCamControls.draggingReadyForChange = true;
                             }
                             if (newSpeedByUser > 95) {
                                 newSpeedByUser = 100;
                             }
                             trainActions.setSpeed(three.followObject, newSpeedByUser, true);
+                        } else {
+                            three.followCamControls.dragging = false;
+                            three.followCamControls.draggingReadyForChange = true;
                         }
                         hardware.mouse.isHold = false;
                     }
+                } else {
+                    three.followCamControls.dragging = false;
+                    three.followCamControls.draggingReadyForChange = true;
                 }
-                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > controlX && hardware.mouse.moveY > controlY + controlHeightSpeed + controlPadding && hardware.mouse.moveX < controlX + controlWidth && hardware.mouse.moveY < controlY + controlY + controlHeightSpeed + controlPadding + controlTextSize) {
+                if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > three.followCamControls.x && hardware.mouse.moveY > three.followCamControls.y + three.followCamControls.draggingAreaHeight + three.followCamControls.padding && hardware.mouse.moveX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.moveY < three.followCamControls.y + three.followCamControls.y + three.followCamControls.draggingAreaHeight + three.followCamControls.padding + three.followCamControls.textSize) {
+                    raycasterActive = false;
                     hardware.mouse.cursor = "pointer";
                     if (hardware.mouse.isHold) {
                         trainActions.changeDirection(three.followObject, true);
@@ -3225,7 +3239,7 @@ function drawObjects() {
                     switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.depth / 2));
                 });
             });
-            if (!gui.controlCenter) {
+            if (!gui.controlCenter && raycasterActive) {
                 var raycasterMove = new THREE.Raycaster();
                 var mouseMove = new THREE.Vector2();
                 mouseMove.x = (hardware.mouse.moveX / client.devicePixelRatio / three.renderer.domElement.clientWidth) * 2 - 1;
@@ -5095,7 +5109,7 @@ const taxOffice: any = {
 
 const classicUI: any = {trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {}}, transformer: {src: 12, onSrc: 13, readySrc: 23, angle: Math.PI / 5, input: {src: 14, angle: 0, minAngle: minTrainSpeed, maxAngle: 1.5 * Math.PI}, directionInput: {srcStandardDirection: 24, srcNotStandardDirection: 15}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
 
-const controlCenter: any = {showCarCenter: false, fontFamily: "sans-serif", mouse: {}};
+const controlCenter: any = {showCarCenter: false, fontFamily: "Roboto, sans-serif", mouse: {}};
 
 const hardware: any = {mouse: {moveX: 0, moveY: 0, downX: 0, downY: 0, downTime: 0, upX: 0, upY: 0, upTime: 0, isMoving: false, isHold: false, cursor: "default"}, keyboard: {keysHold: []}};
 const client: any = {devicePixelRatio: 1, zoomAndTilt: {maxScale: 6, minScale: 1.2}};
@@ -5380,12 +5394,20 @@ const three: Three = {
                 if (three.followObject < trains.length - 1) {
                     three.followObject++;
                 } else {
-                    three.followObject = 0;
-                    three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
+                    if (cars.length == 0) {
+                        //If car calc did not work
+                        three.cameraMode = ThreeCameraModes.BIRDS_EYE;
+                        three.activeCamera = three.camera;
+                    } else {
+                        three.followObject = 0;
+                        three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
+                        three.followCamControls.recalc();
+                    }
                 }
             } else {
                 three.followObject = 0;
                 three.cameraMode = ThreeCameraModes.FOLLOW_TRAIN;
+                three.followCamControls.recalc();
                 three.activeCamera = three.followCamera;
             }
         } else {
@@ -5393,6 +5415,7 @@ const three: Three = {
                 if (three.followObject == 0) {
                     three.followObject = trains.length - 1;
                     three.cameraMode = ThreeCameraModes.FOLLOW_TRAIN;
+                    three.followCamControls.recalc();
                 } else {
                     three.followObject--;
                 }
@@ -5404,8 +5427,15 @@ const three: Three = {
                     three.followObject--;
                 }
             } else {
-                three.followObject = cars.length - 1;
-                three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
+                if (cars.length == 0) {
+                    //If car calc did not work
+                    three.followObject = trains.length - 1;
+                    three.cameraMode = ThreeCameraModes.FOLLOW_TRAIN;
+                } else {
+                    three.followObject = cars.length - 1;
+                    three.cameraMode = ThreeCameraModes.FOLLOW_CAR;
+                }
+                three.followCamControls.recalc();
                 three.activeCamera = three.followCamera;
             }
         }
@@ -5420,7 +5450,54 @@ const three: Three = {
         resetTilt();
         calcMenusAndBackground("resize");
     },
-    zoom: 3
+    zoom: 3,
+    followCamControls: {
+        recalc: function () {
+            three.followCamControls.width = Math.min(50, client.width / 10) * client.devicePixelRatio;
+            three.followCamControls.height = 0;
+            three.followCamControls.padding = three.followCamControls.width / 3;
+            three.followCamControls.font = measureFontSize("speed", "Material Icons", 20, three.followCamControls.width, 5, 1.2);
+            three.followCamControls.textSize = parseFloat(three.followCamControls.font.replace(/^([0-9.]+)px.*$/, "$1"));
+            three.followCamControls.x = client.width * client.devicePixelRatio - three.followCamControls.width - three.followCamControls.padding;
+            three.followCamControls.y = Math.min(three.followCamControls.padding, (client.height * client.devicePixelRatio) / 5);
+            if ("windowControlsOverlay" in navigator) {
+                const windowControlsOverlayRect = (navigator.windowControlsOverlay as any).getTitlebarAreaRect();
+                //TODO: Remove cast once TS is ready
+                if (windowControlsOverlayRect.top === 0) {
+                    three.followCamControls.y += windowControlsOverlayRect.height * client.devicePixelRatio;
+                }
+            }
+            three.followCamControls.maxHeight = (client.height - menus.outerContainer.height) * client.devicePixelRatio - three.followCamControls.y * 2;
+            if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
+                const maxSymbolsInUse = 3;
+                three.followCamControls.height = three.followCamControls.padding * (maxSymbolsInUse - 1) + three.followCamControls.textSize * maxSymbolsInUse;
+                if (three.followCamControls.height > three.followCamControls.maxHeight) {
+                    const controlWidthOld = three.followCamControls.width;
+                    three.followCamControls.width *= 1 - (1 - three.followCamControls.maxHeight / three.followCamControls.height);
+                    three.followCamControls.x += controlWidthOld - three.followCamControls.width;
+                    three.followCamControls.padding *= 1 - (1 - three.followCamControls.maxHeight / three.followCamControls.height);
+                    three.followCamControls.font = measureFontSize("speed", "Material Icons", 20, three.followCamControls.width, 5, 1.2);
+                    three.followCamControls.textSize = parseFloat(three.followCamControls.font.replace(/^([0-9.]+)px.*$/, "$1"));
+                }
+            } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
+                const maxSymbolsInUse = 1;
+                three.followCamControls.draggingAreaHeight = Math.max(three.followCamControls.textSize, Math.min(three.followCamControls.width * 8, Math.min(250, (client.height - menus.outerContainer.height) / 2) * client.devicePixelRatio));
+                three.followCamControls.height = three.followCamControls.draggingAreaHeight + three.followCamControls.padding * maxSymbolsInUse + three.followCamControls.textSize * maxSymbolsInUse;
+                if (three.followCamControls.height > three.followCamControls.maxHeight) {
+                    const controlWidthOld = three.followCamControls.width;
+                    three.followCamControls.width *= 1 - (1 - three.followCamControls.maxHeight / three.followCamControls.height);
+                    three.followCamControls.x += controlWidthOld - three.followCamControls.width;
+                    three.followCamControls.draggingAreaHeight *= 1 - (1 - three.followCamControls.maxHeight / three.followCamControls.height);
+                    three.followCamControls.padding *= 1 - (1 - three.followCamControls.maxHeight / three.followCamControls.height);
+                    three.followCamControls.font = measureFontSize("speed", "Material Icons", 20, three.followCamControls.width, 5, 1.2);
+                    three.followCamControls.textSize = parseFloat(three.followCamControls.font.replace(/^([0-9.]+)px.*$/, "$1"));
+                }
+                three.followCamControls.draggingAreaRadius = three.followCamControls.width / 4;
+            }
+        },
+        dragging: false,
+        draggingReadyForChange: true
+    }
 };
 
 /*******************************************
@@ -5829,6 +5906,9 @@ window.onload = function () {
             }
         } else {
             carWays = cars = [];
+            if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
+                three.cameraMode = ThreeCameraModes.BIRDS_EYE;
+            }
         }
 
         //TAX OFFICE
@@ -7213,6 +7293,13 @@ window.onload = function () {
                 calcClassicUIElements();
                 calcControlCenter();
                 drawOptionsMenu("show");
+
+                document.fonts.ready.then(function () {
+                    //Recalc canvas fonts (font loading may take longer than resize)
+                    calcClassicUIElements();
+                    calcControlCenter();
+                    three.followCamControls.recalc();
+                });
 
                 //Trigger resize
                 window.addEventListener("resize", requestResize);
