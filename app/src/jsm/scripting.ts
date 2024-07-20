@@ -130,7 +130,6 @@ interface Debug {
 interface ThreeFollowCamControls {
     recalc(): void;
     dragging: boolean;
-    draggingReadyForChange: boolean;
     width?: number;
     height?: number;
     maxHeight?: number;
@@ -217,7 +216,6 @@ function drawImage(pic, x, y, width, height, cxt = context, sx: number | undefin
 
 function resetGestures() {
     hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = three.followCamControls.dragging = false;
-    three.followCamControls.draggingReadyForChange = true;
 }
 
 function resetScale() {
@@ -3120,7 +3118,7 @@ function drawObjects() {
                 contextForeground.beginPath();
                 const currentSpeed = (trains[three.followObject].currentSpeedInPercent == undefined || !trains[three.followObject].move || trains[three.followObject].accelerationSpeed < 0 ? 0 : Math.round(trains[three.followObject].currentSpeedInPercent)) / 100;
                 if (contextForeground.roundRect) {
-                    contextForeground.roundRect(0, three.followCamControls.draggingAreaHeight * (1 - currentSpeed), three.followCamControls.width, three.followCamControls.draggingAreaHeight * currentSpeed, [currentSpeed < 1 ? 0 : three.followCamControls.draggingAreaRadius, currentSpeed < 1 ? 0 : three.followCamControls.draggingAreaRadius, three.followCamControls.draggingAreaRadius, three.followCamControls.draggingAreaRadius]);
+                    contextForeground.roundRect(0, three.followCamControls.draggingAreaHeight * (1 - currentSpeed), three.followCamControls.width, three.followCamControls.draggingAreaHeight * currentSpeed, [Math.max(0, three.followCamControls.draggingAreaHeight * currentSpeed - (three.followCamControls.draggingAreaHeight - three.followCamControls.draggingAreaRadius)), Math.max(0, three.followCamControls.draggingAreaHeight * currentSpeed - (three.followCamControls.draggingAreaHeight - three.followCamControls.draggingAreaRadius)), three.followCamControls.draggingAreaRadius, three.followCamControls.draggingAreaRadius]);
                 } else {
                     contextForeground.rect(0, three.followCamControls.draggingAreaHeight * (1 - currentSpeed), three.followCamControls.width, three.followCamControls.draggingAreaHeight * currentSpeed);
                 }
@@ -3152,29 +3150,28 @@ function drawObjects() {
                         if (!trains[three.followObject].crash) {
                             three.followCamControls.dragging = true;
                             var newSpeedByUser = Math.round((1 - (hardware.mouse.moveY - three.followCamControls.y) / three.followCamControls.draggingAreaHeight) * 100);
-                            if (newSpeedByUser < minTrainSpeed && trains[three.followObject].move && trains[three.followObject].accelerationSpeed > 0 && three.followCamControls.draggingReadyForChange) {
-                                newSpeedByUser = 0;
-                                three.followCamControls.dragging = false;
-                                three.followCamControls.draggingReadyForChange = true;
-                            } else if (newSpeedByUser < minTrainSpeed) {
-                                newSpeedByUser = minTrainSpeed;
-                                three.followCamControls.draggingReadyForChange = false;
-                            } else {
-                                three.followCamControls.draggingReadyForChange = true;
-                            }
                             if (newSpeedByUser > 95) {
                                 newSpeedByUser = 100;
                             }
                             trainActions.setSpeed(three.followObject, newSpeedByUser, true);
                         } else {
                             three.followCamControls.dragging = false;
-                            three.followCamControls.draggingReadyForChange = true;
                         }
                         hardware.mouse.isHold = false;
+                    } else if (hardware.mouse.wheelScrolls && hardware.mouse.wheelScrollY != 0 && hardware.mouse.wheelX > three.followCamControls.x && hardware.mouse.wheelY > three.followCamControls.y && hardware.mouse.wheelX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.wheelY < three.followCamControls.y + three.followCamControls.draggingAreaHeight) {
+                        if (trains[three.followObject].speedInPercent == undefined || trains[three.followObject].speedInPercent < minTrainSpeed) {
+                            newSpeedByUser = minTrainSpeed;
+                        } else {
+                            newSpeedByUser = Math.round(trains[three.followObject].speedInPercent * (hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9));
+                        }
+                        if (newSpeedByUser > 95) {
+                            newSpeedByUser = 100;
+                        }
+                        trainActions.setSpeed(three.followObject, newSpeedByUser, true);
+                        hardware.mouse.wheelScrolls = false;
                     }
                 } else {
                     three.followCamControls.dragging = false;
-                    three.followCamControls.draggingReadyForChange = true;
                 }
                 if (trains[three.followObject].accelerationSpeed <= 0 && Math.abs(trains[three.followObject].accelerationSpeed) < 0.2 && hardware.mouse.moveX > three.followCamControls.x && hardware.mouse.moveY > three.followCamControls.y + three.followCamControls.draggingAreaHeight + three.followCamControls.padding && hardware.mouse.moveX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.moveY < three.followCamControls.y + three.followCamControls.y + three.followCamControls.draggingAreaHeight + three.followCamControls.padding + three.followCamControls.textSize) {
                     raycasterActive = false;
@@ -4492,6 +4489,7 @@ function drawObjects() {
                     var newSpeed;
                     if (isClick || isHold) {
                         newSpeed = Math.round((((isClick ? hardware.mouse.upX : hardware.mouse.moveX) - background.x - controlCenter.translateOffset - controlCenter.maxTextWidth) / controlCenter.maxTextWidth / 0.5) * 100);
+                        hardware.mouse.cursor = "grabbing";
                     } else {
                         if (trains[cTrain].speedInPercent == undefined || trains[cTrain].speedInPercent < minTrainSpeed) {
                             newSpeed = minTrainSpeed;
@@ -4503,9 +4501,6 @@ function drawObjects() {
                         newSpeed = 100;
                     }
                     trainActions.setSpeed(cTrain, newSpeed, true);
-                    if (newSpeed > 0 && newSpeed < 100) {
-                        hardware.mouse.cursor = "grabbing";
-                    }
                 }
                 contextForeground.strokeRect(controlCenter.maxTextWidth, maxTextHeight * cTrain, controlCenter.maxTextWidth * 0.5, maxTextHeight);
                 if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 9)) {
@@ -4847,7 +4842,7 @@ const trainActions = {
         if (trains[i].move) {
             actionSync("trains", i, [{accelerationSpeed: (trains[i].accelerationSpeed *= -1)}, {speedInPercent: speed}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         } else {
-            actionSync("trains", i, [{move: true}, {speedInPercent: speed}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
+            actionSync("trains", i, [{move: true}, {accelerationSpeed: 0}, {speedInPercent: speed}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStarts", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         }
         return true;
     },
@@ -4855,7 +4850,7 @@ const trainActions = {
         if (!this.checkRange(i) || trains[i].accelerationSpeed <= 0) {
             return false;
         }
-        actionSync("trains", i, [{accelerationSpeed: (trains[i].accelerationSpeed *= -1)}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
+        actionSync("trains", i, [{accelerationSpeed: (trains[i].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         return true;
     },
     changeDirection: function (i, highlight = false, notificationOnlyForOthers = false) {
@@ -4863,9 +4858,9 @@ const trainActions = {
             return false;
         }
         if (highlight) {
-            actionSync("trains", i, [{accelerationSpeed: 0}, {move: false}, {standardDirection: !trains[i].standardDirection}, {lastDirectionChange: frameNo}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
+            actionSync("trains", i, [{move: false}, {standardDirection: !trains[i].standardDirection}, {lastDirectionChange: frameNo}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         } else {
-            actionSync("trains", i, [{accelerationSpeed: 0}, {move: false}, {standardDirection: !trains[i].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
+            actionSync("trains", i, [{move: false}, {standardDirection: !trains[i].standardDirection}], [{getString: ["appScreenObjectChangesDirection", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         }
         return true;
     },
@@ -4880,7 +4875,7 @@ const trainActions = {
             return this.start(i, speed, notificationOnlyForOthers);
         }
         if (trains[i].speedInPercent != speed) {
-            var accSpeed = trains[i].currentSpeedInPercent / speed;
+            const accSpeed = trains[i].currentSpeedInPercent / speed;
             actionSync("trains", i, [{accelerationSpeedCustom: accSpeed}, {speedInPercent: speed}]);
         }
         return true;
@@ -5495,8 +5490,7 @@ const three: Three = {
                 three.followCamControls.draggingAreaRadius = three.followCamControls.width / 4;
             }
         },
-        dragging: false,
-        draggingReadyForChange: true
+        dragging: false
     }
 };
 
@@ -7510,7 +7504,7 @@ window.onload = function () {
                     }
                 }
             } else if (message.data.k == "trainCrash") {
-                actionSync("trains", message.data.i, [{move: false}, {accelerationSpeed: 0}, {accelerationSpeedCustom: 1}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
+                actionSync("trains", message.data.i, [{move: false}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
                 actionSync("train-crash");
                 if (existsAudio("trainCrash")) {
                     stopAudio("trainCrash");
