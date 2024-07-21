@@ -1,6 +1,6 @@
 /**
  * Copyright 2024 Jonathan Herrmann-Engel
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
 import {getSetting, getSettings, setSetting} from "../jsm/common/settings.js";

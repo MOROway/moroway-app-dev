@@ -22,6 +22,7 @@
   <string name="generalStartDemoMode3DCameraModeFollowCar">Auto folgen</string>
   <string name="generalStartDemoMode3DCameraModeFollowTrain">Zug folgen</string>
   <string name="generalStartDemoMode3DRotationSpeed">3D: Rotationsgeschwindigkeit</string>
+  <string name="generalStartDemoModeRandom">Demo-Modus mit zufälliger Konfiguration starten</string>
   <string name="generalStartGame">Spielen</string>
   <string name="generalStartGameDemoMode">Demo-Modus starten</string>
   <string name="generalStartGameDemoMode3DNight">3D: Nacht</string>

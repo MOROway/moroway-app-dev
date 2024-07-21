@@ -229,6 +229,7 @@ canvas {
     background: floralwhite;
     border-top: 2px solid rgb(48, 48, 48);
     width: inherit;
+    max-width: inherit;
     display: flex;
     justify-content: center;
 }

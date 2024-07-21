@@ -1,6 +1,6 @@
 /**
  * Copyright 2024 Jonathan Herrmann-Engel
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
 import { deepFreeze } from "./js_objects.js";
@@ -10,11 +10,11 @@ var APP_DATA = {
         major: 10,
         minor: 0,
         patch: 0,
-        beta: 19,
+        beta: 24,
         date: {
             year: 2024,
             month: 7,
-            day: 10
+            day: 21
         }
     },
     platform: "snap",
