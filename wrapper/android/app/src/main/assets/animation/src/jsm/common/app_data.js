@@ -10,11 +10,11 @@ var APP_DATA = {
         major: 10,
         minor: 0,
         patch: 0,
-        beta: 24,
+        beta: 0,
         date: {
             year: 2024,
             month: 7,
-            day: 21
+            day: 26
         }
     },
     platform: "android",
