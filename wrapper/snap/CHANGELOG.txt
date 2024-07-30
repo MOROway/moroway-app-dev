@@ -286,3 +286,12 @@ New license: GNU General Public License v3.0 replaces Apache License Version 2.
 
 ---
 
+
+
+10.0.1
+
+Update dependencies.
+
+
+---
+
