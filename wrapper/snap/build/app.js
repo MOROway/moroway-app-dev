@@ -36,10 +36,10 @@ ipcMain.handle("openNormalLink", async (_event, arg) => {
     newWindow(urlToLoad);
 });
 ipcMain.handle("canGoBack", async () => {
-    return BrowserWindow.getFocusedWindow().webContents.canGoBack();
+    return BrowserWindow.getFocusedWindow().webContents.navigationHistory.canGoBack();
 });
 ipcMain.handle("goBack", async () => {
-    BrowserWindow.getFocusedWindow().webContents.goBack();
+    BrowserWindow.getFocusedWindow().webContents.navigationHistory.goBack();
 });
 ipcMain.handle("exitApp", async () => {
     app.quit();
