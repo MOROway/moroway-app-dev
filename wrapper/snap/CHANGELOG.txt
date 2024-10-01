@@ -313,3 +313,12 @@ Update dependencies.
 
 ---
 
+
+
+10.1.0
+
+Translation: French (thanks to Weblate user Dadu042)
+
+
+---
+
