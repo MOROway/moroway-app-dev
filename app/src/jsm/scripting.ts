@@ -2115,14 +2115,14 @@ function drawObjects() {
                 context.restore();
             }
 
-            if (currentObject.wheelFront2DSrc && konamiState >= 0) {
-                const wheelWidthFront = currentObject.width * (pics[currentObject.wheelFront2DSrc].width / pics[currentObject.src].width);
-                const wheelHeightFront = currentObject.height * (pics[currentObject.wheelFront2DSrc].height / pics[currentObject.src].height);
+            if (currentObject.wheels?.front?.src2d && konamiState >= 0) {
+                const wheelWidthFront = currentObject.width * (pics[currentObject.wheels.front.src2d].width / pics[currentObject.src].width);
+                const wheelHeightFront = currentObject.height * (pics[currentObject.wheels.front.src2d].height / pics[currentObject.src].height);
                 context.save();
-                context.translate(currentObject.wheelFrontLeftX, currentObject.wheelFrontLeftY);
+                context.translate(currentObject.wheels.front.leftX, currentObject.wheels.front.leftY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    var xMove = currentObject.wheelMoveX * (flickerZoom - 1);
-                    var yMove = currentObject.wheelMoveY * (flickerZoom - 1);
+                    var xMove = currentObject.wheels.moveX * (flickerZoom - 1);
+                    var yMove = currentObject.wheels.moveY * (flickerZoom - 1);
                     context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
                 context.rotate(currentObject.front.angle);
@@ -2132,13 +2132,13 @@ function drawObjects() {
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     context.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheelFront2DSrc], -wheelWidthFront / 2, -wheelHeightFront / 2, wheelWidthFront, wheelHeightFront);
+                drawImage(pics[currentObject.wheels.front.src2d], -wheelWidthFront / 2, -wheelHeightFront / 2, wheelWidthFront, wheelHeightFront);
                 context.restore();
                 context.save();
-                context.translate(currentObject.wheelFrontRightX, currentObject.wheelFrontRightY);
+                context.translate(currentObject.wheels.front.rightX, currentObject.wheels.front.rightY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    var xMove = currentObject.wheelMoveX * (flickerZoom - 1);
-                    var yMove = -currentObject.wheelMoveY * (flickerZoom - 1);
+                    var xMove = currentObject.wheels.moveX * (flickerZoom - 1);
+                    var yMove = -currentObject.wheels.moveY * (flickerZoom - 1);
                     context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
                 context.rotate(currentObject.front.angle);
@@ -2149,17 +2149,17 @@ function drawObjects() {
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     context.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheelFront2DSrc], -wheelWidthFront / 2, 0, wheelWidthFront, wheelHeightFront);
+                drawImage(pics[currentObject.wheels.front.src2d], -wheelWidthFront / 2, 0, wheelWidthFront, wheelHeightFront);
                 context.restore();
             }
-            if (currentObject.wheelBack2DSrc && konamiState >= 0) {
-                const wheelWidthBack = currentObject.width * (pics[currentObject.wheelBack2DSrc].width / pics[currentObject.src].width);
-                const wheelHeightBack = currentObject.height * (pics[currentObject.wheelBack2DSrc].height / pics[currentObject.src].height);
+            if (currentObject.wheels?.back?.src2d && konamiState >= 0) {
+                const wheelWidthBack = currentObject.width * (pics[currentObject.wheels.back.src2d].width / pics[currentObject.src].width);
+                const wheelHeightBack = currentObject.height * (pics[currentObject.wheels.back.src2d].height / pics[currentObject.src].height);
                 context.save();
-                context.translate(currentObject.wheelBackLeftX, currentObject.wheelBackLeftY);
+                context.translate(currentObject.wheels.back.leftX, currentObject.wheels.back.leftY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    var xMove = -currentObject.wheelMoveX * (flickerZoom - 1);
-                    var yMove = currentObject.wheelMoveY * (flickerZoom - 1);
+                    var xMove = -currentObject.wheels.moveX * (flickerZoom - 1);
+                    var yMove = currentObject.wheels.moveY * (flickerZoom - 1);
                     context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
                 context.rotate(currentObject.back.angle);
@@ -2169,13 +2169,13 @@ function drawObjects() {
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     context.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheelBack2DSrc], -wheelWidthBack / 2, -wheelHeightBack / 2, wheelWidthBack, wheelHeightBack);
+                drawImage(pics[currentObject.wheels.back.src2d], -wheelWidthBack / 2, -wheelHeightBack / 2, wheelWidthBack, wheelHeightBack);
                 context.restore();
                 context.save();
-                context.translate(currentObject.wheelBackRightX, currentObject.wheelBackRightY);
+                context.translate(currentObject.wheels.back.rightX, currentObject.wheels.back.rightY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    var xMove = -currentObject.wheelMoveX * (flickerZoom - 1);
-                    var yMove = -currentObject.wheelMoveY * (flickerZoom - 1);
+                    var xMove = -currentObject.wheels.moveX * (flickerZoom - 1);
+                    var yMove = -currentObject.wheels.moveY * (flickerZoom - 1);
                     context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
                 context.rotate(currentObject.back.angle);
@@ -2186,7 +2186,7 @@ function drawObjects() {
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     context.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheelBack2DSrc], -wheelWidthBack / 2, 0, wheelWidthBack, wheelHeightBack);
+                drawImage(pics[currentObject.wheels.back.src2d], -wheelWidthBack / 2, 0, wheelWidthBack, wheelHeightBack);
                 context.restore();
             }
 
@@ -2867,12 +2867,12 @@ function drawObjects() {
             if (trains3D[i] && trains3D[i].mesh) {
                 trains3D[i].mesh.position.set((three.calcScale() * (train.x - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
                 if (trains3D[i].meshFront) {
-                    trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheelFrontLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelFrontLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
-                    trains3D[i].meshFront.right.position.set((three.calcScale() * (train.wheelFrontRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelFrontRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshFront.right.position.set((three.calcScale() * (train.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
                 }
                 if (trains3D[i].meshBack) {
-                    trains3D[i].meshBack.left.position.set((three.calcScale() * (train.wheelBackLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelBackLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
-                    trains3D[i].meshBack.right.position.set((three.calcScale() * (train.wheelBackRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheelBackRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshBack.left.position.set((three.calcScale() * (train.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshBack.right.position.set((three.calcScale() * (train.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
                 }
                 if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
                     const flickerRandom = (trains3D[i].positionZ / 5) * Math.random();
@@ -2920,12 +2920,12 @@ function drawObjects() {
                 if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
                     trains3D[i].cars[j].mesh.position.set(three.calcScale() * ((car.x - background.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
                     if (trains3D[i].cars[j].meshFront) {
-                        trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheelFrontLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelFrontLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
-                        trains3D[i].cars[j].meshFront.right.position.set((three.calcScale() * (car.wheelFrontRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelFrontRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshFront.right.position.set((three.calcScale() * (car.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
                     }
                     if (trains3D[i].cars[j].meshBack) {
-                        trains3D[i].cars[j].meshBack.left.position.set((three.calcScale() * (car.wheelBackLeftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelBackLeftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
-                        trains3D[i].cars[j].meshBack.right.position.set((three.calcScale() * (car.wheelBackRightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheelBackRightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshBack.left.position.set((three.calcScale() * (car.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshBack.right.position.set((three.calcScale() * (car.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
                     }
                     if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
                         const flickerRandom = (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
@@ -4153,34 +4153,38 @@ function drawObjects() {
                 context.strokeStyle = "orange";
                 context.stroke();
                 context.restore();
-                context.save();
-                context.translate(trains[debugTrain].wheelFrontLeftX, trains[debugTrain].wheelFrontLeftY);
-                context.beginPath();
-                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                context.fillStyle = "#ffff00";
-                context.fill();
-                context.restore();
-                context.save();
-                context.translate(trains[debugTrain].wheelFrontRightX, trains[debugTrain].wheelFrontRightY);
-                context.beginPath();
-                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                context.fillStyle = "#dddd00";
-                context.fill();
-                context.restore();
-                context.save();
-                context.translate(trains[debugTrain].wheelBackLeftX, trains[debugTrain].wheelBackLeftY);
-                context.beginPath();
-                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                context.fillStyle = "#bbbb00";
-                context.fill();
-                context.restore();
-                context.save();
-                context.translate(trains[debugTrain].wheelBackRightX, trains[debugTrain].wheelBackRightY);
-                context.beginPath();
-                context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                context.fillStyle = "#999900";
-                context.fill();
-                context.restore();
+                if (trains[debugTrain].wheels?.front) {
+                    context.save();
+                    context.translate(trains[debugTrain].wheels.front.leftX, trains[debugTrain].wheels.front.leftY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#ffff00";
+                    context.fill();
+                    context.restore();
+                    context.save();
+                    context.translate(trains[debugTrain].wheels.front.rightX, trains[debugTrain].wheels.front.rightY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#dddd00";
+                    context.fill();
+                    context.restore();
+                }
+                if (trains[debugTrain].wheels?.back) {
+                    context.save();
+                    context.translate(trains[debugTrain].wheels.back.leftX, trains[debugTrain].wheels.back.leftY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#bbbb00";
+                    context.fill();
+                    context.restore();
+                    context.save();
+                    context.translate(trains[debugTrain].wheels.back.rightX, trains[debugTrain].wheels.back.rightY);
+                    context.beginPath();
+                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                    context.fillStyle = "#999900";
+                    context.fill();
+                    context.restore();
+                }
                 for (var debugTrainCar in trains[debugTrain].cars) {
                     context.save();
                     context.translate(trains[debugTrain].cars[debugTrainCar].x, trains[debugTrain].cars[debugTrainCar].y);
@@ -4205,34 +4209,38 @@ function drawObjects() {
                     context.arc(0, trains[debugTrain].cars[debugTrainCar].height / 2, background.width / 200, 0, 2 * Math.PI);
                     context.fill();
                     context.restore();
-                    context.save();
-                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelFrontLeftX, trains[debugTrain].cars[debugTrainCar].wheelFrontLeftY);
-                    context.beginPath();
-                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                    context.fillStyle = "#ffff00";
-                    context.fill();
-                    context.restore();
-                    context.save();
-                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelFrontRightX, trains[debugTrain].cars[debugTrainCar].wheelFrontRightY);
-                    context.beginPath();
-                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                    context.fillStyle = "#dddd00";
-                    context.fill();
-                    context.restore();
-                    context.save();
-                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelBackLeftX, trains[debugTrain].cars[debugTrainCar].wheelBackLeftY);
-                    context.beginPath();
-                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                    context.fillStyle = "#bbbb00";
-                    context.fill();
-                    context.restore();
-                    context.save();
-                    context.translate(trains[debugTrain].cars[debugTrainCar].wheelBackRightX, trains[debugTrain].cars[debugTrainCar].wheelBackRightY);
-                    context.beginPath();
-                    context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
-                    context.fillStyle = "#999900";
-                    context.fill();
-                    context.restore();
+                    if (trains[debugTrain].cars[debugTrainCar].wheels?.front) {
+                        context.save();
+                        context.translate(trains[debugTrain].cars[debugTrainCar].wheels.front.leftX, trains[debugTrain].cars[debugTrainCar].wheels.front.leftY);
+                        context.beginPath();
+                        context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                        context.fillStyle = "#ffff00";
+                        context.fill();
+                        context.restore();
+                        context.save();
+                        context.translate(trains[debugTrain].cars[debugTrainCar].wheels.front.rightX, trains[debugTrain].cars[debugTrainCar].wheels.front.rightY);
+                        context.beginPath();
+                        context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                        context.fillStyle = "#dddd00";
+                        context.fill();
+                        context.restore();
+                    }
+                    if (trains[debugTrain].cars[debugTrainCar].wheels?.back) {
+                        context.save();
+                        context.translate(trains[debugTrain].cars[debugTrainCar].wheels.back.leftX, trains[debugTrain].cars[debugTrainCar].wheels.back.leftY);
+                        context.beginPath();
+                        context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                        context.fillStyle = "#bbbb00";
+                        context.fill();
+                        context.restore();
+                        context.save();
+                        context.translate(trains[debugTrain].cars[debugTrainCar].wheels.back.rightX, trains[debugTrain].cars[debugTrainCar].wheels.back.rightY);
+                        context.beginPath();
+                        context.arc(0, 0, background.width / 400, 0, 2 * Math.PI);
+                        context.fillStyle = "#999900";
+                        context.fill();
+                        context.restore();
+                    }
                 }
                 context.save();
                 context.translate(trains[debugTrain].outerX, trains[debugTrain].outerY);
@@ -4819,7 +4827,8 @@ var pics: any = [
     {id: 35, extension: "png"},
     {id: 36, extension: "png"},
     {id: 37, extension: "png"},
-    {id: 38, extension: "png"}
+    {id: 38, extension: "png"},
+    {id: 39, extension: "png"}
 ];
 
 const background: Background = {src: 9, secondLayer: 10};
@@ -5344,7 +5353,7 @@ const textControl: any = {
     }
 };
 
-const onlineGame: any = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "wheelFront2DSrc", "wheelFront3D", "wheelBack2DSrc", "wheelBack3D", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "wheelFront2DSrc", "wheelFront3D", "wheelBack2DSrc", "wheelBack3D", "fac", "bogieDistance"]}, chatSticker: 7, resized: false};
+const onlineGame: any = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]}, chatSticker: 7, resized: false};
 const onlineConnection: any = {serverURI: getServerLink(PROTOCOL_WS) + "/multiplay"};
 
 var resizeTimeout;
@@ -6994,7 +7003,7 @@ window.onload = function () {
                             trains3D[i].resize();
                             trains3D[i].mesh.callback = trainCallback;
                             three.mainGroup.add(trains3D[i].mesh);
-                            if (train.wheelFront3D) {
+                            if (train.wheels?.front?.use3d) {
                                 loaderGLTF.setPath("assets/3d/").load("asset" + train.src + "_front.glb", function (gltf) {
                                     trains3D[i].meshFront = {};
                                     trains3D[i].meshFront.left = gltf.scene;
@@ -7006,7 +7015,7 @@ window.onload = function () {
                                     three.mainGroup.add(trains3D[i].meshFront.right);
                                 });
                             }
-                            if (train.wheelBack3D) {
+                            if (train.wheels?.back?.use3d) {
                                 loaderGLTF.setPath("assets/3d/").load("asset" + train.src + "_back.glb", function (gltf) {
                                     trains3D[i].meshBack = {};
                                     trains3D[i].meshBack.left = gltf.scene;
@@ -7073,7 +7082,7 @@ window.onload = function () {
                                 trains3D[i].cars[j].resize();
                                 trains3D[i].cars[j].mesh.callback = trainCallback;
                                 three.mainGroup.add(trains3D[i].cars[j].mesh);
-                                if (car.wheelFront3D) {
+                                if (car.wheels?.front?.use3d) {
                                     loaderGLTF.setPath("assets/3d/").load("asset" + car.src + "_front.glb", function (gltf) {
                                         trains3D[i].cars[j].meshFront = {};
                                         trains3D[i].cars[j].meshFront.left = gltf.scene;
@@ -7085,7 +7094,7 @@ window.onload = function () {
                                         three.mainGroup.add(trains3D[i].cars[j].meshFront.right);
                                     });
                                 }
-                                if (car.wheelBack3D) {
+                                if (car.wheels?.back?.use3d) {
                                     loaderGLTF.setPath("assets/3d/").load("asset" + car.src + "_back.glb", function (gltf) {
                                         trains3D[i].cars[j].meshBack = {};
                                         trains3D[i].cars[j].meshBack.left = gltf.scene;
@@ -7413,20 +7422,7 @@ window.onload = function () {
                     trains[i].volume = train.volume;
                     trains[i].invisible = train.invisible;
                     trains[i].opacity = train.opacity;
-                    trains[i].wheelFront2DSrc = train.wheelFront2DSrc;
-                    trains[i].wheelBack2DSrc = train.wheelBack2DSrc;
-                    trains[i].wheelFront3D = train.wheelFront3D;
-                    trains[i].wheelMoveX = train.wheelMoveX;
-                    trains[i].wheelMoveY = train.wheelMoveY;
-                    trains[i].wheelFrontLeftX = train.wheelFrontLeftX;
-                    trains[i].wheelFrontLeftY = train.wheelFrontLeftY;
-                    trains[i].wheelFrontRightX = train.wheelFrontRightX;
-                    trains[i].wheelFrontRightY = train.wheelFrontRightY;
-                    trains[i].wheelBack3D = train.wheelBack3D;
-                    trains[i].wheelBackLeftX = train.wheelBackLeftX;
-                    trains[i].wheelBackLeftY = train.wheelBackLeftY;
-                    trains[i].wheelBackRightX = train.wheelBackRightX;
-                    trains[i].wheelBackRightY = train.wheelBackRightY;
+                    trains[i].wheels = train.wheels;
                     train.cars.forEach(function (car, j) {
                         trains[i].cars[j].x = car.x;
                         trains[i].cars[j].y = car.y;
@@ -7445,20 +7441,7 @@ window.onload = function () {
                         trains[i].cars[j].back.x = car.back.x;
                         trains[i].cars[j].back.y = car.back.y;
                         trains[i].cars[j].back.angle = car.back.angle;
-                        trains[i].cars[j].wheelFront2DSrc = car.wheelFront2DSrc;
-                        trains[i].cars[j].wheelBack2DSrc = car.wheelBack2DSrc;
-                        trains[i].cars[j].wheelFront3D = car.wheelFront3D;
-                        trains[i].cars[j].wheelMoveX = car.wheelMoveX;
-                        trains[i].cars[j].wheelMoveY = car.wheelMoveY;
-                        trains[i].cars[j].wheelFrontLeftX = car.wheelFrontLeftX;
-                        trains[i].cars[j].wheelFrontLeftY = car.wheelFrontLeftY;
-                        trains[i].cars[j].wheelFrontRightX = car.wheelFrontRightX;
-                        trains[i].cars[j].wheelFrontRightY = car.wheelFrontRightY;
-                        trains[i].cars[j].wheelBack3D = car.wheelBack3D;
-                        trains[i].cars[j].wheelBackLeftX = car.wheelBackLeftX;
-                        trains[i].cars[j].wheelBackLeftY = car.wheelBackLeftY;
-                        trains[i].cars[j].wheelBackRightX = car.wheelBackRightX;
-                        trains[i].cars[j].wheelBackRightY = car.wheelBackRightY;
+                        trains[i].cars[j].wheels = car.wheels;
                     });
                     if (train.move && !train.mute && audio.active) {
                         if (!existsAudio("train", i)) {
