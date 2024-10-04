@@ -1,19 +1,20 @@
 🚉 Züge:
 Sie können sieben Züge in zwei Kreisen steuern.
 
-🕹️ Usage:
-Control MOROway's trains by using the transformer on the right side. Select a train with the toggle on the left side. Alternatively you may simply click on the desired train or use the train control center.
+🕹️ Bedienung:
+Steuern Sie die Züge von MOROway mittels Klick auf den Trafo rechts im Bild. Wählen Sie einen Zug aus, indem Sie den Umschalter links betätigen.
+Alternativ können Sie den gewünschten Zug auch einfach anklicken oder das Zugkontrollzentrum nutzen.
 
-🏎️ Cars:
-The three cars can be operated separately or move automatically.
+🏎️ Autos:
+Die drei Autos können einzeln gesteuert werden oder automatisch fahren.
 
 🌆 3D:
-As an alternative to the bird's eye view there is a simple 3D view.
+Als Alternative zur Vogelperspektive gibt es eine einfache 3D-Ansicht.
 
-More features:
-🔉 Listen to the trains with sound effects.
-👁️ Relax in demo mode.
-🎮 Play with friends using multiplayer mode.
-🖼️ Zoom and tilt (3D) with gestures (touch, mouse, keyboard).
-🎥 Follow trains and cars (3D).
-❓ Detailed Information in the app's help section.
+Weitere Funktionen:
+🔉 Hören Sie den Zügen zu mit den Audio-Effekten.
+👁️ Entspannen Sie sich im Demo-Modus.
+🎮 Mit Freunden spielen im Mehrspieler-Modus.
+🖼️ Zoomen und Neigen (3D) mit Gesten (Touch, Maus, Tastatur).
+🎥 Zügen und Autos folgen (3D).
+❓ Detaillierte Information auf der Hilfe-Seite der App.
