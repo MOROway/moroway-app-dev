@@ -35,6 +35,7 @@ sed -i "s/\(versionCode\s\)[0-9]\+/\1$version_long/" app/build.gradle
 sed -i "s/\(versionName\s'\)[^']\+/\1$version/" app/build.gradle
 
 # Set Changelog
+rm app/src/main/res/values*/changelog-strings.xml 2>/dev/null
 for lang in "$working_dir_build"/changelogs/*; do
 	lang=$(basename "$lang")
 	changelog=""
@@ -64,19 +65,22 @@ for lang in "$working_dir_build"/changelogs/*; do
 	else
 		lang="-$lang"
 	fi
-	if [[ -d app/src/main/res/values"$lang"/ ]]; then
-		echo '<?xml version="1.0" encoding="utf-8"?><resources><string name="d_update_changelog">'$(echo "$changelog" | perl -0pe 's/\n$//g' | perl -0pe 's/\n/\\n/g' | sed 's/&/\&amp;/g' | sed 's/>/\&gt;/g' | sed 's/</\&lt;/g' | sed "s/'/\\\\'/g" | sed 's/"/\&quot;/g')'</string></resources>' >app/src/main/res/values"$lang"/changelog-strings.xml
+	outDir=./app/src/main/res/values"$lang"
+	if [[ -d "$outDir" ]]; then
+		echo '<?xml version="1.0" encoding="utf-8"?><resources><string name="d_update_changelog">'$(echo "$changelog" | perl -0pe 's/\n$//g' | perl -0pe 's/\n/\\n/g' | sed 's/&/\&amp;/g' | sed 's/>/\&gt;/g' | sed 's/</\&lt;/g' | sed "s/'/\\\\'/g" | sed 's/"/\&quot;/g')'</string></resources>' >"$outDir"/changelog-strings.xml
 	fi
 done
 
 # Set Strings
 for string_file in "$working_dir_build"/strings/*; do
 	lang="$(echo "$(basename "$string_file")" | sed 's/[.]json$//;s/strings//;s/_/-r/;s/-en//')"
-	out=./app/src/main/res/values"$lang"/"auto-strings.xml"
-	./build-libs/jq-linux-amd64 'with_entries(select((.key | startswith("general")) or (.key | startswith("platformAndroid")))) | to_entries | map({"+@name": .key, "+content": .value}) | {"+p_xml": "version=\"1.0\" encoding=\"utf-8\"", "resources": {"string":[.]}} ' "$string_file" | ./build-libs/yq_linux_amd64 \
-		--xml-content-name "+content" \
-		--xml-proc-inst-prefix "+p_" \
-		--xml-attribute-prefix "+@" \
-		--input-format json \
-		--output-format xml | sed "s/&#39;/\\\\'/g" >"$out"
+	outDir=./app/src/main/res/values"$lang"
+	if [[ -d "$outDir" ]]; then
+		"$working_dir_build"/jq-linux-amd64 'with_entries(select((.key | startswith("general")) or (.key | startswith("platformAndroid")))) | to_entries | map({"+@name": .key, "+content": .value}) | {"+p_xml": "version=\"1.0\" encoding=\"utf-8\"", "resources": {"string":[.]}} ' "$string_file" | "$working_dir_build"/yq_linux_amd64 \
+			--xml-content-name "+content" \
+			--xml-proc-inst-prefix "+p_" \
+			--xml-attribute-prefix "+@" \
+			--input-format json \
+			--output-format xml | sed "s/&#39;/\\\\'/g" >"$outDir"/auto-strings.xml
+	fi
 done

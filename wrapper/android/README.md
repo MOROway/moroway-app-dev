@@ -11,7 +11,6 @@ This wrapper app brings the MOROway App to Android. MOROway App directory (app/s
 * MOROway App: [GNU General Public License v3.0](https://github.com/MOROway/moroway-app-dev/blob/main/LICENSE.txt)
 * Included Open Source Projects: See [here](./app/src/main/assets/animation/src/lib/README.md).
 * App dependencies: See [here](./app/build.gradle).
-* App build dependencies: See [here](./build-libs/README.md).
 
 ---
 

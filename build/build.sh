@@ -257,7 +257,7 @@ for platform in ${platforms[@]}; do
 				fi
 				meta_app_name=$(cat "metadata/default/application-name.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
 				meta_author=$(cat "metadata/default/author.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
-				meta_description=$(cat "metadata/default/description.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
+				meta_description=$(./build-libs/yq_linux_amd64 e ".Description[] | .Standard | select(.)" metadata/default/translations.yml | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
 				sed -i 's/<\!--\sinsert_title_app_name\s-->/'"$meta_app_name"'/;s/<\!--\sinsert_meta_app_name\s-->/<meta name="application-name" content="'"$meta_app_name"'">/;s/<\!--\sinsert_meta_author\s-->/<meta name="author" content="'"$meta_author"'">/;s/<\!--\sinsert_meta_description\s-->/<meta name="description" content="'"$meta_description"'">/' "$to/$html_file"
 				while [[ ! -z $(cat "$to/$html_file" | grep "<\!-- dep_check -->" | head -1) ]]; do
 					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
@@ -302,7 +302,7 @@ for platform in ${platforms[@]}; do
 		if [[ -f "$file" ]]; then
 			meta_app_name=$(cat "metadata/default/application-name.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')
 			meta_app_name_short=$(cat "metadata/default/application-name-short.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')
-			meta_description=$(cat "metadata/default/description.txt" | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')
+			meta_description=$(./build-libs/yq_linux_amd64 e ".Description[] | .Standard | select(.)" metadata/default/translations.yml | sed 's!/!\\/!g' | sed 's/&/\\&/g' | sed -e 's/"/\\\\"/g')
 			sed -i "s/{{name}}/$meta_app_name/;s/{{short_name}}/$meta_app_name_short/;s/{{description}}/$meta_description/" "$file"
 		fi
 		# Service Worker

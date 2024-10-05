@@ -49,6 +49,7 @@ MOROway App uses Weblate for translations.
       - Activate debug mode (-d 1).
       - Prefer conf options prefixed "debug:"
       - Use unencrypted connections (as this mode is designed for a local test setup)
+    - `build-libs`: See [here](./build/build-libs/README.md)
   - Configuration files:
     - `conf` and `conf_local` (for local override)
       - `version`: MAJOR.MINOR.PATCH
