@@ -53,7 +53,7 @@ echo $(echo "$link" | sed 's!^\(.*//\)*\([^/]*\).*$!\2!') >app_domain.txt
 sed -i 's/\("version":\s*\)".*"/\1"'"$version"'"/' package.json
 license="$(cat "$working_dir_build/metadata/default/license.txt")"
 sed -i 's/\("license":\s*\)".*"/\1"'"$license"'"/' package.json
-description="$("$working_dir_build"/build-libs/yq_linux_amd64 e ".Description[] | .Short | select(.)" "$working_dir_build/metadata/default/translations.yml")"
+description="$("$working_dir_build"/build-libs/yq_linux_amd64 e ".Description | .Short" "$working_dir_build/metadata/default/translations.yml")"
 sed -i 's/\("description":\s*\)".*"/\1"'"$description"'"/' package.json
 author="$(cat "$working_dir_build/metadata/default/author.txt")"
 sed -i 's/\("author":\s*\)".*"/\1"'"$author"'"/' package.json
