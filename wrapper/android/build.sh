@@ -39,26 +39,28 @@ rm app/src/main/res/values*/changelog-strings.xml 2>/dev/null
 for lang in "$working_dir_build"/changelogs/*; do
 	lang=$(basename "$lang")
 	changelog=""
-	if [[ -f "$working_dir_build/changelogs/$lang/$version" ]] || [[ -f "$working_dir_build/changelogs/default/$version" ]]; then
-		changelogfile="$working_dir_build/changelogs/default/$version"
-		if [[ -f "$working_dir_build/changelogs/$lang/$version" ]]; then
-			changelogfile="$working_dir_build/changelogs/$lang/$version"
-		fi
-		changelog="$changelog"$(cat "$changelogfile" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+	changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .general | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
+	if [[ -z "$changelogAdd" ]]; then
+		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .general | select(.)" "$working_dir_build/changelogs/default/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
 	fi
-	if [[ -f "$working_dir_build/changelogs/$lang/$version-android" ]] || [[ -f "$working_dir_build/changelogs/default/$version-android" ]]; then
-		changelogfile_platform="$working_dir_build/changelogs/default/$version-android"
-		if [[ -f "$working_dir_build/changelogs/$lang/$version-android" ]]; then
-			changelogfile_platform="$working_dir_build/changelogs/$lang/$version-android"
-		fi
-		changelog="$changelog"$(cat "$changelogfile_platform" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+	if [[ ! -z "$changelogAdd" ]]; then
+		changelog="$changelog$changelogAdd"$'\n'
 	fi
-	if [[ $(cat "$working_dir_build/changelogs/meta/fixes/bool/$version") == 1 ]]; then
-		changelogfile_bool="$working_dir_build/changelogs/meta/fixes/locale/default"
-		if [[ -f "$working_dir_build/changelogs/meta/fixes/locale/$lang" ]]; then
-			changelogfile_bool="$working_dir_build/changelogs/meta/fixes/locale/$lang"
+	changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .android | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
+	if [[ -z "$changelogAdd" ]]; then
+		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .android | select(.)" "$working_dir_build/changelogs/default/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
+	fi
+	if [[ ! -z "$changelogAdd" ]]; then
+		changelog="$changelog$changelogAdd"$'\n'
+	fi
+	if [[ $(cat "$working_dir_build/changelogs/meta/fixes/$version") == 1 ]]; then
+		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".fixes | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml")
+		if [[ -z "$changelogAdd" ]]; then
+			changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".fixes | select(.)" "$working_dir_build/changelogs/default/changelog.yml")
 		fi
-		changelog="$changelog"$(cat "$changelogfile_bool")"."$'\n'
+		if [[ ! -z "$changelogAdd" ]]; then
+			changelog="$changelog$changelogAdd."$'\n'
+		fi
 	fi
 	if [[ $lang == default ]]; then
 		lang=""
@@ -76,7 +78,7 @@ for string_file in "$working_dir_build"/strings/*; do
 	lang="$(echo "$(basename "$string_file")" | sed 's/[.]json$//;s/strings//;s/_/-r/;s/-en//')"
 	outDir=./app/src/main/res/values"$lang"
 	if [[ -d "$outDir" ]]; then
-		"$working_dir_build"/jq-linux-amd64 'with_entries(select((.key | startswith("general")) or (.key | startswith("platformAndroid")))) | to_entries | map({"+@name": .key, "+content": .value}) | {"+p_xml": "version=\"1.0\" encoding=\"utf-8\"", "resources": {"string":[.]}} ' "$string_file" | "$working_dir_build"/yq_linux_amd64 \
+		"$working_dir_build"/build-libs/jq-linux-amd64 'with_entries(select((.key | startswith("general")) or (.key | startswith("platformAndroid")))) | to_entries | map({"+@name": .key, "+content": .value}) | {"+p_xml": "version=\"1.0\" encoding=\"utf-8\"", "resources": {"string":[.]}} ' "$string_file" | "$working_dir_build"/build-libs/yq_linux_amd64 \
 			--xml-content-name "+content" \
 			--xml-proc-inst-prefix "+p_" \
 			--xml-attribute-prefix "+@" \

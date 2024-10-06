@@ -74,7 +74,7 @@ for platform in ${platforms[@]}; do
 		version_patch=$(echo "$version" | sed 's/^[0-9]\+\.[0-9]\+\.\([0-9]\+\)$/\1/')
 		[[ "$version_major" != $(echo "$version_major" | sed 's/[^0-9]//g') || "$version_minor" != $(echo "$version_minor" | sed 's/[^0-9]//g') || "$version_patch" != $(echo "$version_patch" | sed 's/[^0-9]//g') ]] && logexit 1 "version invalid"
 		date '+%Y' >changelogs/meta/year/"$version"
-		[[ ! -f changelogs/meta/fixes/bool/"$version" ]] && echo 0 >changelogs/meta/fixes/bool/"$version"
+		[[ ! -f changelogs/meta/fixes/"$version" ]] && echo 0 >changelogs/meta/fixes/"$version"
 		beta=$(echo "$(get_conf "beta" "$debug" "$platform")" | sed s/[^0-9]//g)
 		[[ -z "$beta" ]] && logexit 2 "beta empty"
 		beta_identifier=""
@@ -145,42 +145,56 @@ for platform in ${platforms[@]}; do
 		[[ $(file -i "$file" | sed 's/.*charset=//') != utf-8 ]] && logexit 4 "setting strings internal error"
 		for clangdir in changelogs/*; do
 			clang=$(basename "$clangdir")
-			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]]; then
+			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]] && [[ -f "changelogs/$clang/changelog.yml" ]]; then
 				changelogs=""
-				for changelogfile in "$clangdir"/*.0; do
-					if [[ -f "$changelogfile" ]]; then
-						cv=$(basename "$changelogfile")
-						cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
-						cvMi=$(echo "$cv" | sed 's/^[0-9]\+\.\([0-9]\+\)\.0$/\1/')
-						changelog="whatsNewScreenByVersionMa${cvMa}Mi${cvMi}: ["
-						changelogfile_year="changelogs/meta/year/$cv"
-						if [[ -f "$changelogfile_year" ]]; then
-							changelog="$changelog"'"'$(cat "$changelogfile_year")'",'
-						fi
-						while read -r line; do
-							line=$(echo "$line" | sed 's/"/\\"/g')
-							changelog="$changelog"$(printf '"%s",' "$line")
-						done <"$changelogfile"
-						if [[ -f "$changelogfile-$platform" ]] || [[ -f "changelogs/default/$cvMa.$cvMi.0-$platform" ]]; then
-							changelogfile_platform="changelogs/default/$cvMa.$cvMi.0-$platform"
-							if [[ -f "$changelogfile-$platform" ]]; then
-								changelogfile_platform="$changelogfile-$platform"
-							fi
-							while read -r line; do
-								line=$(echo "$line" | sed 's/"/\\"/g')
-								changelog="$changelog"$(printf '"%s",' "$line")
-							done <"$changelogfile_platform"
-						fi
-						if [[ $(cat "changelogs/meta/fixes/bool/$cv") == 1 ]]; then
-							changelogfile_bool="changelogs/meta/fixes/locale/default"
-							if [[ -f "changelogs/meta/fixes/locale/$clang" ]]; then
-								changelogfile_bool="changelogs/meta/fixes/locale/$clang"
-							fi
-							line=$(echo "$(cat "$changelogfile_bool")." | sed 's/"/\\"/g')
-							changelog="$changelog"$(printf '"%s",' "$line")
-						fi
-						changelogs="$changelogs"$(echo "$changelog" | sed 's/,$/],/')
+				for cv in $(./build-libs/yq_linux_amd64 '.versions | keys[] | select(. == "*.0")' "changelogs/$clang/changelog.yml"); do
+					cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
+					cvMi=$(echo "$cv" | sed 's/^[0-9]\+\.\([0-9]\+\)\.0$/\1/')
+					changelog="whatsNewScreenByVersionMa${cvMa}Mi${cvMi}: ["
+					changelogfile_year="changelogs/meta/year/$cv"
+					if [[ -f "$changelogfile_year" ]]; then
+						changelog="$changelog"'"'$(cat "$changelogfile_year")'",'
 					fi
+					changelogAdd=""
+					while read -r line; do
+						if [ ! -z "$line" ]; then
+							line=$(echo "$line" | sed 's/"/\\"/g')
+							changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
+						fi
+					done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .general | select(.)" "changelogs/$clang/changelog.yml")
+					if [[ -z "$changelogAdd" ]]; then
+						while read -r line; do
+							if [ ! -z "$line" ]; then
+								line=$(echo "$line" | sed 's/"/\\"/g')
+								changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
+							fi
+						done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .general | select(.)" "changelogs/default/changelog.yml")
+					fi
+					changelog="$changelog$changelogAdd"
+					changelogAdd=""
+					while read -r line; do
+						if [ ! -z "$line" ]; then
+							line=$(echo "$line" | sed 's/"/\\"/g')
+							changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
+						fi
+					done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .\"$platform\" | select(.)" "changelogs/$clang/changelog.yml")
+					if [[ -z "$changelogAdd" ]]; then
+						while read -r line; do
+							if [ ! -z "$line" ]; then
+								line=$(echo "$line" | sed 's/"/\\"/g')
+								changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
+							fi
+						done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .\"$platform\" | select(.)" "changelogs/default/changelog.yml")
+					fi
+					changelog="$changelog$changelogAdd"
+					if [[ $(cat "changelogs/meta/fixes/$cv") == 1 ]]; then
+						line=$(echo "$(./build-libs/yq_linux_amd64 e ".fixes | select(.)" changelogs/$clang/changelog.yml)" | sed 's/"/\\"/g')
+						if [[ -z "$line" ]]; then
+							line=$(echo "$(./build-libs/yq_linux_amd64 e ".fixes | select(.)" changelogs/default/changelog.yml)" | sed 's/"/\\"/g')
+						fi
+						changelog="$changelog$(printf '"%s",' "$line.")"
+					fi
+					changelogs="$changelogs"$(echo "$changelog" | sed 's/,$/],/')
 				done
 				changelogs=$(echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g' | perl -0pe 's/,$//g')
 				sed -i "s/{{changelog=$clang}}/$changelogs/" "$file"

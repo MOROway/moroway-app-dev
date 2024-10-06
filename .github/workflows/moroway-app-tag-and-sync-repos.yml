@@ -78,14 +78,16 @@ jobs:
                   # Build moroway-app
                   cd build
                   changelog="$VERSION"$'\n'
-                  if [[ -f "changelogs/en/$VERSION" ]]; then
-                    changelog="$changelog"$(cat "changelogs/en/$VERSION" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+                  changelogAdd=$(./build-libs/yq_linux_amd64 e ".versions .\"$VERSION\" .general | select(.)" changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
+                  if [[ ! -z "$changelogAdd" ]]; then
+                     changelog="$changelog$changelogAdd"$'\n'
                   fi
-                  if [[ -f "changelogs/en/$VERSION-$PLATFORM" ]]; then
-                    changelog="$changelog"$(cat "changelogs/en/$VERSION-$PLATFORM" | sed 's/{{[0-9]\+}}\s\?//g')$'\n'
+                  changelogAdd=$(./build-libs/yq_linux_amd64 e ".versions .\"$VERSION\" .snap | select(.)" changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
+                  if [[ ! -z "$changelogAdd" ]]; then
+                     changelog="$changelog$changelogAdd"$'\n'
                   fi
-                  if [[ $(cat "changelogs/meta/fixes/bool/$VERSION") == 1 ]]; then
-                      changelog="$changelog"$(cat "changelogs/meta/fixes/locale/en")"."$'\n'
+                  if [[ $(cat "changelogs/meta/fixes/$VERSION") == 1 ]]; then
+                     changelog="$changelog$(./build-libs/yq_linux_amd64 e ".fixes | select(.)" changelogs/default/changelog.yml)."$'\n'
                   fi
                   bash build.sh -p $PLATFORM || bash build.sh -p $PLATFORM || exit $?
                   # Publish to platform repository

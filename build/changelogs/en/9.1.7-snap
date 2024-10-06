@@ -1,1 +1,0 @@
-Allow passing query parameters as CLI options (e.g. --mode=normal).

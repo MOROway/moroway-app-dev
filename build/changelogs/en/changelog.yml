@@ -1,0 +1,308 @@
+fixes: "Bugfixes"
+versions:
+    1.0.0:
+        general: |
+            First release featuring steam locomotive.
+    2.0.0:
+        general: |
+            {{0}} TGV Duplex.
+            {{0}} First car.
+    3.0.0:
+        general: |
+            {{0}} Second car.
+            Car controls added.
+            Improved paths.
+    3.1.0:
+        general: |
+            Info section added.
+    3.2.0:
+        general: |
+            Short intro added.
+            Train controls added.
+    4.0.0:
+        general: |
+            {{0}} Update from Action-Script 2 to Action-Script 3.
+            {{0}} Added cars to steam engine.
+            {{0}} Third train (railbus).
+            {{0}} Start/stop train by clicking them.
+            Improved background.
+            Improved car paths.
+            New intro.
+            Improved controls and info text
+    5.0.0:
+        general: |
+            {{0}} Better background.
+            {{0}} Custom train speed.
+            {{0}} Change train direction.
+            {{0}} Notifications.
+            {{0}} Option menu added.
+            {{0}} Better intro.
+            {{0}} Animated burning tax office.
+            Improved objects.
+            Improved object paths.
+            Improved controls.
+            Optimized GUI.
+            Improved help section.
+            HTML/JS/CSS replaces Flash Action Script.
+            Offline-Support as Progressive-Web-App.
+            Use of Open-Source-Components.
+            Own code is licensed differently.
+    5.1.0:
+        general: |
+            {{0}} Turn switches.
+            Improved train paths.
+    5.2.0:
+        general: |
+            {{0}} Trains: Acceleration delay.
+            {{0}} Cars: auto mode added.
+            {{0}} Cars: Option to move back a bit.
+            Improved controls.
+    5.3.0:
+        general: |
+            {{0}} Third car (yellow car).
+            {{0}} English Version
+            Better switch symbols
+    5.4.0:
+        general: |
+            Own code is licensed differently. (Apache License Version 2 replaces Two-Clause-BSD).
+    5.5.0:
+        general: |
+            Added website link in help section.
+    5.6.0:
+        general: |
+            Cars: Improvements for auto mode.
+            Only display active settings.
+    6.0.0:
+        general: |
+            {{0}} Play with your friends using the new multiplayer mode.
+    6.1.0:
+        general: |
+            {{0}} Multithreading.
+            Removed option to disable switches.
+    6.2.0:
+        general: |
+            {{0}} Allow gameplay zoom by touch gestures, keyboard and mousewheel.
+            {{0}} Gameplay "Control Center" for trains
+    6.3.0:
+        general: |
+            High precision handling of switches.
+    6.4.0:
+        general: |
+            {{0}} Cars can move back to parking lot
+            {{0}} "Control Center" for cars
+            Improved performance
+            Improved cursor behavior
+    7.0.0:
+        general: |
+            {{0}} Three additional trains: Thalys, local train and street car.
+            {{0}} Central sidings may be used.
+            {{0}} Option to save game state.
+    7.1.0:
+        general: |
+            Remove Material Design Lite dependency.
+    7.2.0:
+        general: |
+            {{0}} Multiplayer: Text chat.
+    7.2.1:
+        oc: |
+            Fix external links
+    7.2.2:
+        general: |
+            Replace birthday logo
+        oc: |
+            Prepare for Apache Cordova-Android 10.1.0
+            NOTE: You will need to open this version of the app (v7.2.2) once to auto prepare data transition to the upcomming next version which will be based on Apache Cordova-Android 10.1.0 and use the newly introduced WebViewAssetLoader.
+    7.2.3:
+        android: |
+            Improve orientation change handling
+    7.2.4:
+        general: |
+            Start logo: small improvements
+        oc: |
+            Update Apache Cordova-Android to 10.1.1
+    7.3.0:
+        general: |
+            Improved train paths
+            Improved shunting
+            Improved zoom gestures
+        snap: |
+            First snap release
+    7.3.1:
+        snap: |
+            Minor UX improvements
+        web: |
+            Add Ubuntu Snap Store link
+    7.3.2:
+        snap: |
+            Minor UX improvements
+    7.3.3:
+        general: |
+            Prevent possible extra loop when parking white car
+            Minor UX improvements
+    7.4.0:
+        general: |
+            Bigger menu and "Classic UI" display on small screens.
+            Improved "Classic UI".
+        windows: |
+            Unified options menu on all platforms.
+    7.4.1:
+        general: |
+            Adjust graphical help to new UI elements.
+            Improve touch gestures on "Classic UI" elements.
+    7.4.2:
+        general: |
+            Improve interaction of mouse and touch events
+    7.4.3:
+        general: |
+            Replace move background mouse gesture during zoom by hold and drag.
+            Doubletap prevents normal touch action.
+        oc: |
+            Remove plugin Native Storage.
+    7.4.4:
+        general: |
+            Fix multiplayer mode
+    7.4.5:
+        android: |
+            Minor UI improvements
+    7.4.6:
+        general: |
+            Improve background image colors
+    7.4.7:
+        snap: |
+            Minor UX improvements
+    7.4.8:
+        general: |
+            Minor UI improvements
+    7.4.9:
+        oc: |
+            Improved in-app navigation
+    7.5.0:
+        general: |
+            {{0}} Sound effects for trains.
+        oc: |
+            Sound effects might not work on older Android versions.
+    7.5.1:
+        general: |
+            Minor UX improvements
+        snap: |
+            Update dependencies
+    8.0.0:
+        general: |
+            {{0}} New train: Boston and Maine (American freight train).
+            {{0}} New – mostly invisible – track.
+            {{0}} Turn trains around using the new track.
+            Replace graphical help image with interactive graphical info.
+            Allow some options menu items to be hidden using a new setting.
+        oc: |
+            Update to Apache Cordova Android 11.0.0
+        snap: |
+            Update dependencies.
+        web: |
+            {{0}} Basic demo mode (Activation: [App-URL]/?mode=demo).
+    8.1.0:
+        general: |
+            {{0}} Demo mode.
+        web: |
+            Enter demo mode using GUI button.
+    8.1.2:
+        oc: |
+            Update screenshots.
+    8.1.3:
+        general: |
+            Text commands (press "/" to activate)
+        android: |
+            Text commands require a physical keyboard.
+            Monochrome icon (Android 13).
+        oc: |
+            Text commands require a physical keyboard.
+        snap: |
+            Update dependencies
+    8.1.4:
+        android: |
+            Improved in-app navigation and UX.
+        snap: |
+            Update Electron version.
+    8.1.6:
+        general: |
+            Translation: Norsk Bokmål (thanks to Weblate user kingu)
+        android: |
+            Update dependencies
+        snap: |
+            Update dependencies
+    8.1.7:
+        android: |
+            Fix options view
+    8.1.8:
+        android: |
+            Simplify settings.
+            This is the last version to support Android 5 and 6.
+        oc: |
+            This is the last version to support Android 5 and 6.
+        snap: |
+            Update Electron version.
+    9.0.0:
+        general: |
+            {{0}} 3D view.
+        oc: |
+            Upgrade Apache Cordova Android to version 12.0.1.
+        snap: |
+            Update Electron version.
+    9.0.2:
+        general: |
+            Add system information to help page.
+        android: |
+            Allow demo mode configuration.
+    9.1.0:
+        general: |
+            Improved 3D view.
+            Migrate to TypeScript modules.
+            Update dependencies.
+        oc: |
+            Android WebView version 80 or newer required.
+            Allow demo mode configuration.
+    9.1.2:
+        general: |
+            Update dependencies.
+    9.1.4:
+        general: |
+            Minor 3d-view improvements.
+            Update dependencies.
+        web: |
+            Add social media share metadata.
+    9.1.5:
+        general: |
+            3D-view: visualize hidden track.
+        oc: |
+            Only keep screen on during a game.
+    9.1.6:
+        snap: |
+            Switch build tool (Cordova Electron -> Electron Builder).
+    9.1.7:
+        general: |
+            Minor background 3D improvements.
+        snap: |
+            Allow passing query parameters as CLI options (e.g. --mode=normal).
+    9.1.9:
+        general: |
+            Update dependencies.
+        oc: |
+            Upgrade Apache Cordova Android to version 13.0.0.
+    10.0.0:
+        general: |
+            {{0}} 3D view: train conductor and car driver cameras.
+            License change: GNU General Public License v3.0 replaces Apache License Version 2.
+    10.0.1:
+        general: |
+            Update dependencies.
+    10.0.2:
+        general: |
+            Update dependencies.
+    10.0.3:
+        general: |
+            Update dependencies.
+    10.1.0:
+        general: |
+            Translation: French (thanks to Weblate user Dadu042)
+    10.1.1:
+        general: |
+            Improve railbus wheels in 2D-view.
