@@ -1,228 +1,228 @@
 fixes: "Fehlerkorrekturen"
 versions:
-    1.0.0:
-        general: |
-            Die animierte Dampflok stellt den Beginn der MOROway App dar.
-    2.0.0:
-        general: |
-            {{0}} Ein neuer Zug, der TGV, wurde hinzugefügt.
-            {{0}} Erstes animiertes Auto.
-    3.0.0:
-        general: |
-            {{0}} Ein zweites Auto wurde hinzugefügt.
-            Beide Autos sind nun steuerbar.
-            Verbesserter TGV-Pfad in umgekehrter Richtung.
-            Verbesserter Pfad für das erste Auto.
-    3.1.0:
-        general: |
-            Erste Version eines Infotextes.
-    3.2.0:
-        general: |
-            Ein Intro mit dem MOROway Logo wurde eingebaut.
-            Beide Züge sind individuell steuerbar.
-            Steuerung des Infotext wurde ergänzt.
-    4.0.0:
-        general: |
-            {{0}} Update von Action-Script 2 auf Action-Script 3.
-            {{0}} Einfügen von Wagen für die Dampflok.
-            {{0}} Zweiter Zug im Innenkreis (Schi-Stra-Bus).
-            {{0}} Steuerung durch Klick auf Zug ist nun möglich.
-            Überarbeiteter Hintergrund.
-            Überarbeitete Kreisführung für die Autos.
-            Veränderter Vorspann.
-            Veränderte Bedienelemente und neuer Hilfetext.
-    5.0.0:
-        general: |
-            {{0}} Neuer Hintergrund (u.a. verbesserter Bildausschnitt).
-            {{0}} Variable Zuggeschwindigkeit.
-            {{0}} Richtungswechsel für alle Züge möglich.
-            {{0}} Kurzzeitig eingeblendete Benachrichtigungen informieren über Events.
-            {{0}} Basiseinstellungen.
-            {{0}} Neuer Vorspann.
-            {{0}} Animation des brennenden Finanzamtes.
-            Optimierte Objekte (Züge, Autos, Trafo,...).
-            Optimierte Objektpfade ("Zugstrecken", "Autostrecken").
-            Optimierte Objektsteuerung (Züge und Autos).
-            Optimierte User-Interface.
-            Optimierte Hilfeseiten.
-            Nativer HTML-, JavaScript- und CSS-Code (statt Flash-Action-Script).
-            Offline-Support als Progressive-Web-App.
-            Einbau diverser Open-Source-Komponenten.
-            Neue Lizenzierung des eigenen Codes.
-    5.1.0:
-        general: |
-            {{0}} Einige Weichen können gestellt werden.
-            Optimierte Zugstrecken.
-    5.2.0:
-        general: |
-            {{0}} Die Züge starten und halten zeitvergözert.
-            {{0}} Autos können automatisch fahren.
-            {{0}} Kurzes Zurücksetzen der Autos möglich.
-            Optimierte  Objektsteuerung (Züge und Autos).
-    5.3.0:
-        general: |
-            {{0}} Drittes, gelbes Auto.
-            {{0}} Englische Version.
-            Verbesserte Weichensymbole.
-    5.4.0:
-        general: |
-            Neue Lizenzierung des eigenen Codes (Apache License Version 2 statt Two-Clause-BSD).
-    5.5.0:
-        general: |
-            Verlinkung zur Website von MOROway in Hilfeseite eingebaut.
-    5.6.0:
-        general: |
-            Autos: Verbesserungen an der automatischen Steuerung.
-            Nur aktive Einstellungen werden angezeigt.
-    6.0.0:
-        general: |
-            {{0}} Spielen Sie mit Freunden über den neuen Mehrspielermodus.
-    6.1.0:
-        general: |
-            {{0}} Multithreading.
-            Entfernen der Option, die Anzeige der Weichen zu deaktivieren.
-    6.2.0:
-        general: |
-            {{0}} Verarbeiten des Spielfeldzooms mit Touch-Gesten, Tastatur und Mausrad.
-            {{0}} Spielfeld "Control Center" für Züge.
-    6.3.0:
-        general: |
-            Hohe Präzision beim Weichenstellen.
-    6.4.0:
-        general: |
-            {{0}} Autos können wieder einparken.
-            {{0}} "Control Center" für Autos.
-            Verbesserte Performance.
-            Verbessertes Cursor-Verhalten.
-    7.0.0:
-        general: |
-            {{0}} Drei zusätzliche Züge: Thalys, Regionalzug und Straßenbahn.
-            {{0}} Zentrale Abstellgleise sind nutzbar.
-            {{0}} Option, den Zustand des Spieles zu speichern.
-    7.1.0:
-        general: |
-            Entfernen des Material Design Lite.
-    7.2.0:
-        general: |
-            {{0}} Mehrspielermodus: Text-Chat.
-    7.2.1:
-        oc: |
-            Fix: Externe Links
-    7.2.2:
-        general: |
-            Ersetzen des Geburtstaglogos
-        oc: |
-            Vorbereitung auf Apache Cordova-Android 10.1.0
-            HINWEIS: Sie müssen diese Version der MOROway App (v7.2.2) einmal öffnen, um die automatische Datenübertragung in die kommende Version zu initialisieren. Die kommende Version wird auf Apache Cordova-Android 10.1.0 basieren und den neuen WebViewAssetLoader nutzen.
-    7.2.3:
-        android: |
-            Verbesserte Handhabung des Wechsels der Bildschirmausrichtung
-    7.2.4:
-        general: |
-            Kleine Verbesserungen am Startlogo
-        oc: |
-            Update auf Apache Cordova-Android 10.1.1
-    7.3.0:
-        general: |
-            Verbesserte Zugstrecken
-            Verbessertes Rangieren
-            Verbesserte Zoomgesten
-        snap: |
-            Erste snap Version
-    7.4.0:
-        general: |
-            Größe Darstellung des Optionsmenüs und der klassischen Steuerelemente auf kleinen Bildschirmen.
-            Verbesserte klassische Steuerelemente.
-        windows: |
-            Vereinheitlichtes Optionsmenü auf allen Plattformen.
-    7.4.3:
-        general: |
-            Ersetzen der Mausgeste zum Bewegen des Hintergrundes bei Zoom durch Halten und Ziehen.
-            Doppeltouch verhindert normale Touchaktion.
-        oc: |
-            Entfernen des Plugins NativeStorage.
-    7.4.4:
-        general: |
-            Fix des Mehrspielermodus
-    7.4.5:
-        android: |
-            Kleinere Verbesserungen an der Nutzeroberfläche
-    7.4.8:
-        general: |
-            Kleinere Verbesserungen an der Nutzeroberfläche
-    7.4.9:
-        oc: |
-            Verbesserte In-App-Navigation
-    7.5.0:
-        general: |
-            {{0}} Audioeffekte für die Züge.
-        oc: |
-            Audioeffekte funktionieren eventuell nicht mit älteren Android-Versionen.
-    8.0.0:
-        general: |
-            {{0}} Neuer Zug: Boston and Maine (Amerikanischer Güterzug).
-            {{0}} Neues – größtenteils nicht sichtbares – Gleis.
-            {{0}} Züge wenden mittels des neues Gleises.
-            Ersetzen des Bildes zur grafischen Hilfe durch einen interaktiven Modus.
-            Einige Optionsmenü-Einträge können mittels einer neuen Einstellung versteckt werden.
-        oc: |
-            Update auf Apache Cordova Android 11.0.0
-        snap: |
-            Aktualisierte Abhängigkeiten.
-        web: |
-            {{0}} Einfacher Demo-Modus (Aktivierung: [App-URL]/?mode=demo).
-    8.1.0:
-        general: |
-            {{0}} Demo-Modus.
-        web: |
-            Demo-Modus mit GUI-Symbol aktivieren.
-    8.1.2:
-        oc: |
-            Aktuelle Screenshots.
-    8.1.3:
-        general: |
-            Text Kommandos (Aktivierung mit "/"-Taste)
-        android: |
-            Text Kommandos erfordern eine physische Tastatur.
-            Monochromes Icon (Android 13).
-        oc: |
-            Text Kommandos erfordern eine physische Tastatur.
-        snap: |
-            Aktualisierte Abhängigkeiten.
-    8.1.4:
-        android: |
-            Verbesserte In-App-Navigation und Nutzererfahrung.
-    8.1.8:
-        android: |
-            Vereinfachte Einstellungen.
-            Dies ist die letzte Version, die Android 5 und 6 unterstützt.
-        oc: |
-            Dies ist die letzte Version, die Android 5 und 6 unterstützt.
-    9.0.0:
-        general: |
-            {{0}} 3D-Ansicht.
-        oc: |
-            Aktualisierung von Apache Cordova Android auf Version 12.0.1.
-    9.0.2:
-        android: |
-            Demo-Modus kann nun konfiguriert werden.
-    9.1.0:
-        general: |
-            Verbesserte 3D-Ansicht.
-            Umstieg auf modularisiertes TypeScript.
-            Aktualisierte Abhängigkeiten.
-        oc: |
-            Android WebView Version 80 oder neuer erforderlich.
-            Demo-Modus kann nun konfiguriert werden.
-    9.1.9:
-        general: |
-            Aktualisierte Abhängigkeiten.
-        oc: |
-            Aktualisierung von Apache Cordova Android auf Version 13.0.0.
-    10.0.0:
-        general: |
-            {{0}} 3D-Ansicht: Lokführer und Autofahrer Kameras.
-            Geänderte Lizenz: GNU General Public License v3.0 ersetzt die Apache License Version 2.
-    10.1.0:
-        general: |
-            Übersetzung: Französisch (Dank an Weblate-Nutzer Dadu042)
+  1.0.0:
+    general: |
+      Die animierte Dampflok stellt den Beginn der MOROway App dar.
+  2.0.0:
+    general: |
+      {{0}} Ein neuer Zug, der TGV, wurde hinzugefügt.
+      {{0}} Erstes animiertes Auto.
+  3.0.0:
+    general: |
+      {{0}} Ein zweites Auto wurde hinzugefügt.
+      Beide Autos sind nun steuerbar.
+      Verbesserter TGV-Pfad in umgekehrter Richtung.
+      Verbesserter Pfad für das erste Auto.
+  3.1.0:
+    general: |
+      Erste Version eines Infotextes.
+  3.2.0:
+    general: |
+      Ein Intro mit dem MOROway Logo wurde eingebaut.
+      Beide Züge sind individuell steuerbar.
+      Steuerung des Infotext wurde ergänzt.
+  4.0.0:
+    general: |
+      {{0}} Update von Action-Script 2 auf Action-Script 3.
+      {{0}} Einfügen von Wagen für die Dampflok.
+      {{0}} Zweiter Zug im Innenkreis (Schi-Stra-Bus).
+      {{0}} Steuerung durch Klick auf Zug ist nun möglich.
+      Überarbeiteter Hintergrund.
+      Überarbeitete Kreisführung für die Autos.
+      Veränderter Vorspann.
+      Veränderte Bedienelemente und neuer Hilfetext.
+  5.0.0:
+    general: |
+      {{0}} Neuer Hintergrund (u.a. verbesserter Bildausschnitt).
+      {{0}} Variable Zuggeschwindigkeit.
+      {{0}} Richtungswechsel für alle Züge möglich.
+      {{0}} Kurzzeitig eingeblendete Benachrichtigungen informieren über Events.
+      {{0}} Basiseinstellungen.
+      {{0}} Neuer Vorspann.
+      {{0}} Animation des brennenden Finanzamtes.
+      Optimierte Objekte (Züge, Autos, Trafo,...).
+      Optimierte Objektpfade ("Zugstrecken", "Autostrecken").
+      Optimierte Objektsteuerung (Züge und Autos).
+      Optimierte User-Interface.
+      Optimierte Hilfeseiten.
+      Nativer HTML-, JavaScript- und CSS-Code (statt Flash-Action-Script).
+      Offline-Support als Progressive-Web-App.
+      Einbau diverser Open-Source-Komponenten.
+      Neue Lizenzierung des eigenen Codes.
+  5.1.0:
+    general: |
+      {{0}} Einige Weichen können gestellt werden.
+      Optimierte Zugstrecken.
+  5.2.0:
+    general: |
+      {{0}} Die Züge starten und halten zeitvergözert.
+      {{0}} Autos können automatisch fahren.
+      {{0}} Kurzes Zurücksetzen der Autos möglich.
+      Optimierte Objektsteuerung (Züge und Autos).
+  5.3.0:
+    general: |
+      {{0}} Drittes, gelbes Auto.
+      {{0}} Englische Version.
+      Verbesserte Weichensymbole.
+  5.4.0:
+    general: |
+      Neue Lizenzierung des eigenen Codes (Apache License Version 2 statt Two-Clause-BSD).
+  5.5.0:
+    general: |
+      Verlinkung zur Website von MOROway in Hilfeseite eingebaut.
+  5.6.0:
+    general: |
+      Autos: Verbesserungen an der automatischen Steuerung.
+      Nur aktive Einstellungen werden angezeigt.
+  6.0.0:
+    general: |
+      {{0}} Spielen Sie mit Freunden über den neuen Mehrspielermodus.
+  6.1.0:
+    general: |
+      {{0}} Multithreading.
+      Entfernen der Option, die Anzeige der Weichen zu deaktivieren.
+  6.2.0:
+    general: |
+      {{0}} Verarbeiten des Spielfeldzooms mit Touch-Gesten, Tastatur und Mausrad.
+      {{0}} Spielfeld "Control Center" für Züge.
+  6.3.0:
+    general: |
+      Hohe Präzision beim Weichenstellen.
+  6.4.0:
+    general: |
+      {{0}} Autos können wieder einparken.
+      {{0}} "Control Center" für Autos.
+      Verbesserte Performance.
+      Verbessertes Cursor-Verhalten.
+  7.0.0:
+    general: |
+      {{0}} Drei zusätzliche Züge: Thalys, Regionalzug und Straßenbahn.
+      {{0}} Zentrale Abstellgleise sind nutzbar.
+      {{0}} Option, den Zustand des Spieles zu speichern.
+  7.1.0:
+    general: |
+      Entfernen des Material Design Lite.
+  7.2.0:
+    general: |
+      {{0}} Mehrspielermodus: Text-Chat.
+  7.2.1:
+    oc: |
+      Fix: Externe Links
+  7.2.2:
+    general: |
+      Ersetzen des Geburtstaglogos
+    oc: |
+      Vorbereitung auf Apache Cordova-Android 10.1.0
+      HINWEIS: Sie müssen diese Version der MOROway App (v7.2.2) einmal öffnen, um die automatische Datenübertragung in die kommende Version zu initialisieren. Die kommende Version wird auf Apache Cordova-Android 10.1.0 basieren und den neuen WebViewAssetLoader nutzen.
+  7.2.3:
+    android: |
+      Verbesserte Handhabung des Wechsels der Bildschirmausrichtung
+  7.2.4:
+    general: |
+      Kleine Verbesserungen am Startlogo
+    oc: |
+      Update auf Apache Cordova-Android 10.1.1
+  7.3.0:
+    general: |
+      Verbesserte Zugstrecken
+      Verbessertes Rangieren
+      Verbesserte Zoomgesten
+    snap: |
+      Erste snap Version
+  7.4.0:
+    general: |
+      Größe Darstellung des Optionsmenüs und der klassischen Steuerelemente auf kleinen Bildschirmen.
+      Verbesserte klassische Steuerelemente.
+    windows: |
+      Vereinheitlichtes Optionsmenü auf allen Plattformen.
+  7.4.3:
+    general: |
+      Ersetzen der Mausgeste zum Bewegen des Hintergrundes bei Zoom durch Halten und Ziehen.
+      Doppeltouch verhindert normale Touchaktion.
+    oc: |
+      Entfernen des Plugins NativeStorage.
+  7.4.4:
+    general: |
+      Fix des Mehrspielermodus
+  7.4.5:
+    android: |
+      Kleinere Verbesserungen an der Nutzeroberfläche
+  7.4.8:
+    general: |
+      Kleinere Verbesserungen an der Nutzeroberfläche
+  7.4.9:
+    oc: |
+      Verbesserte In-App-Navigation
+  7.5.0:
+    general: |
+      {{0}} Audioeffekte für die Züge.
+    oc: |
+      Audioeffekte funktionieren eventuell nicht mit älteren Android-Versionen.
+  8.0.0:
+    general: |
+      {{0}} Neuer Zug: Boston and Maine (Amerikanischer Güterzug).
+      {{0}} Neues – größtenteils nicht sichtbares – Gleis.
+      {{0}} Züge wenden mittels des neues Gleises.
+      Ersetzen des Bildes zur grafischen Hilfe durch einen interaktiven Modus.
+      Einige Optionsmenü-Einträge können mittels einer neuen Einstellung versteckt werden.
+    oc: |
+      Update auf Apache Cordova Android 11.0.0
+    snap: |
+      Aktualisierte Abhängigkeiten.
+    web: |
+      {{0}} Einfacher Demo-Modus (Aktivierung: [App-URL]/?mode=demo).
+  8.1.0:
+    general: |
+      {{0}} Demo-Modus.
+    web: |
+      Demo-Modus mit GUI-Symbol aktivieren.
+  8.1.2:
+    oc: |
+      Aktuelle Screenshots.
+  8.1.3:
+    general: |
+      Text Kommandos (Aktivierung mit "/"-Taste)
+    android: |
+      Text Kommandos erfordern eine physische Tastatur.
+      Monochromes Icon (Android 13).
+    oc: |
+      Text Kommandos erfordern eine physische Tastatur.
+    snap: |
+      Aktualisierte Abhängigkeiten.
+  8.1.4:
+    android: |
+      Verbesserte In-App-Navigation und Nutzererfahrung.
+  8.1.8:
+    android: |
+      Vereinfachte Einstellungen.
+      Dies ist die letzte Version, die Android 5 und 6 unterstützt.
+    oc: |
+      Dies ist die letzte Version, die Android 5 und 6 unterstützt.
+  9.0.0:
+    general: |
+      {{0}} 3D-Ansicht.
+    oc: |
+      Aktualisierung von Apache Cordova Android auf Version 12.0.1.
+  9.0.2:
+    android: |
+      Demo-Modus kann nun konfiguriert werden.
+  9.1.0:
+    general: |
+      Verbesserte 3D-Ansicht.
+      Umstieg auf modularisiertes TypeScript.
+      Aktualisierte Abhängigkeiten.
+    oc: |
+      Android WebView Version 80 oder neuer erforderlich.
+      Demo-Modus kann nun konfiguriert werden.
+  9.1.9:
+    general: |
+      Aktualisierte Abhängigkeiten.
+    oc: |
+      Aktualisierung von Apache Cordova Android auf Version 13.0.0.
+  10.0.0:
+    general: |
+      {{0}} 3D-Ansicht: Lokführer und Autofahrer Kameras.
+      Geänderte Lizenz: GNU General Public License v3.0 ersetzt die Apache License Version 2.
+  10.1.0:
+    general: |
+      Übersetzung: Französisch (Dank an Weblate-Nutzer Dadu042)
