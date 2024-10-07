@@ -28,7 +28,7 @@ rm -r moroway-snapp
 cp -r "$output_dir_build" moroway-snapp
 
 # Set Changelog
-if [[ $beta != 0 ]]; then
+if [[ $beta == 0 ]]; then
    changelog_file="CHANGELOG.txt"
    [[ -z $(cat "$changelog_file") ]] && echo "CHANGELOG" >"$changelog_file"
    changelog=""

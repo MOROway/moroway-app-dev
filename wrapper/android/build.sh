@@ -38,38 +38,40 @@ sed -i "s/\(versionName\s'\)[^']\+/\1$version/" app/build.gradle
 rm app/src/main/res/values*/changelog-strings.xml 2>/dev/null
 for lang in "$working_dir_build"/changelogs/*; do
 	lang=$(basename "$lang")
-	changelog=""
-	changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .general | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
-	if [[ -z "$changelogAdd" ]]; then
-		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .general | select(.)" "$working_dir_build/changelogs/default/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
-	fi
-	if [[ ! -z "$changelogAdd" ]]; then
-		changelog="$changelog$changelogAdd"$'\n'
-	fi
-	changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .android | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
-	if [[ -z "$changelogAdd" ]]; then
-		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .android | select(.)" "$working_dir_build/changelogs/default/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
-	fi
-	if [[ ! -z "$changelogAdd" ]]; then
-		changelog="$changelog$changelogAdd"$'\n'
-	fi
-	if [[ $(cat "$working_dir_build/changelogs/meta/fixes/$version") == 1 ]]; then
-		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".fixes | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml")
+	if [[ "$lang" != meta ]]; then
+		changelog=""
+		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .general | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
 		if [[ -z "$changelogAdd" ]]; then
-			changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".fixes | select(.)" "$working_dir_build/changelogs/default/changelog.yml")
+			changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .general | select(.)" "$working_dir_build/changelogs/default/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
 		fi
 		if [[ ! -z "$changelogAdd" ]]; then
-			changelog="$changelog$changelogAdd."$'\n'
+			changelog="$changelog$changelogAdd"$'\n'
 		fi
-	fi
-	if [[ $lang == default ]]; then
-		lang=""
-	else
-		lang="-$lang"
-	fi
-	outDir=./app/src/main/res/values"$lang"
-	if [[ -d "$outDir" ]]; then
-		echo '<?xml version="1.0" encoding="utf-8"?><resources><string name="d_update_changelog">'$(echo "$changelog" | perl -0pe 's/\n$//g' | perl -0pe 's/\n/\\n/g' | sed 's/&/\&amp;/g' | sed 's/>/\&gt;/g' | sed 's/</\&lt;/g' | sed "s/'/\\\\'/g" | sed 's/"/\&quot;/g')'</string></resources>' >"$outDir"/changelog-strings.xml
+		changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .android | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
+		if [[ -z "$changelogAdd" ]]; then
+			changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .android | select(.)" "$working_dir_build/changelogs/default/changelog.yml" | sed 's/{{[0-9]\+}}\s\?//g')
+		fi
+		if [[ ! -z "$changelogAdd" ]]; then
+			changelog="$changelog$changelogAdd"$'\n'
+		fi
+		if [[ $(cat "$working_dir_build/changelogs/meta/fixes/$version") == 1 ]]; then
+			changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".fixes | select(.)" "$working_dir_build/changelogs/$lang/changelog.yml")
+			if [[ -z "$changelogAdd" ]]; then
+				changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".fixes | select(.)" "$working_dir_build/changelogs/default/changelog.yml")
+			fi
+			if [[ ! -z "$changelogAdd" ]]; then
+				changelog="$changelog$changelogAdd."$'\n'
+			fi
+		fi
+		if [[ $lang == default ]]; then
+			lang=""
+		else
+			lang="-$lang"
+		fi
+		outDir=./app/src/main/res/values"$lang"
+		if [[ -d "$outDir" ]]; then
+			echo '<?xml version="1.0" encoding="utf-8"?><resources><string name="d_update_changelog">'$(echo "$changelog" | perl -0pe 's/\n$//g' | perl -0pe 's/\n/\\n/g' | sed 's/&/\&amp;/g' | sed 's/>/\&gt;/g' | sed 's/</\&lt;/g' | sed "s/'/\\\\'/g" | sed 's/"/\&quot;/g')'</string></resources>' >"$outDir"/changelog-strings.xml
+		fi
 	fi
 done
 

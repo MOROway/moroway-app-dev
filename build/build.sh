@@ -147,7 +147,7 @@ for platform in ${platforms[@]}; do
 			clang=$(basename "$clangdir")
 			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]] && [[ -f "changelogs/$clang/changelog.yml" ]]; then
 				changelogs=""
-				for cv in $(./build-libs/yq_linux_amd64 '.versions | keys[] | select(. == "*.0")' "changelogs/$clang/changelog.yml"); do
+				for cv in $(./build-libs/yq_linux_amd64 '.versions | select(.) | keys[] | select(. == "*.0")' "changelogs/$clang/changelog.yml"); do
 					cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
 					cvMi=$(echo "$cv" | sed 's/^[0-9]\+\.\([0-9]\+\)\.0$/\1/')
 					changelog="whatsNewScreenByVersionMa${cvMa}Mi${cvMi}: ["

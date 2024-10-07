@@ -82,7 +82,7 @@ jobs:
                   if [[ ! -z "$changelogAdd" ]]; then
                      changelog="$changelog$changelogAdd"$'\n'
                   fi
-                  changelogAdd=$(./build-libs/yq_linux_amd64 e ".versions .\"$VERSION\" .snap | select(.)" changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
+                  changelogAdd=$(./build-libs/yq_linux_amd64 e ".versions .\"$VERSION\" .web | select(.)" changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
                   if [[ ! -z "$changelogAdd" ]]; then
                      changelog="$changelog$changelogAdd"$'\n'
                   fi
