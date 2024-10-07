@@ -229,3 +229,4 @@ versions:
     10.1.1:
         general: |
             Verbesserte Räder beim Schi-Stra-Bus in der 2D-Ansicht.
+            Die meisten Metadaten- und Änderungsprotokolldateien wurden in das YAML Format überführt.

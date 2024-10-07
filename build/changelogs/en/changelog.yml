@@ -306,3 +306,4 @@ versions:
     10.1.1:
         general: |
             Improve railbus wheels in 2D-view.
+            Migrate most metadata and changelog files to YAML format.
