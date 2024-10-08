@@ -80,11 +80,13 @@ for string_file in "$working_dir_build"/strings/*; do
 	lang="$(echo "$(basename "$string_file")" | sed 's/[.]json$//;s/strings//;s/_/-r/;s/-en//')"
 	outDir=./app/src/main/res/values"$lang"
 	if [[ -d "$outDir" ]]; then
-		"$working_dir_build"/build-libs/jq-linux-amd64 'with_entries(select((.key | startswith("general")) or (.key | startswith("platformAndroid")))) | to_entries | map({"+@name": .key, "+content": .value}) | {"+p_xml": "version=\"1.0\" encoding=\"utf-8\"", "resources": {"string":[.]}} ' "$string_file" | "$working_dir_build"/build-libs/yq_linux_amd64 \
+		"$working_dir_build"/build-libs/yq_linux_amd64 \
 			--xml-content-name "+content" \
 			--xml-proc-inst-prefix "+p_" \
 			--xml-attribute-prefix "+@" \
 			--input-format json \
-			--output-format xml | sed "s/&#39;/\\\\'/g" >"$outDir"/auto-strings.xml
+			--output-format xml \
+			'with_entries(select((.key == "general*") or (.key == "platformAndroid*"))) | to_entries | map({"+@name": .key, "+content": .value}) | {"+p_xml": "version=\"1.0\" encoding=\"utf-8\"", "resources": {"string":[.]}} ' \
+			"$string_file" | sed "s/&#39;/\\\\'/g" >"$outDir"/auto-strings.xml
 	fi
 done
