@@ -1,8 +1,8 @@
 {
     "name": "moroway-app",
     "license": "GPL-3.0-only",
-    "version": "10.1.0",
-    "description": "Play with the MORO model railroad!",
+    "version": "10.1.1",
+    "description": "Play with the MORO model railroad…",
     "author": "Jonathan Herrmann-Engel",
     "build": {
         "appId": "moroway-app",

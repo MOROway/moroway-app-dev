@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="general3DView">Vue 3D</string>
+  <string name="generalBack">noir</string>
+  <string name="generalClose">fermer</string>
+  <string name="generalIsFail">Une erreur est survenue</string>
+  <string name="generalLeaveAndDestroyGame">Quitter et détruire le jeu ?</string>
+  <string name="generalLeaveAndDestroyGameNo">Continuer jeu</string>
+  <string name="generalLeaveAndDestroyGameTitle">Êtes-vous sur(e) ?</string>
+  <string name="generalLeaveAndDestroyGameYes">Quitter jeu</string>
+  <string name="generalLicense">License</string>
+  <string name="generalNewVersion">Nouvelle version</string>
+  <string name="generalNo">non</string>
+  <string name="generalOK">okay</string>
+  <string name="generalServerNoteButtonGo">Apprendre plus</string>
+  <string name="generalServerNoteButtonLater">montrer encore</string>
+  <string name="generalServerNoteInfoLater">Ne fonctionne que si ce message reste valide.</string>
+  <string name="generalStartDemoMode3DCameraMode">3D : mode caméra</string>
+  <string name="generalStartDemoMode3DCameraModeBirdsEye">vue d\'oiseau</string>
+  <string name="generalStartDemoMode3DCameraModeFollowCar">suivre voiture</string>
+  <string name="generalStartDemoMode3DCameraModeFollowTrain">suivre train</string>
+  <string name="generalStartDemoMode3DRotationSpeed">3D : vitesse rotation</string>
+  <string name="generalStartDemoModeRandom">Démarrer mode démo avec configuration aléatoire</string>
+  <string name="generalStartGame">Jouer</string>
+  <string name="generalStartGameDemoMode">Démarrer mode démo</string>
+  <string name="generalStartGameDemoMode3DNight">3D : nuit</string>
+  <string name="generalTitleDemoMode">Mode démo</string>
+  <string name="generalTitleErrorScreen">Problèmes connus</string>
+  <string name="generalTitleHelpScreen">Aide / Légal</string>
+  <string name="generalTitleHelpScreenShort">Aide</string>
+  <string name="generalTitleSettingsScreen">Paramètres</string>
+  <string name="generalTitleTeamplay">Multijoueur</string>
+  <string name="generalXAreY">{{0}} sont {{1}}</string>
+  <string name="generalXIsY">{{0}} est {{1}}.</string>
+  <string name="generalYes">oui</string>
+</resources>

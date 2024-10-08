@@ -322,3 +322,13 @@ Translation: French (thanks to Weblate user Dadu042)
 
 ---
 
+
+
+10.1.1
+
+Improve railbus wheels in 2D-view.
+Migrate most metadata and changelog files to YAML format.
+
+
+---
+

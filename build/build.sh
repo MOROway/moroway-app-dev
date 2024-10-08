@@ -145,7 +145,7 @@ for platform in ${platforms[@]}; do
 		[[ $(file -i "$file" | sed 's/.*charset=//') != utf-8 ]] && logexit 4 "setting strings internal error"
 		for clangdir in changelogs/*; do
 			clang=$(basename "$clangdir")
-			if [[ "$clang" != meta ]] && [[ ! -z $(cat "$file" | grep "{{changelog=$clang}}") ]] && [[ -f "changelogs/$clang/changelog.yml" ]]; then
+			if [[ "$clang" != meta ]] && [[ ! -z $(grep "{{changelog=$clang}}" "$file") ]] && [[ -f "changelogs/$clang/changelog.yml" ]]; then
 				changelogs=""
 				for cv in $(./build-libs/yq_linux_amd64 '.versions | select(.) | keys[] | select(. == "*.0")' "changelogs/$clang/changelog.yml"); do
 					cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
@@ -219,7 +219,7 @@ for platform in ${platforms[@]}; do
 		# JS License Header
 		for js_file in ${all_files[@]}; do
 			if [[ "$js_file" =~ .([t]|[j])s$ ]] && [[ ! "$js_file" =~ ^src/lib ]]; then
-				license_header=("\\ */" "\\ * SPDX-License-Identifier: $(cat "metadata/default/license.txt" | sed 's!/!!g')" "\\ * Copyright $(date "+%Y") $(cat "metadata/default/author.txt" | sed 's!/!!g')" "/**")
+				license_header=("\\ */" "\\ * SPDX-License-Identifier: $(sed 's!/!!g' <"metadata/default/license.txt")" "\\ * Copyright $(date "+%Y") $(sed 's!/!!g' <"metadata/default/author.txt")" "/**")
 				for line in "${license_header[@]}"; do
 					sed -i "1i$line" "$to/$js_file"
 				done
@@ -273,8 +273,8 @@ for platform in ${platforms[@]}; do
 				meta_author=$(cat "metadata/default/author.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
 				meta_description=$(./build-libs/yq_linux_amd64 e ".Description | .Standard" metadata/default/translations.yml | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
 				sed -i 's/<\!--\sinsert_title_app_name\s-->/'"$meta_app_name"'/;s/<\!--\sinsert_meta_app_name\s-->/<meta name="application-name" content="'"$meta_app_name"'">/;s/<\!--\sinsert_meta_author\s-->/<meta name="author" content="'"$meta_author"'">/;s/<\!--\sinsert_meta_description\s-->/<meta name="description" content="'"$meta_description"'">/' "$to/$html_file"
-				while [[ ! -z $(cat "$to/$html_file" | grep "<\!-- dep_check -->" | head -1) ]]; do
-					if [[ -f "$to/"$(cat "$to/$html_file" | grep -A1 "<\!-- dep_check -->" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
+				while [[ ! -z $(grep "<\!-- dep_check -->" "$to/$html_file" | head -1) ]]; do
+					if [[ -f "$to/"$(grep -A1 "<\!-- dep_check -->" "$to/$html_file" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
 						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n/\n/" "$to/$html_file"
 					else
 						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n.*\n/\n/" "$to/$html_file"
