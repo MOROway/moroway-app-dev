@@ -20,8 +20,7 @@ done
 [[ ! -d "$working_dir_build/changelogs" ]] && exit 1
 [[ ! -d "$working_dir_build/strings" ]] && exit 2
 [[ ! -d "$output_dir_build" ]] && exit 3
-[[ "$(uname -m)" == x86_64 ]] || exit 4
-cd $(dirname "$0") || exit 5
+cd "$(dirname "$0")" || exit 5
 
 # Copy MOROway App Files
 rm -r app/src/main/assets/animation

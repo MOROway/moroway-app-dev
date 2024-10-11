@@ -39,7 +39,8 @@ function get_conf() {
 }
 
 dir=$(dirname "$0")
-cd "$dir" || exit 3
+cd "$dir" || logexit 3 "Could not set working directory"
+[[ "$(uname -m)" == x86_64 ]] || logexit 13 "Machine architecture not supported."
 
 [[ ! -d ../out ]] && mkdir ../out
 
