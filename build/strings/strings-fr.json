@@ -194,6 +194,10 @@
 	],
 	"helpScreenDownloadAppsSnapButton": "Snap Store",
 	"helpScreenDownloadAppsWindows": "Windows",
+	"helpScreenDownloadAppsWindowsButton": "Microsoft Store",
+	"helpScreenDownloadAppsWindowsPs": [
+		"Vous pouvez télécharger cette application sur votre ordinateur portable ou PC Windows par l’intermédiaire du Microsoft Store."
+	],
 	"helpScreenDownloadTranslations": "Traductions {{0}}",
 	"helpScreenDownloadTranslationsButtonTranslations": "Weblate",
 	"helpScreenDownloadTranslationsPs": [
