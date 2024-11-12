@@ -179,6 +179,8 @@
 	"helpScreenContactFeedbackPs": [
 		"Communiquez avec nous en utilisant les coordonnées ci-dessous."
 	],
+	"helpScreenContactFeedbackSend": "Envoyer feedback",
+	"helpScreenContactFeedbackSendNotification": "Page Feedback ouverte",
 	"helpScreenContactImprintTitle": "Info contact",
 	"helpScreenDownload": "Plateformes",
 	"helpScreenDownloadApps": "Apps {{0}}",
@@ -200,6 +202,7 @@
 	],
 	"helpScreenDownloadTranslations": "Traductions {{0}}",
 	"helpScreenDownloadTranslationsButtonTranslations": "Weblate",
+	"helpScreenDownloadTranslationsPic": "texte aliéné",
 	"helpScreenDownloadTranslationsPs": [
 		"Les traductions sont traitées via Weblate."
 	],
@@ -257,12 +260,21 @@
 	"helpScreenLegalAppOCCordovaPs": [
 		"La variante MOROway App OC est basée sur Apache Cordova par l’Apache Software Foundation."
 	],
+	"helpScreenLegalAppOCDialogsPs": [
+		"La variante MOROway App OC utilise le « Plugin Dialogs » de l’Apache Software Foundation."
+	],
+	"helpScreenLegalAppOCWebintentPs": [
+		"La variante MOROway App OC utilise le « Plugin Android WebIntent pour Cordova » de Boris Smus et collaborateurs."
+	],
 	"helpScreenLegalFonts": "Polices {{0}}",
 	"helpScreenLegalFontsMaterialIconsPs": [
 		"MOROway App utilise la police « Material Symbols » de Google Inc."
 	],
 	"helpScreenLegalFontsRobotoPs": [
 		"MOROway App utilise la police « Roboto » de Google Inc."
+	],
+	"helpScreenLegalLibrariesThreeJsPs": [
+		"MOROway App utilise la bibliothèque 3D « Three.js »."
 	],
 	"helpScreenLegalMedia": "Média {{0}}",
 	"helpScreenLegalMedia3DModels": "Modèles 3D",
