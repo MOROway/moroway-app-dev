@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="title_activity_menu">Menu</string>
+    <string name="title_activity_jserror">Erreur JavaScript</string>
+    <string name="title_activity_gimmick2">Tortue</string>
+    <string name="a_anim_pleaseWait">veuillez patienter …</string>
+    <string name="a_jserror_button">Ouvrir Play Store</string>
+    <string name="a_jserror_button2">Ouvrir Feedback</string>
+    <string name="a_opt_start">Accueil</string>
+    <string name="a_g1_again">Rejouer…</string>
+    <string name="d_update_text">Nouvelles fonctionnalités :\n\n%1$s</string>
+    <string name="a_jserror_text">Nous sommes désolés, mais une erreur JavaScript fatale s’est produite. Cette application est basée sur une application web progressive, qui utilise les normes web plus récentes. Ces fichiers basés sur des pages web sont affichés à l’aide du composant WebView d’Android. Veuillez essayer de mettre à jour ce composant en utilisant le Play Store en cliquant sur le bouton ci-dessous.</string>
+    <string name="d_confirmback_text_online">Utiliser le bouton de retour mettra fin à ce jeu en ligne ! Pour naviguer sur votre téléphone, par exemple pour partager le lien du jeu, utilisez le bouton d’accueil. Le jeu en ligne restera actif pendant un certain temps.</string>
+    <string name="a_jserror_text2">Si la mise à jour n’a pas résolu le problème, veuillez envoyer un commentaire comprenant les informations ci-dessous (vous pouvez le copier ici et le coller dans le formulaire de commentaires)</string>
+</resources>
