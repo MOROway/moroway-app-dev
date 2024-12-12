@@ -332,3 +332,12 @@ Migrate most metadata and changelog files to YAML format.
 
 ---
 
+
+
+10.1.2
+
+Update translations and dependencies.
+
+
+---
+
