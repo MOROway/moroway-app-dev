@@ -310,3 +310,6 @@ versions:
     10.1.2:
         general: |
             Update translations and dependencies.
+    10.2.0:
+        general: |
+            Translation: Tamil (thanks to Weblate user TamilNeram)
