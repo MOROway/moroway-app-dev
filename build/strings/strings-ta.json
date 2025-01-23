@@ -67,7 +67,7 @@
 	"appScreenTeamplayCreateError": "விளையாட்டை உருவாக்க முடியவில்லை",
 	"appScreenTeamplayGamePaused": "விளையாட்டு இடைநிறுத்தப்பட்டது",
 	"appScreenTeamplayGameResumed": "விளையாட்டு மீண்டும் தொடங்கியது",
-	"appScreenTeamplayGameStart": "“தொடக்க” பொத்தானைப் பயன்படுத்துவது நீங்களும் ஒவ்வொரு அணியினரும் பொத்தானைக் சொடுக்கு செய்தவுடன் விளையாட்டைத் தொடங்கும். யாராவது பொத்தானைக் சொடுக்கு செய்தவுடன் மேலும் அணி வீரர்களுக்கு சேர முடியாது. தற்போது {{0}}} பிளேயர் (கள்) (நீங்கள் உட்பட) விளையாட்டில் சேர்ந்தார்.",
+	"appScreenTeamplayGameStart": "“தொடக்க” பொத்தானைப் பயன்படுத்துவது நீங்களும் ஒவ்வொரு அணியினரும் பொத்தானைக் சொடுக்கு செய்தவுடன் விளையாட்டைத் தொடங்கும். யாராவது பொத்தானைக் சொடுக்கு செய்தவுடன் மேலும் அணி வீரர்களுக்கு சேர முடியாது. தற்போது {{0}} பிளேயர் (கள்) (நீங்கள் உட்பட) விளையாட்டில் சேர்ந்தார்.",
 	"appScreenTeamplayGameStartButton": "தொடங்கு",
 	"appScreenTeamplayJoinError": "சேர முடியவில்லை. விளையாட்டு நிரம்பியுள்ளது அல்லது வழக்கற்றுப் போய்விட்டது",
 	"appScreenTeamplayJoinTeammateError": "அணி வீரர் விளையாட்டில் சேர முடியவில்லை",
@@ -289,7 +289,7 @@
 	"helpScreenLegalMedia": "மீடியா {{0}}",
 	"helpScreenLegalMedia3DModels": "3 டி மாதிரிகள்",
 	"helpScreenLegalMediaSound": "ஒலி",
-	"helpScreenLegalOwn": "MOROWAY பயன்பாடு {{0}}}",
+	"helpScreenLegalOwn": "MOROWAY பயன்பாடு {{0}}",
 	"helpScreenLegalOwnCode": "பொது",
 	"helpScreenLegalOwnCodePs": [
 		"மொரோவே பயன்பாடு “குனு பொது பொதுமக்கள் உரிமம் V3.0” இன் கீழ் உரிமம் பெற்றது."
@@ -309,7 +309,7 @@
 	"helpScreenPrivacyStatement": "தனியுரிமை அறிக்கை",
 	"helpScreenPrivacyStatementBackupLink": "தனியுரிமை அறிக்கையைத் திற",
 	"helpScreenPrivacyStatementBackupLinkNotification": "இணைப்பு திறக்கப்பட்டது",
-	"langName": "ஆங்கிலம்",
+	"langName": "தமிழ்",
 	"licenseScreenNotFound": "உரிம உரை கிடைக்கவில்லை.",
 	"optApply": "புதிய உள்ளமைவு சேமிக்கப்பட்டது",
 	"optButton_morowayApp_reduceOptMenuHide3DViewCameraSwitcher": "3D-பார்வை சுவிட்ச் கேமரா",
