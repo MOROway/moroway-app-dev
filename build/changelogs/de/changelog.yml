@@ -230,3 +230,6 @@ versions:
         general: |
             Verbesserte Räder beim Schi-Stra-Bus in der 2D-Ansicht.
             Die meisten Metadaten- und Änderungsprotokolldateien wurden in das YAML Format überführt.
+    10.2.0:
+        general: |
+            Übersetzung: Tamil (Dank an Weblate-Nutzer TamilNeram)
