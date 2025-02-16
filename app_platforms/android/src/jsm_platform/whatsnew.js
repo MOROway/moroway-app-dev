@@ -1,9 +1,14 @@
 "use strict";
 document.addEventListener("DOMContentLoaded", function () {
-    const elem = document.getElementById("backOption"),
-        elemClone = elem.cloneNode(true);
-    elem.parentNode.replaceChild(elemClone, elem);
-    document.querySelector("#backOption").addEventListener("click", function () {
-        WebJSInterface.goBack();
-    });
+    const elem = document.getElementById("backOption");
+    if (elem) {
+        const elemClone = elem.cloneNode(true);
+        elem.parentNode.replaceChild(elemClone, elem);
+        const elemNew = document.getElementById("backOption");
+        if (elemNew) {
+            elemNew.addEventListener("click", function () {
+                WebJSInterface.goBack();
+            });
+        }
+    }
 });

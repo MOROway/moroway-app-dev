@@ -68,6 +68,18 @@ document.addEventListener("DOMContentLoaded", function () {
         followLink(getServerHTMLLink("feedback"), "_blank", LINK_STATE_NORMAL);
     });
 
+    (document.querySelector("#download-androidlink") as HTMLElement).addEventListener("click", function () {
+        followLink(getServerRedirectLink("download_android"), "_blank", LINK_STATE_NORMAL);
+    });
+    (document.querySelector("#download-fdroidlink") as HTMLElement).addEventListener("click", function () {
+        followLink(getServerRedirectLink("download_fdroid"), "_blank", LINK_STATE_NORMAL);
+    });
+    (document.querySelector("#download-windowslink") as HTMLElement).addEventListener("click", function () {
+        followLink(getServerRedirectLink("download_windows"), "_blank", LINK_STATE_NORMAL);
+    });
+    (document.querySelector("#download-snaplink") as HTMLElement).addEventListener("click", function () {
+        followLink(getServerRedirectLink("download_snap"), "_blank", LINK_STATE_NORMAL);
+    });
     (document.querySelector("#download-sourcelink") as HTMLElement).addEventListener("click", function () {
         followLink(getServerRedirectLink("source_code"), "_blank", LINK_STATE_NORMAL);
     });

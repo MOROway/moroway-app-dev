@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initTooltips();
 });
 
-window.addEventListener("load", function () {
+document.addEventListener("DOMContentLoaded", function () {
     setSettingsHTML(document.querySelector("main"), true);
     (document.querySelector("#backOption") as HTMLElement).addEventListener("click", function () {
         try {
