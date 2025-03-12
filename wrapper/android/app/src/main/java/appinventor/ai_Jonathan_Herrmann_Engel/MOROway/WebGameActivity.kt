@@ -2,12 +2,13 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogBackConfirmBinding
 
 class WebGameActivity : WebActivity() {
@@ -18,7 +19,7 @@ class WebGameActivity : WebActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.root.background = ColorDrawable(ContextCompat.getColor(this, R.color.black))
+        binding.root.background = ContextCompat.getColor(this, R.color.black).toDrawable()
         setWeb(processAndGetURL(intent))
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -79,7 +80,7 @@ class WebGameActivity : WebActivity() {
             demoGame = false
             if (!queryString.isNullOrEmpty()) {
                 locationOutput += "?$queryString"
-                val locationUri = Uri.parse(locationOutput)
+                val locationUri = locationOutput.toUri()
                 if (locationUri.getQueryParameter("mode") == "multiplay") {
                     onlineGame = true
                 } else if (locationUri.getQueryParameter("mode") == "demoStandalone") {

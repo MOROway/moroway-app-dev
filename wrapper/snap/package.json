@@ -34,7 +34,7 @@
         "dist": "./scripts/insert_html.bash && electron-builder && ./scripts/cleanup_html.bash"
     },
     "devDependencies": {
-        "electron": "^34.0.0",
+        "electron": "^35.0.0",
         "electron-builder": "^25.0.0"
     },
     "main": "www/app.js"

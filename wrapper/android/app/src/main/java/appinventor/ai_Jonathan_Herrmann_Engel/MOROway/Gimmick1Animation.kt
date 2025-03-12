@@ -13,6 +13,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.MotionEvent
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.scale
 
 class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
     androidx.appcompat.widget.AppCompatImageView(context, attrs) {
@@ -144,68 +146,56 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
         if (firstRun) {
             val unscaledSnail = decodeBitmap(R.drawable.gimmick1_4)
             val scaledSnailWidth = width / 8
-            val scaledSnail = Bitmap.createScaledBitmap(
-                unscaledSnail,
+            val scaledSnail = unscaledSnail.scale(
                 scaledSnailWidth,
                 getHeight(scaledSnailWidth, unscaledSnail.width, unscaledSnail.height),
                 false
             )
-            snail = BitmapDrawable(resources, scaledSnail)
+            snail = scaledSnail.toDrawable(resources)
             val unscaledHedgehog = decodeBitmap(R.drawable.gimmick1_0)
             val scaledHedgehogWidth = width / 3
-            val scaledHedgehog = Bitmap.createScaledBitmap(
-                unscaledHedgehog,
+            val scaledHedgehog = unscaledHedgehog.scale(
                 scaledHedgehogWidth,
                 getHeight(scaledHedgehogWidth, unscaledHedgehog.width, unscaledHedgehog.height),
                 false
             )
-            hedgehog = BitmapDrawable(resources, scaledHedgehog)
+            hedgehog = scaledHedgehog.toDrawable(resources)
             val scaledSmallHedgehogWidth = width / 8
             val unscaledSmallHedgehog1 = decodeBitmap(R.drawable.gimmick1_1)
-            val scaledSmallHedgehog1 = Bitmap.createScaledBitmap(
-                unscaledSmallHedgehog1,
-                scaledSmallHedgehogWidth,
-                getHeight(
+            val scaledSmallHedgehog1 = unscaledSmallHedgehog1.scale(
+                scaledSmallHedgehogWidth, getHeight(
                     scaledSmallHedgehogWidth,
                     unscaledSmallHedgehog1.width,
                     unscaledSmallHedgehog1.height
-                ),
-                false
+                ), false
             )
-            smallHedgehog1 = BitmapDrawable(resources, scaledSmallHedgehog1)
+            smallHedgehog1 = scaledSmallHedgehog1.toDrawable(resources)
             val unscaledSmallHedgehog2 = decodeBitmap(R.drawable.gimmick1_2)
-            val scaledSmallHedgehog2 = Bitmap.createScaledBitmap(
-                unscaledSmallHedgehog2,
-                scaledSmallHedgehogWidth,
-                getHeight(
+            val scaledSmallHedgehog2 = unscaledSmallHedgehog2.scale(
+                scaledSmallHedgehogWidth, getHeight(
                     scaledSmallHedgehogWidth,
                     unscaledSmallHedgehog2.width,
                     unscaledSmallHedgehog2.height
-                ),
-                false
+                ), false
             )
-            smallHedgehog2 = BitmapDrawable(resources, scaledSmallHedgehog2)
+            smallHedgehog2 = scaledSmallHedgehog2.toDrawable(resources)
             val unscaledSmallHedgehog3 = decodeBitmap(R.drawable.gimmick1_3)
-            val scaledSmallHedgehog3 = Bitmap.createScaledBitmap(
-                unscaledSmallHedgehog3,
-                scaledSmallHedgehogWidth,
-                getHeight(
+            val scaledSmallHedgehog3 = unscaledSmallHedgehog3.scale(
+                scaledSmallHedgehogWidth, getHeight(
                     scaledSmallHedgehogWidth,
                     unscaledSmallHedgehog3.width,
                     unscaledSmallHedgehog3.height
-                ),
-                false
+                ), false
             )
-            smallHedgehog3 = BitmapDrawable(resources, scaledSmallHedgehog3)
+            smallHedgehog3 = scaledSmallHedgehog3.toDrawable(resources)
             val unscaledApple = decodeBitmap(R.drawable.gimmick1_5)
             val scaledAppleWidth = width / 14
-            val scaledApple = Bitmap.createScaledBitmap(
-                unscaledApple,
+            val scaledApple = unscaledApple.scale(
                 scaledAppleWidth,
                 getHeight(scaledAppleWidth, unscaledApple.width, unscaledApple.height),
                 false
             )
-            apple = BitmapDrawable(resources, scaledApple)
+            apple = scaledApple.toDrawable(resources)
             replay = Paint()
             replay!!.textSize =
                 (height / 5f).coerceAtMost((width / resources.getString(R.string.a_g1_again).length).toFloat())

@@ -341,3 +341,12 @@ Update translations and dependencies.
 
 ---
 
+
+
+10.2.0
+
+Translation: Tamil (thanks to Weblate user TamilNeram)
+
+
+---
+

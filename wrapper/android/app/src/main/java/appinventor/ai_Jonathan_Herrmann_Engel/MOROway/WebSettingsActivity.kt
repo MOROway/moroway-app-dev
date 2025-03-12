@@ -1,16 +1,16 @@
 package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 
 class WebSettingsActivity : WebActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.root.background = ColorDrawable(ContextCompat.getColor(this, R.color.white_light))
+        binding.root.background = ContextCompat.getColor(this, R.color.white_light).toDrawable()
         setWeb(
             "https://" + Globals.WEBVIEW_DOMAIN + Globals.WEBVIEW_PATH + "animation/settings/index.html"
         )

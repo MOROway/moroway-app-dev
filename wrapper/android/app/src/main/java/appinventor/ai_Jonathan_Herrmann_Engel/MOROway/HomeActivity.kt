@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -19,6 +18,8 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMorowayAppBinding
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogPopupBinding
 import com.squareup.picasso.Picasso
@@ -155,7 +156,7 @@ class HomeActivity : MOROwayActivity() {
             versionNoteBinding.showAgainContainer.visibility = View.VISIBLE
             versionNoteBinding.showAgainText.visibility = View.VISIBLE
             try {
-                val linkToServer = Uri.parse(serverMsgSettings.getString("link", null))
+                val linkToServer = serverMsgSettings.getString("link", null)?.toUri()
                 versionNoteBinding.linkbutton.visibility = View.VISIBLE
                 versionNoteBinding.linkbutton.setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW)
@@ -174,7 +175,7 @@ class HomeActivity : MOROwayActivity() {
                     versionNoteBinding.versioNoteImage.setOnClickListener {
                         try {
                             val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = Uri.parse(imageLink)
+                            intent.data = imageLink.toUri()
                             startActivity(intent)
                         } catch (exception: NullPointerException) {
                             exception.printStackTrace()
@@ -190,9 +191,9 @@ class HomeActivity : MOROwayActivity() {
             }
             versionNoteBinding.button.setOnClickListener {
                 if (!versionNoteBinding.showAgain.isChecked) {
-                    val serverMsgSettingsEditor = serverMsgSettings.edit()
-                    serverMsgSettingsEditor.putInt("id", 0)
-                    serverMsgSettingsEditor.apply()
+                    serverMsgSettings.edit {
+                        putInt("id", 0)
+                    }
                 }
                 versionNote.dismiss()
             }
@@ -223,9 +224,9 @@ class HomeActivity : MOROwayActivity() {
             versionNoteBinding.button.setOnClickListener {
                 settingsEditor.putString("versionNoteName", BuildConfig.VERSION_NAME)
                 settingsEditor.apply()
-                val settingsAnimationEditor = settingsAnimation.edit()
-                settingsAnimationEditor.putBoolean("showVersionNoteAgain", false)
-                settingsAnimationEditor.apply()
+                settingsAnimation.edit {
+                    putBoolean("showVersionNoteAgain", false)
+                }
                 versionNote.dismiss()
             }
             versionNote.show()

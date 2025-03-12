@@ -2,9 +2,9 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.core.net.toUri
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityJserrorBinding
 import java.util.Locale
 
@@ -23,14 +23,14 @@ class JSErrorActivity : MOROwayActivity() {
                 startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse("market://details?id=$webViewName")
+                        "market://details?id=$webViewName".toUri()
                     )
                 )
-            } catch (exception: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse("https://play.google.com/store/apps/details?id=$webViewName")
+                        "https://play.google.com/store/apps/details?id=$webViewName".toUri()
                     )
                 )
             }
@@ -47,9 +47,8 @@ class JSErrorActivity : MOROwayActivity() {
             binding.jsErrorButtonFeedback.setOnClickListener {
                 startActivity(
                     Intent(
-                        Intent.ACTION_VIEW, Uri.parse(
-                            String.format(Globals.FEEDBACK_URL, Locale.getDefault().language)
-                        )
+                        Intent.ACTION_VIEW,
+                        String.format(Globals.FEEDBACK_URL, Locale.getDefault().language).toUri()
                     )
                 )
             }

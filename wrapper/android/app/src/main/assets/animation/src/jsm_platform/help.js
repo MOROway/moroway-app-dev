@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Jonathan Herrmann-Engel
+ * Copyright 2025 Jonathan Herrmann-Engel
  * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
@@ -8,12 +8,17 @@ import {getString} from "../jsm/common/string_tools.js";
 import {handleServerJSONValues, getServerHTMLLink} from "../jsm/common/web_tools.js";
 import {notify, NOTIFICATION_PRIO_DEFAULT} from "../jsm/common/notify.js";
 document.addEventListener("DOMContentLoaded", function () {
-    const elem = document.getElementById("backOption"),
-        elemClone = elem.cloneNode(true);
-    elem.parentNode.replaceChild(elemClone, elem);
-    document.querySelector("#backOption").addEventListener("click", function () {
-        WebJSInterface.goBack();
-    });
+    const elem = document.getElementById("backOption");
+    if (elem) {
+        const elemClone = elem.cloneNode(true);
+        elem.parentNode.replaceChild(elemClone, elem);
+        const elemNew = document.getElementById("backOption");
+        if (elemNew) {
+            elemNew.addEventListener("click", function () {
+                WebJSInterface.goBack();
+            });
+        }
+    }
 
     document.querySelector("#legal-appandroid-licenses").classList.remove("hidden");
     document.querySelector("#legal-appandroid-kotlin-license").addEventListener("click", function () {
