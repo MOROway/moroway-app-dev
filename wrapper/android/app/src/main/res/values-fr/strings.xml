@@ -3,7 +3,6 @@
     <string name="title_activity_menu">Menu</string>
     <string name="title_activity_jserror">Erreur JavaScript</string>
     <string name="title_activity_gimmick2">Tortue</string>
-    <string name="a_anim_pleaseWait">veuillez patienter …</string>
     <string name="a_jserror_button">Ouvrir Play Store</string>
     <string name="a_jserror_button2">Ouvrir Feedback</string>
     <string name="a_opt_start">Accueil</string>

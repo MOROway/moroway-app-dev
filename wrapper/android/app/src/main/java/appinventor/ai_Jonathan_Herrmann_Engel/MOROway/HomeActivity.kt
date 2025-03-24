@@ -14,8 +14,8 @@ import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.content.edit
@@ -52,10 +52,8 @@ class HomeActivity : MOROwayActivity() {
         val height: Int
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             val windowMetrics = windowManager.currentWindowMetrics
-            val insets =
-                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            width = windowMetrics.bounds.width() - insets.left - insets.right
-            height = windowMetrics.bounds.height() - insets.top - insets.bottom
+            width = windowMetrics.bounds.width()
+            height = windowMetrics.bounds.height()
         } else {
             val metrics = DisplayMetrics()
             windowManager.defaultDisplay.getMetrics(metrics)
@@ -113,7 +111,15 @@ class HomeActivity : MOROwayActivity() {
             binding.imageHandlerBackwards!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, height / 17f)
             val paddingButton = height / 20
             binding.animationButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, height * 0.1f)
+            binding.animationButton.setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                getButtonTextSize(binding.animationButton, width, height * 0.05f)
+            )
             binding.moreButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, height * 0.05f)
+            binding.moreButton.setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                getButtonTextSize(binding.moreButton, width / 2, height * 0.025f)
+            )
             binding.moreButton.setPadding(0, paddingButton, 0, paddingButton)
         } else {
             binding.homescreenbuttons!!.setOnClickListener(null)
@@ -129,6 +135,26 @@ class HomeActivity : MOROwayActivity() {
                 )
             }
             binding.aboutButton!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.044f)
+            binding.animationButton.setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                getButtonTextSize(binding.animationButton, width / 2, height * 0.044f)
+            )
+            val smallButtonsTextSize =
+                getButtonTextSize(binding.moreButton, width / 4, height * 0.022f)
+                    .coerceAtMost(
+                        getButtonTextSize(
+                            binding.aboutButton!!,
+                            width / 4,
+                            height * 0.022f
+                        )
+                    )
+                    .coerceAtMost(binding.animationButton.textSize)
+            binding.moreButton.setTextSize(
+                TypedValue.COMPLEX_UNIT_PX, smallButtonsTextSize
+            )
+            binding.aboutButton!!.setTextSize(
+                TypedValue.COMPLEX_UNIT_PX, smallButtonsTextSize
+            )
         }
 
         //Inform about new Version or Server messages
@@ -233,10 +259,6 @@ class HomeActivity : MOROwayActivity() {
         }
     }
 
-    public override fun onResume() {
-        super.onResume()
-    }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             try {
@@ -247,6 +269,14 @@ class HomeActivity : MOROwayActivity() {
             }
         }
         return true
+    }
+
+    private fun getButtonTextSize(view: Button, maxWidth: Int, minSize: Float): Float {
+        var size = view.textSize
+        if (view.text.length * size > maxWidth) {
+            size = maxWidth / (view.text.length).toFloat()
+        }
+        return size.coerceAtLeast(minSize)
     }
 
     private fun updateImageSettings() {

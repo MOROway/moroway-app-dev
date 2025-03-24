@@ -25,8 +25,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/a_opt_start"
-                android:textColor="@color/options_home"
-                android:textSize="@dimen/options_button_small" />
+                android:textColor="@color/options_home" />
 
             <Button
                 android:id="@+id/animationButton"
@@ -40,8 +39,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/generalStartGame"
-                android:textColor="@color/options_animation"
-                android:textSize="@dimen/options_button_huge" />
+                android:textColor="@color/options_animation" />
 
             <Button
                 android:id="@+id/animationTeamplayButton"
@@ -55,8 +53,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/generalTitleTeamplay"
-                android:textColor="@color/options_animation_teamplay"
-                android:textSize="@dimen/options_button_big" />
+                android:textColor="@color/options_animation_teamplay" />
 
             <Button
                 android:id="@+id/animationDemoButton"
@@ -70,8 +67,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/generalTitleDemoMode"
-                android:textColor="@color/options_animation_demo"
-                android:textSize="@dimen/options_button_big" />
+                android:textColor="@color/options_animation_demo" />
 
             <Button
                 android:id="@+id/helpButton"
@@ -85,8 +81,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/generalTitleHelpScreen"
-                android:textColor="@color/options_animation_help"
-                android:textSize="@dimen/options_button_medium" />
+                android:textColor="@color/options_animation_help" />
 
             <Button
                 android:id="@+id/animSettingsButton"
@@ -99,8 +94,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/generalTitleSettingsScreen"
-                android:textColor="@color/options_animation_settings"
-                android:textSize="@dimen/options_button_small" />
+                android:textColor="@color/options_animation_settings" />
 
         </RelativeLayout>
     </ScrollView>

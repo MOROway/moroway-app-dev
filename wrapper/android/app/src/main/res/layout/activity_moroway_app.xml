@@ -28,6 +28,8 @@
         android:shadowColor="@color/black_light"
         android:shadowRadius="10"
         android:text="@string/generalStartGame"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/white"
         android:textSize="36sp" />
 
@@ -70,6 +72,8 @@
             android:shadowColor="@color/black_light"
             android:shadowRadius="10"
             android:text="@string/title_activity_menu"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="24sp" />
 

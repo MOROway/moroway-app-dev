@@ -6,14 +6,11 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMenuBinding
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogDemoModeBinding
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 
 class MenuActivity : MOROwayActivity() {
@@ -154,85 +151,41 @@ class MenuActivity : MOROwayActivity() {
 
     public override fun onResume() {
         super.onResume()
-        binding.homeButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            resources.getDimension(R.dimen.options_button_small)
-        )
-        binding.homeButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            getButtonTextSize(binding.homeButton)
-        )
-        binding.animationButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            resources.getDimension(R.dimen.options_button_huge)
-        )
-        binding.animationButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            getButtonTextSize(binding.animationButton)
-        )
-        binding.animationTeamplayButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            resources.getDimension(R.dimen.options_button_big)
-        )
-        binding.animationTeamplayButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            getButtonTextSize(binding.animationTeamplayButton)
-        )
-        binding.animationDemoButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            resources.getDimension(R.dimen.options_button_big)
-        )
-        binding.animationDemoButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            getButtonTextSize(binding.animationDemoButton)
-        )
-        binding.helpButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            resources.getDimension(R.dimen.options_button_medium)
-        )
-        binding.helpButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            getButtonTextSize(binding.helpButton)
-        )
-        binding.animSettingsButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            resources.getDimension(R.dimen.options_button_small)
-        )
-        binding.animSettingsButton.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            getButtonTextSize(binding.animSettingsButton)
-        )
+        setButtonTextSize(binding.homeButton)
+        setButtonTextSize(binding.animationButton)
+        setButtonTextSize(binding.animationTeamplayButton)
+        setButtonTextSize(binding.animationDemoButton)
+        setButtonTextSize(binding.helpButton)
+        setButtonTextSize(binding.animSettingsButton)
     }
 
-    private fun getButtonTextSize(view: Button): Float {
+    private fun setButtonTextSize(view: Button) {
         val width: Int
         val height: Int
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             val windowMetrics = windowManager.currentWindowMetrics
-            val insets =
-                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            width = windowMetrics.bounds.width() - insets.left - insets.right
-            height = windowMetrics.bounds.height() - insets.top - insets.bottom
+            width = windowMetrics.bounds.width()
+            height = windowMetrics.bounds.height()
         } else {
             val metrics = DisplayMetrics()
             windowManager.defaultDisplay.getMetrics(metrics)
             width = metrics.widthPixels
             height = metrics.heightPixels
         }
-        val diagonal = sqrt(
-            (width / resources.displayMetrics.xdpi).toDouble()
-                .pow(2.0) + (height / resources.displayMetrics.ydpi).toDouble().pow(2.0)
+        view.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX, if (width > height) {
+                height * 0.1f
+            } else {
+                height * 0.05f
+            }
         )
-        val base = 5.8
         var size = view.textSize
-        if (diagonal > base) {
-            val factor = (diagonal / base).toFloat()
-            size *= factor
-        }
         if (view.text.length * size > width) {
             size = width / (view.text.length).toFloat()
         }
-        return size.coerceAtLeast(50f)
+        view.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX, size.coerceAtLeast(50f)
+        )
     }
 
     private fun backToHome() {

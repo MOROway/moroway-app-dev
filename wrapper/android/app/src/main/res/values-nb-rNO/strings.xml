@@ -2,7 +2,6 @@
 <resources>
     <string name="title_activity_gimmick2">Skilpadde</string>
     <string name="title_activity_jserror">JavaScript-feil</string>
-    <string name="a_anim_pleaseWait">vent …</string>
     <string name="a_opt_start">Hjem</string>
     <string name="a_jserror_button">Åpne Play-butikken</string>
     <string name="a_jserror_button2">Åpen tilbakemelding</string>

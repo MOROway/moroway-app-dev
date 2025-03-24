@@ -2,7 +2,6 @@
 <resources>
     <!-- General -->
     <string name="app_name" translatable="false">MOROway</string>
-    <string name="web_view_back" translatable="false">⬅</string>
     <!-- Titles (General) -->
     <string name="title_activity_gimmick2">Tortoise</string>
     <string name="title_activity_jserror">JavaScript Error</string>
@@ -11,7 +10,6 @@
     <string name="a_home_iHB" translatable="false">⇐</string>
     <string name="a_home_iHF" translatable="false">⇒</string>
     <!-- Activity: Animation -->
-    <string name="a_anim_pleaseWait">please wait…</string>
     <!-- Activity: MenuActivity -->
     <string name="a_opt_start">Home</string>
     <!--Activity: JS Error -->

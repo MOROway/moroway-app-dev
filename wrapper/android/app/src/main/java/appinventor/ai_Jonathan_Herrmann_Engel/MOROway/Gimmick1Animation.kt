@@ -3,12 +3,10 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build.VERSION.SDK_INT
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -135,11 +133,7 @@ class Gimmick1Animation(context: Context, attrs: AttributeSet?) :
     }
 
     private fun decodeBitmap(resId: Int): Bitmap {
-        return if (SDK_INT >= 28) {
-            ImageDecoder.decodeBitmap(ImageDecoder.createSource(resources, resId))
-        } else {
-            BitmapFactory.decodeResource(resources, resId)
-        }
+        return ImageDecoder.decodeBitmap(ImageDecoder.createSource(resources, resId))
     }
 
     override fun onDraw(hedgehogCanvas: Canvas) {
