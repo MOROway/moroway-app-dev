@@ -6696,17 +6696,7 @@ window.addEventListener("load", function () {
                         };
                         onlineConnection.socket.onclose = function () {
                             showNewGameLink();
-                            notify(
-                                "#canvas-notifier",
-                                getString("appScreenTeamplayConnectionError", "."),
-                                NOTIFICATION_PRIO_HIGH,
-                                6000,
-                                function () {
-                                    followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
-                                },
-                                getString("appScreenFurtherInformation"),
-                                client.height
-                            );
+                            notify("#canvas-notifier", getString("appScreenTeamplayGameEnded", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.height);
                         };
                         onlineConnection.socket.onmessage = function (message) {
                             const ERROR_LEVEL_OKAY = 0;
@@ -7026,12 +7016,7 @@ window.addEventListener("load", function () {
                                     }
                                     break;
                                 case "leave":
-                                    if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                        showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayTeammateLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.height);
-                                    } else {
-                                        notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplaySomebodyLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
-                                    }
+                                    notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                     break;
                                 case "chat-msg":
                                     chatInnerNone.style.display = "none";
