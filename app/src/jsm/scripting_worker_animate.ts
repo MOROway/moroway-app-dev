@@ -2030,7 +2030,7 @@ var trains: TrainCalc[] = [
     }
 ];
 var trainPics;
-const trainParams = {selected: Math.floor(Math.random() * trains.length), margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066};
+const trainParams = {selected: Math.floor(Math.random() * trains.length), margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10};
 
 var switches;
 var switchesBeforeAddSidings;

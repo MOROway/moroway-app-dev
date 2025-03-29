@@ -112,8 +112,8 @@ versions:
         general: |
             Ersetzen des Geburtstaglogos
         oc: |
-            Vorbereitung auf Apache Cordova-Android 10.1.0
-            HINWEIS: Sie müssen diese Version der MOROway App (v7.2.2) einmal öffnen, um die automatische Datenübertragung in die kommende Version zu initialisieren. Die kommende Version wird auf Apache Cordova-Android 10.1.0 basieren und den neuen WebViewAssetLoader nutzen.
+            Vorbereitung auf Apache Cordova Android 10.1.0
+            HINWEIS: Sie müssen diese Version der MOROway App (v7.2.2) einmal öffnen, um die automatische Datenübertragung in die kommende Version zu initialisieren. Die kommende Version wird auf Apache Cordova Android 10.1.0 basieren und den neuen WebViewAssetLoader nutzen.
     7.2.3:
         android: |
             Verbesserte Handhabung des Wechsels der Bildschirmausrichtung
@@ -121,7 +121,7 @@ versions:
         general: |
             Kleine Verbesserungen am Startlogo
         oc: |
-            Update auf Apache Cordova-Android 10.1.1
+            Aktualisierung von Apache Cordova Android auf Version 10.1.1
     7.3.0:
         general: |
             Verbesserte Zugstrecken
@@ -166,7 +166,7 @@ versions:
             Ersetzen des Bildes zur grafischen Hilfe durch einen interaktiven Modus.
             Einige Optionsmenü-Einträge können mittels einer neuen Einstellung versteckt werden.
         oc: |
-            Update auf Apache Cordova Android 11.0.0
+            Aktualisierung von Apache Cordova Android auf Version 11.0.0
         snap: |
             Aktualisierte Abhängigkeiten.
         web: |
@@ -225,11 +225,17 @@ versions:
             Geänderte Lizenz: GNU General Public License v3.0 ersetzt die Apache License Version 2.
     10.1.0:
         general: |
-            Übersetzung: Französisch (Dank an Weblate-Nutzer Dadu042)
+            Übersetzung: Französisch (Dank an Weblate-Nutzer Dadu042).
     10.1.1:
         general: |
             Verbesserte Räder beim Schi-Stra-Bus in der 2D-Ansicht.
             Die meisten Metadaten- und Änderungsprotokolldateien wurden in das YAML Format überführt.
     10.2.0:
         general: |
-            Übersetzung: Tamil (Dank an Weblate-Nutzer TamilNeram)
+            Übersetzung: Tamil (Dank an Weblate-Nutzer TamilNeram).
+    10.3.0:
+        general: |
+            Verbesserter Mehrspieler Server.
+            Aktualisierte Abhängigkeiten.
+        oc: |
+            Aktualisierung von Apache Cordova Android auf Version 14.0.0.

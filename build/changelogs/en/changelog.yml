@@ -110,8 +110,8 @@ versions:
         general: |
             Replace birthday logo
         oc: |
-            Prepare for Apache Cordova-Android 10.1.0
-            NOTE: You will need to open this version of the app (v7.2.2) once to auto prepare data transition to the upcomming next version which will be based on Apache Cordova-Android 10.1.0 and use the newly introduced WebViewAssetLoader.
+            Prepare for Apache Cordova Android 10.1.0
+            NOTE: You will need to open this version of the app (v7.2.2) once to auto prepare data transition to the upcomming next version which will be based on Apache Cordova Android 10.1.0 and use the newly introduced WebViewAssetLoader.
     7.2.3:
         android: |
             Improve orientation change handling
@@ -119,7 +119,7 @@ versions:
         general: |
             Start logo: small improvements
         oc: |
-            Update Apache Cordova-Android to 10.1.1
+            Update Apache Cordova Android to 10.1.1
     7.3.0:
         general: |
             Improved train paths
@@ -302,7 +302,7 @@ versions:
             Update dependencies.
     10.1.0:
         general: |
-            Translation: French (thanks to Weblate user Dadu042)
+            Translation: French (thanks to Weblate user Dadu042).
     10.1.1:
         general: |
             Improve railbus wheels in 2D-view.
@@ -312,4 +312,10 @@ versions:
             Update translations and dependencies.
     10.2.0:
         general: |
-            Translation: Tamil (thanks to Weblate user TamilNeram)
+            Translation: Tamil (thanks to Weblate user TamilNeram).
+    10.3.0:
+        general: |
+            Improve multiplayer server.
+            Update dependencies.
+        oc: |
+            Update Apache Cordova Android to 14.0.0.

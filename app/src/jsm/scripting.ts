@@ -1035,7 +1035,7 @@ function calcMenusAndBackground(state) {
         });
         elementControlCenterTrains?.addEventListener("click", function () {
             commonOnOptionsMenuClick();
-            gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay;
+            gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineGame.stop;
             controlCenter.showCarCenter = false;
             if (gui.infoOverlay) {
                 drawInfoOverlayMenu("items-change");
@@ -1043,7 +1043,7 @@ function calcMenusAndBackground(state) {
         });
         elementControlCenterCars?.addEventListener("click", function () {
             commonOnOptionsMenuClick();
-            gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay;
+            gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineGame.stop;
             controlCenter.showCarCenter = true;
             if (gui.infoOverlay) {
                 drawInfoOverlayMenu("items-change");
@@ -1284,93 +1284,6 @@ function getGesture(gesture) {
     }
 }
 
-function notInTransformerImage(x, y) {
-    if (!getSetting("classicUI") || gui.controlCenter || gui.three || canvasGesture == undefined || contextGesture == undefined) {
-        return true;
-    }
-    contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
-    if (classicUI.transformer.angle == undefined || classicUI.transformer.x == undefined || classicUI.transformer.y == undefined || classicUI.transformer.width == undefined || classicUI.transformer.height == undefined) {
-        return true;
-    }
-    contextGesture.save();
-    contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
-    contextGesture.rotate(classicUI.transformer.angle);
-    contextGesture.beginPath();
-    contextGesture.rect(-classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height);
-    if (contextGesture.isPointInPath(x, y)) {
-        return false;
-    }
-    contextGesture.restore();
-    return true;
-}
-
-function notInTransformerInput(x, y) {
-    if (!getSetting("classicUI") || gui.controlCenter || gui.three || canvasGesture == undefined || contextGesture == undefined) {
-        return true;
-    }
-    contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
-    if (classicUI.transformer.angle == undefined || classicUI.transformer.x == undefined || classicUI.transformer.y == undefined || classicUI.transformer.width == undefined || classicUI.transformer.height == undefined || classicUI.transformer.input.diffY == undefined || classicUI.transformer.input.angle == undefined || classicUI.transformer.input.width == undefined || classicUI.transformer.input.height == undefined) {
-        return true;
-    }
-    contextGesture.save();
-    contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
-    contextGesture.rotate(classicUI.transformer.angle);
-    contextGesture.save();
-    contextGesture.translate(0, -classicUI.transformer.input.diffY);
-    contextGesture.rotate(classicUI.transformer.input.angle);
-    contextGesture.beginPath();
-    contextGesture.rect(-classicUI.transformer.input.width / 2, -classicUI.transformer.input.height / 2, classicUI.transformer.input.width, classicUI.transformer.input.height);
-    if (contextGesture.isPointInPath(x, y)) {
-        return false;
-    }
-    contextGesture.restore();
-    if (classicUI.transformer.directionInput.diffX == undefined || classicUI.transformer.directionInput.diffY == undefined || classicUI.transformer.directionInput.width == undefined || classicUI.transformer.directionInput.height == undefined) {
-        return true;
-    }
-    contextGesture.save();
-    contextGesture.translate(classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
-    contextGesture.beginPath();
-    contextGesture.rect(-classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
-    if (contextGesture.isPointInPath(x, y)) {
-        return false;
-    }
-    contextGesture.restore();
-    contextGesture.restore();
-    return true;
-}
-
-function notInTransformerTrainSwitch(x, y) {
-    if (!getSetting("classicUI") || gui.controlCenter || gui.three || canvasGesture == undefined || contextGesture == undefined) {
-        return true;
-    }
-    contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
-    if (classicUI.trainSwitch.selectedTrainDisplay.visible) {
-        if (classicUI.trainSwitch.selectedTrainDisplay.x == undefined || classicUI.trainSwitch.selectedTrainDisplay.y == undefined || classicUI.trainSwitch.selectedTrainDisplay.width == undefined || classicUI.trainSwitch.selectedTrainDisplay.height == undefined) {
-            return true;
-        }
-        contextGesture.save();
-        contextGesture.beginPath();
-        contextGesture.rect(classicUI.trainSwitch.selectedTrainDisplay.x, classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
-        if (contextGesture.isPointInPath(x, y)) {
-            return false;
-        }
-        contextGesture.restore();
-    }
-    if (classicUI.trainSwitch.angle == undefined || classicUI.trainSwitch.x == undefined || classicUI.trainSwitch.y == undefined || classicUI.trainSwitch.width == undefined || classicUI.trainSwitch.height == undefined) {
-        return true;
-    }
-    contextGesture.save();
-    contextGesture.translate(classicUI.trainSwitch.x + classicUI.trainSwitch.width / 2, classicUI.trainSwitch.y + classicUI.trainSwitch.height / 2);
-    contextGesture.rotate(classicUI.trainSwitch.angle);
-    contextGesture.beginPath();
-    contextGesture.rect(-classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
-    if (contextGesture.isPointInPath(x, y)) {
-        return false;
-    }
-    contextGesture.restore();
-    return true;
-}
-
 function onMouseMove(event) {
     client.chosenInputMethod = "mouse";
     hardware.mouse.isMoving = true;
@@ -1380,7 +1293,7 @@ function onMouseMove(event) {
     movingTimeOut = window.setTimeout(function () {
         hardware.mouse.isMoving = false;
     }, 5000);
-    if (client.zoomAndTilt.realScale > 1 && ((notInTransformerInput(event.clientX * client.devicePixelRatio, event.clientY * client.devicePixelRatio) && hardware.mouse.isHold) || hardware.mouse.isDrag)) {
+    if (client.zoomAndTilt.realScale > 1 && ((!classicUI.pointInTransformerInput(event.clientX * client.devicePixelRatio, event.clientY * client.devicePixelRatio) && hardware.mouse.isHold) || hardware.mouse.isDrag)) {
         var deltaX = -5 * (hardware.mouse.moveX - event.clientX * client.devicePixelRatio);
         var deltaY = -5 * (hardware.mouse.moveY - event.clientY * client.devicePixelRatio);
         if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height) / 30) {
@@ -1400,9 +1313,9 @@ function onMouseDown(event) {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     hardware.lastInputMouse = hardware.mouse.downTime = Date.now();
-    hardware.mouse.isHold = event.button == 0 && !gui.controlCenter && !gui.konamiOverlay;
-    controlCenter.mouse.hold = event.button == 0 && gui.controlCenter && !gui.konamiOverlay;
-    hardware.mouse.isWheelHold = event.button == 1 && !gui.controlCenter && !gui.konamiOverlay;
+    hardware.mouse.isHold = event.button == 0 && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+    controlCenter.mouse.hold = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+    hardware.mouse.isWheelHold = event.button == 1 && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
     hardware.mouse.moveX = hardware.mouse.downX = event.clientX * client.devicePixelRatio;
     hardware.mouse.moveY = hardware.mouse.downY = event.clientY * client.devicePixelRatio;
 }
@@ -1413,7 +1326,7 @@ function onMouseUp(event) {
     hardware.mouse.upX = event.clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay;
+    controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
 }
 function onMouseEnter(event) {
     client.chosenInputMethod = "mouse";
@@ -1450,8 +1363,8 @@ function onMouseWheel(event) {
         }
     } else {
         resetGestures();
-        hardware.mouse.wheelScrolls = !gui.controlCenter && !gui.konamiOverlay;
-        controlCenter.mouse.wheelScrolls = gui.controlCenter && !gui.konamiOverlay;
+        hardware.mouse.wheelScrolls = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+        controlCenter.mouse.wheelScrolls = gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
         hardware.mouse.wheelX = event.clientX * client.devicePixelRatio;
         hardware.mouse.wheelY = event.clientY * client.devicePixelRatio;
         hardware.mouse.wheelScrollX = event.deltaX;
@@ -1462,11 +1375,11 @@ function onMouseWheel(event) {
 function onMouseRight(event) {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
-    if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && (client.zoomAndTilt.realScale == 1 || gui.three)) {
+    if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
         controlCenter.showCarCenter = true;
         notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
     } else {
-        gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && (client.zoomAndTilt.realScale == 1 || gui.three);
+        gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
         if (gui.controlCenter) {
             notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
         }
@@ -1487,7 +1400,7 @@ function getTouchMove(event) {
     if (event.touches.length == 1 && typeof client.zoomAndTilt.pinchHypot == "undefined" && !client.zoomAndTilt.pinchGestureIsTilt) {
         var deltaX = -5 * (hardware.mouse.moveX - event.touches[0].clientX * client.devicePixelRatio);
         var deltaY = -5 * (hardware.mouse.moveY - event.touches[0].clientY * client.devicePixelRatio);
-        if (client.zoomAndTilt.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height) / 30 && notInTransformerInput(event.touches[0].clientX * client.devicePixelRatio, event.touches[0].clientY * client.devicePixelRatio)) {
+        if (client.zoomAndTilt.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height) / 30 && !classicUI.pointInTransformerInput(event.touches[0].clientX * client.devicePixelRatio, event.touches[0].clientY * client.devicePixelRatio)) {
             resetGestures();
             getGesture({type: "swipe", deltaX: deltaX / 4, deltaY: deltaY / 4});
             if (typeof clickTimeOut !== "undefined") {
@@ -1550,7 +1463,7 @@ function getTouchStart(event) {
     client.chosenInputMethod = "touch";
     var xTS = event.changedTouches[0].clientX * client.devicePixelRatio;
     var yTS = event.changedTouches[0].clientY * client.devicePixelRatio;
-    if (event.touches.length == 1 && Math.max(hardware.mouse.moveX, xTS) < 1.1 * Math.min(hardware.mouse.moveX, xTS) && Math.max(hardware.mouse.moveY, yTS) < 1.1 * Math.min(hardware.mouse.moveY, yTS) && Date.now() - hardware.mouse.downTime < doubleTouchTime && Date.now() - hardware.mouse.upTime < doubleTouchTime && notInTransformerTrainSwitch(xTS, yTS) && notInTransformerInput(xTS, yTS)) {
+    if (event.touches.length == 1 && Math.max(hardware.mouse.moveX, xTS) < 1.1 * Math.min(hardware.mouse.moveX, xTS) && Math.max(hardware.mouse.moveY, yTS) < 1.1 * Math.min(hardware.mouse.moveY, yTS) && Date.now() - hardware.mouse.downTime < doubleTouchTime && Date.now() - hardware.mouse.upTime < doubleTouchTime && !classicUI.pointInTrainSwitchInput(xTS, yTS) && !classicUI.pointInTransformerInput(xTS, yTS)) {
         resetGestures();
         if (typeof clickTimeOut !== "undefined") {
             window.clearTimeout(clickTimeOut);
@@ -1576,8 +1489,8 @@ function getTouchStart(event) {
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
         hardware.mouse.moveX = hardware.mouse.downX = xTS;
         hardware.mouse.moveY = hardware.mouse.downY = yTS;
-        hardware.mouse.isHold = event.touches.length == 1 && !gui.controlCenter && !gui.konamiOverlay;
-        controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay;
+        hardware.mouse.isHold = event.touches.length == 1 && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+        controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
     }
 }
 function getTouchEnd(event) {
@@ -1593,14 +1506,14 @@ function getTouchEnd(event) {
     hardware.mouse.upX = event.changedTouches[0].clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.changedTouches[0].clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    controlCenter.mouse.clickEvent = gui.controlCenter && !gui.konamiOverlay;
+    controlCenter.mouse.clickEvent = gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
     if (controlCenter.mouse.prepare && event.touches.length == 0) {
-        if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && (client.zoomAndTilt.realScale == 1 || gui.three)) {
+        if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
             controlCenter.showCarCenter = true;
             notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         } else {
-            gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && (client.zoomAndTilt.realScale == 1 || gui.three);
+            gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
             if (gui.controlCenter) {
                 notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
             }
@@ -1741,7 +1654,7 @@ function calcClassicUIElements() {
         }
     }
     fac = 0.7;
-    classicUI.transformer.input.width = classicUI.transformer.input.height = fac * classicUI.transformer.width;
+    classicUI.transformer.wheelInput.width = classicUI.transformer.wheelInput.height = fac * classicUI.transformer.width;
     fac = 0.17;
     classicUI.transformer.directionInput.width = fac * classicUI.transformer.width;
     classicUI.transformer.directionInput.height = fac * (pics[classicUI.transformer.directionInput.srcStandardDirection].height * (classicUI.transformer.width / pics[classicUI.transformer.directionInput.srcStandardDirection].width));
@@ -1761,7 +1674,7 @@ function calcClassicUIElements() {
             classicUI.transformer.y = background.y + background.height;
         }
     }
-    classicUI.transformer.input.diffY = classicUI.transformer.height / 6;
+    classicUI.transformer.wheelInput.diffY = classicUI.transformer.height / 6;
     classicUI.transformer.directionInput.diffX = classicUI.transformer.width * 0.46 - classicUI.transformer.directionInput.width;
     classicUI.transformer.directionInput.diffY = classicUI.transformer.height * 0.46 - classicUI.transformer.directionInput.height;
     context.textBaseline = "middle";
@@ -1771,7 +1684,6 @@ function calcClassicUIElements() {
             longestName = i;
         }
     }
-    classicUI.trainSwitch.selectedTrainDisplay.fontFamily = "Roboto, sans-serif";
     var heightMultiply = 1.6;
     var widthMultiply = 1.2;
     var wantedWidth = ((menus.small ? 0.35 : 0.9) * background.width) / 4 / widthMultiply;
@@ -1804,7 +1716,6 @@ function calcClassicUIElements() {
         classicUI.trainSwitch.width = pics[classicUI.trainSwitch.src].width * (classicUI.trainSwitch.height / pics[classicUI.trainSwitch.src].height);
         classicUI.trainSwitch.y = classicUI.transformer.y;
     }
-    classicUI.switches.radius = 0.02 * background.width;
 }
 
 /*******************************************
@@ -1939,6 +1850,7 @@ function requestResize() {
         background3D.animateBehind(true);
 
         animateWorker.postMessage({k: "resize", background: background, oldBackground: oldBackground});
+        switchParams.set();
 
         carWays.forEach(function (way) {
             Object.keys(way).forEach(function (cType) {
@@ -2609,32 +2521,70 @@ function drawObjects() {
         } else {
             drawImage(pics[currentObject.src], -currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
         }
-        if (!onlineGame.stop) {
+        context.beginPath();
+        context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
+        if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
+            hardware.mouse.cursor = "pointer";
+        }
+        if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) {
+            if (hardware.lastInputTouch < hardware.lastInputMouse) {
+                hardware.mouse.isHold = false;
+            }
+            if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && context.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                if (typeof clickTimeOut !== "undefined") {
+                    window.clearTimeout(clickTimeOut);
+                    clickTimeOut = null;
+                }
+                if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                    hardware.mouse.isHold = false;
+                } else {
+                    hardware.mouse.lastClickDoubleClick = true;
+                }
+                if (carParams.init) {
+                    carActions.auto.start();
+                } else if (carParams.autoModeOff && !currentObject.move && currentObject.backwardsState === 0) {
+                    carActions.manual.backwards(input1);
+                }
+            } else {
+                if (typeof clickTimeOut !== "undefined") {
+                    window.clearTimeout(clickTimeOut);
+                    clickTimeOut = null;
+                }
+                clickTimeOut = window.setTimeout(
+                    function () {
+                        clickTimeOut = null;
+                        if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                            hardware.mouse.isHold = false;
+                        }
+                        if (!carCollisionCourse(input1, false)) {
+                            if (carParams.autoModeRuns) {
+                                carActions.auto.pause();
+                            } else if (carParams.init || carParams.autoModeOff) {
+                                if (currentObject.move) {
+                                    carActions.manual.stop(input1);
+                                } else {
+                                    carActions.manual.start(input1);
+                                }
+                            } else {
+                                carActions.auto.resume();
+                            }
+                        }
+                    },
+                    hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
+                );
+            }
+        }
+        context.closePath();
+        context.restore();
+        if (!currentObject.parking && !currentObject.move && !carParams.autoModeRuns && !carParams.isBackToRoot && !carCollisionCourse(input1, false, -1)) {
+            context.save();
+            context.translate(background.x + carWays[input1].start[currentObject.startFrame].x, background.y + carWays[input1].start[currentObject.startFrame].y);
+            context.rotate(carWays[input1].start[currentObject.startFrame].angle);
             context.beginPath();
             context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "pointer";
-            }
-            if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) {
-                if (hardware.lastInputTouch < hardware.lastInputMouse) {
-                    hardware.mouse.isHold = false;
-                }
-                if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && context.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
-                    if (typeof clickTimeOut !== "undefined") {
-                        window.clearTimeout(clickTimeOut);
-                        clickTimeOut = null;
-                    }
-                    if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                        hardware.mouse.isHold = false;
-                    } else {
-                        hardware.mouse.lastClickDoubleClick = true;
-                    }
-                    if (carParams.init) {
-                        carActions.auto.start();
-                    } else if (carParams.autoModeOff && !currentObject.move && currentObject.backwardsState === 0) {
-                        carActions.manual.backwards(input1);
-                    }
-                } else {
+                if (hardware.mouse.isHold) {
                     if (typeof clickTimeOut !== "undefined") {
                         window.clearTimeout(clickTimeOut);
                         clickTimeOut = null;
@@ -2642,84 +2592,43 @@ function drawObjects() {
                     clickTimeOut = window.setTimeout(
                         function () {
                             clickTimeOut = null;
-                            if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                                hardware.mouse.isHold = false;
-                            }
-                            if (!carCollisionCourse(input1, false)) {
-                                if (carParams.autoModeRuns) {
-                                    carActions.auto.pause();
-                                } else if (carParams.init || carParams.autoModeOff) {
-                                    if (currentObject.move) {
-                                        carActions.manual.stop(input1);
-                                    } else {
-                                        carActions.manual.start(input1);
-                                    }
-                                } else {
-                                    carActions.auto.resume();
-                                }
+                            hardware.mouse.isHold = false;
+                            if (carParams.autoModeOff) {
+                                carActions.manual.park(input1);
+                            } else {
+                                carActions.auto.end();
                             }
                         },
-                        hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
+                        hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
                     );
                 }
             }
-            context.closePath();
-            context.restore();
-            if (!currentObject.parking && !currentObject.move && !carParams.autoModeRuns && !carParams.isBackToRoot && !carCollisionCourse(input1, false, -1)) {
-                context.save();
-                context.translate(background.x + carWays[input1].start[currentObject.startFrame].x, background.y + carWays[input1].start[currentObject.startFrame].y);
-                context.rotate(carWays[input1].start[currentObject.startFrame].angle);
-                context.beginPath();
-                context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
-                if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
-                    hardware.mouse.cursor = "pointer";
-                    if (hardware.mouse.isHold) {
-                        if (typeof clickTimeOut !== "undefined") {
-                            window.clearTimeout(clickTimeOut);
-                            clickTimeOut = null;
-                        }
-                        clickTimeOut = window.setTimeout(
-                            function () {
-                                clickTimeOut = null;
-                                hardware.mouse.isHold = false;
-                                if (carParams.autoModeOff) {
-                                    carActions.manual.park(input1);
-                                } else {
-                                    carActions.auto.end();
-                                }
-                            },
-                            hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
-                        );
-                    }
-                }
-            }
-            context.closePath();
-            context.restore();
-            if (APP_DATA.debug && debug.paint) {
-                context.save();
-                context.translate(background.x + currentObject.x, background.y + currentObject.y);
-                context.rotate(currentObject.displayAngle);
-                context.strokeRect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
-                context.restore();
-            }
-            if (APP_DATA.debug && debug.paint && !carParams.autoModeRuns) {
-                context.save();
-                context.beginPath();
-                context.strokeStyle = "rgb(" + Math.floor((input1 / carWays.length) * 255) + ",0,0)";
-                context.lineWidth = 1;
-                context.moveTo(background.x + carWays[input1][currentObject.cType][0].x, background.y + carWays[input1][currentObject.cType][0].y);
-                for (var i = 1; i < carWays[input1][currentObject.cType].length; i += 10) {
-                    context.lineTo(background.x + carWays[input1][currentObject.cType][i].x, background.y + carWays[input1][currentObject.cType][i].y);
-                }
-                if (currentObject.cType == "normal") {
-                    context.lineTo(background.x + carWays[input1][currentObject.cType][0].x, background.y + carWays[input1][currentObject.cType][0].y);
-                }
-                context.stroke();
-                context.restore();
-            }
-        } else {
+        }
+        context.closePath();
+        context.restore();
+        if (APP_DATA.debug && debug.paint) {
+            context.save();
+            context.translate(background.x + currentObject.x, background.y + currentObject.y);
+            context.rotate(currentObject.displayAngle);
+            context.strokeRect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             context.restore();
         }
+        if (APP_DATA.debug && debug.paint && !carParams.autoModeRuns) {
+            context.save();
+            context.beginPath();
+            context.strokeStyle = "rgb(" + Math.floor((input1 / carWays.length) * 255) + ",0,0)";
+            context.lineWidth = 1;
+            context.moveTo(background.x + carWays[input1][currentObject.cType][0].x, background.y + carWays[input1][currentObject.cType][0].y);
+            for (var i = 1; i < carWays[input1][currentObject.cType].length; i += 10) {
+                context.lineTo(background.x + carWays[input1][currentObject.cType][i].x, background.y + carWays[input1][currentObject.cType][i].y);
+            }
+            if (currentObject.cType == "normal") {
+                context.lineTo(background.x + carWays[input1][currentObject.cType][0].x, background.y + carWays[input1][currentObject.cType][0].y);
+            }
+            context.stroke();
+            context.restore();
+        }
+
         if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 2)) {
             contextForeground.save();
             contextForeground.translate(background.x + currentObject.x, background.y + currentObject.y);
@@ -2793,13 +2702,13 @@ function drawObjects() {
         canvasBackground.style.display = "none";
         canvas.style.display = "none";
         canvasSemiForeground.style.display = "none";
-        contextForeground.clearRect(0, 0, canvasForeground.width, canvasForeground.height);
-        contextForeground.setTransform(1, 0, 0, 1, 0, 0);
         background3D.behind.style.display = "block";
         if (background3D.behindClone) {
             background3D.behindClone.style.display = "block";
         }
         three.renderer.domElement.style.display = "block";
+        contextForeground.clearRect(0, 0, canvasForeground.width, canvasForeground.height);
+        contextForeground.setTransform(1, 0, 0, 1, 0, 0);
         /////THREE.JS/Background/////
         background3D.animateBehind();
     } else {
@@ -2807,16 +2716,15 @@ function drawObjects() {
         canvasBackground.style.display = "";
         canvas.style.display = "";
         canvasSemiForeground.style.display = "";
-        canvasForeground.style.display = "";
         background3D.behind.style.display = "none";
         if (background3D.behindClone) {
             background3D.behindClone.style.display = "none";
         }
         three.renderer.domElement.style.display = "none";
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvas.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvas.height) / 2 + client.zoomAndTilt.offsetY);
         contextForeground.clearRect(0, 0, canvasForeground.width, canvasForeground.height);
         contextForeground.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasForeground.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasForeground.height) / 2 + client.zoomAndTilt.offsetY);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvas.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvas.height) / 2 + client.zoomAndTilt.offsetY);
     }
     var deltaDiv = 80;
     if (client.zoomAndTilt.realScale > 1) {
@@ -2857,7 +2765,9 @@ function drawObjects() {
     }
 
     /////CARS/////
-    calcCars();
+    if (!onlineGame.stop) {
+        calcCars();
+    }
 
     if (gui.three) {
         /////THREE.JS/////
@@ -3000,7 +2910,7 @@ function drawObjects() {
             three.followCamera.rotateOnAxis(axis, rad);
             three.renderer.render(three.scene, three.followCamera);
 
-            if (!gui.demo && !gui.controlCenter) {
+            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop) {
                 contextForeground.save();
                 contextForeground.translate(three.followCamControls.x, three.followCamControls.y + three.followCamControls.textSize);
                 contextForeground.font = three.followCamControls.font;
@@ -3098,7 +3008,7 @@ function drawObjects() {
             var rad = Math.PI / 2;
             three.followCamera.rotateOnAxis(axis, rad);
 
-            if (!gui.demo && !gui.controlCenter) {
+            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop) {
                 contextForeground.save();
                 contextForeground.translate(three.followCamControls.x, three.followCamControls.y);
                 contextForeground.beginPath();
@@ -3132,7 +3042,7 @@ function drawObjects() {
                 if (trains[three.followObject].accelerationSpeed > 0) {
                     contextForeground.save();
                     const controlSpeedText = trains[three.followObject].speedInPercent + "%";
-                    contextForeground.font = measureFontSize(controlSpeedText, "Roboto, sans-serif", 20, three.followCamControls.width * 0.7, 5, 1.2);
+                    contextForeground.font = measureFontSize(controlSpeedText, defaultFont, 20, three.followCamControls.width * 0.7, 5, 1.2);
                     const controlSpeedTextMetrics = contextForeground.measureText(controlSpeedText);
                     if (three.followCamControls.draggingAreaHeight - three.followCamControls.padding - three.followCamControls.textSize > parseInt(contextForeground.font.replace(/^([0-9.]+)px.*$/, "$1"), 10)) {
                         contextForeground.fillText(controlSpeedText, three.followCamControls.x + (three.followCamControls.width - controlSpeedTextMetrics.width) / 2, three.followCamControls.y + three.followCamControls.draggingAreaHeight - three.followCamControls.padding);
@@ -3159,8 +3069,8 @@ function drawObjects() {
                         }
                         hardware.mouse.isHold = false;
                     } else if (hardware.mouse.wheelScrolls && hardware.mouse.wheelScrollY != 0 && hardware.mouse.wheelX > three.followCamControls.x && hardware.mouse.wheelY > three.followCamControls.y && hardware.mouse.wheelX < three.followCamControls.x + three.followCamControls.width && hardware.mouse.wheelY < three.followCamControls.y + three.followCamControls.draggingAreaHeight) {
-                        if (trains[three.followObject].speedInPercent == undefined || trains[three.followObject].speedInPercent < minTrainSpeed) {
-                            newSpeedByUser = minTrainSpeed;
+                        if (trains[three.followObject].speedInPercent == undefined || trains[three.followObject].speedInPercent < trainParams.minSpeed) {
+                            newSpeedByUser = trainParams.minSpeed;
                         } else {
                             newSpeedByUser = Math.round(trains[three.followObject].speedInPercent * (hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9));
                         }
@@ -3204,8 +3114,8 @@ function drawObjects() {
                     var hexSquare = switches[key][currentKey].turned ? "0x005500" : "0x550000";
                     var angle = switches[key][currentKey].turned ? switches[key][currentKey].angles.turned : switches[key][currentKey].angles.normal;
                     var transparent = true;
-                    if (switches[key][currentKey].lastStateChange != undefined && frameNo - switches[key][currentKey].lastStateChange < classicUI.switches.showDuration) {
-                        var fadeProgress = (frameNo - switches[key][currentKey].lastStateChange) / classicUI.switches.showDuration;
+                    if (switches[key][currentKey].lastStateChange != undefined && frameNo - switches[key][currentKey].lastStateChange < switchParams.showDuration) {
+                        var fadeProgress = (frameNo - switches[key][currentKey].lastStateChange) / switchParams.showDuration;
                         if (switches[key][currentKey].turned) {
                             hex = "0x" + getFadeColor(1 - fadeProgress) + getFadeColor(fadeProgress) + "00";
                             hexSquare = "0x" + getFadeColor(1 - fadeProgress, 85) + getFadeColor(fadeProgress, 85) + "00";
@@ -3216,7 +3126,7 @@ function drawObjects() {
                             angle = getAngle(fadeProgress, switches[key][currentKey].angles.normal, switches[key][currentKey].angles.turned);
                         }
                     }
-                    if (switches[key][currentKey].lastStateChange != undefined && frameNo - switches[key][currentKey].lastStateChange < classicUI.switches.showDuration) {
+                    if (switches[key][currentKey].lastStateChange != undefined && frameNo - switches[key][currentKey].lastStateChange < switchParams.showDuration) {
                         transparent = false;
                     }
 
@@ -3319,21 +3229,23 @@ function drawObjects() {
         var classicUISavedMouseHold;
         var classicUISavedMouseDrag;
         var classicUISavedWheelScroll;
-        context.save();
-        context.beginPath();
-        context.rect(background.x, background.y, background.width, background.height);
-        var moveInPath = context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY);
-        var wheelInPath = context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY);
-        context.restore();
-        if (!moveInPath || (getSetting("classicUI") && !gui.controlCenter && !notInTransformerImage(hardware.mouse.moveX, hardware.mouse.moveY))) {
-            classicUISavedMouseHold = hardware.mouse.isHold;
-            classicUISavedMouseDrag = hardware.mouse.isDrag;
-            hardware.mouse.isHold = false;
-            hardware.mouse.isDrag = false;
-        }
-        if (!wheelInPath || (getSetting("classicUI") && !gui.controlCenter && !notInTransformerImage(hardware.mouse.wheelX, hardware.mouse.wheelY))) {
-            classicUISavedWheelScroll = hardware.mouse.wheelScrolls;
-            hardware.mouse.wheelScrolls = false;
+        if (classicUI.ready()) {
+            context.save();
+            context.beginPath();
+            context.rect(background.x, background.y, background.width, background.height);
+            var moveInPath = context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY);
+            var wheelInPath = context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY);
+            context.restore();
+            if (!moveInPath || classicUI.pointInTransformerImage(hardware.mouse.moveX, hardware.mouse.moveY)) {
+                classicUISavedMouseHold = hardware.mouse.isHold;
+                classicUISavedMouseDrag = hardware.mouse.isDrag;
+                hardware.mouse.isHold = false;
+                hardware.mouse.isDrag = false;
+            }
+            if (!wheelInPath || classicUI.pointInTransformerImage(hardware.mouse.wheelX, hardware.mouse.wheelY)) {
+                classicUISavedWheelScroll = hardware.mouse.wheelScrolls;
+                hardware.mouse.wheelScrolls = false;
+            }
         }
 
         /////TRAINS/////
@@ -3373,7 +3285,7 @@ function drawObjects() {
         }
 
         /////TAX OFFICE/////
-        if (getSetting("burnTheTaxOffice")) {
+        if (getSetting("burnTheTaxOffice") && !onlineGame.stop) {
             //General (BEGIN)
             contextForeground.save();
             contextForeground.translate(background.x, background.y);
@@ -3461,7 +3373,7 @@ function drawObjects() {
         }
 
         /////CLASSIC UI/////
-        if (getSetting("classicUI") && !gui.controlCenter && !gui.demo) {
+        if (classicUI.ready()) {
             if (classicUISavedMouseHold != undefined && classicUISavedMouseDrag != undefined) {
                 hardware.mouse.isHold = classicUISavedMouseHold;
                 hardware.mouse.isDrag = classicUISavedMouseDrag;
@@ -3475,31 +3387,29 @@ function drawObjects() {
             }
             var step = Math.PI / 30;
             if (trains[trainParams.selected].accelerationSpeed > 0) {
-                if (classicUI.transformer.input.angle < (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.input.maxAngle) {
-                    classicUI.transformer.input.angle += step;
-                    if (classicUI.transformer.input.angle >= (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.input.maxAngle) {
-                        classicUI.transformer.input.angle = (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.input.maxAngle;
+                if (classicUI.transformer.wheelInput.angle < (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.wheelInput.maxAngle) {
+                    classicUI.transformer.wheelInput.angle += step;
+                    if (classicUI.transformer.wheelInput.angle >= (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.wheelInput.maxAngle) {
+                        classicUI.transformer.wheelInput.angle = (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.wheelInput.maxAngle;
                     }
                 } else {
-                    classicUI.transformer.input.angle -= step;
-                    if (classicUI.transformer.input.angle <= (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.input.maxAngle) {
-                        classicUI.transformer.input.angle = (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.input.maxAngle;
+                    classicUI.transformer.wheelInput.angle -= step;
+                    if (classicUI.transformer.wheelInput.angle <= (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.wheelInput.maxAngle) {
+                        classicUI.transformer.wheelInput.angle = (trains[trainParams.selected].speedInPercent / 100) * classicUI.transformer.wheelInput.maxAngle;
                     }
                 }
             } else {
-                if (classicUI.transformer.input.angle > 0) {
-                    classicUI.transformer.input.angle -= step;
-                    if (classicUI.transformer.input.angle < 0) {
-                        classicUI.transformer.input.angle = 0;
+                if (classicUI.transformer.wheelInput.angle > 0) {
+                    classicUI.transformer.wheelInput.angle -= step;
+                    if (classicUI.transformer.wheelInput.angle < 0) {
+                        classicUI.transformer.wheelInput.angle = 0;
                     }
                 }
             }
             var wasInSwitchPath = false;
             if (classicUI.trainSwitch.selectedTrainDisplay.visible) {
                 contextForeground.save();
-                contextForeground.beginPath();
-                contextForeground.rect(classicUI.trainSwitch.selectedTrainDisplay.x, classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
-                if (((contextForeground.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) && !hardware.mouse.isDrag) {
+                if (((classicUI.pointInTrainSwitchInputText(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || classicUI.pointInTrainSwitchInputText(hardware.mouse.moveX, hardware.mouse.moveY)) && !hardware.mouse.isDrag) {
                     wasInSwitchPath = true;
                 }
                 contextForeground.font = classicUI.trainSwitch.selectedTrainDisplay.font;
@@ -3579,9 +3489,8 @@ function drawObjects() {
                 }
                 contextForeground.restore();
             }
-            contextForeground.beginPath();
-            contextForeground.rect(-classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
-            if ((wasInSwitchPath || (contextForeground.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) && !hardware.mouse.isDrag) {
+            contextForeground.restore();
+            if ((wasInSwitchPath || (classicUI.pointInTrainSwitchInputImage(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls) || classicUI.pointInTrainSwitchInputImage(hardware.mouse.moveX, hardware.mouse.moveY)) && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "pointer";
                 if (typeof movingTimeOut !== "undefined") {
                     window.clearTimeout(movingTimeOut);
@@ -3604,7 +3513,6 @@ function drawObjects() {
                     }
                 }
             }
-            contextForeground.restore();
             contextForeground.save();
             contextForeground.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
             contextForeground.rotate(classicUI.transformer.angle);
@@ -3637,7 +3545,6 @@ function drawObjects() {
                     contextForeground.save();
                     contextForeground.translate(-classicUI.transformer.directionInput.width, -classicUI.transformer.directionInput.height);
                     contextForeground.rotate(-classicUI.transformer.angle);
-                    contextForeground.rotate(-classicUI.transformer.directionInput.angle);
                     var textWidth = background.width / (menus.small ? 125 : 75);
                     contextForeground.beginPath();
                     contextForeground.fillStyle = "#dfbbff";
@@ -3657,9 +3564,7 @@ function drawObjects() {
                     }
                     contextForeground.restore();
                 }
-                contextForeground.beginPath();
-                contextForeground.rect(-classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
-                if (contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !trains[trainParams.selected].move && !hardware.mouse.isDrag) {
+                if (classicUI.pointInTransformerDirectionInput(hardware.mouse.moveX, hardware.mouse.moveY) && !trains[trainParams.selected].move && !hardware.mouse.isDrag) {
                     if (typeof movingTimeOut !== "undefined") {
                         window.clearTimeout(movingTimeOut);
                     }
@@ -3679,16 +3584,16 @@ function drawObjects() {
                 }
             }
             contextForeground.save();
-            contextForeground.translate(0, -classicUI.transformer.input.diffY);
-            contextForeground.rotate(classicUI.transformer.input.angle);
-            drawImage(pics[classicUI.transformer.input.src], -classicUI.transformer.input.width / 2, -classicUI.transformer.input.height / 2, classicUI.transformer.input.width, classicUI.transformer.input.height, contextForeground);
+            contextForeground.translate(0, -classicUI.transformer.wheelInput.diffY);
+            contextForeground.rotate(classicUI.transformer.wheelInput.angle);
+            drawImage(pics[classicUI.transformer.wheelInput.src], -classicUI.transformer.wheelInput.width / 2, -classicUI.transformer.wheelInput.height / 2, classicUI.transformer.wheelInput.width, classicUI.transformer.wheelInput.height, contextForeground);
             if (gui.infoOverlay && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 6)) {
                 contextForeground.save();
                 if (trains[trainParams.selected].crash) {
                     contextForeground.globalAlpha = 0.5;
                 }
                 contextForeground.rotate(-classicUI.transformer.angle);
-                contextForeground.rotate(-classicUI.transformer.input.angle);
+                contextForeground.rotate(-classicUI.transformer.wheelInput.angle);
                 var textWidth = background.width / (menus.small ? 100 : 50);
                 contextForeground.beginPath();
                 contextForeground.fillStyle = "#dfbbff";
@@ -3709,22 +3614,22 @@ function drawObjects() {
                 contextForeground.restore();
             }
             if (APP_DATA.debug && debug.paint) {
-                contextForeground.fillRect(-classicUI.transformer.input.width / 2, classicUI.transformer.input.height / 2, 6, 6);
+                contextForeground.fillRect(-classicUI.transformer.wheelInput.width / 2, classicUI.transformer.wheelInput.height / 2, 6, 6);
                 contextForeground.fillRect(-3, -3, 6, 6);
             }
-            contextForeground.beginPath();
-            contextForeground.rect(-classicUI.transformer.input.width / 2, -classicUI.transformer.input.height / 2, classicUI.transformer.input.width, classicUI.transformer.input.height);
-            if (contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !trains[trainParams.selected].crash && !hardware.mouse.isDrag) {
+            const isMouseMoveInWheelInput = classicUI.pointInTransformerWheelInput(hardware.mouse.moveX, hardware.mouse.moveY);
+            const isMouseWheelInWheelInput = classicUI.pointInTransformerWheelInput(hardware.mouse.wheelX, hardware.mouse.wheelY);
+            if (isMouseMoveInWheelInput && !trains[trainParams.selected].crash && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "pointer";
             }
-            if ((contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) || (contextForeground.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY) && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls)) {
-                contextForeground.restore();
-                contextForeground.restore();
+            contextForeground.restore();
+            contextForeground.restore();
+            if ((isMouseMoveInWheelInput && hardware.mouse.isHold) || (isMouseWheelInWheelInput && hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls)) {
                 if (typeof movingTimeOut !== "undefined") {
                     window.clearTimeout(movingTimeOut);
                 }
-                var x = classicUI.transformer.x + classicUI.transformer.width / 2 + classicUI.transformer.input.diffY * Math.sin(classicUI.transformer.angle);
-                var y = classicUI.transformer.y + classicUI.transformer.height / 2 - classicUI.transformer.input.diffY * Math.cos(classicUI.transformer.angle);
+                var x = classicUI.transformer.x + classicUI.transformer.width / 2 + classicUI.transformer.wheelInput.diffY * Math.sin(classicUI.transformer.angle);
+                var y = classicUI.transformer.y + classicUI.transformer.height / 2 - classicUI.transformer.wheelInput.diffY * Math.cos(classicUI.transformer.angle);
                 if (!trains[trainParams.selected].crash) {
                     if (client.isTiny && (typeof client.zoomAndTilt.realScale == "undefined" || client.zoomAndTilt.realScale <= Math.max(1, client.zoomAndTilt.maxScale / 3))) {
                         if (hardware.mouse.isHold) {
@@ -3738,7 +3643,7 @@ function drawObjects() {
                     } else if ((hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY > y) && adjustScaleX(hardware.mouse.wheelX < x))) || !(adjustScaleY(hardware.mouse.moveY) > y && adjustScaleX(hardware.mouse.moveX) < x)) {
                         var angle;
                         if (hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY) > y && adjustScaleX(hardware.mouse.wheelX) < x)) {
-                            angle = classicUI.transformer.input.angle * (hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9);
+                            angle = classicUI.transformer.wheelInput.angle * (hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9);
                         } else {
                             if (adjustScaleY(hardware.mouse.moveY) > y) {
                                 angle = Math.PI + Math.abs(Math.atan((adjustScaleY(hardware.mouse.moveY) - y) / (adjustScaleX(hardware.mouse.moveX) - x)));
@@ -3748,41 +3653,38 @@ function drawObjects() {
                                 angle = Math.abs(Math.atan((adjustScaleY(hardware.mouse.moveY) - y) / (adjustScaleX(hardware.mouse.moveX) - x)));
                             }
                         }
-                        classicUI.transformer.input.angle = angle >= 0 ? (angle <= classicUI.transformer.input.maxAngle ? angle : classicUI.transformer.input.maxAngle) : 0;
-                        var cAngle = (classicUI.transformer.input.angle / classicUI.transformer.input.maxAngle) * 100;
-                        if (hardware.mouse.wheelScrollY < 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY) > y && adjustScaleX(hardware.mouse.wheelX) < x) && cAngle < classicUI.transformer.input.minAngle) {
-                            cAngle = classicUI.transformer.input.minAngle;
-                            classicUI.transformer.input.angle = (cAngle * classicUI.transformer.input.maxAngle) / 100;
+                        classicUI.transformer.wheelInput.angle = angle >= 0 ? (angle <= classicUI.transformer.wheelInput.maxAngle ? angle : classicUI.transformer.wheelInput.maxAngle) : 0;
+                        var cSpeedPercent = (classicUI.transformer.wheelInput.angle / classicUI.transformer.wheelInput.maxAngle) * 100;
+                        if (hardware.mouse.wheelScrollY < 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY) > y && adjustScaleX(hardware.mouse.wheelX) < x) && cSpeedPercent < trainParams.minSpeed) {
+                            cSpeedPercent = trainParams.minSpeed;
+                            classicUI.transformer.wheelInput.angle = (cSpeedPercent * classicUI.transformer.wheelInput.maxAngle) / 100;
                         }
-                        trainActions.setSpeed(trainParams.selected, cAngle);
-                        if (cAngle == 0) {
+                        trainActions.setSpeed(trainParams.selected, cSpeedPercent);
+                        if (cSpeedPercent == 0) {
                             hardware.mouse.isHold = false;
                         }
                     } else {
                         hardware.mouse.isHold = false;
                     }
                 } else {
-                    classicUI.transformer.input.angle = 0;
+                    classicUI.transformer.wheelInput.angle = 0;
                     trains[trainParams.selected].speedInPercent = 0;
                     trains[trainParams.selected].move = false;
                     hardware.mouse.isHold = false;
                 }
-                if (classicUI.transformer.input.angle > 0 && classicUI.transformer.input.angle < classicUI.transformer.input.maxAngle && !hardware.mouse.isDrag) {
+                if (classicUI.transformer.wheelInput.angle > 0 && classicUI.transformer.wheelInput.angle < classicUI.transformer.wheelInput.maxAngle && !hardware.mouse.isDrag) {
                     hardware.mouse.cursor = "grabbing";
                 }
-            } else {
-                contextForeground.restore();
-                contextForeground.restore();
             }
             if (APP_DATA.debug && debug.paint) {
                 contextForeground.save();
-                var x = classicUI.transformer.x + classicUI.transformer.width / 2 + classicUI.transformer.input.diffY * Math.sin(classicUI.transformer.angle);
-                var y = classicUI.transformer.y + classicUI.transformer.height / 2 - classicUI.transformer.input.diffY * Math.cos(classicUI.transformer.angle);
+                var x = classicUI.transformer.x + classicUI.transformer.width / 2 + classicUI.transformer.wheelInput.diffY * Math.sin(classicUI.transformer.angle);
+                var y = classicUI.transformer.y + classicUI.transformer.height / 2 - classicUI.transformer.wheelInput.diffY * Math.cos(classicUI.transformer.angle);
                 contextForeground.fillStyle = "red";
                 contextForeground.fillRect(x - 2, y - 2, 4, 4);
-                var a = -(classicUI.transformer.input.diffY - classicUI.transformer.input.height / 2);
-                var b = classicUI.transformer.width / 2 - (classicUI.transformer.width / 2 - classicUI.transformer.input.width / 2);
-                var c = classicUI.transformer.input.diffY + classicUI.transformer.input.height / 2;
+                var a = -(classicUI.transformer.wheelInput.diffY - classicUI.transformer.wheelInput.height / 2);
+                var b = classicUI.transformer.width / 2 - (classicUI.transformer.width / 2 - classicUI.transformer.wheelInput.width / 2);
+                var c = classicUI.transformer.wheelInput.diffY + classicUI.transformer.wheelInput.height / 2;
                 var d = b;
                 var x1 = classicUI.transformer.x + classicUI.transformer.width / 2;
                 var y1 = classicUI.transformer.y + classicUI.transformer.height / 2;
@@ -3794,15 +3696,15 @@ function drawObjects() {
                 contextForeground.fillRect(xArr[3], yArr[3], 4, 4);
                 contextForeground.fillRect(xArr[4], yArr[4], 4, 4);
                 contextForeground.fillRect(xArr[5], yArr[5], 4, 4);
-                var x = x1 + classicUI.transformer.input.diffY * Math.sin(classicUI.transformer.angle);
-                var y = y1 - classicUI.transformer.input.diffY * Math.cos(classicUI.transformer.angle);
+                var x = x1 + classicUI.transformer.wheelInput.diffY * Math.sin(classicUI.transformer.angle);
+                var y = y1 - classicUI.transformer.wheelInput.diffY * Math.cos(classicUI.transformer.angle);
                 contextForeground.beginPath();
                 contextForeground.strokeStyle = "black";
-                contextForeground.arc(x, y, classicUI.transformer.input.width / 2, Math.PI, Math.PI + classicUI.transformer.input.maxAngle, false);
+                contextForeground.arc(x, y, classicUI.transformer.wheelInput.width / 2, Math.PI, Math.PI + classicUI.transformer.wheelInput.maxAngle, false);
                 contextForeground.stroke();
                 contextForeground.beginPath();
                 contextForeground.strokeStyle = "red";
-                contextForeground.arc(x, y, classicUI.transformer.input.width / 2, Math.PI, Math.PI + (classicUI.transformer.input.minAngle * classicUI.transformer.input.maxAngle) / 100, false);
+                contextForeground.arc(x, y, classicUI.transformer.wheelInput.width / 2, Math.PI, Math.PI + (trainParams.minSpeed * classicUI.transformer.wheelInput.maxAngle) / 100, false);
                 contextForeground.stroke();
                 contextForeground.restore();
             }
@@ -3814,7 +3716,7 @@ function drawObjects() {
             Object.keys(switches[key]).forEach(function (side) {
                 contextForeground.save();
                 contextForeground.beginPath();
-                contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, classicUI.switches.radius, 0, 2 * Math.PI);
+                contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, switchParams.radius, 0, 2 * Math.PI);
                 if (!wasPointer && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                     hardware.mouse.cursor = "pointer";
                 }
@@ -3826,7 +3728,7 @@ function drawObjects() {
             Object.keys(switches[key]).forEach(function (side) {
                 contextForeground.save();
                 contextForeground.beginPath();
-                contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, classicUI.switches.radius, 0, 2 * Math.PI);
+                contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, switchParams.radius, 0, 2 * Math.PI);
                 if (hardware.mouse.isHold && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !inTrain) {
                     if (typeof clickTimeOut !== "undefined") {
                         window.clearTimeout(clickTimeOut);
@@ -3841,39 +3743,39 @@ function drawObjects() {
                         hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
                     );
                     contextForeground.restore();
-                } else if (!hardware.mouse.isHold && switches[key][side].lastStateChange != undefined && frameNo - switches[key][side].lastStateChange < classicUI.switches.showDuration) {
+                } else if (!hardware.mouse.isHold && switches[key][side].lastStateChange != undefined && frameNo - switches[key][side].lastStateChange < switchParams.showDuration) {
                     contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 255, 144,1)" : "rgba(255,0,0,1)";
                     contextForeground.closePath();
                     contextForeground.fill();
                     contextForeground.restore();
-                } else if (!hardware.mouse.isHold && switches[key][side].lastStateChange != undefined && frameNo - switches[key][side].lastStateChange < classicUI.switches.showDurationFade) {
+                } else if (!hardware.mouse.isHold && switches[key][side].lastStateChange != undefined && frameNo - switches[key][side].lastStateChange < switchParams.showDurationFade) {
                     contextForeground.closePath();
                     contextForeground.restore();
                     contextForeground.save();
                     contextForeground.beginPath();
-                    var fac = 1 - (frameNo - classicUI.switches.showDuration - switches[key][side].lastStateChange) / (classicUI.switches.showDurationFade - classicUI.switches.showDuration);
+                    var fac = 1 - (frameNo - switchParams.showDuration - switches[key][side].lastStateChange) / (switchParams.showDurationFade - switchParams.showDuration);
                     contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 255, 144," + fac + ")" : "rgba(255,0,0," + fac + ")";
-                    contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, fac * classicUI.switches.radius, 0, 2 * Math.PI);
+                    contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, fac * switchParams.radius, 0, 2 * Math.PI);
                     contextForeground.closePath();
                     contextForeground.fill();
                     contextForeground.restore();
-                } else if ((client.chosenInputMethod == "mouse" && !wasPointer && !hardware.mouse.isHold && (switches[key][side].lastStateChange == undefined || frameNo - switches[key][side].lastStateChange > classicUI.switches.showDurationEnd) && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) || (hardware.mouse.isHold && hardware.mouse.cursor == "default" && (clickTimeOut === null || clickTimeOut === undefined))) {
+                } else if ((client.chosenInputMethod == "mouse" && !wasPointer && !hardware.mouse.isHold && (switches[key][side].lastStateChange == undefined || frameNo - switches[key][side].lastStateChange > switchParams.showDurationEnd) && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) || (hardware.mouse.isHold && hardware.mouse.cursor == "default" && (clickTimeOut === null || clickTimeOut === undefined))) {
                     contextForeground.closePath();
                     contextForeground.restore();
                     contextForeground.save();
                     contextForeground.lineWidth = 5;
                     contextForeground.translate(background.x + switches[key][side].x, background.y + switches[key][side].y);
                     if (switches[key][side].turned) {
-                        switchesLocate(switches[key][side].angles.normal, 0.9 * classicUI.switches.radius, "rgba(255, 235, 235, 1)");
-                        switchesLocate(switches[key][side].angles.turned, 1.25 * classicUI.switches.radius, "rgba(170, 255, 170,1)");
+                        switchesLocate(switches[key][side].angles.normal, 0.9 * switchParams.radius, "rgba(255, 235, 235, 1)");
+                        switchesLocate(switches[key][side].angles.turned, 1.25 * switchParams.radius, "rgba(170, 255, 170,1)");
                     } else {
-                        switchesLocate(switches[key][side].angles.turned, 0.9 * classicUI.switches.radius, "rgba(235, 255, 235, 1)");
-                        switchesLocate(switches[key][side].angles.normal, 1.25 * classicUI.switches.radius, "rgba(255,40,40,1)");
+                        switchesLocate(switches[key][side].angles.turned, 0.9 * switchParams.radius, "rgba(235, 255, 235, 1)");
+                        switchesLocate(switches[key][side].angles.normal, 1.25 * switchParams.radius, "rgba(255,40,40,1)");
                     }
                     contextForeground.save();
                     contextForeground.beginPath();
                     contextForeground.lineWidth = 5;
-                    contextForeground.arc(0, 0, 0.2 * classicUI.switches.radius + (konamiState < 0 ? Math.random() * 0.3 * classicUI.switches.radius : 0), 0, 2 * Math.PI);
+                    contextForeground.arc(0, 0, 0.2 * switchParams.radius + (konamiState < 0 ? Math.random() * 0.3 * switchParams.radius : 0), 0, 2 * Math.PI);
                     contextForeground.closePath();
                     contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 238, 144,1)" : "rgba(255,0,0,1)";
                     contextForeground.fill();
@@ -3883,7 +3785,7 @@ function drawObjects() {
                         contextForeground.save();
                         contextForeground.beginPath();
                         contextForeground.lineWidth = 1;
-                        contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, classicUI.switches.radius, 0, 2 * Math.PI);
+                        contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, switchParams.radius, 0, 2 * Math.PI);
                         contextForeground.closePath();
                         contextForeground.strokeStyle = switches[key][side].turned ? "rgba(144, 238, 144,1)" : "rgba(255,0,0,1)";
                         contextForeground.stroke();
@@ -4091,28 +3993,28 @@ function drawObjects() {
             context.save();
             context.fillStyle = "yellow";
             context.beginPath();
-            context.arc(switches.outer2inner.right.x + background.x, switches.outer2inner.right.y / switchesBeforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
+            context.arc(switches.outer2inner.right.x + background.x, switches.outer2inner.right.y / switchParams.beforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
             context.fill();
             context.beginPath();
-            context.arc(switches.outer2inner.left.x + background.x, switches.outer2inner.left.y / switchesBeforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
+            context.arc(switches.outer2inner.left.x + background.x, switches.outer2inner.left.y / switchParams.beforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
             context.fill();
             context.beginPath();
-            context.arc(switches.innerWide.right.x + background.x, switches.innerWide.right.y * switchesBeforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
+            context.arc(switches.innerWide.right.x + background.x, switches.innerWide.right.y * switchParams.beforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
             context.fill();
             context.beginPath();
-            context.arc(switches.innerWide.left.x + background.x, switches.innerWide.left.y * switchesBeforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
+            context.arc(switches.innerWide.left.x + background.x, switches.innerWide.left.y * switchParams.beforeFac + background.y, background.width / 100, 0, 2 * Math.PI);
             context.fill();
             context.restore();
             context.save();
             context.strokeStyle = "orange";
             context.lineWidth = 3;
             context.beginPath();
-            context.moveTo(switches.sidings2.left.x + background.x - background.width / 20, switches.sidings2.left.y + background.y + switchesBeforeAddSidings[0]);
-            context.lineTo(switches.sidings2.left.x + background.x, switches.sidings2.left.y + background.y + switchesBeforeAddSidings[0]);
+            context.moveTo(switches.sidings2.left.x + background.x - background.width / 20, switches.sidings2.left.y + background.y + switchParams.beforeAddSidings[0]);
+            context.lineTo(switches.sidings2.left.x + background.x, switches.sidings2.left.y + background.y + switchParams.beforeAddSidings[0]);
             context.stroke();
             context.beginPath();
-            context.moveTo(switches.sidings3.left.x + background.x - background.width / 20, switches.sidings3.left.y + background.y + switchesBeforeAddSidings[1]);
-            context.lineTo(switches.sidings3.left.x + background.x, switches.sidings3.left.y + background.y + switchesBeforeAddSidings[1]);
+            context.moveTo(switches.sidings3.left.x + background.x - background.width / 20, switches.sidings3.left.y + background.y + switchParams.beforeAddSidings[1]);
+            context.lineTo(switches.sidings3.left.x + background.x, switches.sidings3.left.y + background.y + switchParams.beforeAddSidings[1]);
             context.stroke();
             context.restore();
             context.lineWidth = 2;
@@ -4499,8 +4401,8 @@ function drawObjects() {
                         newSpeed = Math.round((((isClick ? hardware.mouse.upX : hardware.mouse.moveX) - background.x - controlCenter.translateOffset - controlCenter.maxTextWidth) / controlCenter.maxTextWidth / 0.5) * 100);
                         hardware.mouse.cursor = "grabbing";
                     } else {
-                        if (trains[cTrain].speedInPercent == undefined || trains[cTrain].speedInPercent < minTrainSpeed) {
-                            newSpeed = minTrainSpeed;
+                        if (trains[cTrain].speedInPercent == undefined || trains[cTrain].speedInPercent < trainParams.minSpeed) {
+                            newSpeed = trainParams.minSpeed;
                         } else {
                             newSpeed = Math.round(trains[cTrain].speedInPercent * (hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9));
                         }
@@ -4639,6 +4541,12 @@ function drawObjects() {
         gui.controlCenter = false;
     }
 
+    /////Online Game Waiting Animation/////
+    if (onlineGame.stop) {
+        hardware.mouse.cursor = "default";
+        onlineGame.waitingClock.draw();
+    }
+
     /////BACKGROUND/Margins-2////
     if (konamiState < 0) {
         var bgGradient = contextForeground.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
@@ -4752,6 +4660,8 @@ function actionSync(objectName: string, index: any[] | number | undefined = unde
 
 const animateWorker = new Worker("./src/jsm/scripting_worker_animate.js", {type: "module"});
 
+const defaultFont = "Roboto, sans-serif";
+
 var frameNo = 0;
 var canvas;
 var canvasGesture;
@@ -4829,9 +4739,10 @@ const background3D: Background3D = {flat: {src: "assets/3d/background-flat.jpg"}
 
 const audio: any = {};
 
-var rotationPoints: RotationPoints;
 var trains: Train[];
 const trains3D: Train3D[] = [];
+var rotationPoints: RotationPoints;
+var trainParams;
 const trainActions = {
     checkRange: function (i) {
         return i >= 0 && i < trains.length;
@@ -4869,7 +4780,7 @@ const trainActions = {
         if (!this.checkRange(i) || speed < 0 || speed > 100) {
             return false;
         }
-        if (speed < minTrainSpeed) {
+        if (speed < trainParams.minSpeed) {
             return this.stop(i, notificationOnlyForOthers);
         }
         if (trains[i].accelerationSpeed <= 0) {
@@ -4882,8 +4793,6 @@ const trainActions = {
         return true;
     }
 };
-const minTrainSpeed = 10;
-var trainParams;
 
 var switches: any = {
     inner2outer: {left: {turned: false, angles: {normal: 1.01 * Math.PI, turned: 0.941 * Math.PI}}, right: {turned: false, angles: {normal: 1.5 * Math.PI, turned: 1.56 * Math.PI}}},
@@ -4897,6 +4806,14 @@ var switches: any = {
     outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.7 * Math.PI, turned: 1.75 * Math.PI}}}
 };
 const switches3D = {};
+const switchParams: any = {
+    showDuration: 11,
+    showDurationFade: 33,
+    showDurationEnd: 44,
+    set: function () {
+        switchParams.radius = 0.02 * background.width;
+    }
+};
 const switchActions = {
     turn: function (key, side) {
         if (onlineGame.enabled) {
@@ -4915,7 +4832,6 @@ const switchActions = {
         }
     }
 };
-var switchesBeforeFac, switchesBeforeAddSidings;
 
 var cars: Car[] = [
     {src: 16, fac: 0.02, speed: 0.0008, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xff0000"},
@@ -5103,9 +5019,110 @@ const taxOffice: any = {
     }
 };
 
-const classicUI: any = {trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {}}, transformer: {src: 12, onSrc: 13, readySrc: 23, angle: Math.PI / 5, input: {src: 14, angle: 0, minAngle: minTrainSpeed, maxAngle: 1.5 * Math.PI}, directionInput: {srcStandardDirection: 24, srcNotStandardDirection: 15}}, switches: {showDuration: 11, showDurationFade: 33, showDurationEnd: 44}};
+const classicUI: any = {
+    trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {fontFamily: defaultFont}},
+    transformer: {src: 12, onSrc: 13, readySrc: 23, angle: Math.PI / 5, wheelInput: {src: 14, angle: 0, maxAngle: 1.5 * Math.PI}, directionInput: {srcStandardDirection: 24, srcNotStandardDirection: 15}},
+    ready: function (): boolean {
+        return getSetting("classicUI") && !(gui.controlCenter || gui.konamiOverlay || gui.three || gui.demo || onlineGame.stop || canvasGesture == undefined || contextGesture == undefined);
+    },
+    pointInTransformerImage: function (x, y): boolean {
+        if (!classicUI.ready()) {
+            return false;
+        }
+        if (classicUI.transformer.angle == undefined || classicUI.transformer.x == undefined || classicUI.transformer.y == undefined || classicUI.transformer.width == undefined || classicUI.transformer.height == undefined) {
+            return false;
+        }
+        contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
+        contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
+        contextGesture.rotate(classicUI.transformer.angle);
+        contextGesture.beginPath();
+        contextGesture.rect(-classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height);
+        if (contextGesture.isPointInPath(x, y)) {
+            return true;
+        }
+        return false;
+    },
+    pointInTransformerWheelInput: function (x, y): boolean {
+        if (!classicUI.pointInTransformerImage(x, y)) {
+            return false;
+        }
+        if (classicUI.transformer.wheelInput.diffY == undefined || classicUI.transformer.wheelInput.angle == undefined || classicUI.transformer.wheelInput.width == undefined || classicUI.transformer.wheelInput.height == undefined) {
+            return false;
+        }
+        contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
+        contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
+        contextGesture.rotate(classicUI.transformer.angle);
+        contextGesture.translate(0, -classicUI.transformer.wheelInput.diffY);
+        contextGesture.rotate(classicUI.transformer.wheelInput.angle);
+        contextGesture.beginPath();
+        contextGesture.rect(-classicUI.transformer.wheelInput.width / 2, -classicUI.transformer.wheelInput.height / 2, classicUI.transformer.wheelInput.width, classicUI.transformer.wheelInput.height);
+        if (contextGesture.isPointInPath(x, y)) {
+            return true;
+        }
+        return false;
+    },
+    pointInTransformerDirectionInput: function (x, y): boolean {
+        if (!classicUI.pointInTransformerImage(x, y)) {
+            return false;
+        }
+        if (classicUI.transformer.directionInput.diffX == undefined || classicUI.transformer.directionInput.diffY == undefined || classicUI.transformer.directionInput.width == undefined || classicUI.transformer.directionInput.height == undefined) {
+            return false;
+        }
+        contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
+        contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
+        contextGesture.rotate(classicUI.transformer.angle);
+        contextGesture.translate(classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
+        contextGesture.beginPath();
+        contextGesture.rect(-classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
+        if (contextGesture.isPointInPath(x, y)) {
+            return true;
+        }
+        return false;
+    },
+    pointInTransformerInput: function (x, y): boolean {
+        return classicUI.pointInTransformerWheelInput(x, y) || classicUI.pointInTransformerDirectionInput(x, y);
+    },
+    pointInTrainSwitchInputImage: function (x, y): boolean {
+        if (!classicUI.ready()) {
+            return false;
+        }
+        if (classicUI.trainSwitch.angle == undefined || classicUI.trainSwitch.x == undefined || classicUI.trainSwitch.y == undefined || classicUI.trainSwitch.width == undefined || classicUI.trainSwitch.height == undefined) {
+            return false;
+        }
+        contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
+        contextGesture.translate(classicUI.trainSwitch.x + classicUI.trainSwitch.width / 2, classicUI.trainSwitch.y + classicUI.trainSwitch.height / 2);
+        contextGesture.rotate(classicUI.trainSwitch.angle);
+        contextGesture.beginPath();
+        contextGesture.rect(-classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
+        if (contextGesture.isPointInPath(x, y)) {
+            return true;
+        }
+        return false;
+    },
+    pointInTrainSwitchInputText: function (x, y): boolean {
+        if (!classicUI.ready()) {
+            return false;
+        }
+        if (!classicUI.trainSwitch.selectedTrainDisplay.visible) {
+            return false;
+        }
+        if (classicUI.trainSwitch.selectedTrainDisplay.x == undefined || classicUI.trainSwitch.selectedTrainDisplay.y == undefined || classicUI.trainSwitch.selectedTrainDisplay.width == undefined || classicUI.trainSwitch.selectedTrainDisplay.height == undefined) {
+            return false;
+        }
+        contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
+        contextGesture.beginPath();
+        contextGesture.rect(classicUI.trainSwitch.selectedTrainDisplay.x, classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
+        if (contextGesture.isPointInPath(x, y)) {
+            return true;
+        }
+        return false;
+    },
+    pointInTrainSwitchInput: function (x, y): boolean {
+        return classicUI.pointInTrainSwitchInputImage(x, y) || classicUI.pointInTrainSwitchInputText(x, y);
+    }
+};
 
-const controlCenter: any = {showCarCenter: false, fontFamily: "Roboto, sans-serif", mouse: {}};
+const controlCenter: any = {showCarCenter: false, fontFamily: defaultFont, mouse: {}};
 
 const hardware: any = {mouse: {moveX: 0, moveY: 0, downX: 0, downY: 0, downTime: 0, upX: 0, upY: 0, upTime: 0, isMoving: false, isHold: false, cursor: "default"}, keyboard: {keysHold: []}};
 const client: any = {devicePixelRatio: 1, zoomAndTilt: {maxScale: 6, minScale: 1.2}};
@@ -5345,7 +5362,156 @@ const textControl: any = {
     }
 };
 
-const onlineGame: any = {animateInterval: 40, syncInterval: 10000, excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]}, chatSticker: 7, resized: false};
+const onlineGame: any = {
+    animateInterval: 40,
+    syncInterval: 10000,
+    excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]},
+    chatSticker: 7,
+    resized: false,
+    waitingClock: {
+        initialZoom: 0.3,
+        draw: function () {
+            //WAITING CLOCK/GLOBAL/SETUP/1
+            contextForeground.save();
+            contextForeground.translate(canvasForeground.width / 2, canvasForeground.height / 2);
+            contextForeground.translate(0, (-menus.outerContainer.height * client.devicePixelRatio) / 2);
+            const size = Math.min(background.width, background.height);
+            const radius = size / 2.2;
+            //WAITING CLOCK/STATIC/BACKGROUND
+            contextForeground.save();
+            const bgGradient = contextForeground.createRadialGradient(0, 0, radius * onlineGame.waitingClock.zoom, 0, 0, radius * 2);
+            bgGradient.addColorStop(0, "rgba(239,224,227,1)");
+            bgGradient.addColorStop(0.1, "rgba(239,224,227,0.3)");
+            bgGradient.addColorStop(1, "rgba(100,92,130,0.3)");
+            contextForeground.fillStyle = bgGradient;
+            contextForeground.globalAlpha = 0.6;
+            contextForeground.fillStyle = bgGradient;
+            contextForeground.fillRect(-canvasForeground.width / 2, -canvasForeground.height / 2 + (menus.outerContainer.height * client.devicePixelRatio) / 2, canvasForeground.width, canvasForeground.height);
+            contextForeground.restore();
+            //WAITING CLOCK/GLOBAL/SCALE
+            contextForeground.scale(onlineGame.waitingClock.zoom, onlineGame.waitingClock.zoom);
+            //WAITING CLOCK/STATIC/CLOCK FACE
+            const circleWidth = size / 20;
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, radius - circleWidth / 4, 0, Math.PI * 2);
+            contextForeground.lineWidth = circleWidth / 2;
+            contextForeground.strokeStyle = "rgba(0,0,0,0.7)";
+            contextForeground.stroke();
+            for (let i = 0; i < 60; i++) {
+                var rectWidth = size / 70;
+                var rectHeight = size / 25;
+                if (i % 5 == 0) {
+                    rectWidth *= 2;
+                    rectHeight *= 2.5;
+                }
+                if (i % 15 == 0) {
+                    rectHeight *= 1.2;
+                }
+                var angle = (Math.PI * 2 * i) / 60;
+                contextForeground.save();
+                contextForeground.fillStyle = "rgba(15,15,15,0.5)";
+                contextForeground.translate(radius * Math.sin(angle), radius * Math.cos(angle));
+                contextForeground.rotate(-angle);
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight - circleWidth / 1.5, rectWidth, rectHeight);
+                contextForeground.restore();
+            }
+            //WAITING CLOCK/DYNAMIC/CLOCK HANDS
+            const date = new Date();
+            //WAITING CLOCK/DYNAMIC/CLOCK HAND/HOURS
+            var hours = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
+            if (hours > 12) {
+                hours -= 12;
+            }
+            var rectWidth = size / 28;
+            var rectHeight = size / 4;
+            var angle = (Math.PI * 2 * hours) / 12;
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            //WAITING CLOCK/DYNAMIC/CLOCK HAND/MINUTES
+            var minutes = date.getMinutes();
+            var rectWidth = size / 30;
+            var rectHeight = size / 3;
+            var angle = (Math.PI * 2 * minutes) / 60;
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            //WAITING CLOCK/DYNAMIC/CLOCK HAND/SECONDS
+            var seconds = date.getSeconds() + date.getMilliseconds() / 1000;
+            var rectWidth = size / 100;
+            var rectHeight = size / 2.95;
+            var angle = Math.min(2 * Math.PI, (Math.PI * 2 * seconds) / 58);
+            if (Math.round(angle * 100) % Math.round(Math.PI * 100) == 0) {
+                onlineGame.waitingClock.secondHandBackwards = konamiState < 0;
+            }
+            if (onlineGame.waitingClock.secondHandBackwards) {
+                angle = Math.PI * 2 - angle;
+            }
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(139,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            var rectWidth = size / 55;
+            var rectHeight = size / 8;
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(139,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
+            contextForeground.restore();
+            //WAITING CLOCK/STATIC/CLOCK HANDS
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
+            contextForeground.fillStyle = "white";
+            contextForeground.fill();
+            contextForeground.restore();
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fill();
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 60, 0, Math.PI * 2);
+            contextForeground.fillStyle = "rgba(192,192,192,0.5)";
+            contextForeground.fill();
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 120, 0, Math.PI * 2);
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fill();
+            //WAITING CLOCK/GLOBAL/SETUP/2
+            contextForeground.restore();
+            onlineGame.waitingClock.zoom *= 1.035;
+            if (onlineGame.waitingClock.zoom > 1) {
+                onlineGame.waitingClock.zoom = 1;
+            }
+        }
+    }
+};
 const onlineConnection: any = {
     serverURI: getServerLink(PROTOCOL_WS) + "/multiplay",
     send: function (mode: string, message?: string) {
@@ -5767,7 +5933,7 @@ window.onload = function () {
                         var p = copyJSObject(carPaths[i][cType][currentObject.state]);
                         curve_left(p);
                         if (p.y[1] > p.y[0]) {
-                            //TODO
+                            //TODO: Add definition
                         } else {
                             if (currentObject.angle >= 0.5 * Math.PI) {
                                 currentObject.x = p.x[1] + (p.y[0] - p.y[1]) / 2;
@@ -5873,6 +6039,8 @@ window.onload = function () {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         calcMenusAndBackground("load");
+
+        switchParams.set();
 
         const savedGameBg = window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg");
         const savedGameTrains = window.localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains");
@@ -6372,7 +6540,6 @@ window.onload = function () {
                         }
                         function showStartGame(teamNum) {
                             hideLoadingAnimation();
-                            onlineGame.stop = false;
                             document.addEventListener("visibilitychange", function () {
                                 if (document.visibilityState == "hidden") {
                                     onlineConnection.send("pause-request");
@@ -6432,7 +6599,7 @@ window.onload = function () {
                                     if (onlineGame.locomotive) {
                                         onlineGame.syncRequest = window.setTimeout(sendSyncRequest, onlineGame.syncInterval);
                                     }
-                                } else if (!onlineGame.stop) {
+                                } else if (!onlineGame.paused) {
                                     var number = 0;
                                     number += trains.length;
                                     trains.forEach(function (train) {
@@ -6699,6 +6866,8 @@ window.onload = function () {
                                                 }
                                                 break;
                                             case "run":
+                                                onlineGame.stop = false;
+                                                onlineGame.paused = false;
                                                 onlineGame.syncing = false;
                                                 if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
                                                     window.clearTimeout(onlineGame.syncRequest);
@@ -6767,6 +6936,11 @@ window.onload = function () {
                                 case "sync-request":
                                     onlineGame.syncingCounter = 0;
                                     onlineGame.syncingCounterFinal = parseInt(json.data, 10);
+                                    if (!onlineGame.stop) {
+                                        onlineGame.waitingClock.zoom = onlineGame.waitingClock.initialZoom;
+                                        onlineGame.waitingClock.secondHandBackwards = false;
+                                        onlineGame.stop = true;
+                                    }
                                     onlineGame.syncing = true;
                                     animateWorker.postMessage({k: "sync-request"});
                                     break;
@@ -6801,11 +6975,12 @@ window.onload = function () {
                                     }
                                     break;
                                 case "sync-done":
+                                    onlineGame.stop = onlineGame.paused;
                                     onlineGame.syncing = false;
                                     if (json.errorLevel !== ERROR_LEVEL_OKAY) {
                                         notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                     }
-                                    if (!onlineGame.stop) {
+                                    if (!onlineGame.paused) {
                                         if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
                                             window.clearTimeout(onlineGame.syncRequest);
                                         }
@@ -6819,20 +6994,26 @@ window.onload = function () {
                                     if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
                                         window.clearTimeout(onlineGame.syncRequest);
                                     }
-                                    onlineGame.stop = true;
+                                    if (!onlineGame.stop) {
+                                        onlineGame.waitingClock.zoom = onlineGame.waitingClock.initialZoom;
+                                        onlineGame.waitingClock.secondHandBackwards = false;
+                                        onlineGame.stop = true;
+                                    }
+                                    onlineGame.paused = true;
                                     playAndPauseAudio();
                                     animateWorker.postMessage({k: "pause"});
                                     notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                     break;
                                 case "resume":
-                                    if (onlineGame.stop) {
+                                    if (onlineGame.paused) {
                                         if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
                                             window.clearTimeout(onlineGame.syncRequest);
                                         }
                                         if (onlineGame.locomotive) {
                                             onlineGame.syncRequest = window.setTimeout(sendSyncRequest, onlineGame.syncInterval);
                                         }
-                                        onlineGame.stop = false;
+                                        onlineGame.stop = onlineGame.syncing;
+                                        onlineGame.paused = false;
                                         playAndPauseAudio();
                                         notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                         animateWorker.postMessage({k: "resume"});
@@ -7528,8 +7709,8 @@ window.onload = function () {
                     animateWorker.postMessage({k: "game-saved"});
                 }
             } else if (message.data.k == "debug") {
-                switchesBeforeFac = message.data.switchesBeforeFac;
-                switchesBeforeAddSidings = message.data.switchesBeforeAddSidings;
+                switchParams.beforeFac = message.data.switchesBeforeFac;
+                switchParams.beforeAddSidings = message.data.switchesBeforeAddSidings;
                 if (!debug.trainReady) {
                     console.log("Animate Interval:", message.data.animateInterval);
                 }
