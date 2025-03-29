@@ -31,6 +31,16 @@ This repository provides the build tools for MOROway App. The code here is used 
 
 MOROway App uses Weblate for translations.
 
+<details>
+<summary>Contributors (chronological order)</summary>
+
+- J. Lavoie (Edanas)
+- Allan Nordhøy (kingu)
+- David D. (Dadu042)
+- தமிழ்நேரம் (TamilNeram)
+
+</details>
+
 ## Directories
 
 - `app` = core files for all platform

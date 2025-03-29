@@ -350,3 +350,13 @@ Translation: Tamil (thanks to Weblate user TamilNeram)
 
 ---
 
+
+
+10.3.0
+
+Improve multiplayer server.
+Update dependencies.
+
+
+---
+

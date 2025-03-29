@@ -5369,8 +5369,16 @@ const onlineGame: any = {
     chatSticker: 7,
     resized: false,
     waitingClock: {
-        initialZoom: 0.3,
-        draw: function () {
+        init: function (): void {
+            const initialZoom = 0.45;
+            onlineGame.waitingClock.initTime = Date.now();
+            onlineGame.waitingClock.zoom = initialZoom;
+            onlineGame.waitingClock.secondHandBackwards = false;
+        },
+        draw: function (): void {
+            if (Date.now() - onlineGame.waitingClock.initTime < 5000) {
+                return;
+            }
             //WAITING CLOCK/GLOBAL/SETUP/1
             contextForeground.save();
             contextForeground.translate(canvasForeground.width / 2, canvasForeground.height / 2);
@@ -5505,7 +5513,7 @@ const onlineGame: any = {
             contextForeground.fill();
             //WAITING CLOCK/GLOBAL/SETUP/2
             contextForeground.restore();
-            onlineGame.waitingClock.zoom *= 1.035;
+            onlineGame.waitingClock.zoom *= 1.0375;
             if (onlineGame.waitingClock.zoom > 1) {
                 onlineGame.waitingClock.zoom = 1;
             }
@@ -5679,7 +5687,7 @@ const three: Three = {
  *            Event Listeners              *
  ******************************************/
 
-window.onload = function () {
+window.addEventListener("load", function () {
     function initialDisplay() {
         function defineCarParams() {
             function defineCarWays(cType, isFirst, i, j = 0, obj: any[] = [], currentObjectInput: Object | undefined = undefined, stateNullAgain = false) {
@@ -6937,8 +6945,7 @@ window.onload = function () {
                                     onlineGame.syncingCounter = 0;
                                     onlineGame.syncingCounterFinal = parseInt(json.data, 10);
                                     if (!onlineGame.stop) {
-                                        onlineGame.waitingClock.zoom = onlineGame.waitingClock.initialZoom;
-                                        onlineGame.waitingClock.secondHandBackwards = false;
+                                        onlineGame.waitingClock.init();
                                         onlineGame.stop = true;
                                     }
                                     onlineGame.syncing = true;
@@ -6995,8 +7002,7 @@ window.onload = function () {
                                         window.clearTimeout(onlineGame.syncRequest);
                                     }
                                     if (!onlineGame.stop) {
-                                        onlineGame.waitingClock.zoom = onlineGame.waitingClock.initialZoom;
-                                        onlineGame.waitingClock.secondHandBackwards = false;
+                                        onlineGame.waitingClock.init();
                                         onlineGame.stop = true;
                                     }
                                     onlineGame.paused = true;
@@ -7897,7 +7903,7 @@ window.onload = function () {
             }, 1000);
         };
     });
-};
+});
 
 document.addEventListener("DOMContentLoaded", function () {
     setHTMLStrings();
