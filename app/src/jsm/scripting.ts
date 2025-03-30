@@ -2574,7 +2574,6 @@ function drawObjects() {
                 );
             }
         }
-        context.closePath();
         context.restore();
         if (!currentObject.parking && !currentObject.move && !carParams.autoModeRuns && !carParams.isBackToRoot && !carCollisionCourse(input1, false, -1)) {
             context.save();
@@ -2604,7 +2603,6 @@ function drawObjects() {
                 }
             }
         }
-        context.closePath();
         context.restore();
         if (APP_DATA.debug && debug.paint) {
             context.save();
@@ -3334,7 +3332,6 @@ function drawObjects() {
                 contextForeground.translate(taxOffice.fire[i].x, taxOffice.fire[i].y);
                 contextForeground.beginPath();
                 contextForeground.arc(0, 0, taxOffice.fire[i].size, 0, 2 * Math.PI);
-                contextForeground.closePath();
                 contextForeground.fill();
                 contextForeground.restore();
                 contextForeground.save();
@@ -3342,7 +3339,6 @@ function drawObjects() {
                 contextForeground.translate(taxOffice.smoke[i].x, taxOffice.smoke[i].y);
                 contextForeground.beginPath();
                 contextForeground.arc(0, 0, taxOffice.smoke[i].size, 0, 2 * Math.PI);
-                contextForeground.closePath();
                 contextForeground.fill();
                 contextForeground.restore();
             }
@@ -3720,7 +3716,6 @@ function drawObjects() {
                 if (!wasPointer && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                     hardware.mouse.cursor = "pointer";
                 }
-                contextForeground.closePath();
                 contextForeground.restore();
             });
         });
@@ -3745,22 +3740,18 @@ function drawObjects() {
                     contextForeground.restore();
                 } else if (!hardware.mouse.isHold && switches[key][side].lastStateChange != undefined && frameNo - switches[key][side].lastStateChange < switchParams.showDuration) {
                     contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 255, 144,1)" : "rgba(255,0,0,1)";
-                    contextForeground.closePath();
                     contextForeground.fill();
                     contextForeground.restore();
                 } else if (!hardware.mouse.isHold && switches[key][side].lastStateChange != undefined && frameNo - switches[key][side].lastStateChange < switchParams.showDurationFade) {
-                    contextForeground.closePath();
                     contextForeground.restore();
                     contextForeground.save();
                     contextForeground.beginPath();
                     var fac = 1 - (frameNo - switchParams.showDuration - switches[key][side].lastStateChange) / (switchParams.showDurationFade - switchParams.showDuration);
                     contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 255, 144," + fac + ")" : "rgba(255,0,0," + fac + ")";
                     contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, fac * switchParams.radius, 0, 2 * Math.PI);
-                    contextForeground.closePath();
                     contextForeground.fill();
                     contextForeground.restore();
                 } else if ((client.chosenInputMethod == "mouse" && !wasPointer && !hardware.mouse.isHold && (switches[key][side].lastStateChange == undefined || frameNo - switches[key][side].lastStateChange > switchParams.showDurationEnd) && contextForeground.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY)) || (hardware.mouse.isHold && hardware.mouse.cursor == "default" && (clickTimeOut === null || clickTimeOut === undefined))) {
-                    contextForeground.closePath();
                     contextForeground.restore();
                     contextForeground.save();
                     contextForeground.lineWidth = 5;
@@ -3776,7 +3767,6 @@ function drawObjects() {
                     contextForeground.beginPath();
                     contextForeground.lineWidth = 5;
                     contextForeground.arc(0, 0, 0.2 * switchParams.radius + (konamiState < 0 ? Math.random() * 0.3 * switchParams.radius : 0), 0, 2 * Math.PI);
-                    contextForeground.closePath();
                     contextForeground.fillStyle = switches[key][side].turned ? "rgba(144, 238, 144,1)" : "rgba(255,0,0,1)";
                     contextForeground.fill();
                     contextForeground.restore();
@@ -3814,7 +3804,6 @@ function drawObjects() {
                         }
                         contextForeground.restore();
                     }
-                    contextForeground.closePath();
                     contextForeground.restore();
                 }
             });
@@ -6704,7 +6693,13 @@ window.addEventListener("load", function () {
                             const ERROR_LEVEL_ERROR = 2;
                             const json = JSON.parse(message.data);
                             if (APP_DATA.debug) {
-                                console.log(json);
+                                if (json.errorLevel === ERROR_LEVEL_ERROR) {
+                                    console.error(json);
+                                } else if (json.errorLevel === ERROR_LEVEL_WARNING) {
+                                    console.warn(json);
+                                } else {
+                                    console.debug(json);
+                                }
                             }
                             switch (json.mode) {
                                 case "hello":
@@ -7703,9 +7698,9 @@ window.addEventListener("load", function () {
                 switchParams.beforeFac = message.data.switchesBeforeFac;
                 switchParams.beforeAddSidings = message.data.switchesBeforeAddSidings;
                 if (!debug.trainReady) {
-                    console.log("Animate Interval:", message.data.animateInterval);
+                    console.info("Animate Interval:", message.data.animateInterval);
                 }
-                console.log("Trains: ", message.data.trains);
+                console.debug("Trains: ", message.data.trains);
             } else if (message.data.k == "debugDrawPoints") {
                 debug.drawPoints = message.data.p;
                 debug.drawPointsCrash = message.data.pC;
