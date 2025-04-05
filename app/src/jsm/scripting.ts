@@ -4736,8 +4736,14 @@ const trainActions = {
     checkRange: function (i) {
         return i >= 0 && i < trains.length;
     },
+    checkReady: function () {
+        return !gui.demo && !onlineGame.stop;
+    },
+    checkAll: function (i) {
+        return this.checkRange(i) && this.checkReady();
+    },
     start: function (i, speed, notificationOnlyForOthers = false) {
-        if (!this.checkRange(i) || trains[i].crash || trains[i].accelerationSpeed > 0 || speed <= 0 || speed > 100) {
+        if (!this.checkAll(i) || trains[i].crash || trains[i].accelerationSpeed > 0 || speed <= 0 || speed > 100) {
             return false;
         }
         if (trains[i].move) {
@@ -4748,14 +4754,14 @@ const trainActions = {
         return true;
     },
     stop: function (i, notificationOnlyForOthers = false) {
-        if (!this.checkRange(i) || trains[i].accelerationSpeed <= 0) {
+        if (!this.checkAll(i) || trains[i].accelerationSpeed <= 0) {
             return false;
         }
         actionSync("trains", i, [{accelerationSpeed: (trains[i].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         return true;
     },
     changeDirection: function (i, highlight = false, notificationOnlyForOthers = false) {
-        if (!this.checkRange(i) || trains[i].accelerationSpeed > 0 || Math.abs(trains[i].accelerationSpeed) >= 0.2) {
+        if (!this.checkAll(i) || trains[i].accelerationSpeed > 0 || Math.abs(trains[i].accelerationSpeed) >= 0.2) {
             return false;
         }
         if (highlight) {
@@ -4766,7 +4772,7 @@ const trainActions = {
         return true;
     },
     setSpeed: function (i, speed, notificationOnlyForOthers = false) {
-        if (!this.checkRange(i) || speed < 0 || speed > 100) {
+        if (!this.checkAll(i) || speed < 0 || speed > 100) {
             return false;
         }
         if (speed < trainParams.minSpeed) {
@@ -4896,8 +4902,11 @@ var carWays: CarWays[] = [];
 var carParams: CarParams = {init: true, wayNo: 7};
 const carActions = {
     auto: {
+        checkReady: function () {
+            return !gui.demo && !onlineGame.stop;
+        },
         start: function () {
-            if (carParams.init) {
+            if (this.checkReady() && carParams.init) {
                 carParams.init = false;
                 carParams.autoModeOff = false;
                 carParams.autoModeRuns = true;
@@ -4908,7 +4917,7 @@ const carActions = {
             return false;
         },
         end: function () {
-            if (!carParams.autoModeOff && !carParams.isBackToRoot) {
+            if (this.checkReady() && !carParams.autoModeOff && !carParams.isBackToRoot) {
                 carParams.autoModeRuns = true;
                 carParams.isBackToRoot = true;
                 notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height);
@@ -4917,7 +4926,7 @@ const carActions = {
             return false;
         },
         pause: function () {
-            if (!carParams.autoModeRuns) {
+            if (!this.checkReady() || !carParams.autoModeRuns) {
                 return false;
             }
             carParams.autoModeRuns = false;
@@ -4925,7 +4934,7 @@ const carActions = {
             return true;
         },
         resume: function () {
-            if (carParams.autoModeRuns || carParams.autoModeOff) {
+            if (!this.checkReady() || carParams.autoModeRuns || carParams.autoModeOff) {
                 return false;
             }
             carParams.autoModeRuns = true;
@@ -4938,8 +4947,14 @@ const carActions = {
         checkRange: function (car) {
             return car >= 0 && car < cars.length;
         },
+        checkReady: function () {
+            return !gui.demo && !onlineGame.stop;
+        },
+        checkAll: function (car) {
+            return this.checkRange(car) && this.checkReady();
+        },
         start: function (car) {
-            if (!this.checkRange(car) || carCollisionCourse(car, false) || (!carParams.init && !carParams.autoModeOff) || cars[car].move) {
+            if (!this.checkAll(car) || carCollisionCourse(car, false) || (!carParams.init && !carParams.autoModeOff) || cars[car].move) {
                 return false;
             }
             cars[car].move = true;
@@ -4952,7 +4967,7 @@ const carActions = {
             return true;
         },
         stop: function (car) {
-            if (!this.checkRange(car) || !carParams.autoModeOff || !cars[car].move) {
+            if (!this.checkAll(car) || !carParams.autoModeOff || !cars[car].move) {
                 return false;
             }
             cars[car].move = false;
@@ -4965,7 +4980,7 @@ const carActions = {
             return true;
         },
         backwards: function (car) {
-            if (!this.checkRange(car) || !carParams.autoModeOff || cars[car].move || cars[car].backwardsState !== 0 || cars[car].parking) {
+            if (!this.checkAll(car) || !carParams.autoModeOff || cars[car].move || cars[car].backwardsState !== 0 || cars[car].parking) {
                 return false;
             }
             cars[car].lastDirectionChange = frameNo;
@@ -4979,7 +4994,7 @@ const carActions = {
             return true;
         },
         park: function (car) {
-            if (!this.checkRange(car) || carCollisionCourse(car, false, -1) || !carParams.autoModeOff || cars[car].move || cars[car].parking) {
+            if (!this.checkAll(car) || carCollisionCourse(car, false, -1) || !carParams.autoModeOff || cars[car].move || cars[car].parking) {
                 return false;
             }
             cars[car].move = true;
@@ -6557,6 +6572,7 @@ window.addEventListener("load", function () {
                         }
                         function showNewGameLink() {
                             hideLoadingAnimation();
+                            playAndPauseAudio();
                             var parent = document.querySelector("#content") as HTMLElement;
                             var elem = parent.querySelector("#setup") as HTMLElement;
                             resetForElem(parent, elem, "block");
