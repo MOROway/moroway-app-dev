@@ -1,4 +1,6 @@
+dependencies: "Aktualisierte Abhängigkeiten"
 fixes: "Fehlerkorrekturen"
+translations: "Aktualisierte Übersetzungen"
 versions:
     1.0.0:
         general: |
@@ -167,8 +169,6 @@ versions:
             Einige Optionsmenü-Einträge können mittels einer neuen Einstellung versteckt werden.
         oc: |
             Aktualisierung von Apache Cordova Android auf Version 11.0.0
-        snap: |
-            Aktualisierte Abhängigkeiten.
         web: |
             {{0}} Einfacher Demo-Modus (Aktivierung: [App-URL]/?mode=demo).
     8.1.0:
@@ -187,8 +187,6 @@ versions:
             Monochromes Icon (Android 13).
         oc: |
             Text Kommandos erfordern eine physische Tastatur.
-        snap: |
-            Aktualisierte Abhängigkeiten.
     8.1.4:
         android: |
             Verbesserte In-App-Navigation und Nutzererfahrung.
@@ -210,13 +208,10 @@ versions:
         general: |
             Verbesserte 3D-Ansicht.
             Umstieg auf modularisiertes TypeScript.
-            Aktualisierte Abhängigkeiten.
         oc: |
             Android WebView Version 80 oder neuer erforderlich.
             Demo-Modus kann nun konfiguriert werden.
     9.1.9:
-        general: |
-            Aktualisierte Abhängigkeiten.
         oc: |
             Aktualisierung von Apache Cordova Android auf Version 13.0.0.
     10.0.0:
@@ -236,6 +231,44 @@ versions:
     10.3.0:
         general: |
             Verbesserter Mehrspieler Server.
-            Aktualisierte Abhängigkeiten.
         oc: |
             Aktualisierung von Apache Cordova Android auf Version 14.0.0.
+hints:
+    1.0.0:
+        general: |
+            Dampflok reagiert nur auf Trafo.
+    2.0.0:
+        general: |
+            Dampflok reagiert nur auf Trafo.
+            TGV läuft immer.
+            Autos starten bei Klick auf den roten Bus (unterm Bahnhof).
+    3.0.0:
+        general: |
+            Dampflok reagiert nur auf Trafo.
+            TGV läuft immer.
+            Autos starten bei Klick auf den roten Bus (unterm Bahnhof).
+    4.0.0:
+        general: |
+            Autos starten bei Klick auf den roten Bus (unterm Bahnhof).
+    6.0.0:
+        general: |
+            Der heutige Multiplay-Server ist inkompatibel mit dieser Version.
+warnings:
+    4.0.0:
+        general: |
+            Lädt langsam.
+    5.0.0:
+        general: |
+            Bug: Kann verpixelt aussehen.
+    5.1.0:
+        general: |
+            Bug: Kann verpixelt aussehen.
+    5.2.0:
+        general: |
+            Bug: Kann verpixelt aussehen.
+    6.1.0:
+        general: |
+            Bug: Performance Probleme.
+    6.2.0:
+        general: |
+            Bug: Performance Probleme.

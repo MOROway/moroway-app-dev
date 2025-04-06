@@ -1,4 +1,6 @@
+dependencies: "Update dependencies"
 fixes: "Bugfixes"
+translations: "Update translations"
 versions:
     1.0.0:
         general: |
@@ -184,8 +186,6 @@ versions:
     7.5.1:
         general: |
             Minor UX improvements
-        snap: |
-            Update dependencies
     8.0.0:
         general: |
             {{0}} New train: Boston and Maine (American freight train).
@@ -195,8 +195,6 @@ versions:
             Allow some options menu items to be hidden using a new setting.
         oc: |
             Update to Apache Cordova Android 11.0.0
-        snap: |
-            Update dependencies.
         web: |
             {{0}} Basic demo mode (Activation: [App-URL]/?mode=demo).
     8.1.0:
@@ -215,8 +213,6 @@ versions:
             Monochrome icon (Android 13).
         oc: |
             Text commands require a physical keyboard.
-        snap: |
-            Update dependencies
     8.1.4:
         android: |
             Improved in-app navigation and UX.
@@ -225,10 +221,6 @@ versions:
     8.1.6:
         general: |
             Translation: Norsk Bokmål (thanks to Weblate user kingu)
-        android: |
-            Update dependencies
-        snap: |
-            Update dependencies
     8.1.7:
         android: |
             Fix options view
@@ -256,17 +248,12 @@ versions:
         general: |
             Improved 3D view.
             Migrate to TypeScript modules.
-            Update dependencies.
         oc: |
             Android WebView version 80 or newer required.
             Allow demo mode configuration.
-    9.1.2:
-        general: |
-            Update dependencies.
     9.1.4:
         general: |
             Minor 3d-view improvements.
-            Update dependencies.
         web: |
             Add social media share metadata.
     9.1.5:
@@ -283,23 +270,12 @@ versions:
         snap: |
             Allow passing query parameters as CLI options (e.g. --mode=normal).
     9.1.9:
-        general: |
-            Update dependencies.
         oc: |
             Upgrade Apache Cordova Android to version 13.0.0.
     10.0.0:
         general: |
             {{0}} 3D view: train conductor and car driver cameras.
             License change: GNU General Public License v3.0 replaces Apache License Version 2.
-    10.0.1:
-        general: |
-            Update dependencies.
-    10.0.2:
-        general: |
-            Update dependencies.
-    10.0.3:
-        general: |
-            Update dependencies.
     10.1.0:
         general: |
             Translation: French (thanks to Weblate user Dadu042).
@@ -307,15 +283,54 @@ versions:
         general: |
             Improve railbus wheels in 2D-view.
             Migrate most metadata and changelog files to YAML format.
-    10.1.2:
-        general: |
-            Update translations and dependencies.
     10.2.0:
         general: |
             Translation: Tamil (thanks to Weblate user TamilNeram).
     10.3.0:
         general: |
             Improve multiplayer server.
-            Update dependencies.
         oc: |
             Update Apache Cordova Android to 14.0.0.
+    10.3.2:
+        general: |
+            Improve changelog page.
+            Improve build scripts.
+hints:
+    1.0.0:
+        general: |
+            Steam locomotive starts only if transformer is used.
+    2.0.0:
+        general: |
+            Steam locomotive starts only if transformer is used.
+            TGV runs always.
+            Cars start if red bus is clicked (beneath train station).
+    3.0.0:
+        general: |
+            Steam locomotive starts only if transformer is used.
+            TGV runs always.
+            Cars start if red bus is clicked (beneath train station).
+    4.0.0:
+        general: |
+            Cars start if red bus is clicked (beneath train station). 
+    6.0.0:
+        general: |
+            Today's multiplay server is incompatible with this version. 
+warnings:
+    4.0.0:
+        general: |
+            Loads slowly.
+    5.0.0:
+        general: |
+            Bug: May look pixelated.
+    5.1.0:
+        general: |
+            Bug: May look pixelated.
+    5.2.0:
+        general: |
+            Bug: May look pixelated.
+    6.1.0:
+        general: |
+            Bug: Performance issues. 
+    6.2.0:
+        general: |
+            Bug: Performance issues. 

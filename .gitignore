@@ -1,7 +1,7 @@
 git-publish.sh
+build/.cache
+build/.logs
 build/conf_local
 out
-wrapper/*
-!wrapper/android
-!wrapper/snap
+wrapper/oc
 .vscode

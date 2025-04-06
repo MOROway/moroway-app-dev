@@ -2,7 +2,7 @@
 
 function log() {
 	echo "$1"
-	[[ "$2" == 0 ]] && printf '%s\n' "$1 $(date -R)" >>../out/build_logs || printf '\t%s\n' "$1 $(date -R)" >>../out/build_logs
+	[[ "$2" == 0 ]] && printf '%s\n' "$1 $(date -R)" >>.logs/builds.log || printf '\t%s\n' "$1 $(date -R)" >>.logs/builds.log
 }
 
 function logexit() {
@@ -28,21 +28,31 @@ function get_conf() {
 		conf=$(cat ./conf ./conf_local)
 	fi
 	pattern="^$1="
-	if [[ "$2" == 1 ]] && [[ ! -z $(echo "$conf" | grep -e "^debug:$platform:$1=\|^$platform:debug:$1=") ]]; then
+	if [[ "$2" == 1 ]] && [[ -n $(echo "$conf" | grep -e "^debug:$platform:$1=\|^$platform:debug:$1=") ]]; then
 		pattern="^debug:$platform:$1=\|^$platform:debug:$1="
-	elif [[ "$2" == 1 ]] && [[ ! -z $(echo "$conf" | grep -e "^debug:$1=") ]]; then
+	elif [[ "$2" == 1 ]] && [[ -n $(echo "$conf" | grep -e "^debug:$1=") ]]; then
 		pattern="^debug:$1="
-	elif [[ ! -z $(echo "$conf" | grep -e "^$platform:$1=") ]]; then
+	elif [[ -n $(echo "$conf" | grep -e "^$platform:$1=") ]]; then
 		pattern="^$platform:$1="
 	fi
 	echo $(echo "$conf" | grep -e "$pattern" | tail -1 | sed s/[^=]*=//)
 }
 
+function task_changelogs() {
+	./build-tasks/changelogs.sh -p "$1" >/dev/null 2>&1 || logexit 2 "Could not generate changelogs"
+}
+
+function task_fonts() {
+	./build-tasks/fonts.sh >/dev/null 2>&1 || logexit 2 "Could not generate fonts"
+}
+
 dir=$(dirname "$0")
+
+[[ ! -d "$dir"/../out ]] && mkdir "$dir"/../out
+[[ ! -d "$dir"/.logs ]] && mkdir "$dir"/.logs
+
 cd "$dir" || logexit 3 "Could not set working directory"
 [[ "$(uname -m)" == x86_64 ]] || logexit 13 "Machine architecture not supported."
-
-[[ ! -d ../out ]] && mkdir ../out
 
 tsc -v >/dev/null 2>&1 || logexit 5 "typescript not installed"
 fonttools -h >/dev/null 2>&1 || logexit 11 "fonttools not installed"
@@ -62,7 +72,7 @@ fi
 log "build started" 0
 valid_platform=0
 
-[[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh >../out/pre_build.log 2>&1
+[[ -f private_autotasks/prebuild.sh ]] && ./private_autotasks/prebuild.sh >.logs/pre_build.log 2>&1
 
 for platform in ${platforms[@]}; do
 	if [[ "$p" == "$platform" ]] || [[ -z "$p" ]]; then
@@ -74,8 +84,13 @@ for platform in ${platforms[@]}; do
 		version_minor=$(echo "$version" | sed 's/^[0-9]\+\.\([0-9]\+\)\.[0-9]\+$/\1/')
 		version_patch=$(echo "$version" | sed 's/^[0-9]\+\.[0-9]\+\.\([0-9]\+\)$/\1/')
 		[[ "$version_major" != $(echo "$version_major" | sed 's/[^0-9]//g') || "$version_minor" != $(echo "$version_minor" | sed 's/[^0-9]//g') || "$version_patch" != $(echo "$version_patch" | sed 's/[^0-9]//g') ]] && logexit 1 "version invalid"
-		date '+%Y' >changelogs/meta/year/"$version"
-		[[ ! -f changelogs/meta/fixes/"$version" ]] && echo 0 >changelogs/meta/fixes/"$version"
+		metaYear="$(./build-libs/yq_linux_amd64 e ".\"$version\" .year" changelogs/meta.yml)"
+		realYear="$(date '+%Y')"
+		if [[ "$metaYear" == "null" ]]; then
+			./build-libs/yq_linux_amd64 -i e ". += {\"$version\":{\"year\":$realYear}}" changelogs/meta.yml
+		elif [[ "$metaYear" != "$realYear" ]]; then
+			./build-libs/yq_linux_amd64 -i e ".\"$version\" .year = $realYear" changelogs/meta.yml
+		fi
 		beta=$(echo "$(get_conf "beta" "$debug" "$platform")" | sed s/[^0-9]//g)
 		[[ -z "$beta" ]] && logexit 2 "beta empty"
 		beta_identifier=""
@@ -98,6 +113,10 @@ for platform in ${platforms[@]}; do
 		valid_platform=1
 		log "platform/version $platform/$version.$beta"
 
+		# Execute Tasks
+		task_changelogs "$platform"
+		task_fonts
+
 		# Prepare copy files
 		from=../app
 		fromPf=../app_platforms/"$platform"
@@ -109,8 +128,8 @@ for platform in ${platforms[@]}; do
 		# Copy core and platform files
 		cp -pr "$from/"* "$to"
 		cp -pr "$fromPf/"* "$to"
-		cp -pr ../ABOUT "$to"
-		cp -pr ../LICENSE* "$to"
+		cp -p ../ABOUT "$to"
+		cp -p ../LICENSE* "$to"
 
 		# Remove core excludes
 		file="$to/core_excludes"
@@ -118,13 +137,14 @@ for platform in ${platforms[@]}; do
 			while read -r line; do
 				if [[ ! "$line" =~ ^"#" ]]; then
 					line=$(echo "$line" | sed 's/\(^\|[^\\]\)\s\+/\1/g;s/\(^\|[/]\)\+[.][.]\+//g;s!^[/]\+!!g')
-					[[ ! -z "$line" ]] && rm -r "$to/"$line
+					[[ -n "$line" ]] && rm -r "$to/"$line
 				fi
 			done <"$file"
 			rm "$file"
 		fi
 
 		# Modify Content
+		cache_dir=.cache
 		all_files=$(loop_files "$to" "$to")
 		# App Data
 		file="$to/src/jsm/common/app_data.ts"
@@ -136,70 +156,21 @@ for platform in ${platforms[@]}; do
 		# Strings
 		file="$to/src/jsm/common/string_tools.ts"
 		strings="{"
+		supported_langs=()
 		for clang in strings/strings-*.json; do
 			langCode=$(echo "$clang" | sed 's/[^-]*-\([^.]*\).*/\1/')
 			stringsCurrent=$(cat "$clang" | sed 's/\\/\\\\/g' | sed 's!/!\\/!g' | perl -0pe 's/(\n|\s|\t)*([^\n]*)\n/\2/g' | perl -0pe 's/\n*}$/,/g')
 			strings="$strings$langCode:$stringsCurrent{{changelog=$langCode}}},"
+			supported_langs+=($langCode)
 		done
 		strings=$(echo "$strings" | perl -0pe 's/,$/}/g')
 		perl -0pi -e "s/\"\{\{strings\}\}\"/$strings/" "$file"
 		[[ $(file -i "$file" | sed 's/.*charset=//') != utf-8 ]] && logexit 4 "setting strings internal error"
-		for clangdir in changelogs/*; do
-			clang=$(basename "$clangdir")
-			if [[ "$clang" != meta ]] && [[ ! -z $(grep "{{changelog=$clang}}" "$file") ]] && [[ -f "changelogs/$clang/changelog.yml" ]]; then
-				changelogs=""
-				for cv in $(./build-libs/yq_linux_amd64 '.versions | select(.) | keys[] | select(. == "*.0")' "changelogs/$clang/changelog.yml"); do
-					cvMa=$(echo "$cv" | sed 's/^\([0-9]\+\)\.[0-9]\+\.0$/\1/')
-					cvMi=$(echo "$cv" | sed 's/^[0-9]\+\.\([0-9]\+\)\.0$/\1/')
-					changelog="whatsNewScreenByVersionMa${cvMa}Mi${cvMi}: ["
-					changelogfile_year="changelogs/meta/year/$cv"
-					if [[ -f "$changelogfile_year" ]]; then
-						changelog="$changelog"'"'$(cat "$changelogfile_year")'",'
-					fi
-					changelogAdd=""
-					while read -r line; do
-						if [ ! -z "$line" ]; then
-							line=$(echo "$line" | sed 's/"/\\"/g')
-							changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
-						fi
-					done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .general | select(.)" "changelogs/$clang/changelog.yml")
-					if [[ -z "$changelogAdd" ]]; then
-						while read -r line; do
-							if [ ! -z "$line" ]; then
-								line=$(echo "$line" | sed 's/"/\\"/g')
-								changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
-							fi
-						done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .general | select(.)" "changelogs/default/changelog.yml")
-					fi
-					changelog="$changelog$changelogAdd"
-					changelogAdd=""
-					while read -r line; do
-						if [ ! -z "$line" ]; then
-							line=$(echo "$line" | sed 's/"/\\"/g')
-							changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
-						fi
-					done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .\"$platform\" | select(.)" "changelogs/$clang/changelog.yml")
-					if [[ -z "$changelogAdd" ]]; then
-						while read -r line; do
-							if [ ! -z "$line" ]; then
-								line=$(echo "$line" | sed 's/"/\\"/g')
-								changelogAdd="$changelogAdd"$(printf '"%s",' "$line")
-							fi
-						done < <(./build-libs/yq_linux_amd64 e ".versions .\"$cv\" .\"$platform\" | select(.)" "changelogs/default/changelog.yml")
-					fi
-					changelog="$changelog$changelogAdd"
-					if [[ $(cat "changelogs/meta/fixes/$cv") == 1 ]]; then
-						line=$(echo "$(./build-libs/yq_linux_amd64 e ".fixes | select(.)" changelogs/$clang/changelog.yml)" | sed 's/"/\\"/g')
-						if [[ -z "$line" ]]; then
-							line=$(echo "$(./build-libs/yq_linux_amd64 e ".fixes | select(.)" changelogs/default/changelog.yml)" | sed 's/"/\\"/g')
-						fi
-						changelog="$changelog$(printf '"%s",' "$line.")"
-					fi
-					changelogs="$changelogs"$(echo "$changelog" | sed 's/,$/],/')
-				done
-				changelogs=$(echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g' | perl -0pe 's/,$//g')
-				sed -i "s/{{changelog=$clang}}/$changelogs/" "$file"
-			fi
+		for clang in "${supported_langs[@]}"; do
+			current_changelog_file="$cache_dir/changelogs/$clang/$platform.json"
+			changelogs="$(./build-libs/yq_linux_amd64 -I0 e '(to_entries | .[]) as $i ireduce({}; .[$i.key | sub("(?<major>[0-9]+).(?<minor>[0-9]+).(?<patch>[0-9]+)";"whatsNewScreenByVersionMa${major}Mi${minor}Pa${patch}")]  = [($i.value | .year | to_string)] + ($i.value | .content))' "$current_changelog_file" | sed 's/^{//;s/}$//')"
+			changelogs=$(echo "$changelogs" | sed 's/\\/\\\\/g' | sed 's/&/\\&/g' | sed 's#/#\\/#g')
+			sed -i "s/{{changelog=$clang}}/$changelogs/" "$file"
 		done
 		sed -i "s/{{changelog=[^}]*}}//g" "$file"
 		# Web Tools
@@ -274,14 +245,14 @@ for platform in ${platforms[@]}; do
 				meta_author=$(cat "metadata/default/author.txt" | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
 				meta_description=$(./build-libs/yq_linux_amd64 e ".Description | .Standard" metadata/default/translations.yml | sed 's!/!\\/!g' | sed -e 's/"/\&quot;/g' | sed 's/&/\\&/g')
 				sed -i 's/<\!--\sinsert_title_app_name\s-->/'"$meta_app_name"'/;s/<\!--\sinsert_meta_app_name\s-->/<meta name="application-name" content="'"$meta_app_name"'">/;s/<\!--\sinsert_meta_author\s-->/<meta name="author" content="'"$meta_author"'">/;s/<\!--\sinsert_meta_description\s-->/<meta name="description" content="'"$meta_description"'">/' "$to/$html_file"
-				while [[ ! -z $(grep "<\!-- dep_check -->" "$to/$html_file" | head -1) ]]; do
+				while [[ -n $(grep "<\!-- dep_check -->" "$to/$html_file" | head -1) ]]; do
 					if [[ -f "$to/"$(grep -A1 "<\!-- dep_check -->" "$to/$html_file" | head -2 | tail -1 | sed 's/.*\(src\|href\)="\([^"]\+\)".*/\2/') ]]; then
 						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n/\n/" "$to/$html_file"
 					else
 						perl -0pi -e "s/(^|[\n]).*<\!--\sdep_check\s-->.*\n.*\n/\n/" "$to/$html_file"
 					fi
 				done
-				if [[ ! -z "$app_link_self" ]] && [[ ! -z "$app_link_banner" ]]; then
+				if [[ -n "$app_link_self" ]] && [[ -n "$app_link_banner" ]]; then
 					sed -i 's/<\!--\sinsert_open_graph_data\s-->/<meta property="og:title" content="'"$meta_app_name"'"><meta property="og:type" content="website"><meta property="og:url" content="'"$app_link_self"'"><meta property="og:image" content="'"$app_link_banner"'">/' "$to/$html_file"
 				else
 					sed -i 's/<\!--\sinsert_open_graph_data\s-->//' "$to/$html_file"
@@ -301,16 +272,8 @@ for platform in ${platforms[@]}; do
 		fi
 
 		# Generate fonts
-		fontBasePath="$to/src/lib/open_fonts"
-		fontPath="$fontBasePath/google/MaterialSymbols"
-		fontFile="$fontPath/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf"
-		fonttools varLib.mutator "$fontFile" FILL=1 GRAD=125 opsz=48 wght=450 --no-recalc-timestamp -o "$fontPath/MaterialSymbols.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
-		rm "$fontFile"
-		fontPath="$fontBasePath/google/Roboto"
-		fontFile="$fontPath/Roboto[wdth,wght].ttf"
-		fonttools varLib.mutator "$fontFile" wdth=480 wght=500 --no-recalc-timestamp -o "$fontPath/Roboto-Medium.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
-		fonttools varLib.mutator "$fontFile" wdth=480 wght=400 --no-recalc-timestamp -o "$fontPath/Roboto-Regular.ttf" >/dev/null 2>&1 || logexit 12 "fonttools error"
-		rm "$fontFile"
+		mkdir "$to/src/lib/open_fonts"
+		cp -r "$cache_dir/fonts"/* "$to/src/lib/open_fonts"
 
 		# Web Manifest
 		file="$to/manifest.webmanifest"
@@ -360,13 +323,13 @@ for platform in ${platforms[@]}; do
 		# Platform specific build scripts
 		if [[ -f ../wrapper/"$platform"/build.sh ]]; then
 			log "start platform-wrapper build"
-			$(../wrapper/"$platform"/build.sh -b "$beta" -d "$debug" -l "$serverlink" -o "$(realpath ../out/"$platform"/latest/)" -s "$sharelink" -v "$version" -w "$(realpath .)" >/dev/null 2>&1) || logexit $((1000 + $?)) "platform-wrapper build"
+			$(../wrapper/"$platform"/build.sh -b "$beta" -d "$debug" -l "$serverlink" -o "$(realpath ../out/"$platform"/latest/)" -s "$sharelink" -v "$version" -w "$(realpath .)" >/dev/null 2>&1) || logexit $? "platform-wrapper build"
 			log "finished platform-wrapper build"
 		fi
 
 	fi
 done
 
-[[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh >../out/post_build.log 2>&1
+[[ -f private_autotasks/postbuild.sh ]] && ./private_autotasks/postbuild.sh >.logs/post_build.log 2>&1
 
 [[ $valid_platform == 1 ]] && log "build succeeded" 0 || logexit 100 "invalid platform"

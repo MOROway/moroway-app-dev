@@ -77,19 +77,9 @@ jobs:
               run: |
                   # Build moroway-app
                   cd build
-                  changelog="$VERSION"$'\n'
-                  changelogAdd=$(./build-libs/yq_linux_amd64 e ".versions .\"$VERSION\" .general | select(.)" changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
-                  if [[ ! -z "$changelogAdd" ]]; then
-                     changelog="$changelog$changelogAdd"$'\n'
-                  fi
-                  changelogAdd=$(./build-libs/yq_linux_amd64 e ".versions .\"$VERSION\" .web | select(.)" changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
-                  if [[ ! -z "$changelogAdd" ]]; then
-                     changelog="$changelog$changelogAdd"$'\n'
-                  fi
-                  if [[ $(cat "changelogs/meta/fixes/$VERSION") == 1 ]]; then
-                     changelog="$changelog$(./build-libs/yq_linux_amd64 e ".fixes | select(.)" changelogs/default/changelog.yml)."$'\n'
-                  fi
-                  bash build.sh -p $PLATFORM || bash build.sh -p $PLATFORM || exit $?
+                  ./build.sh -p $PLATFORM || exit $?
+                  # Get Changelog
+                  changelog="$VERSION"$'\n'$'\n'"$(./build-libs/yq_linux_amd64 -r ".\"$VERSION\" .content | .[]" ".cache/changelogs/default/$PLATFORM.json" | sed 's/{{[0-9]\+}}\s\?//g')"
                   # Publish to platform repository
                   cd ../out
                   git config --global user.email "$GIT_MAIL"

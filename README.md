@@ -17,13 +17,17 @@ This repository provides the build tools for MOROway App. The code here is used 
 [![F-Droid](https://img.shields.io/f-droid/v/de.moroway.oc.svg?label=oc&color=303030&labelColor=d2781b)](https://f-droid.org/de/packages/de.moroway.oc/)
 [![Snap Store](https://img.shields.io/badge/snap-Snap%20Store-303030?labelColor=d2781b)](https://snapcraft.io/moroway-app)
 
-- The "web"-platform is the main platform and can be used with any modern web browser. The ready-to-use code for the "web"-platform can be found [here](https://github.com/MOROway/moroway-app).<sup>[1](#morowayrepoautoupdate)</sup>
+- The "web"-platform is the main platform and can be used with any modern web browser. The ready-to-use code for the "web"-platform can be found [here](https://github.com/MOROway/moroway-app).<sup>[1](#ghaction)</sup>
 - The "windows"-platform provides the PWA available at Microsoft Store (packaged by [PWABuilder](https://www.pwabuilder.com/)).
 - The "android"-platform is used within the Android wrapper app available at Google Play Store. The wrapper app can be found [here](./wrapper/android). This wrapper app contains a [already built version](./wrapper/android/app/src/main/assets/animation) of the "android"-platform.
 - The "oc"-platform is used within the Apache Cordova Android wrapper app available at F-Droid. The wrapper app can be found [here](https://github.com/MOROway/moroway-app-oc). This wrapper app contains a [already built version](https://github.com/MOROway/moroway-app-oc/tree/master/moroway-app-oc) of the "oc"-platform.
 - The "snap"-platform is used within the Electron wrapper app available at Ubuntu&apos;s Snap Store. The wrapper app can be found [here](./wrapper/snap). This wrapper app contains a [already built version](./wrapper/snap/moroway-snapp) of the "snap"-platform.
 
-<a name="morowayrepoautoupdate">&#91;1&#93;</a> Auto updated by a [Github Action](https://github.com/MOROway/moroway-app-dev/actions/workflows/moroway-app-tag-and-sync-repos.yml). This action uses code derived from the action [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository/) (License: MIT, by Carles Pina Estany). Furthermore the actions [action-create-tag](https://github.com/rickstaa/action-create-tag) (License: MIT, by rickstaa) and [setup-ffmpeg](https://github.com/FedericoCarboni/setup-ffmpeg) (License: MIT, by Federico Carboni) are used.
+<a name="ghaction"></a>
+
+&#91;1&#93; Auto updated by a [Github Action](https://github.com/MOROway/moroway-app-dev/actions/workflows/moroway-app-tag-and-sync-repos.yml). This action uses code derived from the action [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository/) (License: MIT, by Carles Pina Estany). Furthermore the actions [action-create-tag](https://github.com/rickstaa/action-create-tag) (License: MIT, by rickstaa) and [setup-ffmpeg](https://github.com/FedericoCarboni/setup-ffmpeg) (License: MIT, by Federico Carboni) are used.
+
+<a name="weblate"></a>
 
 ## Weblate
 
@@ -46,20 +50,27 @@ MOROway App uses Weblate for translations.
 - `app` = core files for all platform
   - `src/lib`: included open source [components](./app/src/lib/README.md).
 - `app_platforms` = platform specific files
-  - All directories containing files end with `_platform`.
+  - All directories containing files end with `_platform` (if they are not nested beneath a directory suffixed `_platform`).
   - `[PLATFORM]/core_excludes`: core files not used by platform.
   - `[PLATFORM]/sw_excludes`: files not used by service worker.
-- `build` = build script
-  - Linux-based x86_64 OS, Bash, Typescript (tsc), FFmpeg (if `convert_audio`-configuration option is used), fonttools and common CLI-tools required
-  - Usage: `bash build.sh [ -p PLATFORM ] [ -d DEBUG ]`
-    - -p (platform):
-      - One of the platforms listed above.
-      - Omitting builds all.
-    - -d (debug):
-      - Activate debug mode (-d 1).
-      - Prefer conf options prefixed "debug:"
-      - Use unencrypted connections (as this mode is designed for a local test setup)
-  - `build-libs`: See [here](./build/build-libs/README.md)
+- `build` = build tools
+  - Script files:
+    - Linux-based x86_64 OS, Bash, Typescript (tsc), FFmpeg (if `convert_audio`-configuration option is used), fonttools and common CLI-tools required
+    - Main script usage: `bash build.sh [ -p PLATFORM ] [ -d DEBUG ]`
+      - -p (platform):
+        - One of the platforms listed above.
+        - Omitting builds all.
+      - -d (debug):
+        - Activate debug mode (-d 1).
+        - Prefer conf options prefixed "debug:"
+        - Use unencrypted connections (as this mode is designed for a local test setup)
+    - Logs at `.logs`
+    - `build-tasks`:
+      - Scripts executed by main script.
+      - Cache at `.cache`
+    - `build-libs`:
+      - Used in build scripts
+      - See [here](./build/build-libs/README.md)
   - Configuration files:
     - `conf` and `conf_local` (for local override)
       - `version`: MAJOR.MINOR.PATCH
@@ -74,9 +85,11 @@ MOROway App uses Weblate for translations.
         - `[platform]`: Configuration only used for specific platform
         - Hierachy (if both prefixes apply): prefixed both, prefixed `debug`, prefixed `[platform]`, not prefixed
     - `tsconfig.json`: Typescript conf
+  - `changelogs`, `metadata`,`strings`
+    - Localization files (see above: [Weblate](#weblate))
+    - Exception: `changelogs/meta.yml`: Changelog metadata
 - `out` = ready-to-use MOROway App output
   - generated by build script
-  - build logs at `out/build_logs`
   - `out/[PLATFORM]/latest` = last build (release or beta)
   - `out/[PLATFORM]/current` = last release build
 - `wrapper` = platform wrapper apps

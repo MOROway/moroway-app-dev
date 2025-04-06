@@ -22,6 +22,20 @@ export function getString(prop, punctuationMark = "", caseType = "", lang = CURR
     return caseType == "upper" ? str.toUpperCase() : caseType == "lower" ? str.toLowerCase() : str;
 }
 
+
+export function searchStringKeys(pattern: RegExp, lang: string = DEFAULT_LANG) : Array<String> {
+    const keyList = [];
+    if (!STRINGS[lang]) {
+        return keyList
+    } 
+    Object.keys(STRINGS[lang]).forEach((key) => {
+        if(key.match(pattern)) {
+            keyList.push(key);
+        }
+    });
+    return keyList;
+}
+
 export function formatJSString(str: string, ...replaces: (string | number)[]) {
     for (var i = 0; i < replaces.length; i++) {
         if (str.includes("{{" + i + "}}")) {

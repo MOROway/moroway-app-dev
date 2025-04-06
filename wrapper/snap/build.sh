@@ -28,21 +28,10 @@ rm -r moroway-snapp
 cp -r "$output_dir_build" moroway-snapp
 
 # Set Changelog
-if [[ $beta == 0 ]]; then
+if [[ $beta == 0 ]]; then 
    changelog_file="CHANGELOG.txt"
    [[ -z $(cat "$changelog_file") ]] && echo "CHANGELOG" >"$changelog_file"
-   changelog=""
-   changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .general | select(.)" $working_dir_build/changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
-   if [[ ! -z "$changelogAdd" ]]; then
-      changelog="$changelog$changelogAdd"$'\n'
-   fi
-   changelogAdd=$("$working_dir_build"/build-libs/yq_linux_amd64 e ".versions .\"$version\" .snap | select(.)" $working_dir_build/changelogs/default/changelog.yml | sed 's/{{[0-9]\+}}\s\?//g')
-   if [[ ! -z "$changelogAdd" ]]; then
-      changelog="$changelog$changelogAdd"$'\n'
-   fi
-   if [[ $(cat "$working_dir_build/changelogs/meta/fixes/$version") == 1 ]]; then
-      changelog="$changelog$("$working_dir_build"/build-libs/yq_linux_amd64 e ".fixes | select(.)" $working_dir_build/changelogs/default/changelog.yml)."$'\n'
-   fi
+   changelog="$("$working_dir_build"/build-libs/yq_linux_amd64 -r ".\"$version\" .content | .[]" "$working_dir_build/.cache/changelogs/default/snap.json" | sed 's/{{[0-9]\+}}\s\?//g')"
    if [[ ! -z "$changelog" ]] && [[ -z $(cat "$changelog_file" | grep "$version") ]]; then
       printf '%s' $'\n'$'\n'"$version"$'\n'$'\n'"$changelog"$'\n'$'\n'"---"$'\n'$'\n' >>"$changelog_file"
    fi

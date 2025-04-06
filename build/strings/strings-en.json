@@ -438,6 +438,8 @@
 	"platformOcAppUpdateNo": "Ignore",
 	"platformOcAppUpdateYes": "View",
 	"platformSnapAppExit": "Exit app",
+	"whatsNewScreenPatchesDetail": "Details on patches",
+	"whatsNewScreenPatchesPatch": "Patch {{0}}",
 	"whatsNewScreenVersionIsNew": "New",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
 	"whatsNewScreenVersionNumberMinor": "New in version {{0}}.{{1}}"
