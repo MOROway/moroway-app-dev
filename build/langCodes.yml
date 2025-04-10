@@ -1,0 +1,11 @@
+default: en
+aliases:
+    de:
+        - de-DE
+    en:
+        - en-US
+    fr: []
+    nb_NO:
+        - nb-NO
+        - nb-rNO
+    ta: []

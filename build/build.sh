@@ -38,6 +38,14 @@ function get_conf() {
 	echo $(echo "$conf" | grep -e "$pattern" | tail -1 | sed s/[^=]*=//)
 }
 
+function task_sync_lang_codes() {
+	./build-tasks/sync-lang-codes.sh >/dev/null 2>&1 || logexit 2 "Could not sync language codes"
+}
+
+function task_metadata() {
+	./build-tasks/metadata.sh >/dev/null 2>&1 || logexit 2 "Could not prepare metadata"
+}
+
 function task_changelogs() {
 	./build-tasks/changelogs.sh -p "$1" >/dev/null 2>&1 || logexit 2 "Could not generate changelogs"
 }
@@ -114,6 +122,8 @@ for platform in ${platforms[@]}; do
 		log "platform/version $platform/$version.$beta"
 
 		# Execute Tasks
+		task_sync_lang_codes
+		task_metadata
 		task_changelogs "$platform"
 		task_fonts
 
