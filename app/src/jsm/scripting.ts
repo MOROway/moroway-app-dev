@@ -104,7 +104,7 @@ interface Background3D {
     three: BackgroundObject3D;
     behind?: HTMLCanvasElement;
     behindClone?: HTMLCanvasElement;
-    animateBehind?(reset?: boolean): void;
+    animateBehind?(reset?: boolean, forceFac?: number): void;
     animateBehindFac?: number;
     animateBehindStars?: any[];
 }
@@ -2708,7 +2708,9 @@ function drawObjects() {
         contextForeground.clearRect(0, 0, canvasForeground.width, canvasForeground.height);
         contextForeground.setTransform(1, 0, 0, 1, 0, 0);
         /////THREE.JS/Background/////
-        background3D.animateBehind();
+        if (three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
+            background3D.animateBehind();
+        }
     } else {
         canvasGesture.style.display = "";
         canvasBackground.style.display = "";
@@ -2894,6 +2896,7 @@ function drawObjects() {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
             }
+            background3D.animateBehind(false, cars[three.followObject].displayAngle / Math.PI);
             three.followCamera.position.set(three.calcScale() * ((cars[three.followObject].outerX - background.width / 2) / background.width), three.calcScale() * (-(cars[three.followObject].outerY - background.height / 2) / background.width) + three.calcPositionY(), cars3D[three.followObject].positionZ == undefined ? 0 : cars3D[three.followObject].positionZ);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -cars[three.followObject].displayAngle;
@@ -2992,8 +2995,9 @@ function drawObjects() {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > trains.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * trains.length) : 0;
             }
-            var object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
+            const object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
             three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[three.followObject].positionZ == undefined ? 0 : trains3D[three.followObject].positionZ);
+            background3D.animateBehind(false, object.displayAngle / Math.PI);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -object.displayAngle;
             if (!trains[three.followObject].standardDirection) {
@@ -6265,7 +6269,7 @@ window.addEventListener("load", function () {
         });
 
         background3D.behind = document.getElementById("game-gameplay-three-bg") as HTMLCanvasElement;
-        background3D.animateBehind = function (reset = false) {
+        background3D.animateBehind = function (reset = false, forceFac = undefined) {
             if (reset) {
                 background3D.behind.style.transform = "";
                 const behindCloneId = background3D.behind.id + "-clone";
@@ -6342,9 +6346,16 @@ window.addEventListener("load", function () {
                 }
             }
             if (three.night) {
-                background3D.animateBehindFac += 0.00025;
-                if (background3D.animateBehindFac >= 1) {
+                if (typeof forceFac == "number") {
+                    background3D.animateBehindFac = forceFac;
+                } else {
+                    background3D.animateBehindFac += 0.00025;
+                }
+                while (background3D.animateBehindFac >= 1) {
                     background3D.animateBehindFac -= 1;
+                }
+                while (background3D.animateBehindFac < 0) {
+                    background3D.animateBehindFac += 1;
                 }
                 background3D.behind.style.transform = "translateX(" + -background3D.animateBehindFac * background3D.behind.offsetWidth + "px)";
                 background3D.behindClone.style.transform = "translateX(" + (1 - background3D.animateBehindFac) * background3D.behind.offsetWidth + "px)";
