@@ -2996,8 +2996,8 @@ function drawObjects() {
                 three.followObject = gui.demo ? Math.floor(Math.random() * trains.length) : 0;
             }
             const object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
-            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[three.followObject].positionZ == undefined ? 0 : trains3D[three.followObject].positionZ);
             background3D.animateBehind(false, object.displayAngle / Math.PI);
+            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[three.followObject].positionZ == undefined ? 0 : trains3D[three.followObject].positionZ);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -object.displayAngle;
             if (!trains[three.followObject].standardDirection) {
