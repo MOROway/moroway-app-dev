@@ -6289,6 +6289,7 @@ window.addEventListener("load", function () {
                         let fill = "rgba(" + starColorRed + "," + starColorGreen + "," + starColorBlue + "," + alpha + ")";
                         background3D.animateBehindStars.push({left: left, top: top, radius: radius, fill: fill});
                         background3D.animateBehindStars.push({left: left + background3D.behind.width, top: top, radius: radius, fill: fill});
+                        background3D.animateBehindStars.push({left: left - background3D.behind.width, top: top, radius: radius, fill: fill});
                     }
                 } else {
                     const length = 15 + 15 * Math.random();
