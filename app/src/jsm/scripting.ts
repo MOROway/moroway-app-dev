@@ -2896,7 +2896,11 @@ function drawObjects() {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
                 three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
             }
-            background3D.animateBehind(false, cars[three.followObject].displayAngle / Math.PI);
+            if ((!carParams.autoModeOff && carParams.isBackToRoot) || (carParams.autoModeOff && (cars[three.followObject].backToInit || cars[three.followObject].backwardsState > 0))) {
+                background3D.animateBehind(false, (cars[three.followObject].displayAngle - Math.PI) / (2 * Math.PI));
+            } else {
+                background3D.animateBehind(false, cars[three.followObject].displayAngle / (2 * Math.PI));
+            }
             three.followCamera.position.set(three.calcScale() * ((cars[three.followObject].outerX - background.width / 2) / background.width), three.calcScale() * (-(cars[three.followObject].outerY - background.height / 2) / background.width) + three.calcPositionY(), cars3D[three.followObject].positionZ == undefined ? 0 : cars3D[three.followObject].positionZ);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -cars[three.followObject].displayAngle;
@@ -2996,8 +3000,9 @@ function drawObjects() {
                 three.followObject = gui.demo ? Math.floor(Math.random() * trains.length) : 0;
             }
             const object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
-            background3D.animateBehind(false, object.displayAngle / Math.PI);
-            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[three.followObject].positionZ == undefined ? 0 : trains3D[three.followObject].positionZ);
+            const object3D = trains[three.followObject].standardDirection || trains3D[three.followObject].cars.length == 0 ? trains3D[three.followObject] : trains3D[three.followObject].cars[trains3D[three.followObject].cars.length - 1];
+            background3D.animateBehind(false, (trains[three.followObject].standardDirection ? object.displayAngle : object.displayAngle - Math.PI) / (2 * Math.PI));
+            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), object3D.positionZ == undefined ? 0 : object3D.positionZ);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -object.displayAngle;
             if (!trains[three.followObject].standardDirection) {
