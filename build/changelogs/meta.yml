@@ -229,6 +229,5 @@
 10.3.2:
   year: 2025
   general:
-    fixes: true
-  android:
     dependencies: true
+    fixes: true
