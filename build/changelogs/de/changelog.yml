@@ -233,6 +233,10 @@ versions:
             Verbesserter Mehrspieler Server.
         oc: |
             Aktualisierung von Apache Cordova Android auf Version 14.0.0.
+    10.3.2:
+        general: |
+            Verbesserungen and der Versions-Historie.
+            Verbesserungen an den Build-Skripten.
 hints:
     1.0.0:
         general: |
