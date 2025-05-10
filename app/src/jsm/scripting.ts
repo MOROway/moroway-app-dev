@@ -267,7 +267,7 @@ function onVisibilityChange() {
 
 function playAndPauseAudio() {
     if (typeof audio.context == "object") {
-        var play = audio.active && !client.hidden && !onlineGame.stop;
+        const play = audio.active && !client.hidden && !onlineGame.paused;
         if (play && audio.context.state == "suspended") {
             audio.context.resume();
         } else if (!play && audio.context.state == "running") {
@@ -2915,7 +2915,7 @@ function drawObjects() {
             three.followCamera.rotateOnAxis(axis, rad);
             three.renderer.render(three.scene, three.followCamera);
 
-            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop) {
+            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.waitingClock.visible) {
                 contextForeground.save();
                 contextForeground.translate(three.followCamControls.x, three.followCamControls.y + three.followCamControls.textSize);
                 contextForeground.font = three.followCamControls.font;
@@ -3015,7 +3015,7 @@ function drawObjects() {
             var rad = Math.PI / 2;
             three.followCamera.rotateOnAxis(axis, rad);
 
-            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop) {
+            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.waitingClock.visible) {
                 contextForeground.save();
                 contextForeground.translate(three.followCamControls.x, three.followCamControls.y);
                 contextForeground.beginPath();
@@ -3292,7 +3292,7 @@ function drawObjects() {
         }
 
         /////TAX OFFICE/////
-        if (getSetting("burnTheTaxOffice") && !onlineGame.stop) {
+        if (getSetting("burnTheTaxOffice") && !onlineGame.waitingClock.visible) {
             //General (BEGIN)
             contextForeground.save();
             contextForeground.translate(background.x, background.y);
@@ -3378,7 +3378,7 @@ function drawObjects() {
         }
 
         /////CLASSIC UI/////
-        if (classicUI.ready()) {
+        if (classicUI.ready(true)) {
             if (classicUISavedMouseHold != undefined && classicUISavedMouseDrag != undefined) {
                 hardware.mouse.isHold = classicUISavedMouseHold;
                 hardware.mouse.isDrag = classicUISavedMouseDrag;
@@ -5035,8 +5035,8 @@ const taxOffice: any = {
 const classicUI: any = {
     trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {fontFamily: defaultFont}},
     transformer: {src: 12, onSrc: 13, readySrc: 23, angle: Math.PI / 5, wheelInput: {src: 14, angle: 0, maxAngle: 1.5 * Math.PI}, directionInput: {srcStandardDirection: 24, srcNotStandardDirection: 15}},
-    ready: function (): boolean {
-        return getSetting("classicUI") && !(gui.controlCenter || gui.konamiOverlay || gui.three || gui.demo || onlineGame.stop || canvasGesture == undefined || contextGesture == undefined);
+    ready: function (displayOnly: boolean = false): boolean {
+        return getSetting("classicUI") && !(gui.controlCenter || gui.konamiOverlay || gui.three || gui.demo || onlineGame.waitingClock.visible || canvasGesture == undefined || contextGesture == undefined) && (displayOnly || !onlineGame.stop);
     },
     pointInTransformerImage: function (x, y): boolean {
         if (!classicUI.ready()) {
@@ -5392,6 +5392,7 @@ const onlineGame: any = {
             if (Date.now() - onlineGame.waitingClock.initTime < 5000) {
                 return;
             }
+            onlineGame.waitingClock.visible = onlineGame.stop;
             //WAITING CLOCK/GLOBAL/SETUP/1
             contextForeground.save();
             contextForeground.translate(canvasForeground.width / 2, canvasForeground.height / 2);
@@ -6895,6 +6896,7 @@ window.addEventListener("load", function () {
                                                 onlineGame.stop = false;
                                                 onlineGame.paused = false;
                                                 onlineGame.syncing = false;
+                                                onlineGame.waitingClock.visible = false;
                                                 if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
                                                     window.clearTimeout(onlineGame.syncRequest);
                                                 }
@@ -7002,6 +7004,9 @@ window.addEventListener("load", function () {
                                 case "sync-done":
                                     onlineGame.stop = onlineGame.paused;
                                     onlineGame.syncing = false;
+                                    if (!onlineGame.stop) {
+                                        onlineGame.waitingClock.visible = false;
+                                    }
                                     if (json.errorLevel !== ERROR_LEVEL_OKAY) {
                                         notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                     }
@@ -7038,6 +7043,9 @@ window.addEventListener("load", function () {
                                         }
                                         onlineGame.stop = onlineGame.syncing;
                                         onlineGame.paused = false;
+                                        if (!onlineGame.stop) {
+                                            onlineGame.waitingClock.visible = false;
+                                        }
                                         playAndPauseAudio();
                                         notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
                                         animateWorker.postMessage({k: "resume"});
