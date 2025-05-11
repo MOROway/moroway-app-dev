@@ -35,7 +35,7 @@ sed -i "s/\(versionName\s'\)[^']\+/\1$version/" app/build.gradle
 
 # Set Changelog
 rm app/src/main/res/values*/changelog-strings.xml 2>/dev/null
-for lang in "$working_dir_build"/changelogs/*; do
+for lang in "$working_dir_build"/.cache/changelogs/*; do
 	if [[ -d "$lang" ]]; then
 		lang=$(basename "$lang")
 		changelog="$("$working_dir_build"/build-libs/yq_linux_amd64 -r ".\"$version\" .content | .[]" "$working_dir_build/.cache/changelogs/"$lang"/android.json" | sed 's/{{[0-9]\+}}\s\?//g')"

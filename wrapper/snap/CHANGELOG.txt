@@ -360,3 +360,14 @@ Update dependencies.
 
 ---
 
+
+
+10.3.2
+
+Improve changelog page.
+Improve build scripts.
+Update dependencies.
+Bugfixes.
+
+---
+
