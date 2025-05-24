@@ -1,42 +1,45 @@
 "use strict";
 import {deepFreeze} from "./js_objects.js";
 //HANDLE STRINGS
-export function getString(prop, punctuationMark = "", caseType = "", lang = CURRENT_LANG) {
-    var str: string;
+export function getString(prop: [string, number] | string, punctuationMark: string = "", caseType: string = "", lang: string = CURRENT_LANG): string {
+    var str: string = "undefined";
     if (Array.isArray(prop)) {
-        if (prop.length == 2 && typeof prop[0] == "string" && typeof prop[1] == "number") {
-            if (typeof STRINGS[lang] != "undefined" && typeof STRINGS[lang][prop[0]] != "undefined" && typeof STRINGS[lang][prop[0]][prop[1]] != "undefined" && STRINGS[lang][prop[0]][prop[1]] != null && STRINGS[lang][prop[0]][prop[1]] != "") {
-                str = STRINGS[lang][prop[0]][prop[1]];
-            } else if (typeof STRINGS[DEFAULT_LANG] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != "undefined" && STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != null) {
-                str = STRINGS[DEFAULT_LANG][prop[0]][prop[1]];
-            } else {
-                return "undefined";
-            }
-        } else {
-            return "undefined";
+        if (typeof STRINGS[lang] != "undefined" && typeof STRINGS[lang][prop[0]] != "undefined" && typeof STRINGS[lang][prop[0]][prop[1]] != "undefined" && STRINGS[lang][prop[0]][prop[1]] != null && STRINGS[lang][prop[0]][prop[1]] != "") {
+            str = STRINGS[lang][prop[0]][prop[1]];
+        } else if (typeof STRINGS[DEFAULT_LANG] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != "undefined" && STRINGS[DEFAULT_LANG][prop[0]][prop[1]] != null) {
+            str = STRINGS[DEFAULT_LANG][prop[0]][prop[1]];
         }
     } else {
-        str = typeof STRINGS[lang] == "undefined" || typeof STRINGS[lang][prop] == "undefined" || STRINGS[lang][prop] == null || STRINGS[lang][prop] == "" ? (typeof STRINGS[DEFAULT_LANG] == "undefined" || typeof STRINGS[DEFAULT_LANG][prop] == "undefined" || typeof STRINGS[DEFAULT_LANG][prop] == null ? "undefined" : STRINGS[DEFAULT_LANG][prop]) : STRINGS[lang][prop];
+        if (typeof STRINGS[lang] != "undefined" && typeof STRINGS[lang][prop] != "undefined" && STRINGS[lang][prop] != null && STRINGS[lang][prop] != "") {
+            str = STRINGS[lang][prop];
+        } else if (typeof STRINGS[DEFAULT_LANG] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop] != "undefined" && typeof STRINGS[DEFAULT_LANG][prop] != null) {
+            str = STRINGS[DEFAULT_LANG][prop];
+        }
     }
     str += punctuationMark;
-    return caseType == "upper" ? str.toUpperCase() : caseType == "lower" ? str.toLowerCase() : str;
+    if (caseType == "upper") {
+        return str.toUpperCase();
+    }
+    if (caseType == "lower") {
+        return str.toLowerCase();
+    }
+    return str;
 }
 
-
-export function searchStringKeys(pattern: RegExp, lang: string = DEFAULT_LANG) : Array<String> {
+export function searchStringKeys(pattern: RegExp, lang: string = DEFAULT_LANG): string[] {
     const keyList = [];
     if (!STRINGS[lang]) {
-        return keyList
-    } 
+        return keyList;
+    }
     Object.keys(STRINGS[lang]).forEach((key) => {
-        if(key.match(pattern)) {
+        if (key.match(pattern)) {
             keyList.push(key);
         }
     });
     return keyList;
 }
 
-export function formatJSString(str: string, ...replaces: (string | number)[]) {
+export function formatJSString(str: string, ...replaces: (string | number)[]): string {
     for (var i = 0; i < replaces.length; i++) {
         if (str.includes("{{" + i + "}}")) {
             var toReplace = new RegExp("{{[" + i + "]}}", "g");
@@ -48,7 +51,7 @@ export function formatJSString(str: string, ...replaces: (string | number)[]) {
     return str;
 }
 
-export function formatHTMLString(str: string) {
+export function formatHTMLString(str: string): string {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
@@ -123,7 +126,7 @@ export function setHTMLStrings() {
     }
 }
 
-export function getLanguageList() {
+export function getLanguageList(): string[] {
     var langCodes = Object.keys(STRINGS);
     langCodes.sort(function (a, b) {
         if (a == CURRENT_LANG) {
@@ -145,7 +148,7 @@ export function setCurrentLang(lang) {
     window.localStorage.setItem("morowayAppLang", lang);
 }
 
-function getCurrentLang() {
+function getCurrentLang(): string {
     const savedLang = window.localStorage.getItem("morowayAppLang");
     if (typeof savedLang == "string") {
         return savedLang;
