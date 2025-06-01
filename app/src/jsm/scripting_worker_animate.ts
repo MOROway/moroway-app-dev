@@ -138,6 +138,37 @@ export interface RotationPoints {
     inner2outer: RotationPointsInner2Outer;
 }
 
+interface SwitchSide {
+    turned: boolean;
+    angles: {
+        normal: number;
+        turned: number;
+    };
+    x?: number;
+    y?: number;
+    lastStateChange?: number;
+}
+
+interface LeftRightSwitch {
+    left: SwitchSide;
+    right: SwitchSide;
+}
+interface LeftSwitch {
+    left: SwitchSide;
+}
+
+export interface Switches {
+    inner2outer: LeftRightSwitch;
+    outer2inner: LeftRightSwitch;
+    innerWide: LeftRightSwitch;
+    outerAltState3: LeftRightSwitch;
+    sidings1: LeftSwitch;
+    sidings2: LeftSwitch;
+    sidings3: LeftSwitch;
+    outerRightSiding: LeftSwitch;
+    outerRightSidingTurn: LeftSwitch;
+}
+
 function saveTrainCirclePrepare(train, trainOriginal) {
     delete train.lastDirectionChange;
     if (trainOriginal.circleFamily != null) {
@@ -2032,7 +2063,7 @@ var trains: TrainCalc[] = [
 var trainPics;
 const trainParams = {selected: Math.floor(Math.random() * trains.length), margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10};
 
-var switches;
+var switches: Switches;
 var switchesBeforeAddSidings;
 var background;
 const switchesBeforeFac = 1.3;

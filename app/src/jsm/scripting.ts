@@ -4,7 +4,7 @@
  *                 Imports                 *
  ******************************************/
 
-import {Train, TrainPoint, RotationPoints} from "./scripting_worker_animate.js";
+import {Train, TrainPoint, RotationPoints, Switches} from "./scripting_worker_animate.js";
 import {followLink, LINK_STATE_INTERNAL_HTML} from "{{jsm_platform}}/common/follow_links.js";
 import {getLocalAppDataCopy, setLocalAppDataCopy, APP_DATA} from "./common/app_data.js";
 import {formatJSString, getString, setHTMLStrings} from "./common/string_tools.js";
@@ -4798,7 +4798,7 @@ const trainActions = {
     }
 };
 
-var switches: any = {
+var switches: Switches = {
     inner2outer: {left: {turned: false, angles: {normal: 1.01 * Math.PI, turned: 0.941 * Math.PI}}, right: {turned: false, angles: {normal: 1.5 * Math.PI, turned: 1.56 * Math.PI}}},
     outer2inner: {left: {turned: false, angles: {normal: 0.25 * Math.PI, turned: 0.2 * Math.PI}}, right: {turned: false, angles: {normal: 0.27 * Math.PI, turned: 0.35 * Math.PI}}},
     innerWide: {left: {turned: false, angles: {normal: 1.44 * Math.PI, turned: 1.37 * Math.PI}}, right: {turned: false, angles: {normal: 1.02 * Math.PI, turned: 1.1 * Math.PI}}},
@@ -6952,12 +6952,17 @@ window.addEventListener("load", function () {
                                             }
                                             break;
                                         case "switches":
-                                            var obj = switches[input.index[0]][input.index[1]];
-                                            input.params.forEach(function (param) {
-                                                obj[Object.keys(param)[0]] = Object.values(param)[0];
-                                            });
-                                            obj.lastStateChange = frameNo;
-                                            animateWorker.postMessage({k: "switches", switches: switches});
+                                            if (Object.hasOwn(switches, input.index[0]) && Object.hasOwn(switches[input.index[0]], input.index[1])) {
+                                                const obj = switches[input.index[0]][input.index[1]];
+                                                input.params.forEach(function (param) {
+                                                    const key = Object.keys(param)[0];
+                                                    if (Object.hasOwn(obj, key)) {
+                                                        obj[key] = Object.values(param)[0];
+                                                    }
+                                                });
+                                                obj.lastStateChange = frameNo;
+                                                animateWorker.postMessage({k: "switches", switches: switches});
+                                            }
                                             break;
                                     }
                                     break;
