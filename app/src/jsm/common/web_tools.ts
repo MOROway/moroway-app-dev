@@ -4,13 +4,13 @@ import {APP_DATA} from "./app_data.js";
 import {formatJSString, getString, CURRENT_LANG} from "./string_tools.js";
 
 //HANDLE QUERY String
-export function getQueryString(key) {
+export function getQueryString(key: string): string {
     var value = "";
     window.location.search
         .substring(1)
         .split("&")
         .forEach(function (part) {
-            if (part.indexOf("=") > 0 && part.substring(0, part.indexOf("=")) == key) {
+            if (part.indexOf("=") > 0 && part.substring(0, part.indexOf("=")) === key) {
                 value = part.substring(part.indexOf("=") + 1);
             }
         });
@@ -18,28 +18,28 @@ export function getQueryString(key) {
 }
 
 //HANDLE LINKS
-export function getShareLink(id, key) {
+export function getShareLink(id: string, key: string): string {
     return formatJSString("{{sharelink}}", id, key);
 }
-export function getShareLinkServerName() {
+export function getShareLinkServerName(): string {
     return "{{shareserver}}";
 }
-export function getServerLink(protocol = PROTOCOL_HTTP) {
+export function getServerLink(protocol: string = PROTOCOL_HTTP): string {
     return protocol + "://{{serverlink}}";
 }
-export function getServerRedirectLink(key) {
+export function getServerRedirectLink(key: string): string {
     const SERVER_REDIRECT_LINK = getServerLink() + "/redirect_to/index.php";
     return SERVER_REDIRECT_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG;
 }
-export function getServerHTMLLink(key, showCloseButton = "") {
+export function getServerHTMLLink(key: string): string {
     const SERVER_HTML_LINK = getServerLink() + "/html_content/index.php";
-    return SERVER_HTML_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG + "&closeButton=" + showCloseButton;
+    return SERVER_HTML_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG + "&closeButton=auto";
 }
-export function getServerDataLink(path) {
+export function getServerDataLink(path: string): string {
     const SERVER_DATA_LINK = getServerLink() + "/data";
     return SERVER_DATA_LINK + path;
 }
-export function handleServerJSONValues(key, func) {
+export function handleServerJSONValues(key: string, func: (response: any) => void): void {
     const SERVER_JSON_LINK = getServerLink() + "/json_content/index.php";
     fetch(SERVER_JSON_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG)
         .then(function (response) {
@@ -58,7 +58,7 @@ export function handleServerJSONValues(key, func) {
             }
         });
 }
-export function getServerNote(func) {
+export function getServerNote(func: (response: any) => void): void {
     function getServerNoteImage(id, background) {
         return getServerDataLink("/server-note/img/") + id + (background ? "-background-image" : "-image") + ".png";
     }
@@ -82,7 +82,7 @@ export function getServerNote(func) {
         });
     }
 }
-export function showServerNote(serverNoteElementRoot: HTMLElement) {
+export function showServerNote(serverNoteElementRoot: HTMLElement): void {
     getServerNote(function (serverMsg) {
         function styleShowAgain() {
             window.localStorage.setItem("morowayAppLastServerNoteShowAgain", showAgain ? "1" : "0");

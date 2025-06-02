@@ -1,6 +1,7 @@
 "use strict";
 import {APP_DATA} from "./app_data.js";
 import {getSetting} from "./settings.js";
+
 //NOTIFICATIONS
 export function notify(elem, message, prio, timeout, actionHandler, actionText, minHeight = -1, channel = NOTIFICATION_CHANNEL_DEFAULT) {
     var notificationContainer = document.querySelector(elem);

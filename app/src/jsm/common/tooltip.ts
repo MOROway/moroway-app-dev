@@ -1,10 +1,10 @@
 "use strict";
-//TOOLTIPS
 
-function reset() {
+//TOOLTIPS
+function reset(): void {
     tooltipContainer.classList.remove("active");
 }
-export function initTooltip(elem: HTMLElement) {
+export function initTooltip(elem: HTMLElement): void {
     function activate() {
         tooltipContainer.classList.add("active");
         tooltipContainer.textContent = elem.dataset.tooltip;
@@ -35,10 +35,10 @@ export function initTooltip(elem: HTMLElement) {
         elem.dataset.tooltipInit = "1";
     }
 }
-export function initTooltips() {
-    const elemsTooltip = document.querySelectorAll("*[data-tooltip]") as NodeListOf<HTMLElement>;
-    for (let i = 0; i < elemsTooltip.length; i++) {
-        initTooltip(elemsTooltip[i]);
+export function initTooltips(): void {
+    const elementsTooltip = document.querySelectorAll("*[data-tooltip]") as NodeListOf<HTMLElement>;
+    for (let i = 0; i < elementsTooltip.length; i++) {
+        initTooltip(elementsTooltip[i]);
     }
 }
 const tooltipContainer = document.createElement("div");

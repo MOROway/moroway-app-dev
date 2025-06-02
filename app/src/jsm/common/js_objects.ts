@@ -1,4 +1,5 @@
 "use strict";
+
 //HANDLE OBJECTS
 export function copyJSObject(obj) {
     return structuredClone(obj);

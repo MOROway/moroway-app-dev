@@ -1,5 +1,6 @@
 "use strict";
 import {APP_DATA} from "./app_data.js";
+
 //COPY & PASTE
 export function copy(selector, successFunction, failFunction) {
     var selection = window.getSelection();

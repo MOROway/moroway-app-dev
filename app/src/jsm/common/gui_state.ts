@@ -1,6 +1,6 @@
 "use strict";
-//GUI STATE
 
+//GUI STATE
 export enum ThreeCameraModes {
     BIRDS_EYE = "birds-eye",
     FOLLOW_TRAIN = "follow-train",

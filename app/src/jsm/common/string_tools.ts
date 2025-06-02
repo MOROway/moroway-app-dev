@@ -1,5 +1,6 @@
 "use strict";
 import {deepFreeze} from "./js_objects.js";
+
 //HANDLE STRINGS
 export function getString(prop: [string, number] | string, punctuationMark: string = "", caseType: string = "", lang: string = CURRENT_LANG): string {
     var str: string = "undefined";

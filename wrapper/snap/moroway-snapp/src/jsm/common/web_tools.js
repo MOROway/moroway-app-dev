@@ -13,7 +13,7 @@ export function getQueryString(key) {
         .substring(1)
         .split("&")
         .forEach(function (part) {
-        if (part.indexOf("=") > 0 && part.substring(0, part.indexOf("=")) == key) {
+        if (part.indexOf("=") > 0 && part.substring(0, part.indexOf("=")) === key) {
             value = part.substring(part.indexOf("=") + 1);
         }
     });
@@ -34,10 +34,9 @@ export function getServerRedirectLink(key) {
     var SERVER_REDIRECT_LINK = getServerLink() + "/redirect_to/index.php";
     return SERVER_REDIRECT_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG;
 }
-export function getServerHTMLLink(key, showCloseButton) {
-    if (showCloseButton === void 0) { showCloseButton = ""; }
+export function getServerHTMLLink(key) {
     var SERVER_HTML_LINK = getServerLink() + "/html_content/index.php";
-    return SERVER_HTML_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG + "&closeButton=" + showCloseButton;
+    return SERVER_HTML_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG + "&closeButton=auto";
 }
 export function getServerDataLink(path) {
     var SERVER_DATA_LINK = getServerLink() + "/data";

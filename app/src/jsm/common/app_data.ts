@@ -1,5 +1,6 @@
 "use strict";
 import {deepFreeze} from "./js_objects.js";
+
 interface APP_DATA {
     version: {
         major: number;

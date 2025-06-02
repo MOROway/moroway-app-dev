@@ -6861,12 +6861,17 @@ window.addEventListener("load", function () {
                                             }
                                             break;
                                         case "switches":
-                                            var obj = switches[input_1.index[0]][input_1.index[1]];
-                                            input_1.params.forEach(function (param) {
-                                                obj[Object.keys(param)[0]] = Object.values(param)[0];
-                                            });
-                                            obj.lastStateChange = frameNo;
-                                            animateWorker.postMessage({ k: "switches", switches: switches });
+                                            if (Object.hasOwn(switches, input_1.index[0]) && Object.hasOwn(switches[input_1.index[0]], input_1.index[1])) {
+                                                var obj_1 = switches[input_1.index[0]][input_1.index[1]];
+                                                input_1.params.forEach(function (param) {
+                                                    var key = Object.keys(param)[0];
+                                                    if (Object.hasOwn(obj_1, key)) {
+                                                        obj_1[key] = Object.values(param)[0];
+                                                    }
+                                                });
+                                                obj_1.lastStateChange = frameNo;
+                                                animateWorker.postMessage({ k: "switches", switches: switches });
+                                            }
                                             break;
                                     }
                                     break;
