@@ -1,7 +1,7 @@
 "use strict";
-import {followIntent} from "./common/follow_links.js";
+import { followLink, LINK_STATE_INTENT } from "{{jsm}}/common/web_tools.js";
 document.addEventListener("deviceready", function () {
     window.plugins.webintent.getUri(function (url) {
-        followIntent(url);
+        followLink(url, "", LINK_STATE_INTENT);
     }, false);
 });

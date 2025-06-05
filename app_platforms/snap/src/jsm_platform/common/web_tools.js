@@ -1,9 +1,10 @@
 "use strict";
-import {getShareLinkServerName} from "../../jsm/common/web_tools.js";
+import { LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "{{jsm}}/common/web_tools.js";
+
 export function followLink(input1, input2, input3) {
     switch (input3) {
         case LINK_STATE_NORMAL:
-            input2 = "_system";
+            _openExternalLink.exec(input1);
             break;
         case LINK_STATE_INTERNAL_HTML:
             var hash, queryString;
@@ -22,33 +23,14 @@ export function followLink(input1, input2, input3) {
             if (hash !== undefined) {
                 input1 += hash;
             }
+            if (input2 === "_self") {
+                window.location.href = input1;
+            } else {
+                _openNormalLink.exec(input1);
+            }
             break;
         case LINK_STATE_INTERNAL_LICENSE:
-            input1 = "./license/index.html?license-file=" + input1;
+            followLink("license/?license-file=" + input1, input2, LINK_STATE_INTERNAL_HTML);
             break;
     }
-    window.open(input1, input2);
 }
-
-export function followIntent(url) {
-    var redirect = "./";
-    if (url !== null) {
-        url = url.replace(/^[a-z]*:[/][/]/, "");
-    }
-    var server = getShareLinkServerName() + "/";
-    if (url !== null && url.toLowerCase().indexOf(server) === 0) {
-        url = url.replace(server, "");
-        var id = url.replace(/[/].*$/, "");
-        var key = url.replace(/.*[/]([^/]+)([/])?$/, "$1");
-        if (url.length > 0 && id.match(/^[0-9]+$/) !== null && key.match(/^[a-zA-Z0-9]+$/) !== null) {
-            redirect += "?mode=multiplay&id=" + id + "&key=" + key;
-        }
-        followLink(redirect, "_blank", LINK_STATE_INTERNAL_HTML);
-    } else {
-        followLink(redirect + "html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
-    }
-}
-
-export const LINK_STATE_NORMAL = 0;
-export const LINK_STATE_INTERNAL_HTML = 1;
-export const LINK_STATE_INTERNAL_LICENSE = 3;

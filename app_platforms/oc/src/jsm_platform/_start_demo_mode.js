@@ -1,6 +1,6 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "./common/follow_links.js";
-import {setHTMLStrings} from "../jsm/common/string_tools.js";
+import { setHTMLStrings } from "{{jsm}}/common/string_tools.js";
+import { followLink, LINK_STATE_INTERNAL_HTML } from "{{jsm}}/common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const demoModeGo = document.getElementById("demo-mode-go");

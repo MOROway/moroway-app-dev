@@ -115,6 +115,7 @@ The following query parameters can be used with MOROway App (foremost web platfo
 - only demo or demoStandalone mode
   - `gui-demo-3d-rotation-speed-percent`: 0-100 (*3D demo mode canvas rotation speed in percent*)
   - `gui-demo-random`: 0, 1 (*Overrides all other GUI-related query parameters by random values*)
+  - `exit-timeout`: 1, 2, 3, … (*Leave app after specified amount of minutes. Only works on supported platforms.*)
 - only multiplay mode
   - `key`: *game key*
   - `id`: *game id*

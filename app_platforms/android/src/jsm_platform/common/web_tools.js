@@ -1,8 +1,10 @@
 "use strict";
+import { LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "{{jsm}}/common/web_tools.js";
+
 export function followLink(input1, input2, input3) {
+    var followLink = true;
     switch (input3) {
         case LINK_STATE_NORMAL:
-            _openExternalLink.exec(input1);
             break;
         case LINK_STATE_INTERNAL_HTML:
             var hash, queryString;
@@ -21,18 +23,17 @@ export function followLink(input1, input2, input3) {
             if (hash !== undefined) {
                 input1 += hash;
             }
-            if (input2 == "_self") {
-                window.location.href = input1;
-            } else {
-                _openNormalLink.exec(input1);
-            }
             break;
         case LINK_STATE_INTERNAL_LICENSE:
-            followLink("license/?license-file=" + input1, input2, LINK_STATE_INTERNAL_HTML);
+            input1 = "./license/index.html?license-file=" + input1;
             break;
     }
+    if (followLink) {
+        input2 = input2.replace(/\s/g, "");
+        if (input2 === "") {
+            window.open(input1);
+        } else {
+            window.open(input1, input2);
+        }
+    }
 }
-
-export const LINK_STATE_NORMAL = 0;
-export const LINK_STATE_INTERNAL_HTML = 1;
-export const LINK_STATE_INTERNAL_LICENSE = 3;

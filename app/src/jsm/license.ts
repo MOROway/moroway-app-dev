@@ -1,9 +1,8 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "{{jsm_platform}}/common/follow_links.js";
-import {APP_DATA} from "./common/app_data.js";
-import {getQueryString} from "./common/web_tools.js";
-import {getString, setHTMLStrings} from "./common/string_tools.js";
-import {initTooltips} from "./common/tooltip.js";
+import { APP_DATA } from "./common/app_data.js";
+import { getString, setHTMLStrings } from "./common/string_tools.js";
+import { initTooltips } from "./common/tooltip.js";
+import { followLink, getQueryString, LINK_STATE_INTERNAL_HTML } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("#backOption")?.addEventListener("click", function () {

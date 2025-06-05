@@ -1,8 +1,7 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "./common/follow_links.js";
-import {getLocalAppDataCopy, setLocalAppDataCopy, APP_DATA} from "../jsm/common/app_data.js";
-import {getString, setHTMLStrings} from "../jsm/common/string_tools.js";
-import {showServerNote} from "../jsm/common/web_tools.js";
+import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "{{jsm}}/common/app_data.js";
+import { getString, setHTMLStrings } from "{{jsm}}/common/string_tools.js";
+import { followLink, LINK_STATE_INTERNAL_HTML, showServerNote } from "{{jsm}}/common/web_tools.js";
 
 function styleContent() {
     var content = document.getElementById("content");

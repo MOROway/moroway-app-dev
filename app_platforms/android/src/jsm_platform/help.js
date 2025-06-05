@@ -1,8 +1,8 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL} from "./common/follow_links.js";
-import {getString} from "../jsm/common/string_tools.js";
-import {handleServerJSONValues, getServerHTMLLink} from "../jsm/common/web_tools.js";
-import {notify, NOTIFICATION_PRIO_DEFAULT} from "../jsm/common/notify.js";
+import { NOTIFICATION_PRIO_DEFAULT, notify } from "{{jsm}}/common/notify.js";
+import { getString } from "{{jsm}}/common/string_tools.js";
+import { followLink, getServerHTMLLink, handleServerJSONValues, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "{{jsm}}/common/web_tools.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     const elem = document.getElementById("backOption");
     if (elem) {

@@ -4,20 +4,19 @@
  *                 Imports                 *
  ******************************************/
 
-import {Train, TrainPoint, RotationPoints, Switches} from "./scripting_worker_animate.js";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "{{jsm_platform}}/common/follow_links.js";
-import {getLocalAppDataCopy, setLocalAppDataCopy, APP_DATA} from "./common/app_data.js";
-import {formatJSString, getString, setHTMLStrings} from "./common/string_tools.js";
-import {getQueryString, getServerLink, getShareLink, PROTOCOL_WS} from "./common/web_tools.js";
-import {getSetting} from "./common/settings.js";
-import {notify, NOTIFICATION_CHANNEL_3D_CAMERA, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT, NOTIFICATION_CHANNEL_TRAIN_SWITCHES, NOTIFICATION_PRIO_DEFAULT, NOTIFICATION_PRIO_LOW, NOTIFICATION_PRIO_HIGH} from "./common/notify.js";
-import {copyJSObject} from "./common/js_objects.js";
-import {copy} from "./common/copy_paste.js";
-import {ThreeCameraModes, getGuiState, setGuiState} from "./common/gui_state.js";
-import {getVersionCode, updateSavedGame, removeSavedGame} from "./common/saved_game.js";
-import {initTooltip, initTooltips} from "./common/tooltip.js";
+import { GLTFLoader } from "../lib/open_code/jsm/three.js/GLTFLoader.js";
 import * as THREE from "../lib/open_code/jsm/three.js/three.module.min.js";
-import {GLTFLoader} from "../lib/open_code/jsm/three.js/GLTFLoader.js";
+import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "./common/app_data.js";
+import { copy } from "./common/copy_paste.js";
+import { getGuiState, setGuiState, ThreeCameraModes } from "./common/gui_state.js";
+import { copyJSObject } from "./common/js_objects.js";
+import { NOTIFICATION_CHANNEL_3D_CAMERA, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT, NOTIFICATION_CHANNEL_TRAIN_SWITCHES, NOTIFICATION_PRIO_DEFAULT, NOTIFICATION_PRIO_HIGH, NOTIFICATION_PRIO_LOW, notify } from "./common/notify.js";
+import { getVersionCode, removeSavedGame, updateSavedGame } from "./common/saved_game.js";
+import { getSetting } from "./common/settings.js";
+import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
+import { initTooltip, initTooltips } from "./common/tooltip.js";
+import { followLink, getQueryString, getServerLink, getShareLink, LINK_STATE_INTERNAL_HTML, PROTOCOL_WS } from "./common/web_tools.js";
+import { RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_animate.js";
 
 /*******************************************
  *          TypeScript Interfaces          *
@@ -5567,6 +5566,9 @@ const demoMode: any = {
         if (demoMode.leaveTimeout != undefined && demoMode.leaveTimeout != null) {
             window.clearTimeout(demoMode.leaveTimeout);
         }
+    },
+    reload: function () {
+        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
     }
 };
 
@@ -7536,14 +7538,34 @@ window.addEventListener("load", function () {
 
                 //Gestures
                 if (gui.demo) {
+                    const demoModeTimeoutDelay = 90000;
                     window.setTimeout(function () {
                         if (carParams.autoModeRuns) {
                             window.sessionStorage.setItem("demoCars", JSON.stringify(cars));
                             window.sessionStorage.setItem("demoCarParams", JSON.stringify(carParams));
                             window.sessionStorage.setItem("demoBg", JSON.stringify(background));
                         }
-                        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
-                    }, 90000);
+                        if (Object.hasOwn(demoMode, "exitTimeout")) {
+                            var elapsedTime = demoModeTimeoutDelay;
+                            const storedElapsedTime = parseInt(window.sessionStorage.getItem("demoElapsedTime"), 10);
+                            if (Number.isInteger(storedElapsedTime)) {
+                                elapsedTime += storedElapsedTime;
+                            }
+                            window.sessionStorage.setItem("demoElapsedTime", JSON.stringify(elapsedTime));
+                            if (elapsedTime >= demoMode.exitTimeout) {
+                                window.sessionStorage.removeItem("demoElapsedTime");
+                                const event = new CustomEvent("moroway-app-exit");
+                                document.dispatchEvent(event);
+                                window.setTimeout(function () {
+                                    demoMode.reload();
+                                }, 500);
+                            } else {
+                                demoMode.reload();
+                            }
+                        } else {
+                            demoMode.reload();
+                        }
+                    }, demoModeTimeoutDelay);
                     if (!demoMode.standalone) {
                         document.addEventListener("keyup", function (event) {
                             if (event.key == "Escape") {
@@ -7847,6 +7869,10 @@ window.addEventListener("load", function () {
             const cameraModes = Object.values(ThreeCameraModes);
             three.cameraMode = cameraModes[Math.floor(Math.random() * cameraModes.length)];
             three.demoRotationSpeedFac = Math.floor(Math.random() * 101);
+        }
+        const queryStringDemoExitTimeout = parseInt(getQueryString("exit-timeout"), 10);
+        if (typeof queryStringDemoExitTimeout == "number" && Number.isInteger(queryStringDemoExitTimeout) && queryStringDemoExitTimeout > 0) {
+            demoMode.exitTimeout = queryStringDemoExitTimeout * 60000;
         }
     }
 

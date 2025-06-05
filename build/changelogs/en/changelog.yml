@@ -295,6 +295,9 @@ versions:
         general: |
             Improve changelog page.
             Improve build scripts.
+    10.3.4:
+        snap: |
+            Exit app started in demo mode after specified amount of minutes via CLI-parameter --exit-timeout=MINUTES.
 hints:
     1.0.0:
         general: |
@@ -311,10 +314,10 @@ hints:
             Cars start if red bus is clicked (beneath train station).
     4.0.0:
         general: |
-            Cars start if red bus is clicked (beneath train station). 
+            Cars start if red bus is clicked (beneath train station).
     6.0.0:
         general: |
-            Today's multiplay server is incompatible with this version. 
+            Today's multiplay server is incompatible with this version.
 warnings:
     4.0.0:
         general: |
@@ -330,7 +333,7 @@ warnings:
             Bug: May look pixelated.
     6.1.0:
         general: |
-            Bug: Performance issues. 
+            Bug: Performance issues.
     6.2.0:
         general: |
-            Bug: Performance issues. 
+            Bug: Performance issues.

@@ -218,7 +218,7 @@ for platform in ${platforms[@]}; do
 					i=$(($i + 1))
 					((i == 3)) && logexit 6 "module resolution error"
 				done
-				sed -i 's#\(import\s\+.\+\s\+from\s\+"\)[{][{]jsm_platform[}][}]#\1'"$replace"'#' "$to/$ts_file"
+				sed -i 's#\(\(import\|export\)\s\+.\+\s\+from\s\+"\)[{][{]jsm_platform[}][}]#\1'"$replace"'#' "$to/$ts_file"
 				replace="../jsm"
 				i=0
 				while [[ ! -d "$(dirname "$to/$ts_file")/$replace" ]]; do
@@ -226,7 +226,7 @@ for platform in ${platforms[@]}; do
 					i=$(($i + 1))
 					((i == 3)) && logexit 7 "module resolution error"
 				done
-				sed -i 's#\(import\s\+.\+\s\+from\s\+"\)[{][{]jsm[}][}]#\1'"$replace"'#' "$to/$ts_file"
+				sed -i 's#\(\(import\|export\)\s\+.\+\s\+from\s\+"\)[{][{]jsm[}][}]#\1'"$replace"'#' "$to/$ts_file"
 			fi
 		done
 		tsc -p "$to/tsconfig.json" || logexit 8 "TypeScript error"

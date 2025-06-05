@@ -1,10 +1,9 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL} from "{{jsm_platform}}/common/follow_links.js";
-import {APP_DATA} from "./common/app_data.js";
-import {formatJSString, getString, setHTMLStrings} from "./common/string_tools.js";
-import {handleServerJSONValues, getServerHTMLLink, getServerRedirectLink} from "./common/web_tools.js";
-import {notify, NOTIFICATION_PRIO_DEFAULT} from "./common/notify.js";
-import {initTooltips} from "./common/tooltip.js";
+import { APP_DATA } from "./common/app_data.js";
+import { NOTIFICATION_PRIO_DEFAULT, notify } from "./common/notify.js";
+import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
+import { initTooltips } from "./common/tooltip.js";
+import { followLink, getServerHTMLLink, getServerRedirectLink, handleServerJSONValues, LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     function getUserSystem() {

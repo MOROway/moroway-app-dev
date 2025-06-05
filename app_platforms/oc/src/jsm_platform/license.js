@@ -1,5 +1,5 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "./common/follow_links.js";
+import { followLink, LINK_STATE_INTERNAL_HTML } from "{{jsm}}/common/web_tools.js";
 function goBack() {
     followLink("./help", "_self", LINK_STATE_INTERNAL_HTML);
 }

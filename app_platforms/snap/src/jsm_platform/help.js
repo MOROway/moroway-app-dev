@@ -1,5 +1,5 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_LICENSE} from "./common/follow_links.js";
+import { followLink, LINK_STATE_INTERNAL_LICENSE } from "{{jsm}}/common/web_tools.js";
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("#legal-appsnap-licenses").classList.remove("hidden");
     document.querySelector("#legal-appsnap-electron-builder-license").addEventListener("click", function () {

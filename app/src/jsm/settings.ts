@@ -1,8 +1,8 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "{{jsm_platform}}/common/follow_links.js";
-import {setHTMLStrings} from "./common/string_tools.js";
-import {setSettingsHTML} from "./common/settings.js";
-import {initTooltips} from "./common/tooltip.js";
+import { setSettingsHTML } from "./common/settings.js";
+import { setHTMLStrings } from "./common/string_tools.js";
+import { initTooltips } from "./common/tooltip.js";
+import { followLink, LINK_STATE_INTERNAL_HTML } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     setHTMLStrings();

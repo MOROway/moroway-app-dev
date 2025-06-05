@@ -1,7 +1,7 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "{{jsm_platform}}/common/follow_links.js";
-import {formatHTMLString, formatJSString, getString, searchStringKeys, setHTMLStrings} from "./common/string_tools.js";
-import {initTooltips} from "./common/tooltip.js";
+import { formatHTMLString, formatJSString, getString, searchStringKeys, setHTMLStrings } from "./common/string_tools.js";
+import { initTooltips } from "./common/tooltip.js";
+import { followLink, LINK_STATE_INTERNAL_HTML } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     function createCardForMinor(major: number, element: HTMLElement, newestFamily: boolean) {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 element.appendChild(subElementPatches);
             }
         }
-        
+
         const minors = searchStringKeys(RegExp("whatsNewScreenByVersionMa" + major + "Mi[0-9]+Pa0"));
         if (minors.length == 0) {
             return;

@@ -1,6 +1,6 @@
 "use strict";
-import {getSetting, getSettings, setSetting} from "../jsm/common/settings.js";
-import {getServerNote, getServerRedirectLink} from "../jsm/common/web_tools.js";
+import { getSetting, getSettings, setSetting } from "{{jsm}}/common/settings.js";
+import { getServerNote, getServerRedirectLink } from "{{jsm}}/common/web_tools.js";
 
 window.addEventListener("load", function () {
     getServerNote(function (serverMsg) {

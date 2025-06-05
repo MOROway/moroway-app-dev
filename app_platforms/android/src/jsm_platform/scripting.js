@@ -1,8 +1,8 @@
 "use strict";
-import {APP_DATA} from "../jsm/common/app_data.js";
-import {getSetting} from "../jsm/common/settings.js";
-import {getString} from "../jsm/common/string_tools.js";
-import {optionsMenuEditorAdd, optionsMenuEditorHide} from "../jsm/scripting.js";
+import { APP_DATA } from "{{jsm}}/common/app_data.js";
+import { getSetting } from "{{jsm}}/common/settings.js";
+import { getString } from "{{jsm}}/common/string_tools.js";
+import { optionsMenuEditorAdd, optionsMenuEditorHide } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-after-calc-options-menu-load", function () {
     optionsMenuEditorHide("canvas-team");

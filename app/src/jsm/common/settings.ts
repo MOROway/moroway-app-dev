@@ -1,9 +1,9 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "{{jsm_platform}}/common/follow_links.js";
-import {APP_DATA} from "./app_data.js";
-import {getString, getLanguageList, setCurrentLang, CURRENT_LANG} from "./string_tools.js";
-import {notify, NOTIFICATION_PRIO_HIGH, NOTIFICATION_PRIO_LOW} from "./notify.js";
-import {isGameSaved, removeSavedGame} from "./saved_game.js";
+import { APP_DATA } from "./app_data.js";
+import { NOTIFICATION_PRIO_HIGH, NOTIFICATION_PRIO_LOW, notify } from "./notify.js";
+import { isGameSaved, removeSavedGame } from "./saved_game.js";
+import { CURRENT_LANG, getLanguageList, getString, setCurrentLang } from "./string_tools.js";
+import { followLink, LINK_STATE_INTERNAL_HTML } from "./web_tools.js";
 
 //SETTINGS
 export function getSettings() {

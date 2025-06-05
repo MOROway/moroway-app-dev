@@ -1,11 +1,10 @@
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_HTML} from "./common/follow_links.js";
-import {APP_DATA} from "{{jsm}}/common/app_data.js";
-import {showServerNote} from "{{jsm}}/common/web_tools.js";
-import {getString} from "{{jsm}}/common/string_tools.js";
-import {setSettingsHTML} from "{{jsm}}/common/settings.js";
-import {notify, NOTIFICATION_PRIO_DEFAULT} from "{{jsm}}/common/notify.js";
-import {getMode} from "{{jsm}}/scripting.js";
+import { APP_DATA } from "{{jsm}}/common/app_data.js";
+import { NOTIFICATION_PRIO_DEFAULT, notify } from "{{jsm}}/common/notify.js";
+import { setSettingsHTML } from "{{jsm}}/common/settings.js";
+import { getString } from "{{jsm}}/common/string_tools.js";
+import { followLink, LINK_STATE_INTERNAL_HTML, showServerNote } from "{{jsm}}/common/web_tools.js";
+import { getMode } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-ready", function () {
     if (getMode() == "normal") {
@@ -66,6 +65,16 @@ document.addEventListener("moroway-app-keep-screen-alive", function (event) {
                     }
                 }
             }
+        }
+    }
+});
+
+document.addEventListener("moroway-app-exit", function () {
+    try {
+        window.close();
+    } catch (error) {
+        if (APP_DATA.debug) {
+            console.log("Window-Close-Error:", error);
         }
     }
 });

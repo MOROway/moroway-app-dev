@@ -1,7 +1,8 @@
 "use strict";
-import {followLink, LINK_STATE_NORMAL} from "{{jsm_platform}}/common/follow_links.js";
-import {APP_DATA} from "./app_data.js";
-import {formatJSString, getString, CURRENT_LANG} from "./string_tools.js";
+import { followLink } from "{{jsm_platform}}/common/web_tools.js";
+import { APP_DATA } from "./app_data.js";
+import { CURRENT_LANG, formatJSString, getString } from "./string_tools.js";
+export { followLink } from "{{jsm_platform}}/common/web_tools.js";
 
 //HANDLE QUERY String
 export function getQueryString(key: string): string {
@@ -170,3 +171,8 @@ export function showServerNote(serverNoteElementRoot: HTMLElement): void {
 
 export const PROTOCOL_HTTP = "{{hypertextprotocol}}";
 export const PROTOCOL_WS = "{{websocketprotocol}}";
+
+export const LINK_STATE_NORMAL = 0;
+export const LINK_STATE_INTERNAL_HTML = 1;
+export const LINK_STATE_INTERNAL_LICENSE = 2;
+export const LINK_STATE_INTENT = 4;
