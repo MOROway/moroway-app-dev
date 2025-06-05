@@ -10,12 +10,12 @@ import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "./common/app
 import { copy } from "./common/copy_paste.js";
 import { getGuiState, setGuiState, ThreeCameraModes } from "./common/gui_state.js";
 import { copyJSObject } from "./common/js_objects.js";
-import { NOTIFICATION_CHANNEL_3D_CAMERA, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT, NOTIFICATION_CHANNEL_TRAIN_SWITCHES, NOTIFICATION_PRIO_DEFAULT, NOTIFICATION_PRIO_HIGH, NOTIFICATION_PRIO_LOW, notify } from "./common/notify.js";
+import { NotificationChannel, NotificationPriority, notify } from "./common/notify.js";
 import { getVersionCode, removeSavedGame, updateSavedGame } from "./common/saved_game.js";
 import { getSetting } from "./common/settings.js";
 import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
 import { initTooltip, initTooltips } from "./common/tooltip.js";
-import { followLink, getQueryString, getServerLink, getShareLink, LINK_STATE_INTERNAL_HTML, PROTOCOL_WS } from "./common/web_tools.js";
+import { followLink, getQueryString, getServerLink, getShareLink, LinkStates, Protocols } from "./common/web_tools.js";
 import { RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_animate.js";
 
 /*******************************************
@@ -461,7 +461,7 @@ function closeConfirmDialog() {
 }
 
 function switchMode(mode = "normal") {
-    followLink("?mode=" + mode, "_self", LINK_STATE_INTERNAL_HTML);
+    followLink("?mode=" + mode, "_self", LinkStates.InternalHtml);
 }
 
 export function getMode() {
@@ -1018,7 +1018,7 @@ function calcMenusAndBackground(state) {
         };
         elementHelp?.addEventListener("click", function () {
             commonOnOptionsMenuClick();
-            followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);
+            followLink("help", "_blank", LinkStates.InternalHtml);
         });
         elementInfoToggle?.addEventListener("click", function () {
             commonOnOptionsMenuClick();
@@ -1057,7 +1057,7 @@ function calcMenusAndBackground(state) {
             set3DItems();
             calcMenusAndBackground("items-change");
             if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.demo && !gui.three) {
-                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected])), NOTIFICATION_PRIO_HIGH, 1250, null, null, client.y + menus.outerContainer.height);
+                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected])), NotificationPriority.High, 1250, null, null, client.y + menus.outerContainer.height);
             }
         });
         element3DViewNightToggle?.addEventListener("click", function () {
@@ -1376,11 +1376,11 @@ function onMouseRight(event) {
     client.chosenInputMethod = "mouse";
     if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
         controlCenter.showCarCenter = true;
-        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
+        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
     } else {
         gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
         if (gui.controlCenter) {
-            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
         }
         controlCenter.mouse.clickEvent = false;
         controlCenter.mouse.wheelScrolls = false;
@@ -1509,12 +1509,12 @@ function getTouchEnd(event) {
     if (controlCenter.mouse.prepare && event.touches.length == 0) {
         if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
             controlCenter.showCarCenter = true;
-            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         } else {
             gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
             if (gui.controlCenter) {
-                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NOTIFICATION_PRIO_LOW, 1000, null, null, client.y + menus.outerContainer.height);
+                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
             }
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         }
@@ -1950,7 +1950,7 @@ function carCollisionCourse(input1, sendNotification, fixFac: number | undefined
             context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             if (context.isPointInPath(x1, y1) || context.isPointInPath(x2, y2) || context.isPointInPath(x3, y3)) {
                 if (sendNotification && cars[input1].move) {
-                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames", input1]), getString(["appScreenCarNames", i])), NOTIFICATION_PRIO_DEFAULT, 2000, null, null, client.y + menus.outerContainer.height);
+                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames", input1]), getString(["appScreenCarNames", i])), NotificationPriority.Default, 2000, null, null, client.y + menus.outerContainer.height);
                 }
                 collision = true;
                 cars[input1].move = cars[input1].backToInit = false;
@@ -2400,7 +2400,7 @@ function drawObjects() {
                             window.sessionStorage.removeItem("demoCarParams");
                             window.sessionStorage.removeItem("demoBg");
                         } else {
-                            notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NOTIFICATION_PRIO_HIGH, 5000, null, null, client.height);
+                            notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NotificationPriority.High, 5000, null, null, client.height);
                         }
                         carParams.autoModeOff = true;
                         carParams.autoModeRuns = false;
@@ -2419,7 +2419,7 @@ function drawObjects() {
                     window.sessionStorage.removeItem("demoCarParams");
                     window.sessionStorage.removeItem("demoBg");
                 } else {
-                    notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NOTIFICATION_PRIO_HIGH, 5000, null, null, client.height);
+                    notify("#canvas-notifier", getString("appScreenCarAutoModeCrash", "."), NotificationPriority.High, 5000, null, null, client.height);
                 }
                 carParams.autoModeOff = true;
                 carParams.autoModeRuns = false;
@@ -2675,7 +2675,7 @@ function drawObjects() {
     var wasHold = hardware.mouse.isHold;
     frameNo++;
     if (frameNo % 1000000 === 0) {
-        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NOTIFICATION_PRIO_DEFAULT, 5000, null, null, client.y + menus.outerContainer.height);
+        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NotificationPriority.Default, 5000, null, null, client.y + menus.outerContainer.height);
     }
     if (client.zoomAndTilt.realScale != client.zoomAndTilt.realScaleOld || client.zoomAndTilt.offsetX != client.zoomAndTilt.offsetXOld || client.zoomAndTilt.offsetY != client.zoomAndTilt.offsetYOld) {
         client.zoomAndTilt.realScaleOld = client.zoomAndTilt.realScale;
@@ -3513,7 +3513,7 @@ function drawObjects() {
                     }
                     trainParams.selectedLastChange = frameNo;
                     if (!classicUI.trainSwitch.selectedTrainDisplay.visible) {
-                        notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected])), NOTIFICATION_PRIO_HIGH, 1250, null, null, client.height, NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH);
+                        notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected])), NotificationPriority.High, 1250, null, null, client.height, NotificationChannel.ClassicUiTrainSwitch);
                     }
                 }
             }
@@ -4644,7 +4644,7 @@ function actionSync(objectName: string, index: any[] | number | undefined = unde
                         notifyArr.push(getString.apply(null, elem.getString));
                     });
                     var notifyStr = formatJSString.apply(null, notifyArr);
-                    notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + menus.outerContainer.height);
+                    notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
                 }
                 break;
         }
@@ -4825,7 +4825,7 @@ const switchActions = {
             switches[key][side].turned = !switches[key][side].turned;
             switches[key][side].lastStateChange = frameNo;
             animateWorker.postMessage({k: "switches", switches: switches});
-            notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_TRAIN_SWITCHES);
+            notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height, NotificationChannel.TrainSwitches);
         }
         if (existsAudio("switch")) {
             stopAudio("switch");
@@ -4919,7 +4919,7 @@ const carActions = {
                 carParams.autoModeOff = false;
                 carParams.autoModeRuns = true;
                 carParams.autoModeInit = true;
-                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
+                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
                 return true;
             }
             return false;
@@ -4928,7 +4928,7 @@ const carActions = {
             if (this.checkReady() && !carParams.autoModeOff && !carParams.isBackToRoot) {
                 carParams.autoModeRuns = true;
                 carParams.isBackToRoot = true;
-                notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height);
+                notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NotificationPriority.Default, 750, null, null, client.y + menus.outerContainer.height);
                 return true;
             }
             return false;
@@ -4938,7 +4938,7 @@ const carActions = {
                 return false;
             }
             carParams.autoModeRuns = false;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
         resume: function () {
@@ -4947,7 +4947,7 @@ const carActions = {
             }
             carParams.autoModeRuns = true;
             carParams.autoModeInit = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         }
     },
@@ -4971,7 +4971,7 @@ const carActions = {
             cars[car].backToInit = false;
             carParams.init = false;
             carParams.autoModeOff = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", car])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
         stop: function (car) {
@@ -4984,7 +4984,7 @@ const carActions = {
             cars[car].backToInit = false;
             carParams.init = false;
             carParams.autoModeOff = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", car])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
         backwards: function (car) {
@@ -4998,7 +4998,7 @@ const carActions = {
                 return false;
             }
             cars[car].move = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", car])), NOTIFICATION_PRIO_DEFAULT, 750, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 750, null, null, client.y + menus.outerContainer.height);
             return true;
         },
         park: function (car) {
@@ -5007,7 +5007,7 @@ const carActions = {
             }
             cars[car].move = true;
             cars[car].backToInit = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", car])), NOTIFICATION_PRIO_DEFAULT, 500, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         }
     }
@@ -5534,7 +5534,7 @@ const onlineGame: any = {
     }
 };
 const onlineConnection: any = {
-    serverURI: getServerLink(PROTOCOL_WS) + "/multiplay",
+    serverURI: getServerLink(Protocols.WebSocket) + "/multiplay",
     send: function (mode: string, message?: string) {
         if (onlineConnection.socket && onlineConnection.socket.readyState == WebSocket.OPEN) {
             onlineConnection.socket.send(
@@ -5568,7 +5568,7 @@ const demoMode: any = {
         }
     },
     reload: function () {
-        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
+        followLink(window.location.href, "_self", LinkStates.InternalHtml);
     }
 };
 
@@ -5640,9 +5640,9 @@ const three: Three = {
             }
         }
         if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 2500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NotificationPriority.Default, 2500, null, null, client.y + menus.outerContainer.height, NotificationChannel.Camera3D);
         } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NOTIFICATION_PRIO_DEFAULT, 2500, null, null, client.y + menus.outerContainer.height, NOTIFICATION_CHANNEL_3D_CAMERA);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NotificationPriority.Default, 2500, null, null, client.y + menus.outerContainer.height, NotificationChannel.Camera3D);
         }
         setGuiState("3d-cam-mode", three.cameraMode);
         setGuiState("3d-follow-object", three.followObject);
@@ -6394,9 +6394,9 @@ window.addEventListener("load", function () {
 
         //Animate Worker
         animateWorker.onerror = function () {
-            notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
+            notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NotificationPriority.High, 950, null, null, client.height);
             window.setTimeout(function () {
-                followLink("error#animate", "_self", LINK_STATE_INTERNAL_HTML);
+                followLink("error#animate", "_self", LinkStates.InternalHtml);
             }, 1000);
         };
         animateWorker.onmessage = function (message) {
@@ -6522,7 +6522,7 @@ window.addEventListener("load", function () {
                                 }
                             }
                             if (!smileySupport) {
-                                notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
+                                notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
                             }
                         });
                     }
@@ -6721,7 +6721,7 @@ window.addEventListener("load", function () {
                         };
                         onlineConnection.socket.onclose = function () {
                             showNewGameLink();
-                            notify("#canvas-notifier", getString("appScreenTeamplayGameEnded", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.height);
+                            notify("#canvas-notifier", getString("appScreenTeamplayGameEnded", "."), NotificationPriority.High, 900, null, null, client.height);
                         };
                         onlineConnection.socket.onmessage = function (message) {
                             const ERROR_LEVEL_OKAY = 0;
@@ -6742,12 +6742,12 @@ window.addEventListener("load", function () {
                                     if (json.errorLevel === ERROR_LEVEL_ERROR) {
                                         (document.querySelector("#content") as HTMLElement).style.display = "none";
                                         window.setTimeout(function () {
-                                            followLink("error#tp-update", "_self", LINK_STATE_INTERNAL_HTML);
+                                            followLink("error#tp-update", "_self", LinkStates.InternalHtml);
                                         }, 1000);
-                                        notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NotificationPriority.High, 6000, null, null, client.height);
                                     } else {
                                         if (json.errorLevel === ERROR_LEVEL_WARNING) {
-                                            notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NOTIFICATION_PRIO_DEFAULT, 900, null, null, client.height);
+                                            notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NotificationPriority.Default, 900, null, null, client.height);
                                         }
                                         var parent = document.querySelector("#content") as HTMLElement;
                                         var elem = parent.querySelector("#setup") as HTMLElement;
@@ -6790,10 +6790,10 @@ window.addEventListener("load", function () {
                                         notify(
                                             "#canvas-notifier",
                                             getString("appScreenTeamplayConnectionError", "."),
-                                            NOTIFICATION_PRIO_HIGH,
+                                            NotificationPriority.High,
                                             6000,
                                             function () {
-                                                followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
                                             },
                                             getString("appScreenFurtherInformation"),
                                             client.height
@@ -6813,7 +6813,7 @@ window.addEventListener("load", function () {
                                         (elem.querySelector("#setup-start-gamelink") as HTMLElement).textContent = getShareLink(onlineGame.gameId, onlineGame.gameKey);
                                         (elem.querySelector("#setup-start-button") as HTMLElement).onclick = function () {
                                             copy("#setup #setup-start #setup-start-gamelink", null, function () {
-                                                notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.height);
+                                                notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NotificationPriority.High, 6000, null, null, client.height);
                                             });
                                         };
                                     } else {
@@ -6821,10 +6821,10 @@ window.addEventListener("load", function () {
                                         notify(
                                             "#canvas-notifier",
                                             getString("appScreenTeamplayCreateError", "!"),
-                                            NOTIFICATION_PRIO_HIGH,
+                                            NotificationPriority.High,
                                             6000,
                                             function () {
-                                                followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
                                             },
                                             getString("appScreenFurtherInformation"),
                                             client.height
@@ -6841,10 +6841,10 @@ window.addEventListener("load", function () {
                                             notify(
                                                 "#canvas-notifier",
                                                 getString("appScreenTeamplayJoinError", "!"),
-                                                NOTIFICATION_PRIO_HIGH,
+                                                NotificationPriority.High,
                                                 6000,
                                                 function () {
-                                                    followLink("error#tp-join", "_self", LINK_STATE_INTERNAL_HTML);
+                                                    followLink("error#tp-join", "_self", LinkStates.InternalHtml);
                                                 },
                                                 getString("appScreenFurtherInformation"),
                                                 client.height
@@ -6858,10 +6858,10 @@ window.addEventListener("load", function () {
                                             notify(
                                                 "#canvas-notifier",
                                                 getString("appScreenTeamplayJoinTeammateError", "!"),
-                                                NOTIFICATION_PRIO_HIGH,
+                                                NotificationPriority.High,
                                                 6000,
                                                 function () {
-                                                    followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                                    followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
                                                 },
                                                 getString("appScreenFurtherInformation"),
                                                 client.height
@@ -6875,10 +6875,10 @@ window.addEventListener("load", function () {
                                         notify(
                                             "#canvas-notifier",
                                             getString("appScreenTeamplayStartError", "!"),
-                                            NOTIFICATION_PRIO_HIGH,
+                                            NotificationPriority.High,
                                             6000,
                                             function () {
-                                                followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
                                             },
                                             getString("appScreenFurtherInformation"),
                                             client.height
@@ -6891,7 +6891,7 @@ window.addEventListener("load", function () {
                                                     var elem = parent.querySelector("#game-wait") as HTMLElement;
                                                     resetForElem(parent, elem);
                                                 } else {
-                                                    notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.height);
+                                                    notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NotificationPriority.Default, 1000, null, null, client.height);
                                                 }
                                                 break;
                                             case "run":
@@ -6929,7 +6929,7 @@ window.addEventListener("load", function () {
                                             notifyStr = json.sessionName + ": " + notifyStr;
                                         }
                                         if (onlineGame.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
-                                            notify("#canvas-notifier", notifyStr, NOTIFICATION_PRIO_DEFAULT, 1000, null, null, client.y + menus.outerContainer.height);
+                                            notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
                                         }
                                     }
                                     switch (input.objectName) {
@@ -7015,7 +7015,7 @@ window.addEventListener("load", function () {
                                         onlineGame.waitingClock.visible = false;
                                     }
                                     if (json.errorLevel !== ERROR_LEVEL_OKAY) {
-                                        notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
                                     }
                                     if (!onlineGame.paused) {
                                         if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
@@ -7038,7 +7038,7 @@ window.addEventListener("load", function () {
                                     onlineGame.paused = true;
                                     playAndPauseAudio();
                                     animateWorker.postMessage({k: "pause"});
-                                    notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
                                     break;
                                 case "resume":
                                     if (onlineGame.paused) {
@@ -7054,12 +7054,12 @@ window.addEventListener("load", function () {
                                             onlineGame.waitingClock.visible = false;
                                         }
                                         playAndPauseAudio();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
                                         animateWorker.postMessage({k: "resume"});
                                     }
                                     break;
                                 case "leave":
-                                    notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NOTIFICATION_PRIO_HIGH, 900, null, null, client.y + menus.outerContainer.height);
+                                    notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
                                     break;
                                 case "chat-msg":
                                     chatInnerNone.style.display = "none";
@@ -7094,12 +7094,12 @@ window.addEventListener("load", function () {
                                     }
                                     chatInner.appendChild(chatInnerContainerMsg);
                                     if (onlineGame.sessionId != json.sessionId && chat.style.display == "") {
-                                        notify("#tp-chat-notifier", json.sessionName + ": " + json.data, NOTIFICATION_PRIO_DEFAULT, 4000, null, null, client.height, NOTIFICATION_CHANNEL_TEAMPLAY_CHAT + json.sessionId);
+                                        notify("#tp-chat-notifier", json.sessionName + ": " + json.data, NotificationPriority.Default, 4000, null, null, client.height, NotificationChannel.MultiplayerChat + json.sessionId);
                                     }
                                     chat.resizeChat();
                                     break;
                                 case "unknown":
-                                    notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NOTIFICATION_PRIO_HIGH, 2000, null, null, client.y + menus.outerContainer.height);
+                                    notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y + menus.outerContainer.height);
                                     break;
                             }
                         };
@@ -7108,10 +7108,10 @@ window.addEventListener("load", function () {
                             notify(
                                 "#canvas-notifier",
                                 getString("appScreenTeamplayConnectionError", "!"),
-                                NOTIFICATION_PRIO_HIGH,
+                                NotificationPriority.High,
                                 6000,
                                 function () {
-                                    followLink("error#tp-connection", "_self", LINK_STATE_INTERNAL_HTML);
+                                    followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
                                 },
                                 getString("appScreenFurtherInformation"),
                                 client.height
@@ -7613,7 +7613,7 @@ window.addEventListener("load", function () {
                         window.setTimeout(function () {
                             var localAppData = getLocalAppDataCopy();
                             if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.demo && !gui.three) {
-                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NOTIFICATION_PRIO_HIGH, 3000, null, null, client.y + menus.outerContainer.height);
+                                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NotificationPriority.High, 3000, null, null, client.y + menus.outerContainer.height);
                             } else if (localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor)) && !gui.demo) {
                                 const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
                                 document.dispatchEvent(event);
@@ -7758,7 +7758,7 @@ window.addEventListener("load", function () {
                         if (APP_DATA.debug) {
                             console.error(e.name + "/" + e.message);
                         }
-                        notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NOTIFICATION_PRIO_HIGH, 1000, null, null, client.y + menus.outerContainer.height);
+                        notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y + menus.outerContainer.height);
                     }
                     animateWorker.postMessage({k: "game-saved"});
                 }
@@ -7830,7 +7830,7 @@ window.addEventListener("load", function () {
             var loadingAnimElemChangingFilter = loadingImageAnimation();
         } else {
             onlineGame.enabled = false;
-            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NOTIFICATION_PRIO_HIGH, 6000, null, null, client.y + menus.outerContainer.height);
+            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
         }
     } else {
         onlineGame.enabled = false;
@@ -7949,9 +7949,9 @@ window.addEventListener("load", function () {
             }
         };
         pics[pic.id].onerror = function () {
-            notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NOTIFICATION_PRIO_HIGH, 950, null, null, client.height);
+            notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NotificationPriority.High, 950, null, null, client.height);
             window.setTimeout(function () {
-                followLink("error#pic", "_self", LINK_STATE_INTERNAL_HTML);
+                followLink("error#pic", "_self", LinkStates.InternalHtml);
             }, 1000);
         };
     });

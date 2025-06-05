@@ -1,11 +1,11 @@
 "use strict";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "{{jsm}}/common/web_tools.js";
+import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 function goBack() {
     if (document.referrer === document.baseURI + "help/index.html") {
-        followLink("./help", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("./help", "_self", LinkStates.InternalHtml);
     } else {
-        followLink("html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);
     }
 }
 document.addEventListener("DOMContentLoaded", function () {

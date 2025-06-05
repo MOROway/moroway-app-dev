@@ -1,11 +1,11 @@
 "use strict";
 import { getString, setHTMLStrings } from "./common/string_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "./common/web_tools.js";
+import { followLink, LinkStates } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     (document.querySelector("#backOption") as HTMLElement).addEventListener("click", function () {
-        followLink("./", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("./", "_self", LinkStates.InternalHtml);
     });
 
     var elements = document.querySelectorAll(".content") as NodeListOf<HTMLElement>;

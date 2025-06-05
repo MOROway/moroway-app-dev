@@ -1,9 +1,9 @@
 "use strict";
-import { getShareLinkServerName, LINK_STATE_INTENT, LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "{{jsm}}/common/web_tools.js";
+import { getShareLinkServerName, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 export function followLink(input1, input2, input3) {
     switch (input3) {
-        case LINK_STATE_INTENT:
+        case LinkStates.Intent:
             var redirect = "./";
             if (typeof input1 == "string") {
                 input1 = input1.replace(/^[a-z]*:[/][/]/, "");
@@ -16,15 +16,15 @@ export function followLink(input1, input2, input3) {
                 if (input1.length > 0 && id.match(/^[0-9]+$/) !== null && key.match(/^[a-zA-Z0-9]+$/) !== null) {
                     redirect += "?mode=multiplay&id=" + id + "&key=" + key;
                 }
-                followLink(redirect, "_blank", LINK_STATE_INTERNAL_HTML);
+                followLink(redirect, "_blank", LinkStates.InternalHtml);
             } else {
-                followLink(redirect + "html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
+                followLink(redirect + "html_platform/start.html", "_self", LinkStates.InternalHtml);
             }
             return;
-        case LINK_STATE_NORMAL:
+        case LinkStates.External:
             input2 = "_system";
             break;
-        case LINK_STATE_INTERNAL_HTML:
+        case LinkStates.InternalHtml:
             var hash, queryString;
             if (input1.includes("#")) {
                 hash = input1.substr(input1.indexOf("#"));
@@ -42,9 +42,12 @@ export function followLink(input1, input2, input3) {
                 input1 += hash;
             }
             break;
-        case LINK_STATE_INTERNAL_LICENSE:
+        case LinkStates.InternalLicense:
             input1 = "./license/index.html?license-file=" + input1;
             break;
+    }
+    if (typeof input2 !== "string") {
+        input2 = "";
     }
     input2 = input2.replace(/\s/g, "");
     if (input2 === "") {

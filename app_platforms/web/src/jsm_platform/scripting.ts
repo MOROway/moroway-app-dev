@@ -1,9 +1,9 @@
 "use strict";
 import { APP_DATA } from "{{jsm}}/common/app_data.js";
-import { NOTIFICATION_PRIO_DEFAULT, notify } from "{{jsm}}/common/notify.js";
+import { NotificationPriority, notify } from "{{jsm}}/common/notify.js";
 import { setSettingsHTML } from "{{jsm}}/common/settings.js";
 import { getString } from "{{jsm}}/common/string_tools.js";
-import { followLink, LINK_STATE_INTERNAL_HTML, showServerNote } from "{{jsm}}/common/web_tools.js";
+import { followLink, LinkStates, showServerNote } from "{{jsm}}/common/web_tools.js";
 import { getMode } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-ready", function () {
@@ -22,10 +22,10 @@ document.addEventListener("moroway-app-ready-notification", function (event) {
     notify(
         "#canvas-notifier",
         getString("appScreenHasLoaded", "."),
-        NOTIFICATION_PRIO_DEFAULT,
+        NotificationPriority.Default,
         4000,
         function () {
-            followLink("help", "_blank", LINK_STATE_INTERNAL_HTML);
+            followLink("help", "_blank", LinkStates.InternalHtml);
         },
         getString("generalTitleHelpScreen", "", "upper"),
         minHeight
@@ -41,10 +41,10 @@ document.addEventListener("moroway-app-update-notification", function (event) {
     notify(
         "#canvas-notifier",
         getString("generalNewVersion", "!", "upper"),
-        NOTIFICATION_PRIO_DEFAULT,
+        NotificationPriority.Default,
         7000,
         function () {
-            followLink("whatsnew/#newest", "_blank", LINK_STATE_INTERNAL_HTML);
+            followLink("whatsnew/#newest", "_blank", LinkStates.InternalHtml);
         },
         getString("appScreenFurtherInformation", "", "upper"),
         minHeight

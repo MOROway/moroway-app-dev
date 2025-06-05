@@ -2,7 +2,7 @@
 import { APP_DATA } from "{{jsm}}/common/app_data.js";
 import { getSetting } from "{{jsm}}/common/settings.js";
 import { getString } from "{{jsm}}/common/string_tools.js";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "{{jsm}}/common/web_tools.js";
+import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 import { getMode, optionsMenuEditorHide } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-after-calc-options-menu-load", function () {
@@ -23,14 +23,14 @@ document.addEventListener("deviceready", function () {
                     getString("generalLeaveAndDestroyGame"),
                     function (button) {
                         if (button == 1) {
-                            followLink("html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
+                            followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);
                         }
                     },
                     getString("generalLeaveAndDestroyGameTitle"),
                     [getString("generalLeaveAndDestroyGameYes"), getString("generalLeaveAndDestroyGameNo")]
                 );
             } else {
-                followLink("html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
+                followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);
             }
         },
         false

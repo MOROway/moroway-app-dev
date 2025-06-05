@@ -1,18 +1,18 @@
 "use strict";
-import {APP_DATA} from "./app_data.js";
-import {getSetting} from "./settings.js";
+import { APP_DATA } from "./app_data.js";
+import { getSetting } from "./settings.js";
 
 //NOTIFICATIONS
-export function notify(elem, message, prio, timeout, actionHandler, actionText, minHeight = -1, channel = NOTIFICATION_CHANNEL_DEFAULT) {
+export function notify(elem, message, prio, timeout, actionHandler, actionText, minHeight = -1, channel = NotificationChannel.Default) {
     var notificationContainer = document.querySelector(elem);
     if (notificationContainer == undefined || notificationContainer == null) {
         return false;
     }
     if (prio == undefined || prio == null) {
-        prio = NOTIFICATION_PRIO_DEFAULT;
+        prio = NotificationPriority.Default;
     }
     if (channel == undefined || channel == null) {
-        channel = NOTIFICATION_CHANNEL_DEFAULT;
+        channel = NotificationChannel.Default;
     }
     if (notificationContainer.queue == undefined) {
         notificationContainer.queue = [];
@@ -67,11 +67,11 @@ export function notify(elem, message, prio, timeout, actionHandler, actionText, 
             return false;
         };
     }
-    if (prio > NOTIFICATION_PRIO_LOW || (notificationContainer.queue.length == 0 && !notificationContainer.active)) {
+    if (prio > NotificationPriority.Low || (notificationContainer.queue.length == 0 && !notificationContainer.active)) {
         var obj = {message: message, timeout: timeout, prio: prio, channel: channel, actionHandler: actionHandler, actionText: actionText};
-        if (prio === NOTIFICATION_PRIO_HIGH || minHeight == -1 || (minHeight >= notificationContainer.offsetHeight - 15 && getSetting("showNotifications"))) {
+        if (prio === NotificationPriority.High || minHeight == -1 || (minHeight >= notificationContainer.offsetHeight - 15 && getSetting("showNotifications"))) {
             var chNo = notificationContainer.sameChannelNo(notificationContainer, channel, prio);
-            if (channel != NOTIFICATION_CHANNEL_DEFAULT && chNo !== false) {
+            if (channel != NotificationChannel.Default && chNo !== false) {
                 notificationContainer.queue[chNo] = obj;
             } else {
                 notificationContainer.queue.push(obj);
@@ -85,12 +85,16 @@ export function notify(elem, message, prio, timeout, actionHandler, actionText, 
     }
 }
 
-export const NOTIFICATION_PRIO_LOW = 0;
-export const NOTIFICATION_PRIO_DEFAULT = 1;
-export const NOTIFICATION_PRIO_HIGH = 2;
+export enum NotificationPriority {
+    Low = 0,
+    Default = 1,
+    High = 2
+}
 
-export const NOTIFICATION_CHANNEL_DEFAULT = 0;
-export const NOTIFICATION_CHANNEL_TRAIN_SWITCHES = 1;
-export const NOTIFICATION_CHANNEL_CLASSIC_UI_TRAIN_SWITCH = 2;
-export const NOTIFICATION_CHANNEL_TEAMPLAY_CHAT = 3;
-export const NOTIFICATION_CHANNEL_3D_CAMERA = 4;
+export enum NotificationChannel {
+    Default = 0,
+    TrainSwitches = 1,
+    ClassicUiTrainSwitch = 2,
+    MultiplayerChat = 3,
+    Camera3D = 4,
+}

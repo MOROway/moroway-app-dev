@@ -1,5 +1,5 @@
 "use strict";
-import {deepFreeze} from "./js_objects.js";
+import { deepFreeze } from "./js_objects.js";
 
 interface APP_DATA {
     version: {
@@ -33,13 +33,13 @@ const APP_DATA: APP_DATA = {
     debug: "{{debug}}"
 };
 deepFreeze(APP_DATA);
-export {APP_DATA};
+export { APP_DATA };
 
 //LOCAL APP DATA COPY
 export function getLocalAppDataCopy(): APP_DATA | null {
     return JSON.parse(window.localStorage.getItem("morowayAppData") || "null");
 }
 
-export function setLocalAppDataCopy() {
+export function setLocalAppDataCopy(): void {
     window.localStorage.setItem("morowayAppData", JSON.stringify(APP_DATA));
 }

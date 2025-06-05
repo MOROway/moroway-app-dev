@@ -1,12 +1,12 @@
 "use strict";
-import { LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "{{jsm}}/common/web_tools.js";
+import { LinkStates } from "{{jsm}}/common/web_tools.js";
 
 export function followLink(input1, input2, input3) {
     var followLink = true;
     switch (input3) {
-        case LINK_STATE_NORMAL:
+        case LinkStates.External:
             break;
-        case LINK_STATE_INTERNAL_HTML:
+        case LinkStates.InternalHtml:
             var hash, queryString;
             if (input1.includes("#")) {
                 hash = input1.substr(input1.indexOf("#"));
@@ -24,11 +24,14 @@ export function followLink(input1, input2, input3) {
                 input1 += hash;
             }
             break;
-        case LINK_STATE_INTERNAL_LICENSE:
+        case LinkStates.InternalLicense:
             input1 = "./license/index.html?license-file=" + input1;
             break;
     }
     if (followLink) {
+        if (typeof input2 !== "string") {
+            input2 = "";
+        }
         input2 = input2.replace(/\s/g, "");
         if (input2 === "") {
             window.open(input1);

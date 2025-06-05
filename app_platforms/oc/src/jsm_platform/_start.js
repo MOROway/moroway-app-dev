@@ -1,7 +1,7 @@
 "use strict";
 import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "{{jsm}}/common/app_data.js";
 import { getString, setHTMLStrings } from "{{jsm}}/common/string_tools.js";
-import { followLink, LINK_STATE_INTERNAL_HTML, showServerNote } from "{{jsm}}/common/web_tools.js";
+import { followLink, LinkStates, showServerNote } from "{{jsm}}/common/web_tools.js";
 
 function styleContent() {
     var content = document.getElementById("content");
@@ -28,19 +28,19 @@ function styleContent() {
 }
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("link_game").addEventListener("click", function () {
-        followLink("./", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("./", "_self", LinkStates.InternalHtml);
     });
     document.getElementById("link_multiplayer").addEventListener("click", function () {
-        followLink("./?mode=multiplay", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("./?mode=multiplay", "_self", LinkStates.InternalHtml);
     });
     document.getElementById("link_demo").addEventListener("click", function () {
-        followLink("html_platform/start_demo_mode.html", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("html_platform/start_demo_mode.html", "_self", LinkStates.InternalHtml);
     });
     document.getElementById("link_help").addEventListener("click", function () {
-        followLink("help", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("help", "_self", LinkStates.InternalHtml);
     });
     document.getElementById("link_settings").addEventListener("click", function () {
-        followLink("settings", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("settings", "_self", LinkStates.InternalHtml);
     });
 
     setHTMLStrings();
@@ -69,7 +69,7 @@ document.addEventListener("deviceready", function () {
             getString("platformOcAppUpdate"),
             function (button) {
                 if (button == 1) {
-                    followLink("whatsnew/#newest", "_blank", LINK_STATE_INTERNAL_HTML);
+                    followLink("whatsnew/#newest", "_blank", LinkStates.InternalHtml);
                 }
             },
             getString("generalNewVersion"),

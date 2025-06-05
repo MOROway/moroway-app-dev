@@ -1,9 +1,9 @@
 "use strict";
 import { APP_DATA } from "./common/app_data.js";
-import { NOTIFICATION_PRIO_DEFAULT, notify } from "./common/notify.js";
+import { NotificationPriority, notify } from "./common/notify.js";
 import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, getServerHTMLLink, getServerRedirectLink, handleServerJSONValues, LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "./common/web_tools.js";
+import { followLink, getServerHTMLLink, getServerRedirectLink, handleServerJSONValues, LinkStates } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     function getUserSystem() {
@@ -23,34 +23,34 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             window.close();
         } catch (err) {}
-        followLink("./", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("./", "_self", LinkStates.InternalHtml);
     });
 
     (document.querySelector("#legal-libraries-threejs-license") as HTMLElement).addEventListener("click", function () {
-        followLink("src/lib/open_code/jsm/three.js/LICENSE.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("src/lib/open_code/jsm/three.js/LICENSE.txt", "_self", LinkStates.InternalLicense);
     });
     (document.querySelector("#legal-fonts-roboto-license") as HTMLElement).addEventListener("click", function () {
-        followLink("src/lib/open_fonts/google/Roboto/LICENSE.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("src/lib/open_fonts/google/Roboto/LICENSE.txt", "_self", LinkStates.InternalLicense);
     });
     (document.querySelector("#legal-fonts-materialicons-license") as HTMLElement).addEventListener("click", function () {
-        followLink("src/lib/open_fonts/google/MaterialSymbols/LICENSE.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("src/lib/open_fonts/google/MaterialSymbols/LICENSE.txt", "_self", LinkStates.InternalLicense);
     });
     (document.querySelector("#legal-media-sound-license-cc0") as HTMLElement).addEventListener("click", function () {
-        followLink("assets/CC0-1.0.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("assets/CC0-1.0.txt", "_self", LinkStates.InternalLicense);
     });
     (document.querySelector("#legal-media-3d-models-license-cc-by") as HTMLElement).addEventListener("click", function () {
-        followLink("assets/CC-BY-4.0.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("assets/CC-BY-4.0.txt", "_self", LinkStates.InternalLicense);
     });
     (document.querySelector("#legal-self-code-license") as HTMLElement).addEventListener("click", function () {
-        followLink("LICENSE.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("LICENSE.txt", "_self", LinkStates.InternalLicense);
     });
     (document.querySelector("#legal-self-assets-license") as HTMLElement).addEventListener("click", function () {
-        followLink("LICENSE_ASSETS.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("LICENSE_ASSETS.txt", "_self", LinkStates.InternalLicense);
     });
 
     (document.querySelector("#contact-imprintlink") as HTMLElement).addEventListener("click", function () {
-        notify("#help-notifier", getString("helpScreenContactBackupLinkNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight);
-        followLink(getServerHTMLLink("imprint"), "_blank", LINK_STATE_NORMAL);
+        notify("#help-notifier", getString("helpScreenContactBackupLinkNotification", "."), NotificationPriority.Default, 900, null, null, window.innerHeight);
+        followLink(getServerHTMLLink("imprint"), "_blank", LinkStates.External);
     });
     handleServerJSONValues("imprint", function (res) {
         const imprint = document.querySelector("#contact-imprint") as HTMLElement;
@@ -63,31 +63,31 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
     (document.querySelector("#contact-feedbacklink") as HTMLElement).addEventListener("click", function () {
-        notify("#help-notifier", getString("helpScreenContactFeedbackSendNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight);
-        followLink(getServerHTMLLink("feedback"), "_blank", LINK_STATE_NORMAL);
+        notify("#help-notifier", getString("helpScreenContactFeedbackSendNotification", "."), NotificationPriority.Default, 900, null, null, window.innerHeight);
+        followLink(getServerHTMLLink("feedback"), "_blank", LinkStates.External);
     });
 
     (document.querySelector("#download-androidlink") as HTMLElement).addEventListener("click", function () {
-        followLink(getServerRedirectLink("download_android"), "_blank", LINK_STATE_NORMAL);
+        followLink(getServerRedirectLink("download_android"), "_blank", LinkStates.External);
     });
     (document.querySelector("#download-fdroidlink") as HTMLElement).addEventListener("click", function () {
-        followLink(getServerRedirectLink("download_fdroid"), "_blank", LINK_STATE_NORMAL);
+        followLink(getServerRedirectLink("download_fdroid"), "_blank", LinkStates.External);
     });
     (document.querySelector("#download-windowslink") as HTMLElement).addEventListener("click", function () {
-        followLink(getServerRedirectLink("download_windows"), "_blank", LINK_STATE_NORMAL);
+        followLink(getServerRedirectLink("download_windows"), "_blank", LinkStates.External);
     });
     (document.querySelector("#download-snaplink") as HTMLElement).addEventListener("click", function () {
-        followLink(getServerRedirectLink("download_snap"), "_blank", LINK_STATE_NORMAL);
+        followLink(getServerRedirectLink("download_snap"), "_blank", LinkStates.External);
     });
     (document.querySelector("#download-sourcelink") as HTMLElement).addEventListener("click", function () {
-        followLink(getServerRedirectLink("source_code"), "_blank", LINK_STATE_NORMAL);
+        followLink(getServerRedirectLink("source_code"), "_blank", LinkStates.External);
     });
     (document.querySelector("#download-translations") as HTMLElement).addEventListener("click", function () {
-        followLink(getServerRedirectLink("translations"), "_blank", LINK_STATE_NORMAL);
+        followLink(getServerRedirectLink("translations"), "_blank", LinkStates.External);
     });
 
     (document.querySelector("#website-link") as HTMLElement).addEventListener("click", function () {
-        followLink(getServerRedirectLink("moroweb"), "_blank", LINK_STATE_NORMAL);
+        followLink(getServerRedirectLink("moroweb"), "_blank", LinkStates.External);
     });
 
     const elements = document.querySelectorAll(".content") as NodeListOf<HTMLElement>;
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     elem.textContent = formatJSString(getString("helpScreenGeneralWelcomeVersion", "."), APP_DATA.version.major, APP_DATA.version.minor, APP_DATA.version.patch, APP_DATA.version.date.year, APP_DATA.version.date.month < 10 ? "0" + APP_DATA.version.date.month : APP_DATA.version.date.month, APP_DATA.version.date.day < 10 ? "0" + APP_DATA.version.date.day : APP_DATA.version.date.day, APP_DATA.version.beta > 0 ? "-beta" + APP_DATA.version.beta : "");
     (document.querySelector("#general-version") as HTMLElement).appendChild(elem);
     (document.querySelector("#general-whatsnew") as HTMLElement).addEventListener("click", function () {
-        followLink("whatsnew/#newest", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("whatsnew/#newest", "_self", LinkStates.InternalHtml);
     });
 
     const pics = document.querySelector("#website-pics") as HTMLElement;
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 res.pics.forEach(function (pic) {
                     var img = document.createElement("div");
                     img.onclick = function () {
-                        followLink(pic.links.normal, "_blank", LINK_STATE_NORMAL);
+                        followLink(pic.links.normal, "_blank", LinkStates.External);
                     };
                     img.style.backgroundImage = "url('" + pic.urls.thumb.url + "')";
                     pics.appendChild(img);

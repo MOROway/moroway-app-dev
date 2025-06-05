@@ -1,6 +1,6 @@
 "use strict";
 import { setHTMLStrings } from "{{jsm}}/common/string_tools.js";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "{{jsm}}/common/web_tools.js";
+import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const demoModeGo = document.getElementById("demo-mode-go");
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             cameraMode = "follow-car";
         }
         const url = "./?mode=demoStandalone&gui-3d=" + (demoModeInput3D.checked ? 1 : 0) + "&gui-3d-night=" + (document.getElementById("demo-mode-3d-night").checked ? 1 : 0) + "&gui-demo-3d-rotation-speed-percent=" + document.getElementById("demo-mode-3d-rotation-speed").value + "&gui-3d-cam-mode=" + cameraMode + "&gui-demo-random=" + (demoModeInputRandom.checked ? 1 : 0);
-        followLink(url, "_self", LINK_STATE_INTERNAL_HTML);
+        followLink(url, "_self", LinkStates.InternalHtml);
     });
     demoModeInputRandom.addEventListener("change", function () {
         demoModeContainerManual.style.display = demoModeInputRandom.checked ? "none" : "";
@@ -43,6 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("deviceready", function () {
     document.addEventListener("backbutton", function () {
-        followLink("html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);
     });
 });

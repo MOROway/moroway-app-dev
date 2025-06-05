@@ -25,7 +25,7 @@ export function getShareLink(id: string, key: string): string {
 export function getShareLinkServerName(): string {
     return "{{shareserver}}";
 }
-export function getServerLink(protocol: string = PROTOCOL_HTTP): string {
+export function getServerLink(protocol: string = Protocols.Http): string {
     return protocol + "://{{serverlink}}";
 }
 export function getServerRedirectLink(key: string): string {
@@ -131,7 +131,7 @@ export function showServerNote(serverNoteElementRoot: HTMLElement): void {
         if (serverMsg.link != undefined && serverMsg.link != null && typeof serverMsg.link == "string") {
             serverNoteElementButtonGo.style.display = "block";
             serverNoteElementButtonGo.onclick = function () {
-                followLink(getServerRedirectLink(serverMsg.link), "_blank", LINK_STATE_NORMAL);
+                followLink(getServerRedirectLink(serverMsg.link), "_blank", LinkStates.External);
             };
         }
         serverNoteElementButtonNo.onclick = function () {
@@ -143,7 +143,7 @@ export function showServerNote(serverNoteElementRoot: HTMLElement): void {
             if (serverMsg.imageLink != undefined && serverMsg.imageLink != null && typeof serverMsg.imageLink == "string") {
                 serverNoteElementImage.style.cursor = "pointer";
                 serverNoteElementImage.onclick = function () {
-                    followLink(getServerRedirectLink(serverMsg.imageLink), "_blank", LINK_STATE_NORMAL);
+                    followLink(getServerRedirectLink(serverMsg.imageLink), "_blank", LinkStates.External);
                 };
             }
         }
@@ -169,10 +169,14 @@ export function showServerNote(serverNoteElementRoot: HTMLElement): void {
     });
 }
 
-export const PROTOCOL_HTTP = "{{hypertextprotocol}}";
-export const PROTOCOL_WS = "{{websocketprotocol}}";
+export enum Protocols {
+    Http = "{{hypertextprotocol}}",
+    WebSocket = "{{websocketprotocol}}"
+}
 
-export const LINK_STATE_NORMAL = 0;
-export const LINK_STATE_INTERNAL_HTML = 1;
-export const LINK_STATE_INTERNAL_LICENSE = 2;
-export const LINK_STATE_INTENT = 4;
+export enum LinkStates {
+    External = 1,
+    InternalHtml = 2,
+    InternalLicense = 3,
+    Intent = 4
+}

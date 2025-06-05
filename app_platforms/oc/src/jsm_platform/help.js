@@ -1,7 +1,7 @@
 "use strict";
-import { followLink, LINK_STATE_INTERNAL_HTML, LINK_STATE_INTERNAL_LICENSE } from "{{jsm}}/common/web_tools.js";
+import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 function goBack() {
-    followLink("html_platform/start.html", "_self", LINK_STATE_INTERNAL_HTML);
+    followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);
 }
 document.addEventListener("DOMContentLoaded", function () {
     const elem = document.getElementById("backOption");
@@ -15,13 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     document.querySelector("#legal-appoc-licenses").classList.remove("hidden");
     document.querySelector("#legal-appoc-cordova-license").addEventListener("click", function () {
-        followLink("licenses_platform/cordova", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/cordova", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appoc-webintent-license").addEventListener("click", function () {
-        followLink("licenses_platform/webintent", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/webintent", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appoc-dialogs-license").addEventListener("click", function () {
-        followLink("licenses_platform/dialogs", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/dialogs", "_self", LinkStates.InternalLicense);
     });
 });
 document.addEventListener("deviceready", function () {

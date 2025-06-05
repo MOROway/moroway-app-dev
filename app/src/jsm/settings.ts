@@ -2,7 +2,7 @@
 import { setSettingsHTML } from "./common/settings.js";
 import { setHTMLStrings } from "./common/string_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "./common/web_tools.js";
+import { followLink, LinkStates } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     setHTMLStrings();
@@ -15,6 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             window.close();
         } catch (err) {}
-        followLink("./", "_self", LINK_STATE_INTERNAL_HTML);
+        followLink("./", "_self", LinkStates.InternalHtml);
     });
 });

@@ -1,5 +1,5 @@
 "use strict";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "{{jsm}}/common/web_tools.js";
+import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 document.addEventListener("DOMContentLoaded", function () {
     const elem = document.getElementById("backOption");
     if (elem) {
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         try {
                             window.close();
                         } catch (err) {
-                            followLink("./", "_self", LINK_STATE_INTERNAL_HTML);
+                            followLink("./", "_self", LinkStates.InternalHtml);
                         }
                     }
                 })();

@@ -1,9 +1,9 @@
 "use strict";
 import { APP_DATA } from "./app_data.js";
-import { NOTIFICATION_PRIO_HIGH, NOTIFICATION_PRIO_LOW, notify } from "./notify.js";
+import { NotificationPriority, notify } from "./notify.js";
 import { isGameSaved, removeSavedGame } from "./saved_game.js";
 import { CURRENT_LANG, getLanguageList, getString, setCurrentLang } from "./string_tools.js";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "./web_tools.js";
+import { followLink, LinkStates } from "./web_tools.js";
 
 //SETTINGS
 export function getSettings() {
@@ -131,7 +131,7 @@ export function setSettingsHTML(elem, standalone) {
         setSetting(id, !getSetting(id));
         displaySettingsOpts();
         displaySettingsButtons();
-        notify(".notify", getString("optApply", "."), NOTIFICATION_PRIO_LOW, 900, null, null, window.innerHeight);
+        notify(".notify", getString("optApply", "."), NotificationPriority.Low, 900, null, null, window.innerHeight);
     }
 
     if (elem == undefined || elem == null) {
@@ -247,10 +247,10 @@ export function setSettingsHTML(elem, standalone) {
                 notify(
                     ".notify",
                     getString("optLangSelectChange", "!", "upper", val),
-                    NOTIFICATION_PRIO_HIGH,
+                    NotificationPriority.High,
                     10000,
                     function () {
-                        followLink(window.location.href, "_self", LINK_STATE_INTERNAL_HTML);
+                        followLink(window.location.href, "_self", LinkStates.InternalHtml);
                     },
                     getString("optLangSelectChangeButton", "", "upper", val)
                 );

@@ -1,7 +1,7 @@
 "use strict";
-import { NOTIFICATION_PRIO_DEFAULT, notify } from "{{jsm}}/common/notify.js";
+import { NotificationPriority, notify } from "{{jsm}}/common/notify.js";
 import { getString } from "{{jsm}}/common/string_tools.js";
-import { followLink, getServerHTMLLink, handleServerJSONValues, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL } from "{{jsm}}/common/web_tools.js";
+import { followLink, getServerHTMLLink, handleServerJSONValues, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const elem = document.getElementById("backOption");
@@ -18,24 +18,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelector("#legal-appandroid-licenses").classList.remove("hidden");
     document.querySelector("#legal-appandroid-kotlin-license").addEventListener("click", function () {
-        followLink("licenses_platform/org.jetbrains.kotlin.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/org.jetbrains.kotlin.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-android-x-appcompat-license").addEventListener("click", function () {
-        followLink("licenses_platform/androidx.appcompat.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/androidx.appcompat.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-android-x-activity-license").addEventListener("click", function () {
-        followLink("licenses_platform/androidx.activity.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/androidx.activity.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-android-x-webkit-license").addEventListener("click", function () {
-        followLink("licenses_platform/androidx.webkit.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/androidx.webkit.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-picasso-license").addEventListener("click", function () {
-        followLink("licenses_platform/com.squareup.picasso.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/com.squareup.picasso.txt", "_self", LinkStates.InternalLicense);
     });
 
     document.querySelector("#privacy-statement-link").addEventListener("click", function () {
-        notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight);
-        followLink(getServerHTMLLink("privacy"), "_blank", LINK_STATE_NORMAL);
+        notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NotificationPriority.Default, 900, null, null, window.innerHeight);
+        followLink(getServerHTMLLink("privacy"), "_blank", LinkStates.External);
     });
     handleServerJSONValues("privacy", function (res) {
         var privacy = document.querySelector("#privacy-statement");
