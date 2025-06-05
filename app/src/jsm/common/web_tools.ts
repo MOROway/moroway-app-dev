@@ -175,8 +175,8 @@ export enum Protocols {
 }
 
 export enum LinkStates {
-    External = 1,
-    InternalHtml = 2,
-    InternalLicense = 3,
-    Intent = 4
+    External,
+    InternalHtml,
+    InternalLicense,
+    Intent
 }

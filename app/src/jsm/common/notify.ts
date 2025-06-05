@@ -86,15 +86,15 @@ export function notify(elem, message, prio, timeout, actionHandler, actionText, 
 }
 
 export enum NotificationPriority {
-    Low = 0,
-    Default = 1,
-    High = 2
+    Low,
+    Default,
+    High
 }
 
 export enum NotificationChannel {
-    Default = 0,
-    TrainSwitches = 1,
-    ClassicUiTrainSwitch = 2,
-    MultiplayerChat = 3,
-    Camera3D = 4,
+    Default,
+    TrainSwitches,
+    ClassicUiTrainSwitch,
+    MultiplayerChat,
+    Camera3D,
 }
