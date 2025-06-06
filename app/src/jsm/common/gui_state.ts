@@ -47,37 +47,37 @@ export function setGuiState(item, value) {
 const items = {
     "3d": {
         default: false,
-        validate: function (test) {
+        validate(test) {
             return typeof test == "boolean";
         }
     },
     "3d-night": {
         default: false,
-        validate: function (test) {
+        validate(test) {
             return typeof test == "boolean";
         }
     },
     "3d-cam-mode": {
         default: ThreeCameraModes.BIRDS_EYE,
-        validate: function (test) {
+        validate(test) {
             return Object.values(ThreeCameraModes).includes(test);
         }
     },
     "3d-follow-object": {
         default: 0,
-        validate: function (test) {
+        validate(test) {
             return typeof test == "number" && Number.isInteger(test) && test >= 0;
         }
     },
     "3d-rotation-speed": {
         default: 50,
-        validate: function (test) {
+        validate(test) {
             return typeof test == "number" && !Number.isNaN(test) && test >= 0 && test <= 100;
         }
     },
     "demo-random": {
         default: false,
-        validate: function (test) {
+        validate(test) {
             return typeof test == "boolean";
         }
     }

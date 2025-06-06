@@ -18,12 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const file = getQueryString("license-file");
         if ((file.startsWith(document.baseURI) || (!file.startsWith("/") && !file.includes("://"))) && (file.endsWith(".txt") || file.match(/([/]|^)[^.]+$/)) && !file.endsWith("/")) {
             fetch(file)
-                .then(function (response) {
+                .then((response) => {
                     if (response.ok && response.status == 200) {
                         return response.text();
                     }
                 })
-                .then(function (text) {
+                .then((text) => {
                     if (text) {
                         const textArray = text
                             .replace(/\r\n/g, "\n")
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         elementContent.textContent = getString("licenseScreenNotFound");
                     }
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     if (APP_DATA.debug) {
                         console.log("Fetch-Error:", error);
                     }

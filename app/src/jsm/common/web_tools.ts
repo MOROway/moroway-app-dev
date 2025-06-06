@@ -43,15 +43,15 @@ export function getServerDataLink(path: string): string {
 export function handleServerJSONValues(key: string, func: (response: any) => void): void {
     const SERVER_JSON_LINK = getServerLink() + "/json_content/index.php";
     fetch(SERVER_JSON_LINK + "?key=" + key + "&platform=" + APP_DATA.platform + "&lang=" + CURRENT_LANG)
-        .then(function (response) {
+        .then((response) => {
             return response.json();
         })
-        .catch(function (error) {
+        .catch((error) => {
             if (APP_DATA.debug) {
                 console.log("Fetch-Error:", error);
             }
         })
-        .then(function (response) {
+        .then((response) => {
             if (typeof response == "object" && response != null && typeof response.error == "undefined") {
                 func(response);
             } else if (APP_DATA.debug) {

@@ -725,18 +725,18 @@ function calcMenusAndBackground(state) {
     function createTrainAudio(cTrainNumber) {
         try {
             fetch("./assets/audio_asset_" + cTrainNumber + "." + soundFileExtension)
-                .then(function (response) {
+                .then((response) => {
                     if (response.ok) {
                         return response.arrayBuffer();
                     }
                     throw new Error("response not ok");
                 })
-                .then(function (response) {
+                .then((response) => {
                     audio.context.decodeAudioData(response, function (buffer) {
                         createAudio("train", cTrainNumber, buffer, 0);
                     });
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     if (APP_DATA.debug) {
                         console.error("Fetch-Error:", error);
                     }
@@ -926,15 +926,15 @@ function calcMenusAndBackground(state) {
                     audio.source.train = [];
                     try {
                         fetch("./assets/audio_asset_crash." + soundFileExtension)
-                            .then(function (response) {
+                            .then((response) => {
                                 return response.arrayBuffer();
                             })
-                            .catch(function (error) {
+                            .catch((error) => {
                                 if (APP_DATA.debug) {
                                     console.error("Fetch-Error:", error);
                                 }
                             })
-                            .then(function (response) {
+                            .then((response) => {
                                 audio.context.decodeAudioData(response, function (buffer) {
                                     createAudio("trainCrash", null, buffer, 1);
                                 });
@@ -946,15 +946,15 @@ function calcMenusAndBackground(state) {
                     }
                     try {
                         fetch("./assets/audio_asset_switch." + soundFileExtension)
-                            .then(function (response) {
+                            .then((response) => {
                                 return response.arrayBuffer();
                             })
-                            .catch(function (error) {
+                            .catch((error) => {
                                 if (APP_DATA.debug) {
                                     console.error("Fetch-Error:", error);
                                 }
                             })
-                            .then(function (response) {
+                            .then((response) => {
                                 audio.context.decodeAudioData(response, function (buffer) {
                                     createAudio("switch", null, buffer, 1);
                                 });
@@ -4742,16 +4742,16 @@ const trains3D: Train3D[] = [];
 var rotationPoints: RotationPoints;
 var trainParams;
 const trainActions = {
-    checkRange: function (i) {
+    checkRange(i) {
         return i >= 0 && i < trains.length;
     },
-    checkReady: function () {
+    checkReady() {
         return !gui.demo && !onlineGame.stop;
     },
-    checkAll: function (i) {
+    checkAll(i) {
         return this.checkRange(i) && this.checkReady();
     },
-    start: function (i, speed, notificationOnlyForOthers = false) {
+    start(i, speed, notificationOnlyForOthers = false) {
         if (!this.checkAll(i) || trains[i].crash || trains[i].accelerationSpeed > 0 || speed <= 0 || speed > 100) {
             return false;
         }
@@ -4762,14 +4762,14 @@ const trainActions = {
         }
         return true;
     },
-    stop: function (i, notificationOnlyForOthers = false) {
+    stop(i, notificationOnlyForOthers = false) {
         if (!this.checkAll(i) || trains[i].accelerationSpeed <= 0) {
             return false;
         }
         actionSync("trains", i, [{accelerationSpeed: (trains[i].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         return true;
     },
-    changeDirection: function (i, highlight = false, notificationOnlyForOthers = false) {
+    changeDirection(i, highlight = false, notificationOnlyForOthers = false) {
         if (!this.checkAll(i) || trains[i].accelerationSpeed > 0 || Math.abs(trains[i].accelerationSpeed) >= 0.2) {
             return false;
         }
@@ -4780,7 +4780,7 @@ const trainActions = {
         }
         return true;
     },
-    setSpeed: function (i, speed, notificationOnlyForOthers = false) {
+    setSpeed(i, speed, notificationOnlyForOthers = false) {
         if (!this.checkAll(i) || speed < 0 || speed > 100) {
             return false;
         }
@@ -4814,12 +4814,12 @@ const switchParams: any = {
     showDuration: 11,
     showDurationFade: 33,
     showDurationEnd: 44,
-    set: function () {
+    set() {
         switchParams.radius = 0.02 * background.width;
     }
 };
 const switchActions = {
-    turn: function (key, side) {
+    turn(key, side) {
         if (onlineGame.enabled) {
             actionSync("switches", [key, side], [{turned: !switches[key][side].turned}], [{getString: ["appScreenSwitchTurns", "."]}]);
         } else {
@@ -4911,10 +4911,10 @@ var carWays: CarWays[] = [];
 var carParams: CarParams = {init: true, wayNo: 7};
 const carActions = {
     auto: {
-        checkReady: function () {
+        checkReady() {
             return !gui.demo && !onlineGame.stop;
         },
-        start: function () {
+        start() {
             if (this.checkReady() && carParams.init) {
                 carParams.init = false;
                 carParams.autoModeOff = false;
@@ -4925,7 +4925,7 @@ const carActions = {
             }
             return false;
         },
-        end: function () {
+        end() {
             if (this.checkReady() && !carParams.autoModeOff && !carParams.isBackToRoot) {
                 carParams.autoModeRuns = true;
                 carParams.isBackToRoot = true;
@@ -4934,7 +4934,7 @@ const carActions = {
             }
             return false;
         },
-        pause: function () {
+        pause() {
             if (!this.checkReady() || !carParams.autoModeRuns) {
                 return false;
             }
@@ -4942,7 +4942,7 @@ const carActions = {
             notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
-        resume: function () {
+        resume() {
             if (!this.checkReady() || carParams.autoModeRuns || carParams.autoModeOff) {
                 return false;
             }
@@ -4953,16 +4953,16 @@ const carActions = {
         }
     },
     manual: {
-        checkRange: function (car) {
+        checkRange(car) {
             return car >= 0 && car < cars.length;
         },
-        checkReady: function () {
+        checkReady() {
             return !gui.demo && !onlineGame.stop;
         },
-        checkAll: function (car) {
+        checkAll(car) {
             return this.checkRange(car) && this.checkReady();
         },
-        start: function (car) {
+        start(car) {
             if (!this.checkAll(car) || carCollisionCourse(car, false) || (!carParams.init && !carParams.autoModeOff) || cars[car].move) {
                 return false;
             }
@@ -4975,7 +4975,7 @@ const carActions = {
             notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
-        stop: function (car) {
+        stop(car) {
             if (!this.checkAll(car) || !carParams.autoModeOff || !cars[car].move) {
                 return false;
             }
@@ -4988,7 +4988,7 @@ const carActions = {
             notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
-        backwards: function (car) {
+        backwards(car) {
             if (!this.checkAll(car) || !carParams.autoModeOff || cars[car].move || cars[car].backwardsState !== 0 || cars[car].parking) {
                 return false;
             }
@@ -5002,7 +5002,7 @@ const carActions = {
             notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 750, null, null, client.y + menus.outerContainer.height);
             return true;
         },
-        park: function (car) {
+        park(car) {
             if (!this.checkAll(car) || carCollisionCourse(car, false, -1) || !carParams.autoModeOff || cars[car].move || cars[car].parking) {
                 return false;
             }
@@ -5035,10 +5035,10 @@ const taxOffice: any = {
 const classicUI: any = {
     trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {fontFamily: defaultFont}},
     transformer: {src: 12, onSrc: 13, readySrc: 23, angle: Math.PI / 5, wheelInput: {src: 14, angle: 0, maxAngle: 1.5 * Math.PI}, directionInput: {srcStandardDirection: 24, srcNotStandardDirection: 15}},
-    ready: function (displayOnly: boolean = false): boolean {
+    ready(displayOnly: boolean = false): boolean {
         return getSetting("classicUI") && !(gui.controlCenter || gui.konamiOverlay || gui.three || gui.demo || onlineGame.waitingClock.visible || canvasGesture == undefined || contextGesture == undefined) && (displayOnly || !onlineGame.stop);
     },
-    pointInTransformerImage: function (x, y): boolean {
+    pointInTransformerImage(x, y): boolean {
         if (!classicUI.ready()) {
             return false;
         }
@@ -5055,7 +5055,7 @@ const classicUI: any = {
         }
         return false;
     },
-    pointInTransformerWheelInput: function (x, y): boolean {
+    pointInTransformerWheelInput(x, y): boolean {
         if (!classicUI.pointInTransformerImage(x, y)) {
             return false;
         }
@@ -5074,7 +5074,7 @@ const classicUI: any = {
         }
         return false;
     },
-    pointInTransformerDirectionInput: function (x, y): boolean {
+    pointInTransformerDirectionInput(x, y): boolean {
         if (!classicUI.pointInTransformerImage(x, y)) {
             return false;
         }
@@ -5092,10 +5092,10 @@ const classicUI: any = {
         }
         return false;
     },
-    pointInTransformerInput: function (x, y): boolean {
+    pointInTransformerInput(x, y): boolean {
         return classicUI.pointInTransformerWheelInput(x, y) || classicUI.pointInTransformerDirectionInput(x, y);
     },
-    pointInTrainSwitchInputImage: function (x, y): boolean {
+    pointInTrainSwitchInputImage(x, y): boolean {
         if (!classicUI.ready()) {
             return false;
         }
@@ -5112,7 +5112,7 @@ const classicUI: any = {
         }
         return false;
     },
-    pointInTrainSwitchInputText: function (x, y): boolean {
+    pointInTrainSwitchInputText(x, y): boolean {
         if (!classicUI.ready()) {
             return false;
         }
@@ -5130,7 +5130,7 @@ const classicUI: any = {
         }
         return false;
     },
-    pointInTrainSwitchInput: function (x, y): boolean {
+    pointInTrainSwitchInput(x, y): boolean {
         return classicUI.pointInTrainSwitchInputImage(x, y) || classicUI.pointInTrainSwitchInputText(x, y);
     }
 };
@@ -5143,7 +5143,7 @@ const menus: any = {};
 
 const textControl: any = {
     elements: {},
-    validateSubcommand: function (command, args) {
+    validateSubcommand(command, args) {
         if (args.length - 1 < this.commands[command].subcommands[args[0]].args.min || args.length - 1 > this.commands[command].subcommands[args[0]].args.max) {
             return false;
         }
@@ -5159,10 +5159,10 @@ const textControl: any = {
         }
         return true;
     },
-    getSubcommandNames: function (command) {
+    getSubcommandNames(command) {
         return Object.keys(this.commands[command].subcommands);
     },
-    execute: function (command, args) {
+    execute(command, args) {
         var commandNames = Object.keys(this.commands);
         if (!commandNames.includes(command)) {
             commandNames.shift();
@@ -5178,7 +5178,7 @@ const textControl: any = {
     },
     commands: {
         "/": {
-            action: function () {
+            action() {
                 return textControl.execute();
             }
         },
@@ -5186,7 +5186,7 @@ const textControl: any = {
             subcommands: {
                 list: {
                     args: {min: 0, max: 0},
-                    execute: function () {
+                    execute() {
                         var trainNames: string[] = [];
                         for (var i = 0; i < trains.length; i++) {
                             trainNames[i] = i + ": " + getString(["appScreenTrainNames", i]);
@@ -5197,7 +5197,7 @@ const textControl: any = {
                 },
                 status: {
                     args: {min: 1, max: 1, patterns: [/^[0-9]+$/]},
-                    execute: function (args) {
+                    execute(args) {
                         var train = parseInt(args[1], 10);
                         if (trainActions.checkRange(train)) {
                             var statusPrefix = getString(["appScreenTrainNames", train]);
@@ -5218,7 +5218,7 @@ const textControl: any = {
                 },
                 start: {
                     args: {min: 1, max: 1, patterns: [/^[0-9]+$/]},
-                    execute: function (args) {
+                    execute(args) {
                         var train = parseInt(args[1], 10);
                         if (trainActions.start(train, 50)) {
                             return getString("appScreenTextCommandsGeneralSuccess", "!", "upper");
@@ -5229,7 +5229,7 @@ const textControl: any = {
                 },
                 stop: {
                     args: {min: 1, max: 1, patterns: [/^[0-9]+|all$/]},
-                    execute: function (args) {
+                    execute(args) {
                         if (args[1] == "all") {
                             for (var i = 0; i < trains.length; i++) {
                                 this.execute([args[0], i]);
@@ -5246,7 +5246,7 @@ const textControl: any = {
                 },
                 turn: {
                     args: {min: 1, max: 1, patterns: [/^[0-9]+$/]},
-                    execute: function (args) {
+                    execute(args) {
                         var train = parseInt(args[1], 10);
                         if (trainActions.changeDirection(train, true)) {
                             return getString("appScreenTextCommandsGeneralSuccess", "!", "upper");
@@ -5257,7 +5257,7 @@ const textControl: any = {
                 },
                 speed: {
                     args: {min: 1, max: 2, patterns: [/^[0-9]+$/, /^[+-]?[0-9]+$/]},
-                    execute: function (args) {
+                    execute(args) {
                         var train = parseInt(args[1], 10);
                         if (!trainActions.checkRange(train)) {
                             return getString("appScreenTextCommandsGeneralFailure", "!", "upper");
@@ -5292,7 +5292,7 @@ const textControl: any = {
                 }
             },
             nameIdentifier: "appScreenTextCommandsTrainsName",
-            action: function (args) {
+            action(args) {
                 return textControl.execute("trains", args);
             }
         },
@@ -5300,7 +5300,7 @@ const textControl: any = {
             subcommands: {
                 list: {
                     args: {min: 0, max: 0},
-                    execute: function () {
+                    execute() {
                         var carNames: string[] = [];
                         for (var i = 0; i < cars.length; i++) {
                             carNames[i] = i + ": " + getString(["appScreenCarNames", i]);
@@ -5311,7 +5311,7 @@ const textControl: any = {
                 },
                 mode: {
                     args: {min: 0, max: 0},
-                    execute: function () {
+                    execute() {
                         if (carParams.init) {
                             return formatJSString(getString("appScreenTextCommandsCarsMode"), getString("appScreenTextCommandsCarsModeStop"));
                         } else if (carParams.autoModeOff) {
@@ -5323,7 +5323,7 @@ const textControl: any = {
                 },
                 auto: {
                     args: {min: 1, max: 1, patterns: [/^start|end|pause|resume$/]},
-                    execute: function (args) {
+                    execute(args) {
                         if (args[1] == "start" && carActions.auto.start()) {
                             return getString("appScreenTextCommandsGeneralSuccess", "!", "upper");
                         } else if (args[1] == "end" && carActions.auto.end()) {
@@ -5339,7 +5339,7 @@ const textControl: any = {
                 },
                 manual: {
                     args: {min: 2, max: 2, patterns: [/^start|stop|back|park$/, /^[0-9]+$/]},
-                    execute: function (args) {
+                    execute(args) {
                         var car = parseInt(args[2], 10);
                         if (args[1] == "start" && carActions.manual.start(car)) {
                             return getString("appScreenTextCommandsGeneralSuccess", "!", "upper");
@@ -5356,12 +5356,12 @@ const textControl: any = {
                 }
             },
             nameIdentifier: "appScreenTextCommandsCarsName",
-            action: function (args) {
+            action(args) {
                 return textControl.execute("cars", args);
             }
         },
         exit: {
-            action: function () {
+            action() {
                 textControl.elements.root.style.display = "";
                 if (gui.infoOverlay && client.zoomAndTilt.realScale == 1) {
                     drawInfoOverlayMenu("show");
@@ -5382,13 +5382,13 @@ const onlineGame: any = {
     chatSticker: 7,
     resized: false,
     waitingClock: {
-        init: function (): void {
+        init(): void {
             const initialZoom = 0.45;
             onlineGame.waitingClock.initTime = Date.now();
             onlineGame.waitingClock.zoom = initialZoom;
             onlineGame.waitingClock.secondHandBackwards = false;
         },
-        draw: function (): void {
+        draw(): void {
             if (Date.now() - onlineGame.waitingClock.initTime < 5000) {
                 return;
             }
@@ -5536,7 +5536,7 @@ const onlineGame: any = {
 };
 const onlineConnection: any = {
     serverURI: getServerLink(Protocols.WebSocket) + "/multiplay",
-    send: function (mode: string, message?: string) {
+    send(mode: string, message?: string) {
         if (onlineConnection.socket && onlineConnection.socket.readyState == WebSocket.OPEN) {
             onlineConnection.socket.send(
                 JSON.stringify({
@@ -5555,7 +5555,7 @@ var resized = false;
 
 const demoMode: any = {
     leaveTimeMin: 1500,
-    leaveTimeoutStart: function () {
+    leaveTimeoutStart() {
         if (demoMode.leaveTimeout != undefined && demoMode.leaveTimeout != null) {
             window.clearTimeout(demoMode.leaveTimeout);
         }
@@ -5563,12 +5563,12 @@ const demoMode: any = {
             switchMode();
         }, demoMode.leaveTimeMin);
     },
-    leaveTimeoutEnd: function () {
+    leaveTimeoutEnd() {
         if (demoMode.leaveTimeout != undefined && demoMode.leaveTimeout != null) {
             window.clearTimeout(demoMode.leaveTimeout);
         }
     },
-    reload: function () {
+    reload() {
         followLink(window.location.href, "_self", LinkStates.InternalHtml);
     }
 };
@@ -5576,13 +5576,13 @@ const demoMode: any = {
 const debug: Debug = {paint: true};
 
 const three: Three = {
-    calcScale: function () {
+    calcScale() {
         return background.height / client.devicePixelRatio / client.height;
     },
-    calcPositionY: function () {
+    calcPositionY() {
         return ((client.height - (background.y * 2 + background.height) / client.devicePixelRatio) / client.height) * (background.height / background.width / 2);
     },
-    switchCamera: function (forwards = true) {
+    switchCamera(forwards = true) {
         if (forwards) {
             if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
                 if (three.followObject < cars.length - 1) {
@@ -5653,7 +5653,7 @@ const three: Three = {
     },
     zoom: 3,
     followCamControls: {
-        recalc: function () {
+        recalc() {
             three.followCamControls.width = Math.min(50, client.width / 10) * client.devicePixelRatio;
             three.followCamControls.height = 0;
             three.followCamControls.padding = three.followCamControls.width / 3;
@@ -7514,7 +7514,7 @@ window.addEventListener("load", function () {
                 calcControlCenter();
                 drawOptionsMenu("show");
 
-                document.fonts.ready.then(function () {
+                document.fonts.ready.then(() => {
                     //Recalc canvas fonts (font loading may take longer than resize)
                     calcClassicUIElements();
                     calcControlCenter();
