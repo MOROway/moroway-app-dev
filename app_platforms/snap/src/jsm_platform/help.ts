@@ -1,5 +1,6 @@
 "use strict";
 import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("#legal-appsnap-licenses").classList.remove("hidden");
     document.querySelector("#legal-appsnap-electron-builder-license").addEventListener("click", function () {

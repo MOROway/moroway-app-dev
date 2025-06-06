@@ -1,8 +1,4 @@
 "use strict";
-import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
-function goBack() {
-    followLink("./help", "_self", LinkStates.InternalHtml);
-}
 document.addEventListener("DOMContentLoaded", function () {
     const elem = document.getElementById("backOption");
     if (elem) {
@@ -10,10 +6,11 @@ document.addEventListener("DOMContentLoaded", function () {
         elem.parentNode.replaceChild(elemClone, elem);
         const elemNew = document.getElementById("backOption");
         if (elemNew) {
-            elemNew.addEventListener("click", goBack);
+            elemNew.addEventListener("click", function () {
+                // Android wrapper contains WebJSInterface
+                // @ts-ignore
+                WebJSInterface.goBack();
+            });
         }
     }
-});
-document.addEventListener("deviceready", function () {
-    document.addEventListener("backbutton", goBack, false);
 });

@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const demoModeContainerManual = document.getElementById("demo-mode-manual-only");
     const demoModeContainer3D = document.getElementById("demo-mode-3d-only");
     const demoModeContainer3DBirdsEye = document.getElementById("demo-mode-3d-birdseye-only");
-    const demoModeInputRandom = document.getElementById("demo-mode-random");
-    const demoModeInput3D = document.getElementById("demo-mode-3d");
-    const demoModeInput3DCamModeBirdsEye = document.getElementById("demo-mode-3d-camera-mode-birds-eye");
-    const demoModeInput3DCamModeFollowTrain = document.getElementById("demo-mode-3d-camera-mode-follow-train");
-    const demoModeInput3DCamModeFollowCar = document.getElementById("demo-mode-3d-camera-mode-follow-car");
+    const demoModeInputRandom = document.getElementById("demo-mode-random") as HTMLInputElement;
+    const demoModeInput3D = document.getElementById("demo-mode-3d") as HTMLInputElement;
+    const demoModeInput3DCamModeBirdsEye = document.getElementById("demo-mode-3d-camera-mode-birds-eye") as HTMLInputElement;
+    const demoModeInput3DCamModeFollowTrain = document.getElementById("demo-mode-3d-camera-mode-follow-train") as HTMLInputElement;
+    const demoModeInput3DCamModeFollowCar = document.getElementById("demo-mode-3d-camera-mode-follow-car") as HTMLInputElement;
     demoModeGo.addEventListener("click", function () {
         var cameraMode = "birds-eye";
         if (demoModeInput3DCamModeFollowTrain.checked) {
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (demoModeInput3DCamModeFollowCar.checked) {
             cameraMode = "follow-car";
         }
-        const url = "./?mode=demoStandalone&gui-3d=" + (demoModeInput3D.checked ? 1 : 0) + "&gui-3d-night=" + (document.getElementById("demo-mode-3d-night").checked ? 1 : 0) + "&gui-demo-3d-rotation-speed-percent=" + document.getElementById("demo-mode-3d-rotation-speed").value + "&gui-3d-cam-mode=" + cameraMode + "&gui-demo-random=" + (demoModeInputRandom.checked ? 1 : 0);
+        const url = "./?mode=demoStandalone&gui-3d=" + (demoModeInput3D.checked ? 1 : 0) + "&gui-3d-night=" + ((document.getElementById("demo-mode-3d-night") as HTMLInputElement).checked ? 1 : 0) + "&gui-demo-3d-rotation-speed-percent=" + (document.getElementById("demo-mode-3d-rotation-speed") as HTMLInputElement).value + "&gui-3d-cam-mode=" + cameraMode + "&gui-demo-random=" + (demoModeInputRandom.checked ? 1 : 0);
         followLink(url, "_self", LinkStates.InternalHtml);
     });
     demoModeInputRandom.addEventListener("change", function () {

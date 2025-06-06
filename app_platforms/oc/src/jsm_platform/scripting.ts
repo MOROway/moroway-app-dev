@@ -1,5 +1,4 @@
 "use strict";
-import { APP_DATA } from "{{jsm}}/common/app_data.js";
 import { getSetting } from "{{jsm}}/common/settings.js";
 import { getString } from "{{jsm}}/common/string_tools.js";
 import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
@@ -19,6 +18,8 @@ document.addEventListener("deviceready", function () {
         function (e) {
             e.preventDefault();
             if (getMode() != "demo" && (!getSetting("saveGame") || getMode() == "online")) {
+                // Cordova wrapper contains this function
+                // @ts-ignore
                 navigator.notification.confirm(
                     getString("generalLeaveAndDestroyGame"),
                     function (button) {
@@ -35,18 +36,4 @@ document.addEventListener("deviceready", function () {
         },
         false
     );
-});
-
-document.addEventListener("moroway-app-keep-screen-alive", function (event) {
-    if (event.detail) {
-        if (event.detail.acquire) {
-            try {
-                navigator.wakeLock.request("screen");
-            } catch (error) {
-                if (APP_DATA.debug) {
-                    console.log("Wake-Lock-Error:", error);
-                }
-            }
-        }
-    }
 });

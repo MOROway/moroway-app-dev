@@ -7,6 +7,8 @@ export function followLink(input1, input2, input3) {
     }
     switch (input3) {
         case LinkStates.External:
+            // Electron wrapper contains this function
+            // @ts-ignore
             _openExternalLink.exec(input1);
             break;
         case LinkStates.InternalHtml:
@@ -29,6 +31,8 @@ export function followLink(input1, input2, input3) {
             if (input2 === "_self") {
                 window.location.href = input1;
             } else {
+                // Electron wrapper contains this function
+                // @ts-ignore
                 _openNormalLink.exec(input1);
             }
             break;

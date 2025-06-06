@@ -14,6 +14,7 @@ import { NotificationChannel, NotificationPriority, notify } from "./common/noti
 import { getVersionCode, removeSavedGame, updateSavedGame } from "./common/saved_game.js";
 import { getSetting } from "./common/settings.js";
 import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltip, initTooltips } from "./common/tooltip.js";
 import { followLink, getQueryString, getServerLink, getShareLink, LinkStates, Protocols } from "./common/web_tools.js";
 import { RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_animate.js";
@@ -7551,15 +7552,16 @@ window.addEventListener("load", function () {
                             if (Number.isInteger(storedElapsedTime)) {
                                 elapsedTime += storedElapsedTime;
                             }
-                            window.sessionStorage.setItem("demoElapsedTime", JSON.stringify(elapsedTime));
                             if (elapsedTime >= demoMode.exitTimeout) {
                                 window.sessionStorage.removeItem("demoElapsedTime");
-                                const event = new CustomEvent("moroway-app-exit");
-                                document.dispatchEvent(event);
+                                if (SYSTEM_TOOLS.canExitApp()) {
+                                    SYSTEM_TOOLS.exitApp();
+                                }
                                 window.setTimeout(function () {
                                     demoMode.reload();
                                 }, 500);
                             } else {
+                                window.sessionStorage.setItem("demoElapsedTime", JSON.stringify(elapsedTime));
                                 demoMode.reload();
                             }
                         } else {
@@ -7811,8 +7813,7 @@ window.addEventListener("load", function () {
     }
 
     function keepScreenAlive() {
-        const event = new CustomEvent("moroway-app-keep-screen-alive", {detail: {acquire: document.visibilityState == "visible"}});
-        document.dispatchEvent(event);
+        SYSTEM_TOOLS.keepAlive(document.visibilityState == "visible");
     }
 
     const queryStringMode = getQueryString("mode");

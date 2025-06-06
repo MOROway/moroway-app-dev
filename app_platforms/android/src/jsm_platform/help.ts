@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const elemNew = document.getElementById("backOption");
         if (elemNew) {
             elemNew.addEventListener("click", function () {
+                // Android wrapper contains WebJSInterface
+                // @ts-ignore
                 WebJSInterface.goBack();
             });
         }
@@ -48,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    var about = document.querySelector("#website-about");
+    const about = document.querySelector("#website-about") as HTMLElement;
     handleServerJSONValues("about", function (res) {
         if (typeof res == "object" && Array.isArray(res)) {
             res.forEach(function (aboutText) {

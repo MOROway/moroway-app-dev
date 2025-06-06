@@ -1,5 +1,6 @@
 "use strict";
 import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
+
 function goBack() {
     followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);
 }

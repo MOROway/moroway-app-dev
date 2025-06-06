@@ -19,17 +19,25 @@ interface APP_DATA {
 //Placeholders are set by build-script, type error is therefore intentional
 const APP_DATA: APP_DATA = {
     version: {
+        // @ts-ignore
         major: "{{version_major}}",
+        // @ts-ignore
         minor: "{{version_minor}}",
+        // @ts-ignore
         patch: "{{version_patch}}",
+        // @ts-ignore
         beta: "{{beta}}",
         date: {
+            // @ts-ignore
             year: "{{date_year}}",
+            // @ts-ignore
             month: "{{date_month}}",
+            // @ts-ignore
             day: "{{date_day}}"
         }
     },
     platform: "{{platform}}",
+    // @ts-ignore
     debug: "{{debug}}"
 };
 deepFreeze(APP_DATA);

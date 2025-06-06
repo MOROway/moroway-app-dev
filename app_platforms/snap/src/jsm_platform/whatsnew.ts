@@ -1,5 +1,6 @@
 "use strict";
 import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     const elem = document.getElementById("backOption");
     if (elem) {
@@ -9,7 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (elemNew) {
             elemNew.addEventListener("click", function () {
                 (async () => {
+                    // Electron wrapper contains this function
+                    // @ts-ignore
                     if (await _canGoBack.exec()) {
+                        // Electron wrapper contains this function
+                        // @ts-ignore
                         _goBack.exec();
                     } else {
                         try {
