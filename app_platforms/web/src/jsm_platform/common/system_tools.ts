@@ -1,7 +1,7 @@
 "use strict";
-import { APP_DATA } from "{{jsm}}/common/app_data";
+import { APP_DATA } from "{{jsm}}/common/app_data.js";
 import { SYSTEM_TOOLS_INTERFACE } from "{{jsm}}/common/system_tools.js";
-import { getMode } from "{{jsm}}/scripting";
+import { getMode } from "{{jsm}}/scripting.js";
 
 export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
     canExitApp() {

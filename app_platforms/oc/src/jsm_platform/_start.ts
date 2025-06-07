@@ -1,5 +1,5 @@
 "use strict";
-import { SYSTEM_TOOLS } from "{{jsm_platform}}/common/system_tools";
+import { SYSTEM_TOOLS } from "{{jsm_platform}}/common/system_tools.js";
 import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "{{jsm}}/common/app_data.js";
 import { getString, setHTMLStrings } from "{{jsm}}/common/string_tools.js";
 import { followLink, LinkStates, showServerNote } from "{{jsm}}/common/web_tools.js";

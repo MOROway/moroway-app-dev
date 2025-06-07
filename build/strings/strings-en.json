@@ -198,6 +198,7 @@
 	"generalStartDemoMode3DCameraModeFollowCar": "follow car",
 	"generalStartDemoMode3DCameraModeFollowTrain": "follow train",
 	"generalStartDemoMode3DRotationSpeed": "3D: rotation speed",
+	"generalStartDemoModeExitTimeout": "Try to exit app after specified amount of time in minutes.",
 	"generalStartDemoModeRandom": "Start demo mode with random configuration",
 	"generalStartGame": "Play",
 	"generalStartGameDemoMode": "Start demo mode",

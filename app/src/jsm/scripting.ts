@@ -380,11 +380,11 @@ function showConfirmDialogLeaveMultiplayerMode() {
 }
 
 function showConfirmDialogEnterDemoMode() {
-    const confirmDialog = document.querySelector("#confirm-dialog") as HTMLElement;
-    if (confirmDialog != null) {
-        const confirmDialogTitle = confirmDialog.querySelector("#confirm-dialog-title") as HTMLElement;
-        const confirmDialogText = confirmDialog.querySelector("#confirm-dialog-text") as HTMLElement;
-        const confirmDialogParams = confirmDialog.querySelector("#confirm-dialog-params") as HTMLElement;
+    const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
+    if (confirmDialog !== null) {
+        const confirmDialogTitle: HTMLElement = confirmDialog.querySelector("#confirm-dialog-title");
+        const confirmDialogText: HTMLElement = confirmDialog.querySelector("#confirm-dialog-text");
+        const confirmDialogParams: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params");
         confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
         confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
         confirmDialogParams.style.display = "block";
@@ -393,9 +393,9 @@ function showConfirmDialogEnterDemoMode() {
         const confirmDialogRandom = document.createElement("input");
         confirmDialogRandom.id = confirmDialogRandomId;
         confirmDialogRandom.type = "checkbox";
-        confirmDialogRandom.onchange = function (event) {
-            const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container") as HTMLElement;
-            if (param3DRotationSpeedElem != null) {
+        confirmDialogRandom.onchange = function () {
+            const param3DRotationSpeedElem: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container");
+            if (param3DRotationSpeedElem !== null) {
                 param3DRotationSpeedElem.style.display = confirmDialogRandom.checked ? "none" : "";
             }
         };
@@ -406,6 +406,23 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogRandomContainer.appendChild(confirmDialogRandom);
         confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
         confirmDialogParams.appendChild(confirmDialogRandomContainer);
+        const confirmDialogExitTimeoutId = "confirm-dialog-params-exit-timeout";
+        const confirmDialogExitTimeoutContainer = document.createElement("div");
+        const confirmDialogExitTimeout = document.createElement("input");
+        confirmDialogExitTimeout.id = confirmDialogExitTimeoutId;
+        confirmDialogExitTimeout.type = "number";
+        confirmDialogExitTimeout.step = "1";
+        confirmDialogExitTimeout.pattern = "d+";
+        confirmDialogExitTimeout.value = "";
+        const confirmDialogExitTimeoutLabel = document.createElement("label");
+        confirmDialogExitTimeoutLabel.htmlFor = confirmDialogExitTimeoutId;
+        confirmDialogExitTimeoutLabel.textContent = getString("generalStartDemoModeExitTimeout");
+        confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeout);
+        confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeoutLabel);
+        if (!SYSTEM_TOOLS.canExitApp()) {
+            confirmDialogExitTimeoutContainer.style.display = "none";
+        }
+        confirmDialogParams.appendChild(confirmDialogExitTimeoutContainer);
         if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
             const elemDiv = document.createElement("div");
             elemDiv.id = "confirm-dialog-params-3d-rotation-speed-container";
@@ -424,19 +441,24 @@ function showConfirmDialogEnterDemoMode() {
             elemDiv.appendChild(elementInput);
             confirmDialogParams.appendChild(elemDiv);
         }
-        const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes") as HTMLElement;
-        if (confirmDialogYes != null) {
+        const confirmDialogYes: HTMLElement = document.querySelector("#confirm-dialog #confirm-dialog-yes");
+        if (confirmDialogYes !== null) {
             confirmDialogYes.onclick = function () {
-                const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input") as HTMLInputElement;
-                if (param3DRotationSpeedElem != null) {
+                const param3DRotationSpeedElem: HTMLInputElement = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
+                if (param3DRotationSpeedElem !== null) {
                     setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
                 }
                 setGuiState("demo-random", confirmDialogRandom.checked);
-                switchMode("demo");
                 closeConfirmDialog();
+                if (confirmDialogExitTimeout.value !== "") {
+                    console.log(1);
+                    switchMode("demo", {"exit-timeout": confirmDialogExitTimeout.value});
+                } else {
+                    switchMode("demo");
+                }
             };
         }
-        const confirmDialogNo = document.querySelector("#confirm-dialog #confirm-dialog-no") as HTMLElement;
+        const confirmDialogNo: HTMLElement = document.querySelector("#confirm-dialog #confirm-dialog-no");
         if (confirmDialogNo != null) {
             confirmDialogNo.onclick = closeConfirmDialog;
         }
@@ -447,12 +469,12 @@ function showConfirmDialogEnterDemoMode() {
 }
 
 function closeConfirmDialog() {
-    const confirmDialog = document.querySelector("#confirm-dialog") as HTMLElement;
+    const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
     if (confirmDialog != null) {
         confirmDialog.style.display = "";
-        const confirmDialogTitle = confirmDialog.querySelector("#confirm-dialog-title") as HTMLElement;
-        const confirmDialogText = confirmDialog.querySelector("#confirm-dialog-text") as HTMLElement;
-        const confirmDialogParams = confirmDialog.querySelector("#confirm-dialog-params") as HTMLElement;
+        const confirmDialogTitle: HTMLElement = confirmDialog.querySelector("#confirm-dialog-title");
+        const confirmDialogText: HTMLElement = confirmDialog.querySelector("#confirm-dialog-text");
+        const confirmDialogParams: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params");
         confirmDialogTitle.textContent = "";
         confirmDialogText.textContent = "";
         confirmDialogText.style.display = "";
@@ -461,8 +483,11 @@ function closeConfirmDialog() {
     }
 }
 
-function switchMode(mode = "normal") {
-    followLink("?mode=" + mode, "_self", LinkStates.InternalHtml);
+function switchMode(mode: string = "normal", additionalParameters: Record<string, string> = {}): void {
+    additionalParameters.mode = mode;
+    const additionalParametersString = new URLSearchParams(additionalParameters).toString();
+    const url = "?" + additionalParametersString;
+    followLink(url, "_self", LinkStates.InternalHtml);
 }
 
 export function getMode() {
