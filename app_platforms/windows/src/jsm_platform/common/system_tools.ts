@@ -5,7 +5,7 @@ import { getMode } from "{{jsm}}/scripting.js";
 
 export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
     canExitApp() {
-        return !window.matchMedia("(display-mode: browser)").matches;
+        return !window.matchMedia("(display-mode: browser)").matches && window.history.length === 1;
     },
     exitApp() {
         try {

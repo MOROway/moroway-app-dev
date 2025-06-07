@@ -178,5 +178,6 @@ export enum LinkStates {
     External,
     InternalHtml,
     InternalLicense,
+    InternalReload,
     Intent
 }
