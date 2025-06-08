@@ -237,6 +237,9 @@ versions:
         general: |
             Verbesserungen an der Versionshistorie.
             Verbesserungen an den Build-Skripten.
+    10.3.4:
+        general: |
+            Anwendung im Demo-Modus beenden nach spezifizierter Zeit wenn unterstützt von der Plattform.
 hints:
     1.0.0:
         general: |

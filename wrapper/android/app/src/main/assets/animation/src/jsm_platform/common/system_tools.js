@@ -1,21 +1,24 @@
+/**
+ * Copyright 2025 Jonathan Herrmann-Engel
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
 "use strict";
-import { APP_DATA } from "{{jsm}}/common/app_data.js";
-import { SYSTEM_TOOLS_INTERFACE } from "{{jsm}}/common/system_tools.js";
-
-export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
-    canExitApp() {
+import { APP_DATA } from "../../jsm/common/app_data.js";
+export var SYSTEM_TOOLS = {
+    canExitApp: function () {
         return false;
     },
-    exitApp() {
+    exitApp: function () {
         // Android wrapper contains WebJSInterface
         // @ts-ignore
         WebJSInterface.exitApp();
     },
-    keepAlive(acquire) {
+    keepAlive: function (acquire) {
         if (acquire) {
             try {
                 navigator.wakeLock.request("screen");
-            } catch (error) {
+            }
+            catch (error) {
                 if (APP_DATA.debug) {
                     console.log("Wake-Lock-Error:", error);
                 }

@@ -7,17 +7,25 @@ import { deepFreeze } from "./js_objects.js";
 //Placeholders are set by build-script, type error is therefore intentional
 var APP_DATA = {
     version: {
+        // @ts-ignore
         major: 10,
+        // @ts-ignore
         minor: 3,
-        patch: 2,
-        beta: 0,
+        // @ts-ignore
+        patch: 4,
+        // @ts-ignore
+        beta: 2,
         date: {
+            // @ts-ignore
             year: 2025,
-            month: 5,
-            day: 11
+            // @ts-ignore
+            month: 6,
+            // @ts-ignore
+            day: 8
         }
     },
     platform: "android",
+    // @ts-ignore
     debug: false
 };
 deepFreeze(APP_DATA);

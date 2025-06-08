@@ -119,7 +119,9 @@ class MenuActivity : MOROwayActivity() {
                         1
                     } else {
                         0
-                    })
+                    }) + (if (demoModeDialogBinding.demoModeExitTimeout.text.isNotEmpty()) {
+                        "&exit-timeout=" + demoModeDialogBinding.demoModeExitTimeout.text
+                    } else "")
                 )
                 demoModeDialog.dismiss()
                 startActivity(intent)

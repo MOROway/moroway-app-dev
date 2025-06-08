@@ -3,43 +3,42 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
-import {followLink, LINK_STATE_INTERNAL_LICENSE, LINK_STATE_NORMAL} from "./common/follow_links.js";
-import {getString} from "../jsm/common/string_tools.js";
-import {handleServerJSONValues, getServerHTMLLink} from "../jsm/common/web_tools.js";
-import {notify, NOTIFICATION_PRIO_DEFAULT} from "../jsm/common/notify.js";
+import { NotificationPriority, notify } from "../jsm/common/notify.js";
+import { getString } from "../jsm/common/string_tools.js";
+import { followLink, getServerHTMLLink, handleServerJSONValues, LinkStates } from "../jsm/common/web_tools.js";
 document.addEventListener("DOMContentLoaded", function () {
-    const elem = document.getElementById("backOption");
+    var elem = document.getElementById("backOption");
     if (elem) {
-        const elemClone = elem.cloneNode(true);
+        var elemClone = elem.cloneNode(true);
         elem.parentNode.replaceChild(elemClone, elem);
-        const elemNew = document.getElementById("backOption");
+        var elemNew = document.getElementById("backOption");
         if (elemNew) {
             elemNew.addEventListener("click", function () {
+                // Android wrapper contains WebJSInterface
+                // @ts-ignore
                 WebJSInterface.goBack();
             });
         }
     }
-
     document.querySelector("#legal-appandroid-licenses").classList.remove("hidden");
     document.querySelector("#legal-appandroid-kotlin-license").addEventListener("click", function () {
-        followLink("licenses_platform/org.jetbrains.kotlin.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/org.jetbrains.kotlin.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-android-x-appcompat-license").addEventListener("click", function () {
-        followLink("licenses_platform/androidx.appcompat.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/androidx.appcompat.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-android-x-activity-license").addEventListener("click", function () {
-        followLink("licenses_platform/androidx.activity.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/androidx.activity.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-android-x-webkit-license").addEventListener("click", function () {
-        followLink("licenses_platform/androidx.webkit.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/androidx.webkit.txt", "_self", LinkStates.InternalLicense);
     });
     document.querySelector("#legal-appandroid-picasso-license").addEventListener("click", function () {
-        followLink("licenses_platform/com.squareup.picasso.txt", "_self", LINK_STATE_INTERNAL_LICENSE);
+        followLink("licenses_platform/com.squareup.picasso.txt", "_self", LinkStates.InternalLicense);
     });
-
     document.querySelector("#privacy-statement-link").addEventListener("click", function () {
-        notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NOTIFICATION_PRIO_DEFAULT, 900, null, null, window.innerHeight);
-        followLink(getServerHTMLLink("privacy"), "_blank", LINK_STATE_NORMAL);
+        notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NotificationPriority.Default, 900, null, null, window.innerHeight);
+        followLink(getServerHTMLLink("privacy"), "_blank", LinkStates.External);
     });
     handleServerJSONValues("privacy", function (res) {
         var privacy = document.querySelector("#privacy-statement");
@@ -51,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function () {
             privacy.appendChild(span);
         });
     });
-
     var about = document.querySelector("#website-about");
     handleServerJSONValues("about", function (res) {
         if (typeof res == "object" && Array.isArray(res)) {

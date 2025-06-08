@@ -9,7 +9,7 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
     exitApp() {
         // Cordova wrapper contains this function
         // @ts-ignore
-        navigator.app.exitApp();
+        cordova.commitSuicide();
     },
     keepAlive(acquire) {
         if (acquire) {

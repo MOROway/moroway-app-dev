@@ -163,6 +163,7 @@
 	"generalStartDemoMode3DCameraModeFollowCar": "Auto folgen",
 	"generalStartDemoMode3DCameraModeFollowTrain": "Zug folgen",
 	"generalStartDemoMode3DRotationSpeed": "3D: Rotationsgeschwindigkeit",
+    "generalStartDemoModeExitTimeout": "Anwendung zu beenden versuchen nach in Minuten angegebenem Zeitraum.",
 	"generalStartDemoModeRandom": "Demo-Modus mit zufälliger Konfiguration starten",
 	"generalStartGame": "Spielen",
 	"generalStartGameDemoMode": "Demo-Modus starten",

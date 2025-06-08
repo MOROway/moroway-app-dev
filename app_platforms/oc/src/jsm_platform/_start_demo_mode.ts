@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const demoModeContainer3D = document.getElementById("demo-mode-3d-only");
     const demoModeContainer3DBirdsEye = document.getElementById("demo-mode-3d-birdseye-only");
     const demoModeInputRandom = document.getElementById("demo-mode-random") as HTMLInputElement;
+    const demoModeInputExitTimeout = document.getElementById("demo-mode-exit-timeout") as HTMLInputElement;
     const demoModeInput3D = document.getElementById("demo-mode-3d") as HTMLInputElement;
     const demoModeInput3DCamModeBirdsEye = document.getElementById("demo-mode-3d-camera-mode-birds-eye") as HTMLInputElement;
     const demoModeInput3DCamModeFollowTrain = document.getElementById("demo-mode-3d-camera-mode-follow-train") as HTMLInputElement;
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (demoModeInput3DCamModeFollowCar.checked) {
             cameraMode = "follow-car";
         }
-        const url = "./?mode=demoStandalone&gui-3d=" + (demoModeInput3D.checked ? 1 : 0) + "&gui-3d-night=" + ((document.getElementById("demo-mode-3d-night") as HTMLInputElement).checked ? 1 : 0) + "&gui-demo-3d-rotation-speed-percent=" + (document.getElementById("demo-mode-3d-rotation-speed") as HTMLInputElement).value + "&gui-3d-cam-mode=" + cameraMode + "&gui-demo-random=" + (demoModeInputRandom.checked ? 1 : 0);
+        const url = "./?mode=demoStandalone&gui-3d=" + (demoModeInput3D.checked ? 1 : 0) + "&gui-3d-night=" + ((document.getElementById("demo-mode-3d-night") as HTMLInputElement).checked ? 1 : 0) + "&gui-demo-3d-rotation-speed-percent=" + (document.getElementById("demo-mode-3d-rotation-speed") as HTMLInputElement).value + "&gui-3d-cam-mode=" + cameraMode + "&gui-demo-random=" + (demoModeInputRandom.checked ? 1 : 0) + (demoModeInputExitTimeout.value !== "" ? "&exit-timeout=" + parseInt(demoModeInputExitTimeout.value, 10) : "");
         followLink(url, "_self", LinkStates.InternalHtml);
     });
     demoModeInputRandom.addEventListener("change", function () {

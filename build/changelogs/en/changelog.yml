@@ -296,8 +296,8 @@ versions:
             Improve changelog page.
             Improve build scripts.
     10.3.4:
-        snap: |
-            Exit app started in demo mode after specified amount of minutes via CLI-parameter --exit-timeout=MINUTES.
+        general: |
+            Exit app in demo mode after specified amount of time if supported by platform.
 hints:
     1.0.0:
         general: |

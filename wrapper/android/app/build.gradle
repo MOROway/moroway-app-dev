@@ -9,8 +9,8 @@ android {
         applicationId 'appinventor.ai_Jonathan_Herrmann_Engel.MOROway'
         minSdk 28
         targetSdk 35
-        versionCode 1003020
-        versionName '10.3.2'
+        versionCode 1003040
+        versionName '10.3.4'
     }
     buildTypes {
         release {
