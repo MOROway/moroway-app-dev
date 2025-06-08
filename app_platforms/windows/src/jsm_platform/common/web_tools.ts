@@ -12,7 +12,7 @@ export function followLink(input1, input2, input3) {
             input1 = input1.replace(/#/, "/#");
         } else if (input1 === "") {
             input1 = "./";
-        } else if (!input1.endsWith("/")) {
+        } else if (!input1.includes("?") && !input1.includes("#") && !input1.endsWith("/")) {
             input1 += "/";
         }
     }
