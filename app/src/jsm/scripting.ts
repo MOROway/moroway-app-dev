@@ -455,7 +455,6 @@ function showConfirmDialogEnterDemoMode() {
                 setGuiState("demo-random", confirmDialogRandom.checked);
                 closeConfirmDialog();
                 if (confirmDialogExitTimeout.value !== "") {
-                    console.log(1);
                     switchMode("demo", {"exit-timeout": confirmDialogExitTimeout.value});
                 } else {
                     switchMode("demo");
@@ -7625,19 +7624,21 @@ window.addEventListener("load", function () {
                         });
                         document.addEventListener("touchstart", demoMode.leaveTimeoutStart, {passive: false});
                         document.addEventListener("touchend", demoMode.leaveTimeoutEnd, {passive: false});
+                        document.addEventListener("touchcancel", demoMode.leaveTimeoutEnd, {passive: false});
                         document.addEventListener("mousedown", demoMode.leaveTimeoutStart, {passive: false});
                         document.addEventListener("mouseup", demoMode.leaveTimeoutEnd, {passive: false});
+                        document.addEventListener("mouseout", demoMode.leaveTimeoutEnd, {passive: false});
                     }
                 } else {
                     canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
                     canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
                     canvasForeground.addEventListener("touchend", getTouchEnd, {passive: false});
-                    canvasForeground.addEventListener("touchcancel", getTouchCancel);
-                    canvasForeground.addEventListener("mousemove", onMouseMove);
+                    canvasForeground.addEventListener("touchcancel", getTouchCancel, {passive: false});
+                    canvasForeground.addEventListener("mousemove", onMouseMove, {passive: false});
                     canvasForeground.addEventListener("mousedown", onMouseDown, {passive: false});
                     canvasForeground.addEventListener("mouseup", onMouseUp, {passive: false});
                     canvasForeground.addEventListener("mouseout", onMouseOut, {passive: false});
-                    canvasForeground.addEventListener("mouseenter", onMouseEnter);
+                    canvasForeground.addEventListener("mouseenter", onMouseEnter, {passive: false});
                     canvasForeground.addEventListener("contextmenu", onMouseRight, {passive: false});
                     canvasForeground.addEventListener("wheel", onMouseWheel, {passive: false});
                     document.addEventListener("keydown", onKeyDown);
@@ -7807,7 +7808,7 @@ window.addEventListener("load", function () {
                         window.localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
                     } catch (e) {
                         if (APP_DATA.debug) {
-                            console.error(e.name + "/" + e.message);
+                            console.error(e.name, e.message);
                         }
                         notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y + menus.outerContainer.height);
                     }

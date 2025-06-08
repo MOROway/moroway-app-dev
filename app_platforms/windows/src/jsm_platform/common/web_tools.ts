@@ -3,7 +3,20 @@ import { APP_DATA } from "{{jsm}}/common/app_data.js";
 import { LinkStates } from "{{jsm}}/common/web_tools.js";
 
 export function followLink(input1, input2, input3) {
-    if (input3 == LinkStates.InternalReload) {
+    if ((input3 === LinkStates.InternalHtml || input3 === LinkStates.InternalReload) && input1.match(/[.][A-Za-z0-9]+([?]|#|$)/) === null) {
+        if (input1.startsWith("?") || input1.startsWith("#")) {
+            input1 = "./" + input1;
+        } else if (input1.includes("?") && !input1.includes("/?")) {
+            input1 = input1.replace(/[?]/, "/?");
+        } else if (input1.includes("#") && !input1.includes("/#")) {
+            input1 = input1.replace(/#/, "/#");
+        } else if (input1 === "") {
+            input1 = "./";
+        } else if (!input1.endsWith("/")) {
+            input1 += "/";
+        }
+    }
+    if (input3 === LinkStates.InternalReload) {
         if (input1 === window.location.href) {
             window.location.reload();
             return;
@@ -17,7 +30,7 @@ export function followLink(input1, input2, input3) {
                 }
             }
         }
-    } else if (input3 == LinkStates.InternalLicense) {
+    } else if (input3 === LinkStates.InternalLicense) {
         input1 = "license/?license-file=" + input1;
     }
     if (typeof input2 !== "string") {
