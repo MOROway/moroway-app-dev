@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
-import { followLink, LINK_STATE_NORMAL } from "../../jsm_platform/common/follow_links.js";
+import { followLink } from "../../jsm_platform/common/web_tools.js";
 import { APP_DATA } from "./app_data.js";
-import { formatJSString, getString, CURRENT_LANG } from "./string_tools.js";
+import { CURRENT_LANG, formatJSString, getString } from "./string_tools.js";
+export { followLink } from "../../jsm_platform/common/web_tools.js";
 //HANDLE QUERY String
 export function getQueryString(key) {
     var value = "";
@@ -27,7 +28,7 @@ export function getShareLinkServerName() {
     return "app.moroway.de";
 }
 export function getServerLink(protocol) {
-    if (protocol === void 0) { protocol = PROTOCOL_HTTP; }
+    if (protocol === void 0) { protocol = Protocols.Http; }
     return protocol + "://herrmann-engel.de/projekte/moroway/moroway-app/server";
 }
 export function getServerRedirectLink(key) {
@@ -132,7 +133,7 @@ export function showServerNote(serverNoteElementRoot) {
         if (serverMsg.link != undefined && serverMsg.link != null && typeof serverMsg.link == "string") {
             serverNoteElementButtonGo.style.display = "block";
             serverNoteElementButtonGo.onclick = function () {
-                followLink(getServerRedirectLink(serverMsg.link), "_blank", LINK_STATE_NORMAL);
+                followLink(getServerRedirectLink(serverMsg.link), "_blank", LinkStates.External);
             };
         }
         serverNoteElementButtonNo.onclick = function () {
@@ -144,7 +145,7 @@ export function showServerNote(serverNoteElementRoot) {
             if (serverMsg.imageLink != undefined && serverMsg.imageLink != null && typeof serverMsg.imageLink == "string") {
                 serverNoteElementImage.style.cursor = "pointer";
                 serverNoteElementImage.onclick = function () {
-                    followLink(getServerRedirectLink(serverMsg.imageLink), "_blank", LINK_STATE_NORMAL);
+                    followLink(getServerRedirectLink(serverMsg.imageLink), "_blank", LinkStates.External);
                 };
             }
         }
@@ -167,5 +168,16 @@ export function showServerNote(serverNoteElementRoot) {
         serverNoteElementRoot.style.display = "block";
     });
 }
-export var PROTOCOL_HTTP = "https";
-export var PROTOCOL_WS = "wss";
+export var Protocols;
+(function (Protocols) {
+    Protocols["Http"] = "https";
+    Protocols["WebSocket"] = "wss";
+})(Protocols || (Protocols = {}));
+export var LinkStates;
+(function (LinkStates) {
+    LinkStates[LinkStates["External"] = 0] = "External";
+    LinkStates[LinkStates["InternalHtml"] = 1] = "InternalHtml";
+    LinkStates[LinkStates["InternalLicense"] = 2] = "InternalLicense";
+    LinkStates[LinkStates["InternalReload"] = 3] = "InternalReload";
+    LinkStates[LinkStates["Intent"] = 4] = "Intent";
+})(LinkStates || (LinkStates = {}));

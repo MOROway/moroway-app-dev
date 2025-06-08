@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
-import { followLink, LINK_STATE_INTERNAL_HTML } from "../jsm_platform/common/follow_links.js";
 import { formatHTMLString, formatJSString, getString, searchStringKeys, setHTMLStrings } from "./common/string_tools.js";
 import { initTooltips } from "./common/tooltip.js";
+import { followLink, LinkStates } from "./common/web_tools.js";
 document.addEventListener("DOMContentLoaded", function () {
     function createCardForMinor(major, element, newestFamily) {
         function createDetailsOnPatches(major, minor, element) {
@@ -103,14 +103,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     document.querySelector("#backOption").addEventListener("click", function () {
         if (document.referrer === document.baseURI + "help/") {
-            followLink("./help", "_self", LINK_STATE_INTERNAL_HTML);
+            followLink("./help", "_self", LinkStates.InternalHtml);
         }
         else {
             try {
                 window.close();
             }
             catch (err) { }
-            followLink("./", "_self", LINK_STATE_INTERNAL_HTML);
+            followLink("./", "_self", LinkStates.InternalHtml);
         }
     });
     var versions = searchStringKeys(RegExp("whatsNewScreenByVersionMa[0-9]+Mi0Pa0"));

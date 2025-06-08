@@ -21,6 +21,12 @@ function newWindow(urlToLoad) {
     win.loadURL(url.toString());
 }
 
+function stopCurrentWakeLock() {
+    if (wakeLockId != undefined) {
+        powerSaveBlocker.stop(wakeLockId);
+    }
+}
+
 function resolveArg(arg) {
     return new Promise((resolve) => {
         resolve(arg);
@@ -42,14 +48,13 @@ ipcMain.handle("goBack", async () => {
     BrowserWindow.getFocusedWindow().webContents.navigationHistory.goBack();
 });
 ipcMain.handle("exitApp", async () => {
+    stopCurrentWakeLock();
     app.quit();
 });
 ipcMain.handle("keepScreenAlive", async (_event, arg) => {
     const {powerSaveBlocker} = require("electron");
     const acquire = await resolveArg(arg);
-    if (wakeLockId != undefined) {
-        powerSaveBlocker.stop(wakeLockId);
-    }
+    stopCurrentWakeLock();
     if (acquire) {
         wakeLockId = powerSaveBlocker.start("prevent-display-sleep");
     }

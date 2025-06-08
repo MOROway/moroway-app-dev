@@ -3,12 +3,19 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
+import { LinkStates } from "../../jsm/common/web_tools.js";
 export function followLink(input1, input2, input3) {
+    if (typeof input2 !== "string") {
+        input2 = "";
+    }
     switch (input3) {
-        case LINK_STATE_NORMAL:
+        case LinkStates.External:
+            // Electron wrapper contains this function
+            // @ts-ignore
             _openExternalLink.exec(input1);
             break;
-        case LINK_STATE_INTERNAL_HTML:
+        case LinkStates.InternalHtml:
+        case LinkStates.InternalReload:
             var hash, queryString;
             if (input1.includes("#")) {
                 hash = input1.substr(input1.indexOf("#"));
@@ -25,18 +32,17 @@ export function followLink(input1, input2, input3) {
             if (hash !== undefined) {
                 input1 += hash;
             }
-            if (input2 == "_self") {
+            if (input2 === "_self") {
                 window.location.href = input1;
-            } else {
+            }
+            else {
+                // Electron wrapper contains this function
+                // @ts-ignore
                 _openNormalLink.exec(input1);
             }
             break;
-        case LINK_STATE_INTERNAL_LICENSE:
-            followLink("license/?license-file=" + input1, input2, LINK_STATE_INTERNAL_HTML);
+        case LinkStates.InternalLicense:
+            followLink("license/?license-file=" + input1, input2, LinkStates.InternalHtml);
             break;
     }
 }
-
-export const LINK_STATE_NORMAL = 0;
-export const LINK_STATE_INTERNAL_HTML = 1;
-export const LINK_STATE_INTERNAL_LICENSE = 3;
