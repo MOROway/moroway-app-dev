@@ -13,7 +13,7 @@ function loop() {
 
 cd "$(dirname "$0")"/.. || exit 1
 
-domain=$(cat "app_domain.txt")
+domain="$(cat "app_domain.txt")"
 app_dir="moroway-snapp"
 build_dir="build"
 dir="www"

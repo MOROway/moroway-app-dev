@@ -31,7 +31,7 @@
         }
     },
     "scripts": {
-        "dist": "./scripts/insert_html.bash && electron-builder && ./scripts/cleanup_html.bash"
+        "dist": "./scripts/insert_html.sh && electron-builder && ./scripts/cleanup_html.sh"
     },
     "devDependencies": {
         "electron": "^36.0.0",
