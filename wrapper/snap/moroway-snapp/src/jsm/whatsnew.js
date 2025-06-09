@@ -4,8 +4,8 @@
  */
 "use strict";
 import { formatHTMLString, formatJSString, getString, searchStringKeys, setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, LinkStates } from "./common/web_tools.js";
 document.addEventListener("DOMContentLoaded", function () {
     function createCardForMinor(major, element, newestFamily) {
         function createDetailsOnPatches(major, minor, element) {
@@ -101,17 +101,9 @@ document.addEventListener("DOMContentLoaded", function () {
             element.appendChild(subElement);
         });
     }
-    document.querySelector("#backOption").addEventListener("click", function () {
-        if (document.referrer === document.baseURI + "help/") {
-            followLink("./help", "_self", LinkStates.InternalHtml);
-        }
-        else {
-            try {
-                window.close();
-            }
-            catch (err) { }
-            followLink("./", "_self", LinkStates.InternalHtml);
-        }
+    var backButton = document.querySelector("#backOption");
+    backButton.addEventListener("click", function () {
+        SYSTEM_TOOLS.navigateBack();
     });
     var versions = searchStringKeys(RegExp("whatsNewScreenByVersionMa[0-9]+Mi0Pa0"));
     if (versions.length > 0) {

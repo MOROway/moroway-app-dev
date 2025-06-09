@@ -2,6 +2,7 @@
 import { APP_DATA } from "./common/app_data.js";
 import { NotificationPriority, notify } from "./common/notify.js";
 import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
 import { followLink, getServerHTMLLink, getServerRedirectLink, handleServerJSONValues, LinkStates } from "./common/web_tools.js";
 
@@ -19,11 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return navigator.userAgent;
     }
-    (document.querySelector("#backOption") as HTMLElement).addEventListener("click", function () {
-        try {
-            window.close();
-        } catch (err) {}
-        followLink("./", "_self", LinkStates.InternalHtml);
+
+    const backButton: HTMLElement = document.querySelector("#backOption");
+    backButton.addEventListener("click", function () {
+        SYSTEM_TOOLS.navigateBack();
     });
 
     (document.querySelector("#legal-libraries-threejs-license") as HTMLElement).addEventListener("click", function () {

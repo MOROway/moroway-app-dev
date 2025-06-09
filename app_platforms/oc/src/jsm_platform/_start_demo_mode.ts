@@ -1,5 +1,6 @@
 "use strict";
 import { setHTMLStrings } from "{{jsm}}/common/string_tools.js";
+import { SYSTEM_TOOLS } from "{{jsm}}/common/system_tools.js";
 import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -43,7 +44,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("deviceready", function () {
-    document.addEventListener("backbutton", function () {
-        followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);
-    });
+    document.addEventListener("backbutton", SYSTEM_TOOLS.navigateBack, false);
 });

@@ -4,11 +4,12 @@
  */
 "use strict";
 import { getString, setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, LinkStates } from "./common/web_tools.js";
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector("#backOption").addEventListener("click", function () {
-        followLink("./", "_self", LinkStates.InternalHtml);
+    var backButton = document.querySelector("#backOption");
+    backButton.addEventListener("click", function () {
+        SYSTEM_TOOLS.navigateBack();
     });
     var elements = document.querySelectorAll(".content");
     for (var i = 0; i < elements.length; i++) {

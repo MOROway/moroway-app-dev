@@ -1,7 +1,7 @@
 "use strict";
 import { formatHTMLString, formatJSString, getString, searchStringKeys, setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, LinkStates } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     function createCardForMinor(major: number, element: HTMLElement, newestFamily: boolean) {
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var addedContent = false;
             patches.forEach((key) => {
                 var currentlyAddedContent = false;
-                const patch = parseInt(key.replace("whatsNewScreenByVersionMa" + major + "Mi" + minor + "Pa", ""),10);
+                const patch = parseInt(key.replace("whatsNewScreenByVersionMa" + major + "Mi" + minor + "Pa", ""), 10);
                 const subElementPatchesContent = document.createElement("p");
                 var subElementPatchesIntro = document.createElement("i");
                 subElementPatchesIntro.textContent = formatJSString(getString("whatsNewScreenPatchesPatch", ": "), patch) + formatJSString(getString([key, 0]));
@@ -58,10 +58,10 @@ document.addEventListener("DOMContentLoaded", function () {
         minors.forEach((key, index) => {
             const minor = parseInt(key.replace(RegExp("whatsNewScreenByVersionMa" + major + "Mi([0-9]+)Pa0"), "$1"), 10);
             const subElement = document.createElement("div");
-            if (newestFamily && index == minors.length -1) {
+            if (newestFamily && index == minors.length - 1) {
                 subElement.id = "newest";
             }
-        subElement.className = "card";
+            subElement.className = "card";
             const subElementTitle = document.createElement("div");
             subElementTitle.className = "card-title";
             const subElement2 = document.createElement("h2");
@@ -98,33 +98,27 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    (document.querySelector("#backOption") as HTMLElement).addEventListener("click", function () {
-        if (document.referrer === document.baseURI + "help/") {
-            followLink("./help", "_self", LinkStates.InternalHtml);
-        } else {
-            try {
-                window.close();
-            } catch (err) {}
-            followLink("./", "_self", LinkStates.InternalHtml);
-        }
+    const backButton: HTMLElement = document.querySelector("#backOption");
+    backButton.addEventListener("click", function () {
+        SYSTEM_TOOLS.navigateBack();
     });
 
     const versions = searchStringKeys(RegExp("whatsNewScreenByVersionMa[0-9]+Mi0Pa0"));
     if (versions.length > 0) {
         versions.sort(new Intl.Collator(undefined, {numeric: true}).compare).reverse();
         versions.forEach((key, index) => {
-                const major = parseInt(key.replace(RegExp("whatsNewScreenByVersionMa([0-9]+)Mi0Pa0"), "$1"), 10);
-                const elem = document.createElement("article");
-                elem.id = "v" + major;
-                const elemTitle = document.createElement("h2");
-                elemTitle.textContent = formatJSString(getString("whatsNewScreenVersionNumber"),major);
-                elem.appendChild(elemTitle);
-                const elemContent = document.createElement("div");
-                elemContent.className = "card-container card-container-highlightable";
-                createCardForMinor(major, elemContent, index == 0);
-                elem.appendChild(elemContent);
-                (document.querySelector("main") as HTMLElement).appendChild(elem);
-        })
+            const major = parseInt(key.replace(RegExp("whatsNewScreenByVersionMa([0-9]+)Mi0Pa0"), "$1"), 10);
+            const elem = document.createElement("article");
+            elem.id = "v" + major;
+            const elemTitle = document.createElement("h2");
+            elemTitle.textContent = formatJSString(getString("whatsNewScreenVersionNumber"), major);
+            elem.appendChild(elemTitle);
+            const elemContent = document.createElement("div");
+            elemContent.className = "card-container card-container-highlightable";
+            createCardForMinor(major, elemContent, index == 0);
+            elem.appendChild(elemContent);
+            (document.querySelector("main") as HTMLElement).appendChild(elem);
+        });
     }
 
     setHTMLStrings();

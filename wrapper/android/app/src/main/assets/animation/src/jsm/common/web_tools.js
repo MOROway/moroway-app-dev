@@ -51,7 +51,7 @@ export function handleServerJSONValues(key, func) {
     })
         .catch(function (error) {
         if (APP_DATA.debug) {
-            console.log("Fetch-Error:", error);
+            console.error("Fetch-Error:", error);
         }
     })
         .then(function (response) {
@@ -59,7 +59,7 @@ export function handleServerJSONValues(key, func) {
             func(response);
         }
         else if (APP_DATA.debug) {
-            console.log(typeof response != "undefined" && response != null && typeof response.error != "undefined" ? "ERROR: " + response.error : "ERROR: Can't handle request!");
+            console.error(typeof response != "undefined" && response != null && typeof response.error != "undefined" ? "ERROR: " + response.error : "ERROR: Can't handle request!");
         }
     });
 }

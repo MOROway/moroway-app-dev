@@ -88,7 +88,7 @@ export function notify(elem, message, prio, timeout, actionHandler, actionText, 
             }
         }
         else if (APP_DATA.debug) {
-            console.log(message);
+            console.debug(message);
         }
     }
 }

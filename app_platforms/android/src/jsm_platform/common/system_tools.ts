@@ -3,9 +3,7 @@ import { APP_DATA } from "{{jsm}}/common/app_data.js";
 import { SYSTEM_TOOLS_INTERFACE } from "{{jsm}}/common/system_tools.js";
 
 export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
-    canExitApp() {
-        return false;
-    },
+    canExitApp: () => true,
     exitApp() {
         // Android wrapper contains WebJSInterface
         // @ts-ignore
@@ -17,9 +15,14 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
                 navigator.wakeLock.request("screen");
             } catch (error) {
                 if (APP_DATA.debug) {
-                    console.log("Wake-Lock-Error:", error);
+                    console.error("Wake-Lock-Error:", error);
                 }
             }
         }
+    },
+    navigateBack() {
+        // Android wrapper contains WebJSInterface
+        // @ts-ignore
+        WebJSInterface.goBack();
     }
 };

@@ -7818,7 +7818,7 @@ window.addEventListener("load", function () {
                 switchParams.beforeFac = message.data.switchesBeforeFac;
                 switchParams.beforeAddSidings = message.data.switchesBeforeAddSidings;
                 if (!debug.trainReady) {
-                    console.info("Animate Interval:", message.data.animateInterval);
+                    console.debug("Animate Interval:", message.data.animateInterval);
                 }
                 console.debug("Trains: ", message.data.trains);
             } else if (message.data.k == "debugDrawPoints") {

@@ -7,19 +7,6 @@ import { NotificationPriority, notify } from "../jsm/common/notify.js";
 import { getString } from "../jsm/common/string_tools.js";
 import { followLink, getServerHTMLLink, handleServerJSONValues, LinkStates } from "../jsm/common/web_tools.js";
 document.addEventListener("DOMContentLoaded", function () {
-    var elem = document.getElementById("backOption");
-    if (elem) {
-        var elemClone = elem.cloneNode(true);
-        elem.parentNode.replaceChild(elemClone, elem);
-        var elemNew = document.getElementById("backOption");
-        if (elemNew) {
-            elemNew.addEventListener("click", function () {
-                // Android wrapper contains WebJSInterface
-                // @ts-ignore
-                WebJSInterface.goBack();
-            });
-        }
-    }
     document.querySelector("#legal-appandroid-licenses").classList.remove("hidden");
     document.querySelector("#legal-appandroid-kotlin-license").addEventListener("click", function () {
         followLink("licenses_platform/org.jetbrains.kotlin.txt", "_self", LinkStates.InternalLicense);

@@ -48,14 +48,14 @@ export function handleServerJSONValues(key: string, func: (response: any) => voi
         })
         .catch((error) => {
             if (APP_DATA.debug) {
-                console.log("Fetch-Error:", error);
+                console.error("Fetch-Error:", error);
             }
         })
         .then((response) => {
             if (typeof response == "object" && response != null && typeof response.error == "undefined") {
                 func(response);
             } else if (APP_DATA.debug) {
-                console.log(typeof response != "undefined" && response != null && typeof response.error != "undefined" ? "ERROR: " + response.error : "ERROR: Can't handle request!");
+                console.error(typeof response != "undefined" && response != null && typeof response.error != "undefined" ? "ERROR: " + response.error : "ERROR: Can't handle request!");
             }
         });
 }

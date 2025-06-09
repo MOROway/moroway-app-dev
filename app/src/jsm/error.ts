@@ -1,11 +1,12 @@
 "use strict";
 import { getString, setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, LinkStates } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-    (document.querySelector("#backOption") as HTMLElement).addEventListener("click", function () {
-        followLink("./", "_self", LinkStates.InternalHtml);
+    const backButton: HTMLElement = document.querySelector("#backOption");
+    backButton.addEventListener("click", function () {
+        SYSTEM_TOOLS.navigateBack();
     });
 
     var elements = document.querySelectorAll(".content") as NodeListOf<HTMLElement>;

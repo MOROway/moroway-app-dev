@@ -1,12 +1,14 @@
 "use strict";
 import { APP_DATA } from "./common/app_data.js";
 import { getString, setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, getQueryString, LinkStates } from "./common/web_tools.js";
+import { getQueryString } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector("#backOption")?.addEventListener("click", function () {
-        followLink("help", "_self", LinkStates.InternalHtml);
+    const backButton: HTMLElement = document.querySelector("#backOption");
+    backButton.addEventListener("click", function () {
+        SYSTEM_TOOLS.navigateBack();
     });
 
     setHTMLStrings();
@@ -54,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .catch((error) => {
                     if (APP_DATA.debug) {
-                        console.log("Fetch-Error:", error);
+                        console.error("Fetch-Error:", error);
                     }
                     elementTitle.textContent = getString("generalIsFail", "!", "upper");
                     elementContent.textContent = getString("licenseScreenNotFound");

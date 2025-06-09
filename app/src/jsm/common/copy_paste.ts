@@ -30,7 +30,7 @@ export function copy(selector, successFunction, failFunction) {
                                 failFunction();
                             }
                             if (APP_DATA.debug) {
-                                console.log(error);
+                                console.error(error);
                             }
                         });
                 } else {
@@ -44,7 +44,7 @@ export function copy(selector, successFunction, failFunction) {
                     failFunction();
                 }
                 if (APP_DATA.debug) {
-                    console.log(error);
+                    console.error(error);
                 }
             });
     } else if (typeof failFunction == "function") {

@@ -1,7 +1,7 @@
 "use strict";
 import { APP_DATA } from "{{jsm}}/common/app_data.js";
 import { SYSTEM_TOOLS_INTERFACE } from "{{jsm}}/common/system_tools.js";
-import { getMode } from "{{jsm}}/scripting.js";
+import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
     canExitApp() {
@@ -12,22 +12,33 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
             window.close();
         } catch (error) {
             if (APP_DATA.debug) {
-                console.log("Window-Close-Error:", error);
+                console.error("Window-Close-Error:", error);
             }
         }
     },
     keepAlive(acquire) {
-        const mode = getMode();
-        if (mode == "online" || mode == "demo") {
-            if (acquire) {
-                try {
-                    navigator.wakeLock.request("screen");
-                } catch (error) {
-                    if (APP_DATA.debug) {
-                        console.log("Wake-Lock-Error:", error);
-                    }
+        if (acquire) {
+            try {
+                navigator.wakeLock.request("screen");
+            } catch (error) {
+                if (APP_DATA.debug) {
+                    console.error("Wake-Lock-Error:", error);
                 }
             }
+        }
+    },
+    navigateBack() {
+        if (document.referrer.startsWith(document.baseURI) && document.referrer !== document.baseURI && window.history.length > 1) {
+            window.history.back();
+        } else {
+            try {
+                window.close();
+            } catch (error) {
+                if (APP_DATA.debug) {
+                    console.error("Window-Close-Error:", error);
+                }
+            }
+            followLink("./", "_self", LinkStates.InternalHtml);
         }
     }
 };

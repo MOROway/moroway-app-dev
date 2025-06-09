@@ -5,9 +5,7 @@
 "use strict";
 import { APP_DATA } from "../../jsm/common/app_data.js";
 export var SYSTEM_TOOLS = {
-    canExitApp: function () {
-        return false;
-    },
+    canExitApp: function () { return true; },
     exitApp: function () {
         // Android wrapper contains WebJSInterface
         // @ts-ignore
@@ -20,9 +18,14 @@ export var SYSTEM_TOOLS = {
             }
             catch (error) {
                 if (APP_DATA.debug) {
-                    console.log("Wake-Lock-Error:", error);
+                    console.error("Wake-Lock-Error:", error);
                 }
             }
         }
+    },
+    navigateBack: function () {
+        // Android wrapper contains WebJSInterface
+        // @ts-ignore
+        WebJSInterface.goBack();
     }
 };

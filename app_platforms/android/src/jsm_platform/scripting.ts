@@ -1,6 +1,7 @@
 "use strict";
 import { getSetting } from "{{jsm}}/common/settings.js";
 import { getString } from "{{jsm}}/common/string_tools.js";
+import { SYSTEM_TOOLS } from "{{jsm}}/common/system_tools.js";
 import { optionsMenuEditorAdd, optionsMenuEditorHide } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-after-calc-options-menu-load", function () {
@@ -11,9 +12,7 @@ document.addEventListener("moroway-app-after-calc-options-menu-load", function (
     optionsMenuEditorHide("canvas-demo-mode");
     if (!getSetting("reduceOptMenuHideExit")) {
         optionsMenuEditorAdd("canvas-platform-back", getString("generalBack"), "cancel", function () {
-            // Android wrapper contains WebJSInterface
-            // @ts-ignore
-            WebJSInterface.goBack();
+            SYSTEM_TOOLS.navigateBack();
         });
     }
 });

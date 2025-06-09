@@ -1,8 +1,8 @@
 "use strict";
 import { setSettingsHTML } from "./common/settings.js";
 import { setHTMLStrings } from "./common/string_tools.js";
+import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
-import { followLink, LinkStates } from "./common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     setHTMLStrings();
@@ -10,11 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    setSettingsHTML(document.querySelector("main"), true);
-    (document.querySelector("#backOption") as HTMLElement).addEventListener("click", function () {
-        try {
-            window.close();
-        } catch (err) {}
-        followLink("./", "_self", LinkStates.InternalHtml);
+    const backButton: HTMLElement = document.querySelector("#backOption");
+    backButton.addEventListener("click", function () {
+        SYSTEM_TOOLS.navigateBack();
     });
+    setSettingsHTML(document.querySelector("main"), true);
 });

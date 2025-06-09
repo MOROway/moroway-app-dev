@@ -6,4 +6,5 @@ export interface SYSTEM_TOOLS_INTERFACE {
     canExitApp: () => boolean;
     exitApp: () => void;
     keepAlive: (acquire: boolean) => void;
+    navigateBack: () => void;
 }
