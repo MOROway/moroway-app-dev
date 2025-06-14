@@ -12,7 +12,7 @@ var APP_DATA = {
         // @ts-ignore
         minor: 3,
         // @ts-ignore
-        patch: 4,
+        patch: 5,
         // @ts-ignore
         beta: 0,
         date: {

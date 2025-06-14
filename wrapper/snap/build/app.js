@@ -1,4 +1,4 @@
-const {app, ipcMain, BrowserWindow} = require("electron");
+const {app, ipcMain, powerSaveBlocker, BrowserWindow} = require("electron");
 var wakeLockId;
 
 function newWindow(urlToLoad) {
@@ -22,7 +22,7 @@ function newWindow(urlToLoad) {
 }
 
 function stopCurrentWakeLock() {
-    if (wakeLockId != undefined) {
+    if (wakeLockId !== undefined) {
         powerSaveBlocker.stop(wakeLockId);
     }
 }
@@ -52,7 +52,6 @@ ipcMain.handle("exitApp", async () => {
     app.quit();
 });
 ipcMain.handle("keepScreenAlive", async (_event, arg) => {
-    const {powerSaveBlocker} = require("electron");
     const acquire = await resolveArg(arg);
     stopCurrentWakeLock();
     if (acquire) {

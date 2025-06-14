@@ -239,3 +239,7 @@
   year: 2025
   snap:
     dependencies: true
+10.3.5:
+  year: 2025
+  snap:
+    fixes: true
