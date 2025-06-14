@@ -379,3 +379,12 @@ Update dependencies.
 
 ---
 
+
+
+10.3.4
+
+Exit app in demo mode after specified amount of time if supported by platform.
+Update dependencies.
+
+---
+

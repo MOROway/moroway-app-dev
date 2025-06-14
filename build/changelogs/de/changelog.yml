@@ -239,7 +239,7 @@ versions:
             Verbesserungen an den Build-Skripten.
     10.3.4:
         general: |
-            Anwendung im Demo-Modus beenden nach spezifizierter Zeit wenn unterstützt von der Plattform.
+            Anwendung im Demo-Modus nach spezifiziertem Zeitraum beenden wenn von Plattform unterstützt.
 hints:
     1.0.0:
         general: |
