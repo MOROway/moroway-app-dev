@@ -63,10 +63,10 @@
 	"appScreenTeamplayChatTitle": "Tchat",
 	"appScreenTeamplayConnectionError": "Erreur : impossible de se connecter ou connexion perdue",
 	"appScreenTeamplayCreateError": "Impossible de créer un jeu",
+	"appScreenTeamplayGameEnded": "Coéquipier parti. Jeu est obsolète",
 	"appScreenTeamplayGamePaused": "Jeu en pause",
 	"appScreenTeamplayGameResumed": "Jeu repris",
 	"appScreenTeamplayGameStart": "Le bouton « Démarrer » démarre la partie dès que vous et chaque coéquipier cliquez sur le bouton. Dès que quelqu’un clique sur le bouton, il est impossible de joindre d’autres coéquipiers. À l’heure actuelle {{0}} joueur(s) (y compris vous) a rejoint la partie.",
-	"appScreenTeamplayGameEnded": "Coéquipier parti. Jeu est obsolète",
 	"appScreenTeamplayGameStartButton": "Démarrer",
 	"appScreenTeamplayJoinError": "Impossible de rejoindre. Le jeu est complet ou obsolète",
 	"appScreenTeamplayJoinTeammateError": "Un coéquipier n’a pas pu se joindre au jeu",
@@ -159,6 +159,7 @@
 	"generalStartDemoMode3DCameraModeFollowCar": "suivre voiture",
 	"generalStartDemoMode3DCameraModeFollowTrain": "suivre train",
 	"generalStartDemoMode3DRotationSpeed": "3D : vitesse rotation",
+	"generalStartDemoModeExitTimeout": "Essayer de quitter l’app après une durée spécifiée en minutes.",
 	"generalStartDemoModeRandom": "Démarrer mode démo avec configuration aléatoire",
 	"generalStartGame": "Jouer",
 	"generalStartGameDemoMode": "Démarrer mode démo",
@@ -169,6 +170,7 @@
 	"generalTitleHelpScreenShort": "Aide",
 	"generalTitleSettingsScreen": "Paramètres",
 	"generalTitleTeamplay": "Multijoueur",
+	"generalTitleWhatsNewScreen": "Historique des modifications",
 	"generalXAreY": "{{0}} sont {{1}}",
 	"generalXIsY": "{{0}} est {{1}}.",
 	"generalYes": "oui",
@@ -250,6 +252,7 @@
 		"Dans le mode de caméra 3D « suivre le train », vous pouvez contrôler le train actuel à l’aide des commandes situées dans le coin supérieur droit."
 	],
 	"helpScreenGeneralWelcome": "Bienvenue {{0}}",
+	"helpScreenGeneralWelcomeButtonWhatsNew": "Historique des modifications",
 	"helpScreenGeneralWelcomePs": [
 		"Bonjour, vous utilisez l’application MOROway. L’image de fond est une vue aérienne du modèle ferroviaire MOROway prise en 2011. Les voies d’évitement centrales ont été refaites en 2021 pour les rendre utilisables. Profitez-en !"
 	],
@@ -343,6 +346,8 @@
 	"platformOcAppUpdateNo": "Ignorer",
 	"platformOcAppUpdateYes": "Vue",
 	"platformSnapAppExit": "Quitter app",
+	"whatsNewScreenPatchesDetail": "Détails sur les correctifs",
+	"whatsNewScreenPatchesPatch": "Correctif {{0}}",
 	"whatsNewScreenVersionIsNew": "Nouveau",
 	"whatsNewScreenVersionNumber": "Version {{0}}",
 	"whatsNewScreenVersionNumberMinor": "Nouveau dans version {{0}}.{{1}}"
