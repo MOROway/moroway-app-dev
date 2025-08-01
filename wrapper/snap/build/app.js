@@ -48,7 +48,6 @@ ipcMain.handle("goBack", async () => {
     BrowserWindow.getFocusedWindow().webContents.navigationHistory.goBack();
 });
 ipcMain.handle("exitApp", async () => {
-    stopCurrentWakeLock();
     app.quit();
 });
 ipcMain.handle("keepScreenAlive", async (_event, arg) => {
@@ -72,3 +71,5 @@ app.on("ready", function () {
     const queryString = "?" + urlSearchParams.toString();
     newWindow("index.html" + queryString);
 });
+
+app.on("before-quit", stopCurrentWakeLock);

@@ -396,3 +396,12 @@ Bugfixes.
 
 ---
 
+
+
+10.3.6
+
+Update translations.
+Update dependencies.
+
+---
+

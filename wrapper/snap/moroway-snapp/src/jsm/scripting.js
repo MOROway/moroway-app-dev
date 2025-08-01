@@ -90,13 +90,11 @@ function getFontSize(font, unit) {
     return parseInt(font.substr(0, font.length - (font.length - font.indexOf(unit))), 10);
 }
 function onVisibilityChange() {
-    resetGestures();
     client.hidden = document.visibilityState == "hidden";
+    resetGestures();
     hardware.keyboard.keysHold = [];
     playAndPauseAudio();
-}
-function keepScreenAlive() {
-    SYSTEM_TOOLS.keepAlive(document.visibilityState == "visible");
+    SYSTEM_TOOLS.keepAlive(!client.hidden);
 }
 /*******************************************
  *            Audio functions              *
@@ -255,6 +253,7 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogExitTimeout_1.type = "number";
         confirmDialogExitTimeout_1.step = "1";
         confirmDialogExitTimeout_1.pattern = "d+";
+        confirmDialogExitTimeout_1.min = "1";
         confirmDialogExitTimeout_1.value = "";
         var confirmDialogExitTimeoutLabel = document.createElement("label");
         confirmDialogExitTimeoutLabel.htmlFor = confirmDialogExitTimeoutId;
@@ -7465,7 +7464,7 @@ window.addEventListener("load", function () {
                 drawInterval = message.data.animateInterval;
                 drawObjects();
                 document.addEventListener("visibilitychange", function () {
-                    if (document.visibilityState != "hidden") {
+                    if (document.visibilityState == "visible") {
                         if (drawTimeout !== undefined && drawTimeout !== null) {
                             window.clearTimeout(drawTimeout);
                         }
@@ -7820,8 +7819,6 @@ window.addEventListener("load", function () {
     //Visibility handling
     document.addEventListener("visibilitychange", onVisibilityChange);
     onVisibilityChange();
-    document.addEventListener("visibilitychange", keepScreenAlive);
-    keepScreenAlive();
     //Prepare game
     if (!onlineGame.enabled) {
         var elements = document.querySelectorAll("#content > *:not(#game), #game > *:not(#game-gameplay)");

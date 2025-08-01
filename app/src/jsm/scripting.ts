@@ -255,14 +255,11 @@ function getFontSize(font, unit) {
 }
 
 function onVisibilityChange() {
-    resetGestures();
     client.hidden = document.visibilityState == "hidden";
+    resetGestures();
     hardware.keyboard.keysHold = [];
     playAndPauseAudio();
-}
-
-function keepScreenAlive() {
-    SYSTEM_TOOLS.keepAlive(document.visibilityState == "visible");
+    SYSTEM_TOOLS.keepAlive(!client.hidden);
 }
 
 /*******************************************
@@ -417,6 +414,7 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogExitTimeout.type = "number";
         confirmDialogExitTimeout.step = "1";
         confirmDialogExitTimeout.pattern = "d+";
+        confirmDialogExitTimeout.min = "1";
         confirmDialogExitTimeout.value = "";
         const confirmDialogExitTimeoutLabel = document.createElement("label");
         confirmDialogExitTimeoutLabel.htmlFor = confirmDialogExitTimeoutId;
@@ -7579,7 +7577,7 @@ window.addEventListener("load", function () {
                 drawInterval = message.data.animateInterval;
                 drawObjects();
                 document.addEventListener("visibilitychange", function () {
-                    if (document.visibilityState != "hidden") {
+                    if (document.visibilityState == "visible") {
                         if (drawTimeout !== undefined && drawTimeout !== null) {
                             window.clearTimeout(drawTimeout);
                         }
@@ -7922,8 +7920,6 @@ window.addEventListener("load", function () {
     //Visibility handling
     document.addEventListener("visibilitychange", onVisibilityChange);
     onVisibilityChange();
-    document.addEventListener("visibilitychange", keepScreenAlive);
-    keepScreenAlive();
 
     //Prepare game
     if (!onlineGame.enabled) {
