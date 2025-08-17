@@ -43,7 +43,8 @@ interface Train3D extends Object3D {
 interface Car {
     src: number;
     fac: number;
-    speed: number;
+    speedFac: number;
+    speed?: number;
     x?: number;
     y?: number;
     width?: number;
@@ -301,7 +302,7 @@ function showConfirmDialogLeaveMultiplayerMode() {
 
 function showConfirmDialogEnterDemoMode() {
     const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
-    if (confirmDialog !== null) {
+    if (confirmDialog) {
         const confirmDialogTitle: HTMLElement = confirmDialog.querySelector("#confirm-dialog-title");
         const confirmDialogText: HTMLElement = confirmDialog.querySelector("#confirm-dialog-text");
         const confirmDialogParams: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params");
@@ -315,7 +316,7 @@ function showConfirmDialogEnterDemoMode() {
         confirmDialogRandom.type = "checkbox";
         confirmDialogRandom.onchange = function () {
             const param3DRotationSpeedElem: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container");
-            if (param3DRotationSpeedElem !== null) {
+            if (param3DRotationSpeedElem) {
                 param3DRotationSpeedElem.style.display = confirmDialogRandom.checked ? "none" : "";
             }
         };
@@ -363,10 +364,10 @@ function showConfirmDialogEnterDemoMode() {
             confirmDialogParams.appendChild(elemDiv);
         }
         const confirmDialogYes: HTMLElement = document.querySelector("#confirm-dialog #confirm-dialog-yes");
-        if (confirmDialogYes !== null) {
+        if (confirmDialogYes) {
             confirmDialogYes.onclick = function () {
                 const param3DRotationSpeedElem: HTMLInputElement = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
-                if (param3DRotationSpeedElem !== null) {
+                if (param3DRotationSpeedElem) {
                     setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
                 }
                 setGuiState("demo-random", confirmDialogRandom.checked);
@@ -404,6 +405,23 @@ function closeConfirmDialog() {
 }
 
 function switchMode(mode: string = "normal", additionalParameters: Record<string, string> = {}): void {
+    function requestModeSwitch() {
+        if (modeSwitchingTimeout !== undefined && modeSwitchingTimeout !== null) {
+            clearTimeout(modeSwitchingTimeout);
+        }
+        if (drawing || resized) {
+            modeSwitchingTimeout = setTimeout(requestModeSwitch, 10);
+        } else {
+            //Update URL
+            if (history.state?.mode == mode) {
+                history.replaceState({mode: mode}, "", url);
+            } else {
+                history.pushState({mode: mode}, "", url);
+            }
+            //Reload app
+            init("reload");
+        }
+    }
     const urlParams = additionalParameters;
     urlParams.mode = mode;
     if (urlParams.mode == "normal" || urlParams.mode.length == 0) {
@@ -413,23 +431,13 @@ function switchMode(mode: string = "normal", additionalParameters: Record<string
     const url = "?" + urlParamsString;
     if (APP_DATA.debug) {
         /* TODO: Finalize mode change without reload
-            Multiplayer reset for create new game
-            ThreeJs: Separate logic for load and display like 2d images
-            ThreeJs: Fix mode switch during object load
-                Uncaught TypeError: can't access property "cars", trains3D[i] is undefined
-                    train.cars.forEach(function (car, j) {
-                        if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
-            single listener visibilitychange
-            …and more
+                    Multiplayer reset for create new game
+                    single listener visibilitychange
         */
-        //Update URL
-        if (history.state?.mode == mode) {
-            history.replaceState({mode: mode}, "", url);
-        } else {
-            history.pushState({mode: mode}, "", url);
+        if (!modeSwitching) {
+            modeSwitching = true;
+            requestModeSwitch();
         }
-        //Reload app
-        init("reload");
     } else {
         followLink(url, "_self", LinkStates.InternalReload);
     }
@@ -1575,7 +1583,7 @@ function onKeyUp(event) {
     hardware.keyboard.keysHold[event.key].ctrlKey = false;
 }
 function preventKeyZoomDuringLoad(event) {
-    if (event.ctrlKey && (event.key == "+" || event.key == "-" || event.key == "0")) {
+    if (event.key == "Escape" || (event.ctrlKey && (event.key == "+" || event.key == "-" || event.key == "0"))) {
         event.preventDefault();
     }
 }
@@ -1763,10 +1771,10 @@ function calcControlCenter() {
 function resizeCars(oldBg) {
     cars.forEach(function (car) {
         car.speed *= background.width / oldBg.width;
-        car.x *= background.width / oldBg.width;
-        car.y *= background.height / oldBg.height;
         car.width *= background.width / oldBg.width;
         car.height *= background.height / oldBg.height;
+        car.x *= background.width / oldBg.width;
+        car.y *= background.height / oldBg.height;
     });
 }
 
@@ -1852,6 +1860,9 @@ function requestResize() {
         });
     }
 
+    if (modeSwitching) {
+        return;
+    }
     if (resizeTimeout !== undefined && resizeTimeout !== null) {
         clearTimeout(resizeTimeout);
     }
@@ -2626,7 +2637,11 @@ function drawObjects() {
     }
 
     /////GENERAL/////
+    if (modeSwitching) {
+        return;
+    }
     var startTime = Date.now();
+    drawing = true;
     var lastClickDoubleClick = hardware.mouse.lastClickDoubleClick;
     var wasHold = hardware.mouse.isHold;
     frameNo++;
@@ -4558,6 +4573,7 @@ function drawObjects() {
         hardware.mouse.lastClickDoubleClick = false;
     }
 
+    drawing = false;
     /////REPAINT/////
     if (drawTimeout !== undefined && drawTimeout !== null) {
         clearTimeout(drawTimeout);
@@ -4623,6 +4639,7 @@ const doubleClickWaitTime = doubleClickTime + 50;
 //Loading animation
 const loadingAnimation: LoadingAnimation = {
     updateProgress(progress) {
+        progress = Math.min(progress, 100);
         if (this.elementProgressText && this.elementProgressBar) {
             this.elementProgressText.textContent = progress + "%";
             this.elementProgressBar.style.left = -100 + progress + "%";
@@ -4671,8 +4688,9 @@ const loadingAnimation: LoadingAnimation = {
         this.elementBranding?.classList.remove("hidden");
         this.elementProgress?.classList.add("hidden");
         //Show progress bar if app loads slowly
+        const element = this.elementProgress;
         const elementProgressHide = function () {
-            this.elementProgress?.classList.remove("hidden");
+            element?.classList.remove("hidden");
         };
         this.showProgressTimeout = setTimeout(elementProgressHide, 2500);
         this.elementSnake?.classList.remove("hidden");
@@ -5455,7 +5473,7 @@ const clientDefault: any = {devicePixelRatio: 1, zoomAndTilt: {maxScale: 6, minS
  *                Variables                *
  ******************************************/
 
-//Canvases
+//Canvas and drawing
 var canvas;
 var canvasGesture;
 var canvasBackground;
@@ -5468,6 +5486,7 @@ var contextSemiForeground;
 var contextForeground;
 var drawInterval;
 var drawTimeout;
+var drawing = false;
 
 //Multithreading
 var animateWorker: Worker;
@@ -5477,6 +5496,7 @@ var frameNo = 0;
 
 //Media
 var pics;
+var objects3D;
 const audio: any = {};
 const audioControl: any = {
     playAndPauseAll() {
@@ -5607,6 +5627,10 @@ const audioControl: any = {
 //Resize
 var resizeTimeout;
 var resized = false;
+
+//Mode switch
+var modeSwitchingTimeout;
+var modeSwitching = true;
 
 //Background
 var background: Background;
@@ -5755,6 +5779,7 @@ function init(state: "load" | "reload" = "reload") {
             var currentObject: any;
             if (typeof currentObjectInput == "undefined") {
                 currentObject = copyJSObject(cars[i]);
+                currentObject.speed = cars[i].speedFac * background.width;
                 currentObject.state = 0;
                 currentObject.angle = currentObject.displayAngle = cars[i].angles[cType];
                 currentObject.x = carPaths[i][cType][0].x[0];
@@ -6012,28 +6037,10 @@ function init(state: "load" | "reload" = "reload") {
         return true;
     }
 
-    function placeCarsAtInitialPositions() {
-        cars.forEach(function (car, i) {
-            car.width = car.fac * background.width;
-            car.height = car.fac * (pics[car.src].height * (background.width / pics[car.src].width));
-            car.cType = typeof carWays[i].start == "undefined" ? "normal" : "start";
-            car.displayAngle = carWays[i][car.cType][car.counter].angle;
-            car.x = carWays[i][car.cType][car.counter].x;
-            car.y = carWays[i][car.cType][car.counter].y;
-            car.backToInit = false;
-            car.parking = true;
-            if (i === 0) {
-                carParams.thickestCar = i;
-            } else if (car.height > cars[carParams.thickestCar].height) {
-                carParams.thickestCar = i;
-            }
-        });
-    }
-
     if (state == "load") {
         //Reset background
         const backgroundDefault: Background = {src: 9, secondLayer: 10};
-        const background3DDefault: Background3D = {flat: {src: "assets/3d/background-flat.jpg"}, three: {src: "background-3d.gltf"}};
+        const background3DDefault: Background3D = {flat: {src: "background-flat"}, three: {src: "background-3d"}};
         background = backgroundDefault;
         background3D = background3DDefault;
     } else {
@@ -6141,9 +6148,6 @@ function init(state: "load" | "reload" = "reload") {
         //Reset resize
         resized = false;
 
-        //Reset animation counter
-        frameNo = 0;
-
         //Reset konami state
         konamiState = 0;
     }
@@ -6238,9 +6242,9 @@ function init(state: "load" | "reload" = "reload") {
         }
     ];
     const carsDefault = [
-        {src: 16, fac: 0.02, speed: 0.0008, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xff0000"},
-        {src: 17, fac: 0.02, speed: 0.001, startFrameFac: 0.335, angles: {start: 0, normal: Math.PI}, hexColor: "0xffffff"},
-        {src: 0, fac: 0.0202, speed: 0.00082, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xffee00"}
+        {src: 16, fac: 0.02, speedFac: 0.0008, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xff0000"},
+        {src: 17, fac: 0.02, speedFac: 0.001, startFrameFac: 0.335, angles: {start: 0, normal: Math.PI}, hexColor: "0xffffff"},
+        {src: 0, fac: 0.0202, speedFac: 0.00082, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xffee00"}
     ];
     carParams = carParamsDefault;
     carPaths = carPathsDefault;
@@ -6451,40 +6455,48 @@ function init(state: "load" | "reload" = "reload") {
     const savedGameCarParamsSession = sessionStorage.getItem("demoCarParams");
 
     //Cars
-    if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && savedGameCars != null && savedGameCarParams != null && savedGameBg != null) {
-        /* UPDATE: v9.0.0 */
-        var carColors: string[] = [];
-        for (var i = 0; i < cars.length; i++) {
-            carColors[i] = cars[i].hexColor;
-        }
-        /* END UPDATE: v9.0.0 */
-        cars = JSON.parse(savedGameCars);
-        /* UPDATE: v9.0.0 */
-        for (var i = 0; i < cars.length; i++) {
-            cars[i].hexColor = carColors[i];
-        }
-        /* END UPDATE: v9.0.0 */
-        carParams = JSON.parse(savedGameCarParams);
-        if (defineCarWays()) {
-            resizeCars(JSON.parse(savedGameBg));
-        }
-    } else if (gui.demo && savedGameCarsSession != null && savedGameCarParamsSession != null && savedGameBgSession != null) {
-        cars = JSON.parse(savedGameCarsSession);
-        carParams = JSON.parse(savedGameCarParamsSession);
-        if (defineCarWays()) {
-            resizeCars(JSON.parse(savedGameBgSession));
-        }
-    } else {
-        cars.forEach(function (car, i) {
-            car.speed *= background.width;
-            if (i === 0) {
-                carParams.lowestSpeedNo = i;
-            } else if (car.speed < cars[carParams.lowestSpeedNo].speed) {
-                carParams.lowestSpeedNo = i;
+    if (defineCarWays()) {
+        if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && savedGameCars != null && savedGameCarParams != null && savedGameBg != null) {
+            /* UPDATE: v9.0.0 */
+            var carColors: string[] = [];
+            for (var i = 0; i < cars.length; i++) {
+                carColors[i] = cars[i].hexColor;
             }
-        });
-        if (defineCarWays()) {
-            placeCarsAtInitialPositions();
+            /* END UPDATE: v9.0.0 */
+            cars = JSON.parse(savedGameCars);
+            /* UPDATE: v9.0.0 */
+            for (var i = 0; i < cars.length; i++) {
+                cars[i].hexColor = carColors[i];
+            }
+            /* END UPDATE: v9.0.0 */
+            carParams = JSON.parse(savedGameCarParams);
+            resizeCars(JSON.parse(savedGameBg));
+        } else if (gui.demo && savedGameCarsSession != null && savedGameCarParamsSession != null && savedGameBgSession != null) {
+            cars = JSON.parse(savedGameCarsSession);
+            carParams = JSON.parse(savedGameCarParamsSession);
+            resizeCars(JSON.parse(savedGameBgSession));
+        } else {
+            cars.forEach(function (car, i) {
+                car.speed = car.speedFac * background.width;
+                car.width = car.fac * background.width;
+                car.height = car.fac * (pics[car.src].height * (background.width / pics[car.src].width));
+                car.cType = typeof carWays[i].start == "undefined" ? "normal" : "start";
+                car.displayAngle = carWays[i][car.cType][car.counter].angle;
+                car.x = carWays[i][car.cType][car.counter].x;
+                car.y = carWays[i][car.cType][car.counter].y;
+                car.backToInit = false;
+                car.parking = true;
+                if (i === 0) {
+                    carParams.lowestSpeedNo = i;
+                } else if (car.speed < cars[carParams.lowestSpeedNo].speed) {
+                    carParams.lowestSpeedNo = i;
+                }
+                if (i === 0) {
+                    carParams.thickestCar = i;
+                } else if (car.height > cars[carParams.thickestCar].height) {
+                    carParams.thickestCar = i;
+                }
+            });
             if (gui.demo) {
                 carParams.init = false;
                 carParams.autoModeOff = false;
@@ -6625,40 +6637,37 @@ function init(state: "load" | "reload" = "reload") {
             }
         }
     };
+    if (objects3D[background3D.flat.src]) {
+        const material: any = new THREE.MeshStandardMaterial({
+            map: objects3D[background3D.flat.src].clone(),
+            roughness: 0.85,
+            metalness: 0.15
+        });
+        const geometry = new THREE.PlaneGeometry(1, background.height / background.width);
+        background3D.flat.mesh = new THREE.Mesh(geometry, material);
+        background3D.flat.resize = function () {
+            const scale = three.calcScale();
+            background3D.flat.mesh.scale.x = scale;
+            background3D.flat.mesh.scale.y = scale;
+            background3D.flat.mesh.position.set(0, three.calcPositionY(), 0);
+        };
+        background3D.flat.resize();
+        three.mainGroup.add(background3D.flat.mesh);
+    }
+
+    if (background3D.three.src) {
+        background3D.three.mesh = objects3D[background3D.three.src].clone();
+        background3D.three.resize = function () {
+            const scale = three.calcScale();
+            background3D.three.mesh.scale.x = scale;
+            background3D.three.mesh.scale.y = scale;
+            background3D.three.mesh.scale.z = scale;
+            background3D.three.mesh.position.set(0, three.calcPositionY(), 0);
+        };
+        background3D.three.resize();
+        three.mainGroup.add(background3D.three.mesh);
+    }
     if (state == "load") {
-        const loaderTexture = new THREE.TextureLoader();
-        loaderTexture.load(background3D.flat.src, function (texture) {
-            const material: any = new THREE.MeshStandardMaterial({
-                map: texture,
-                roughness: 0.85,
-                metalness: 0.15
-            });
-            const geometry = new THREE.PlaneGeometry(1, background.height / background.width);
-            background3D.flat.mesh = new THREE.Mesh(geometry, material);
-            background3D.flat.resize = function () {
-                const scale = three.calcScale();
-                background3D.flat.mesh.scale.x = scale;
-                background3D.flat.mesh.scale.y = scale;
-                background3D.flat.mesh.position.set(0, three.calcPositionY(), 0);
-            };
-            background3D.flat.resize();
-            three.mainGroup.add(background3D.flat.mesh);
-        });
-
-        var loaderGLTF: any = new GLTFLoader();
-        loaderGLTF.setPath("assets/3d/background-3d/").load(background3D.three.src, function (gltf) {
-            background3D.three.mesh = gltf.scene;
-            background3D.three.resize = function () {
-                const scale = three.calcScale();
-                background3D.three.mesh.scale.x = scale;
-                background3D.three.mesh.scale.y = scale;
-                background3D.three.mesh.scale.z = scale;
-                background3D.three.mesh.position.set(0, three.calcPositionY(), 0);
-            };
-            background3D.three.resize();
-            three.mainGroup.add(background3D.three.mesh);
-        });
-
         background3D.behind = document.getElementById("game-gameplay-three-bg") as HTMLCanvasElement;
         background3D.animateBehind = function (reset = false, forceFac = undefined) {
             if (reset) {
@@ -6752,13 +6761,6 @@ function init(state: "load" | "reload" = "reload") {
                 background3D.behindClone.style.transform = "translateX(" + (1 - background3D.animateBehindFac) * background3D.behind.offsetWidth + "px)";
             }
         };
-    } else {
-        if (background3D.three.mesh) {
-            three.mainGroup.add(background3D.flat.mesh);
-        }
-        if (background3D.three.mesh) {
-            three.mainGroup.add(background3D.three.mesh);
-        }
     }
 
     three.camera = new THREE.PerspectiveCamera(60, client.width / client.height, 0.1, 10);
@@ -7543,7 +7545,7 @@ function init(state: "load" | "reload" = "reload") {
             trains = message.data.trains;
             trains3D = [];
             trains.forEach(function (train, i) {
-                var trainCallback = function (downIntersects, upIntersects) {
+                const trainCallback = function (downIntersects, upIntersects) {
                     if (hardware.lastInputTouch < hardware.lastInputMouse) {
                         hardware.mouse.isHold = false;
                     }
@@ -7586,166 +7588,145 @@ function init(state: "load" | "reload" = "reload") {
 
                 //Three.js
                 trains3D[i] = {};
-                var loaderGLTF: any = new GLTFLoader();
-                loaderGLTF.setPath("assets/3d/").load(
-                    "asset" + train.src + ".glb",
-                    function (gltf) {
-                        trains3D[i].mesh = gltf.scene;
-                        trains3D[i].resize = function () {
-                            const scale = three.calcScale();
-                            trains3D[i].mesh.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                if (objects3D[train.src]) {
+                    trains3D[i].mesh = objects3D[train.src].clone();
+                    trains3D[i].resize = function () {
+                        const scale = three.calcScale();
+                        trains3D[i].mesh.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                        if (train.assetFlip) {
+                            trains3D[i].mesh.scale.x *= -1;
+                        }
+                        if (trains3D[i].meshFront) {
+                            trains3D[i].meshFront.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                            trains3D[i].meshFront.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
                             if (train.assetFlip) {
-                                trains3D[i].mesh.scale.x *= -1;
+                                trains3D[i].meshFront.left.scale.x *= -1;
+                                trains3D[i].meshFront.right.scale.x *= -1;
                             }
-                            if (trains3D[i].meshFront) {
-                                trains3D[i].meshFront.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                                trains3D[i].meshFront.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                                if (train.assetFlip) {
-                                    trains3D[i].meshFront.left.scale.x *= -1;
-                                    trains3D[i].meshFront.right.scale.x *= -1;
-                                }
-                            }
-                            if (trains3D[i].meshBack) {
-                                trains3D[i].meshBack.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                                trains3D[i].meshBack.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                                if (train.assetFlip) {
-                                    trains3D[i].meshBack.left.scale.x *= -1;
-                                    trains3D[i].meshBack.right.scale.x *= -1;
-                                }
-                            }
-                            trains3D[i].mesh.position.set(0, 0, 0);
-                            trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
-                        };
-                        trains3D[i].resize();
-                        trains3D[i].mesh.callback = trainCallback;
-                        three.mainGroup.add(trains3D[i].mesh);
-                        if (train.wheels?.front?.use3d) {
-                            loaderGLTF.setPath("assets/3d/").load("asset" + train.src + "_front.glb", function (gltf) {
-                                trains3D[i].meshFront = {};
-                                trains3D[i].meshFront.left = gltf.scene;
-                                trains3D[i].meshFront.right = trains3D[i].meshFront.left.clone();
-                                trains3D[i].resize();
-                                trains3D[i].meshFront.left.callback = trainCallback;
-                                trains3D[i].meshFront.right.callback = trainCallback;
-                                three.mainGroup.add(trains3D[i].meshFront.left);
-                                three.mainGroup.add(trains3D[i].meshFront.right);
-                            });
                         }
-                        if (train.wheels?.back?.use3d) {
-                            loaderGLTF.setPath("assets/3d/").load("asset" + train.src + "_back.glb", function (gltf) {
-                                trains3D[i].meshBack = {};
-                                trains3D[i].meshBack.left = gltf.scene;
-                                trains3D[i].meshBack.right = trains3D[i].meshBack.left.clone();
-                                trains3D[i].resize();
-                                trains3D[i].meshBack.left.callback = trainCallback;
-                                trains3D[i].meshBack.right.callback = trainCallback;
-                                three.mainGroup.add(trains3D[i].meshBack.left);
-                                three.mainGroup.add(trains3D[i].meshBack.right);
-                            });
-                        }
-                    },
-                    null,
-                    function () {
-                        var height3D = 0.0125;
-                        trains3D[i].resize = function () {
-                            if (three.mainGroup.getObjectByName("train_" + i)) {
-                                three.mainGroup.remove(trains3D[i].mesh);
+                        if (trains3D[i].meshBack) {
+                            trains3D[i].meshBack.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                            trains3D[i].meshBack.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                            if (train.assetFlip) {
+                                trains3D[i].meshBack.left.scale.x *= -1;
+                                trains3D[i].meshBack.right.scale.x *= -1;
                             }
-                            const scale = three.calcScale();
-                            trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
-                            trains3D[i].mesh.position.set(0, 0, 0);
-                            trains3D[i].positionZ = (scale * height3D) / 2;
-                            trains3D[i].mesh.callback = trainCallback;
-                            trains3D[i].mesh.name = "train_" + i;
-                            three.mainGroup.add(trains3D[i].mesh);
-                        };
+                        }
+                        trains3D[i].mesh.position.set(0, 0, 0);
+                        trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
+                    };
+                    trains3D[i].resize();
+                    trains3D[i].mesh.callback = trainCallback;
+                    three.mainGroup.add(trains3D[i].mesh);
+                    if (train.wheels?.front?.use3d && objects3D[train.src + "_front"]) {
+                        trains3D[i].meshFront = {};
+                        trains3D[i].meshFront.left = objects3D[train.src + "_front"].clone();
+                        trains3D[i].meshFront.right = trains3D[i].meshFront.left.clone();
                         trains3D[i].resize();
+                        trains3D[i].meshFront.left.callback = trainCallback;
+                        trains3D[i].meshFront.right.callback = trainCallback;
+                        three.mainGroup.add(trains3D[i].meshFront.left);
+                        three.mainGroup.add(trains3D[i].meshFront.right);
                     }
-                );
+                    if (train.wheels?.back?.use3d && objects3D[train.src + "_back"]) {
+                        trains3D[i].meshBack = {};
+                        trains3D[i].meshBack.left = objects3D[train.src + "_back"].clone();
+                        trains3D[i].meshBack.right = trains3D[i].meshBack.left.clone();
+                        trains3D[i].resize();
+                        trains3D[i].meshBack.left.callback = trainCallback;
+                        trains3D[i].meshBack.right.callback = trainCallback;
+                        three.mainGroup.add(trains3D[i].meshBack.left);
+                        three.mainGroup.add(trains3D[i].meshBack.right);
+                    }
+                } else {
+                    var height3D = 0.0125;
+                    trains3D[i].resize = function () {
+                        if (three.mainGroup.getObjectByName("train_" + i)) {
+                            three.mainGroup.remove(trains3D[i].mesh);
+                        }
+                        const scale = three.calcScale();
+                        trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
+                        trains3D[i].mesh.position.set(0, 0, 0);
+                        trains3D[i].positionZ = (scale * height3D) / 2;
+                        trains3D[i].mesh.callback = trainCallback;
+                        trains3D[i].mesh.name = "train_" + i;
+                        three.mainGroup.add(trains3D[i].mesh);
+                    };
+                    trains3D[i].resize();
+                }
                 trains3D[i].cars = [];
                 train.cars.forEach(function (car, j) {
                     trains3D[i].cars[j] = {};
-                    var loaderGLTF: any = new GLTFLoader();
-                    loaderGLTF.setPath("assets/3d/").load(
-                        "asset" + car.src + ".glb",
-                        function (gltf) {
-                            trains[i].cars[j] = trains[i].cars[j];
-                            trains3D[i].cars[j].mesh = gltf.scene;
-                            trains3D[i].cars[j].resize = function () {
-                                const scale = three.calcScale();
-                                trains3D[i].cars[j].mesh.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                    if (objects3D[car.src]) {
+                        trains3D[i].cars[j].mesh = objects3D[car.src].clone();
+                        trains3D[i].cars[j].resize = function () {
+                            const scale = three.calcScale();
+                            trains3D[i].cars[j].mesh.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                            if (car.assetFlip) {
+                                trains3D[i].cars[j].mesh.scale.x *= -1;
+                            }
+                            if (trains3D[i].cars[j].meshFront) {
+                                trains3D[i].cars[j].meshFront.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                trains3D[i].cars[j].meshFront.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
                                 if (car.assetFlip) {
-                                    trains3D[i].cars[j].mesh.scale.x *= -1;
+                                    trains3D[i].cars[j].meshFront.left.scale.x *= -1;
+                                    trains3D[i].cars[j].meshFront.right.scale.x *= -1;
                                 }
-                                if (trains3D[i].cars[j].meshFront) {
-                                    trains3D[i].cars[j].meshFront.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                    trains3D[i].cars[j].meshFront.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                    if (car.assetFlip) {
-                                        trains3D[i].cars[j].meshFront.left.scale.x *= -1;
-                                        trains3D[i].cars[j].meshFront.right.scale.x *= -1;
-                                    }
-                                }
-                                if (trains3D[i].cars[j].meshBack) {
-                                    trains3D[i].cars[j].meshBack.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                    trains3D[i].cars[j].meshBack.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                    if (car.assetFlip) {
-                                        trains3D[i].cars[j].meshBack.left.scale.x *= -1;
-                                        trains3D[i].cars[j].meshBack.right.scale.x *= -1;
-                                    }
-                                }
-                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
-                                trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
-                            };
-                            trains3D[i].cars[j].resize();
-                            trains3D[i].cars[j].mesh.callback = trainCallback;
-                            three.mainGroup.add(trains3D[i].cars[j].mesh);
-                            if (car.wheels?.front?.use3d) {
-                                loaderGLTF.setPath("assets/3d/").load("asset" + car.src + "_front.glb", function (gltf) {
-                                    trains3D[i].cars[j].meshFront = {};
-                                    trains3D[i].cars[j].meshFront.left = gltf.scene;
-                                    trains3D[i].cars[j].meshFront.right = trains3D[i].cars[j].meshFront.left.clone();
-                                    trains3D[i].cars[j].resize();
-                                    trains3D[i].cars[j].meshFront.left.callback = trainCallback;
-                                    trains3D[i].cars[j].meshFront.right.callback = trainCallback;
-                                    three.mainGroup.add(trains3D[i].cars[j].meshFront.left);
-                                    three.mainGroup.add(trains3D[i].cars[j].meshFront.right);
-                                });
                             }
-                            if (car.wheels?.back?.use3d) {
-                                loaderGLTF.setPath("assets/3d/").load("asset" + car.src + "_back.glb", function (gltf) {
-                                    trains3D[i].cars[j].meshBack = {};
-                                    trains3D[i].cars[j].meshBack.left = gltf.scene;
-                                    trains3D[i].cars[j].meshBack.right = trains3D[i].cars[j].meshBack.left.clone();
-                                    trains3D[i].cars[j].resize();
-                                    trains3D[i].cars[j].meshBack.left.callback = trainCallback;
-                                    trains3D[i].cars[j].meshBack.right.callback = trainCallback;
-                                    three.mainGroup.add(trains3D[i].cars[j].meshBack.left);
-                                    three.mainGroup.add(trains3D[i].cars[j].meshBack.right);
-                                });
-                            }
-                        },
-                        null,
-                        function () {
-                            var height3D = 0.01;
-                            trains3D[i].cars[j].resize = function () {
-                                if (three.mainGroup.getObjectByName("train_" + i + "_car_" + j)) {
-                                    three.mainGroup.remove(trains3D[i].cars[j].mesh);
+                            if (trains3D[i].cars[j].meshBack) {
+                                trains3D[i].cars[j].meshBack.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                trains3D[i].cars[j].meshBack.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                if (car.assetFlip) {
+                                    trains3D[i].cars[j].meshBack.left.scale.x *= -1;
+                                    trains3D[i].cars[j].meshBack.right.scale.x *= -1;
                                 }
-                                const scale = three.calcScale();
-                                trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
-                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
-                                trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
-                                trains3D[i].cars[j].mesh.callback = trainCallback;
-                                trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
-                                three.mainGroup.add(trains3D[i].cars[j].mesh);
-                            };
+                            }
+                            trains3D[i].cars[j].mesh.position.set(0, 0, 0);
+                            trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
+                        };
+                        trains3D[i].cars[j].resize();
+                        trains3D[i].cars[j].mesh.callback = trainCallback;
+                        three.mainGroup.add(trains3D[i].cars[j].mesh);
+                        if (car.wheels?.front?.use3d && objects3D[car.src + "_front"]) {
+                            trains3D[i].cars[j].meshFront = {};
+                            trains3D[i].cars[j].meshFront.left = objects3D[car.src + "_front"].clone();
+                            trains3D[i].cars[j].meshFront.right = trains3D[i].cars[j].meshFront.left.clone();
                             trains3D[i].cars[j].resize();
+                            trains3D[i].cars[j].meshFront.left.callback = trainCallback;
+                            trains3D[i].cars[j].meshFront.right.callback = trainCallback;
+                            three.mainGroup.add(trains3D[i].cars[j].meshFront.left);
+                            three.mainGroup.add(trains3D[i].cars[j].meshFront.right);
                         }
-                    );
+                        if (car.wheels?.back?.use3d && objects3D[car.src + "_back"]) {
+                            trains3D[i].cars[j].meshBack = {};
+                            trains3D[i].cars[j].meshBack.left = objects3D[car.src + "_back"].clone();
+                            trains3D[i].cars[j].meshBack.right = trains3D[i].cars[j].meshBack.left.clone();
+                            trains3D[i].cars[j].resize();
+                            trains3D[i].cars[j].meshBack.left.callback = trainCallback;
+                            trains3D[i].cars[j].meshBack.right.callback = trainCallback;
+                            three.mainGroup.add(trains3D[i].cars[j].meshBack.left);
+                            three.mainGroup.add(trains3D[i].cars[j].meshBack.right);
+                        }
+                    } else {
+                        var height3D = 0.01;
+                        trains3D[i].cars[j].resize = function () {
+                            if (three.mainGroup.getObjectByName("train_" + i + "_car_" + j)) {
+                                three.mainGroup.remove(trains3D[i].cars[j].mesh);
+                            }
+                            const scale = three.calcScale();
+                            trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
+                            trains3D[i].cars[j].mesh.position.set(0, 0, 0);
+                            trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
+                            trains3D[i].cars[j].mesh.callback = trainCallback;
+                            trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
+                            three.mainGroup.add(trains3D[i].cars[j].mesh);
+                        };
+                        trains3D[i].cars[j].resize();
+                    }
                 });
             });
             cars.forEach(function (car, i) {
-                var carCallback = function (downIntersects, upIntersects) {
+                const carCallback = function (downIntersects, upIntersects) {
                     if (hardware.lastInputTouch < hardware.lastInputMouse) {
                         hardware.mouse.isHold = false;
                     }
@@ -7794,41 +7775,6 @@ function init(state: "load" | "reload" = "reload") {
                     }
                 };
                 cars3D[i] = {};
-                var loaderGLTF: any = new GLTFLoader();
-                loaderGLTF.setPath("assets/3d/").load(
-                    "asset" + car.src + ".glb",
-                    function (gltf) {
-                        cars3D[i].mesh = gltf.scene;
-                        cars3D[i].resize = function () {
-                            const scale = three.calcScale();
-                            cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
-                            cars3D[i].mesh.position.set(0, 0, 0);
-                            cars3D[i].positionZ = new THREE.Box3().setFromObject(cars3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
-                            cars3D[i].resizeParkingLot();
-                        };
-                        cars3D[i].resize();
-                        cars3D[i].mesh.callback = carCallback;
-                        three.mainGroup.add(cars3D[i].mesh);
-                    },
-                    null,
-                    function () {
-                        var height3D = 0.005;
-                        cars3D[i].resize = function () {
-                            if (three.mainGroup.getObjectByName("car_" + i)) {
-                                three.mainGroup.remove(cars3D[i].mesh);
-                            }
-                            const scale = three.calcScale();
-                            cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
-                            cars3D[i].mesh.position.set(0, 0, 0);
-                            cars3D[i].positionZ = (scale * height3D) / 2;
-                            cars3D[i].mesh.callback = carCallback;
-                            cars3D[i].mesh.name = "car_" + i;
-                            three.mainGroup.add(cars3D[i].mesh);
-                            cars3D[i].resizeParkingLot();
-                        };
-                        cars3D[i].resize();
-                    }
-                );
                 var radius = 0.0036;
                 var height3D = 0.0005;
                 cars3D[i].meshParkingLot = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.5, transparent: true}));
@@ -7847,6 +7793,35 @@ function init(state: "load" | "reload" = "reload") {
                 };
                 cars3D[i].meshParkingLot.visible = false;
                 cars3D[i].resizeParkingLot();
+                if (objects3D[car.src]) {
+                    cars3D[i].mesh = objects3D[car.src].clone();
+                    cars3D[i].resize = function () {
+                        const scale = three.calcScale();
+                        cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
+                        cars3D[i].mesh.position.set(0, 0, 0);
+                        cars3D[i].positionZ = new THREE.Box3().setFromObject(cars3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
+                        cars3D[i].resizeParkingLot();
+                    };
+                    cars3D[i].resize();
+                    cars3D[i].mesh.callback = carCallback;
+                    three.mainGroup.add(cars3D[i].mesh);
+                } else {
+                    var height3D = 0.005;
+                    cars3D[i].resize = function () {
+                        if (three.mainGroup.getObjectByName("car_" + i)) {
+                            three.mainGroup.remove(cars3D[i].mesh);
+                        }
+                        const scale = three.calcScale();
+                        cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
+                        cars3D[i].mesh.position.set(0, 0, 0);
+                        cars3D[i].positionZ = (scale * height3D) / 2;
+                        cars3D[i].mesh.callback = carCallback;
+                        cars3D[i].mesh.name = "car_" + i;
+                        three.mainGroup.add(cars3D[i].mesh);
+                        cars3D[i].resizeParkingLot();
+                    };
+                    cars3D[i].resize();
+                }
                 three.mainGroup.add(cars3D[i].meshParkingLot);
             });
             if (!gui.demo) {
@@ -7920,6 +7895,9 @@ function init(state: "load" | "reload" = "reload") {
                 calcControlCenter();
                 three.followCamControls.recalc();
             });
+
+            //Reset mode switch block
+            modeSwitching = false;
 
             //Trigger resize
             window.addEventListener("resize", requestResize);
@@ -8201,6 +8179,125 @@ window.addEventListener("load", function () {
     loadingAnimation.init();
     loadingAnimation.show(gui.demo || onlineGame.enabled);
 
+    //Load media
+    var finalLoadNo = 0;
+    var currentLoadNo = 0;
+    //Load 3d objects
+    const defaultObjects3D = [
+        {object: "background-flat.jpg", path: "assets/3d/", id: "background-flat", type: "texture"},
+        {object: "background-3d.gltf", path: "assets/3d/background-3d/", id: "background-3d", type: "mesh"},
+        {object: "asset0.glb", path: "assets/3d/", id: "0", type: "mesh"},
+        {object: "asset1.glb", path: "assets/3d/", id: "1", type: "mesh"},
+        {object: "asset2.glb", path: "assets/3d/", id: "2", type: "mesh"},
+        {object: "asset3.glb", path: "assets/3d/", id: "3", type: "mesh"},
+        {object: "asset4.glb", path: "assets/3d/", id: "4", type: "mesh"},
+        {object: "asset5.glb", path: "assets/3d/", id: "5", type: "mesh"},
+        {object: "asset6.glb", path: "assets/3d/", id: "6", type: "mesh"},
+        {object: "asset7.glb", path: "assets/3d/", id: "7", type: "mesh"},
+        {object: "asset8.glb", path: "assets/3d/", id: "8", type: "mesh"},
+        {object: "asset16.glb", path: "assets/3d/", id: "16", type: "mesh"},
+        {object: "asset17.glb", path: "assets/3d/", id: "17", type: "mesh"},
+        {object: "asset18.glb", path: "assets/3d/", id: "18", type: "mesh"},
+        {object: "asset19.glb", path: "assets/3d/", id: "19", type: "mesh"},
+        {object: "asset20.glb", path: "assets/3d/", id: "20", type: "mesh"},
+        {object: "asset21.glb", path: "assets/3d/", id: "21", type: "mesh"},
+        {object: "asset22.glb", path: "assets/3d/", id: "22", type: "mesh"},
+        {object: "asset33.glb", path: "assets/3d/", id: "33", type: "mesh"},
+        {object: "asset34.glb", path: "assets/3d/", id: "34", type: "mesh"},
+        {object: "asset35.glb", path: "assets/3d/", id: "35", type: "mesh"},
+        {object: "asset36.glb", path: "assets/3d/", id: "36", type: "mesh"},
+        {object: "asset37.glb", path: "assets/3d/", id: "37", type: "mesh"},
+        {object: "asset2_front.glb", path: "assets/3d/", id: "2_front", type: "mesh"},
+        {object: "asset3_front.glb", path: "assets/3d/", id: "3_front", type: "mesh"},
+        {object: "asset4_front.glb", path: "assets/3d/", id: "4_front", type: "mesh"},
+        {object: "asset5_front.glb", path: "assets/3d/", id: "5_front", type: "mesh"},
+        {object: "asset6_front.glb", path: "assets/3d/", id: "6_front", type: "mesh"},
+        {object: "asset7_front.glb", path: "assets/3d/", id: "7_front", type: "mesh"},
+        {object: "asset8_front.glb", path: "assets/3d/", id: "8_front", type: "mesh"},
+        {object: "asset18_front.glb", path: "assets/3d/", id: "18_front", type: "mesh"},
+        {object: "asset19_front.glb", path: "assets/3d/", id: "19_front", type: "mesh"},
+        {object: "asset20_front.glb", path: "assets/3d/", id: "20_front", type: "mesh"},
+        {object: "asset21_front.glb", path: "assets/3d/", id: "21_front", type: "mesh"},
+        {object: "asset22_front.glb", path: "assets/3d/", id: "22_front", type: "mesh"},
+        {object: "asset34_front.glb", path: "assets/3d/", id: "34_front", type: "mesh"},
+        {object: "asset35_front.glb", path: "assets/3d/", id: "35_front", type: "mesh"},
+        {object: "asset36_front.glb", path: "assets/3d/", id: "36_front", type: "mesh"},
+        {object: "asset37_front.glb", path: "assets/3d/", id: "37_front", type: "mesh"},
+        {object: "asset2_back.glb", path: "assets/3d/", id: "2_back", type: "mesh"},
+        {object: "asset3_back.glb", path: "assets/3d/", id: "3_back", type: "mesh"},
+        {object: "asset4_back.glb", path: "assets/3d/", id: "4_back", type: "mesh"},
+        {object: "asset5_back.glb", path: "assets/3d/", id: "5_back", type: "mesh"},
+        {object: "asset6_back.glb", path: "assets/3d/", id: "6_back", type: "mesh"},
+        {object: "asset7_back.glb", path: "assets/3d/", id: "7_back", type: "mesh"},
+        {object: "asset8_back.glb", path: "assets/3d/", id: "8_back", type: "mesh"},
+        {object: "asset18_back.glb", path: "assets/3d/", id: "18_back", type: "mesh"},
+        {object: "asset19_back.glb", path: "assets/3d/", id: "19_back", type: "mesh"},
+        {object: "asset20_back.glb", path: "assets/3d/", id: "20_back", type: "mesh"},
+        {object: "asset21_back.glb", path: "assets/3d/", id: "21_back", type: "mesh"},
+        {object: "asset22_back.glb", path: "assets/3d/", id: "22_back", type: "mesh"},
+        {object: "asset34_back.glb", path: "assets/3d/", id: "34_back", type: "mesh"},
+        {object: "asset35_back.glb", path: "assets/3d/", id: "35_back", type: "mesh"},
+        {object: "asset36_back.glb", path: "assets/3d/", id: "36_back", type: "mesh"},
+        {object: "asset37_back.glb", path: "assets/3d/", id: "37_back", type: "mesh"}
+    ];
+    objects3D = [];
+    finalLoadNo += defaultObjects3D.length;
+    defaultObjects3D.forEach(function (object3D) {
+        if (object3D.type == "mesh") {
+            const loaderGLTF: any = new GLTFLoader();
+            loaderGLTF.setPath(object3D.path).load(
+                object3D.object,
+                function (gltf) {
+                    objects3D[object3D.id] = gltf.scene;
+                    currentLoadNo++;
+                    const progressPercent = Math.round(100 * (currentLoadNo / finalLoadNo));
+                    loadingAnimation.updateProgress(progressPercent);
+                    if (currentLoadNo == finalLoadNo) {
+                        //Initialize content
+                        init("load");
+                    }
+                },
+                null,
+                function () {
+                    objects3D[object3D.id] = null;
+                    currentLoadNo++;
+                    const progressPercent = Math.round(100 * (currentLoadNo / finalLoadNo));
+                    loadingAnimation.updateProgress(progressPercent);
+                    if (currentLoadNo == finalLoadNo) {
+                        //Initialize content
+                        init("load");
+                    }
+                }
+            );
+        } else if (object3D.type == "texture") {
+            const loaderTexture = new THREE.TextureLoader();
+            loaderTexture.setPath(object3D.path).load(
+                object3D.object,
+                function (texture) {
+                    objects3D[object3D.id] = texture;
+                    currentLoadNo++;
+                    const progressPercent = Math.round(100 * (currentLoadNo / finalLoadNo));
+                    loadingAnimation.updateProgress(progressPercent);
+                    if (currentLoadNo == finalLoadNo) {
+                        //Initialize content
+                        init("load");
+                    }
+                },
+                null,
+                function () {
+                    objects3D[object3D.id] = null;
+                    currentLoadNo++;
+                    const progressPercent = Math.round(100 * (currentLoadNo / finalLoadNo));
+                    loadingAnimation.updateProgress(progressPercent);
+                    if (currentLoadNo == finalLoadNo) {
+                        //Initialize content
+                        init("load");
+                    }
+                }
+            );
+        }
+    });
+
     //Load images
     const defaultPics = [
         {id: 0, extension: "png"},
@@ -8245,16 +8342,16 @@ window.addEventListener("load", function () {
         {id: 39, extension: "png"}
     ];
     pics = [];
-    const finalPicNo = defaultPics.length;
-    var loadNo = 0;
+    defaultObjects3D.length;
+    finalLoadNo += defaultPics.length;
     defaultPics.forEach(function (pic) {
         pics[pic.id] = new Image();
         pics[pic.id].src = "assets/asset" + pic.id + "." + pic.extension;
         pics[pic.id].onload = function () {
-            loadNo++;
-            const progressPercent = Math.round(100 * (loadNo / finalPicNo));
+            currentLoadNo++;
+            const progressPercent = Math.round(100 * (currentLoadNo / finalLoadNo));
             loadingAnimation.updateProgress(progressPercent);
-            if (loadNo == finalPicNo) {
+            if (currentLoadNo == finalLoadNo) {
                 //Initialize content
                 init("load");
             }
