@@ -314,7 +314,7 @@
 	"helpScreenLegalAppAndroidAndroidXWebkit": "androidx.webkit",
 	"helpScreenLegalAppAndroidIcon": "📱",
 	"helpScreenLegalAppAndroidKotlin": "org.jetbrains.kotlin",
-	"helpScreenLegalAppAndroidPicasso": "com.squareup.picasso",
+	"helpScreenLegalAppAndroidCoil": "io.coil-kt.coil3",
 	"helpScreenLegalAppOC": "MOROway App OC {{0}}",
 	"helpScreenLegalAppOCCordova": "Apache Cordova",
 	"helpScreenLegalAppOCCordovaPs": [

@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("#legal-appandroid-android-x-webkit-license").addEventListener("click", function () {
         followLink("licenses_platform/androidx.webkit.txt", "_self", LinkStates.InternalLicense);
     });
-    document.querySelector("#legal-appandroid-picasso-license").addEventListener("click", function () {
-        followLink("licenses_platform/com.squareup.picasso.txt", "_self", LinkStates.InternalLicense);
+    document.querySelector("#legal-appandroid-coil-license").addEventListener("click", function () {
+        followLink("licenses_platform/io.coil-kt.coil3.txt", "_self", LinkStates.InternalLicense);
     });
 
     document.querySelector("#privacy-statement-link").addEventListener("click", function () {

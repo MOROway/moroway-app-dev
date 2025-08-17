@@ -22,7 +22,7 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMorowayAppBinding
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogPopupBinding
-import com.squareup.picasso.Picasso
+import coil3.load
 import kotlin.math.abs
 
 
@@ -194,7 +194,7 @@ class HomeActivity : MOROwayActivity() {
             }
             val imageSrc = serverMsgSettings.getString("image", null)
             if (!imageSrc.isNullOrEmpty()) {
-                Picasso.get().load(imageSrc).into(versionNoteBinding.versioNoteImage)
+                versionNoteBinding.versioNoteImage.load(imageSrc)
                 versionNoteBinding.versioNoteImage.visibility = View.VISIBLE
                 val imageLink = serverMsgSettings.getString("imageLink", null)
                 if (!imageLink.isNullOrEmpty()) {
@@ -211,8 +211,7 @@ class HomeActivity : MOROwayActivity() {
             }
             val imageSrcBackground = serverMsgSettings.getString("backgroundImage", null)
             if (!imageSrcBackground.isNullOrEmpty()) {
-                Picasso.get().load(imageSrcBackground)
-                    .into(versionNoteBinding.versioNoteBackgroundImage)
+                versionNoteBinding.versioNoteBackgroundImage.load(imageSrcBackground)
                 versionNoteBinding.versioNoteBackgroundImage.visibility = View.VISIBLE
             }
             versionNoteBinding.button.setOnClickListener {
