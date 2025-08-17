@@ -2251,7 +2251,7 @@ function drawObjects() {
                 carParams.autoModeInit = false;
             }
             const points: CarPoint = {x: [], y: [], angle: []};
-            const arrLen = carParams.wayNo * 20;
+            const arrLen = carParams.wayNo * 23;
             const abstrNo = Math.ceil(arrLen * 0.05);
             const cCars = copyJSObject(cars);
             for (var i = 0; i < cCars.length; i++) {
@@ -2644,7 +2644,7 @@ function drawObjects() {
     var wasHold = hardware.mouse.isHold;
     frameNo++;
     if (frameNo % 1000000 === 0) {
-        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NotificationPriority.Default, 5000, null, null, client.y + menus.outerContainer.height);
+        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NotificationPriority.Default, 10000, null, null, client.y + menus.outerContainer.height);
     }
     if (client.zoomAndTilt.realScale != client.zoomAndTilt.realScaleOld || client.zoomAndTilt.offsetX != client.zoomAndTilt.offsetXOld || client.zoomAndTilt.offsetY != client.zoomAndTilt.offsetYOld) {
         client.zoomAndTilt.realScaleOld = client.zoomAndTilt.realScale;
@@ -6189,7 +6189,7 @@ function init(state: "load" | "reload" = "reload") {
     switchParams = switchParamsDefault;
 
     //Reset cars
-    const carParamsDefault = {init: true, wayNo: 7};
+    const carParamsDefault = {init: true, wayNo: 6};
     const carPathsDefault = [
         {
             start: [{type: "curve_right", x: [0.29, 0.29], y: [0.38, 0.227]}],
