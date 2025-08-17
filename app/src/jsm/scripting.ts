@@ -147,6 +147,7 @@ interface ThreeFollowCamControls {
 interface Three {
     calcScale(): number;
     calcPositionY(): number;
+    cloneNode(src: any, cloneMaterial?: boolean): any;
     switchCamera(forwards: boolean): void;
     zoom: number;
     followCamControls: ThreeFollowCamControls;
@@ -4649,9 +4650,9 @@ const loadingAnimation: LoadingAnimation = {
         this.element = document.querySelector("#loading-anim");
         this.elementBranding = document.querySelector("#branding");
         this.elementBrandingImageAnimation = document.querySelector("#branding img");
+        const element = this.elementBrandingImageAnimation;
         this.brandingImageAnimation = {
             start() {
-                const element = this.elementBrandingImageAnimation;
                 if (element) {
                     const filter = "blur(1px) saturate(5) sepia(1) hue-rotate({{0}}deg)";
                     element.style.transition = "filter 0.08s";
@@ -4668,7 +4669,6 @@ const loadingAnimation: LoadingAnimation = {
                 if (this.interval) {
                     clearInterval(this.interval);
                 }
-                const element = this.elementBrandingImageAnimation;
                 if (element) {
                     element.style.filter = "unset";
                 }
@@ -5162,6 +5162,17 @@ const three: Three = {
     },
     calcPositionY() {
         return ((client.height - (background.y * 2 + background.height) / client.devicePixelRatio) / client.height) * (background.height / background.width / 2);
+    },
+    cloneNode(src, cloneMaterial = false) {
+        const target = src.clone();
+        if (cloneMaterial) {
+            target.traverse((node) => {
+                if (node.isMesh) {
+                    node.material = node.material.clone();
+                }
+            });
+        }
+        return target;
     },
     switchCamera(forwards = true) {
         if (forwards) {
@@ -6149,7 +6160,12 @@ function init(state: "load" | "reload" = "reload") {
         resized = false;
 
         //Reset konami state
-        konamiState = 0;
+        konamiState = 0
+
+        //Reset three scene
+        while (three.scene.children.length > 0) {
+            three.scene.remove(three.scene.children[0]);
+        }
     }
     //Reset switches
     const switchParamsDefault: any = {
@@ -6656,7 +6672,7 @@ function init(state: "load" | "reload" = "reload") {
     }
 
     if (background3D.three.src) {
-        background3D.three.mesh = objects3D[background3D.three.src].clone();
+        background3D.three.mesh = three.cloneNode(objects3D[background3D.three.src]);
         background3D.three.resize = function () {
             const scale = three.calcScale();
             background3D.three.mesh.scale.x = scale;
@@ -7589,7 +7605,7 @@ function init(state: "load" | "reload" = "reload") {
                 //Three.js
                 trains3D[i] = {};
                 if (objects3D[train.src]) {
-                    trains3D[i].mesh = objects3D[train.src].clone();
+                    trains3D[i].mesh = three.cloneNode(objects3D[train.src], true);
                     trains3D[i].resize = function () {
                         const scale = three.calcScale();
                         trains3D[i].mesh.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
@@ -7620,8 +7636,8 @@ function init(state: "load" | "reload" = "reload") {
                     three.mainGroup.add(trains3D[i].mesh);
                     if (train.wheels?.front?.use3d && objects3D[train.src + "_front"]) {
                         trains3D[i].meshFront = {};
-                        trains3D[i].meshFront.left = objects3D[train.src + "_front"].clone();
-                        trains3D[i].meshFront.right = trains3D[i].meshFront.left.clone();
+                        trains3D[i].meshFront.left = three.cloneNode(objects3D[train.src + "_front"], true);
+                        trains3D[i].meshFront.right = three.cloneNode(objects3D[train.src + "_front"], true);
                         trains3D[i].resize();
                         trains3D[i].meshFront.left.callback = trainCallback;
                         trains3D[i].meshFront.right.callback = trainCallback;
@@ -7630,8 +7646,8 @@ function init(state: "load" | "reload" = "reload") {
                     }
                     if (train.wheels?.back?.use3d && objects3D[train.src + "_back"]) {
                         trains3D[i].meshBack = {};
-                        trains3D[i].meshBack.left = objects3D[train.src + "_back"].clone();
-                        trains3D[i].meshBack.right = trains3D[i].meshBack.left.clone();
+                        trains3D[i].meshBack.left = three.cloneNode(objects3D[train.src + "_back"], true);
+                        trains3D[i].meshBack.right = three.cloneNode(objects3D[train.src + "_back"], true);
                         trains3D[i].resize();
                         trains3D[i].meshBack.left.callback = trainCallback;
                         trains3D[i].meshBack.right.callback = trainCallback;
@@ -7658,7 +7674,7 @@ function init(state: "load" | "reload" = "reload") {
                 train.cars.forEach(function (car, j) {
                     trains3D[i].cars[j] = {};
                     if (objects3D[car.src]) {
-                        trains3D[i].cars[j].mesh = objects3D[car.src].clone();
+                        trains3D[i].cars[j].mesh = three.cloneNode(objects3D[car.src], true);
                         trains3D[i].cars[j].resize = function () {
                             const scale = three.calcScale();
                             trains3D[i].cars[j].mesh.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
@@ -7689,8 +7705,8 @@ function init(state: "load" | "reload" = "reload") {
                         three.mainGroup.add(trains3D[i].cars[j].mesh);
                         if (car.wheels?.front?.use3d && objects3D[car.src + "_front"]) {
                             trains3D[i].cars[j].meshFront = {};
-                            trains3D[i].cars[j].meshFront.left = objects3D[car.src + "_front"].clone();
-                            trains3D[i].cars[j].meshFront.right = trains3D[i].cars[j].meshFront.left.clone();
+                            trains3D[i].cars[j].meshFront.left = three.cloneNode(objects3D[car.src + "_front"], true);
+                            trains3D[i].cars[j].meshFront.right = three.cloneNode(objects3D[car.src + "_front"], true);
                             trains3D[i].cars[j].resize();
                             trains3D[i].cars[j].meshFront.left.callback = trainCallback;
                             trains3D[i].cars[j].meshFront.right.callback = trainCallback;
@@ -7699,8 +7715,8 @@ function init(state: "load" | "reload" = "reload") {
                         }
                         if (car.wheels?.back?.use3d && objects3D[car.src + "_back"]) {
                             trains3D[i].cars[j].meshBack = {};
-                            trains3D[i].cars[j].meshBack.left = objects3D[car.src + "_back"].clone();
-                            trains3D[i].cars[j].meshBack.right = trains3D[i].cars[j].meshBack.left.clone();
+                            trains3D[i].cars[j].meshBack.left = three.cloneNode(objects3D[car.src + "_back"], true);
+                            trains3D[i].cars[j].meshBack.right = three.cloneNode(objects3D[car.src + "_back"], true);
                             trains3D[i].cars[j].resize();
                             trains3D[i].cars[j].meshBack.left.callback = trainCallback;
                             trains3D[i].cars[j].meshBack.right.callback = trainCallback;
@@ -7794,7 +7810,7 @@ function init(state: "load" | "reload" = "reload") {
                 cars3D[i].meshParkingLot.visible = false;
                 cars3D[i].resizeParkingLot();
                 if (objects3D[car.src]) {
-                    cars3D[i].mesh = objects3D[car.src].clone();
+                    cars3D[i].mesh = three.cloneNode(objects3D[car.src]);
                     cars3D[i].resize = function () {
                         const scale = three.calcScale();
                         cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
