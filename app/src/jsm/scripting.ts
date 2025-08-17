@@ -431,10 +431,7 @@ function switchMode(mode: string = "normal", additionalParameters: Record<string
     const urlParamsString = new URLSearchParams(urlParams).toString();
     const url = "?" + urlParamsString;
     if (APP_DATA.debug) {
-        /* TODO: Finalize mode change without reload
-                    Multiplayer reset for create new game
-                    single listener visibilitychange
-        */
+        // TODO: Multiplayer reset for create new game
         if (!modeSwitching) {
             modeSwitching = true;
             requestModeSwitch();
@@ -6160,7 +6157,7 @@ function init(state: "load" | "reload" = "reload") {
         resized = false;
 
         //Reset konami state
-        konamiState = 0
+        konamiState = 0;
 
         //Reset three scene
         while (three.scene.children.length > 0) {
@@ -6988,13 +6985,6 @@ function init(state: "load" | "reload" = "reload") {
                     }
                     function showStartGame(teamNum) {
                         endLoading();
-                        document.addEventListener("visibilitychange", function () {
-                            if (document.visibilityState == "hidden") {
-                                onlineConnection.send("pause-request");
-                            } else {
-                                onlineConnection.send("resume-request");
-                            }
-                        });
                         var parent = document.querySelector("#content") as HTMLElement;
                         var elem = parent.querySelector("#game") as HTMLElement;
                         resetForElement(parent, elem, "block");
@@ -7546,14 +7536,6 @@ function init(state: "load" | "reload" = "reload") {
                     (document.getElementById("setup-ball") as HTMLElement).style.top = "-1vw";
                 };
                 onlineConnection.connect();
-            } else {
-                document.addEventListener("visibilitychange", function () {
-                    if (document.visibilityState == "hidden") {
-                        animateWorker.postMessage({k: "pause"});
-                    } else {
-                        animateWorker.postMessage({k: "resume"});
-                    }
-                });
             }
 
             //Initialize trains
@@ -7922,14 +7904,6 @@ function init(state: "load" | "reload" = "reload") {
             //Initialize canvas
             drawInterval = message.data.animateInterval;
             drawObjects();
-            document.addEventListener("visibilitychange", function () {
-                if (document.visibilityState == "visible") {
-                    if (drawTimeout !== undefined && drawTimeout !== null) {
-                        clearTimeout(drawTimeout);
-                    }
-                    drawObjects();
-                }
-            });
 
             //Gestures
             if (gui.demo) {
@@ -8170,6 +8144,27 @@ window.addEventListener("load", function () {
         hardware.keyboard.keysHold = [];
         audioControl.playAndPauseAll();
         SYSTEM_TOOLS.keepAlive(!client.hidden);
+        if (!modeSwitching) {
+            if (!client.hidden) {
+                if (drawTimeout !== undefined && drawTimeout !== null) {
+                    clearTimeout(drawTimeout);
+                }
+                drawObjects();
+            }
+            if (onlineGame.enabled) {
+                if (client.hidden) {
+                    onlineConnection.send("pause-request");
+                } else {
+                    onlineConnection.send("resume-request");
+                }
+            } else {
+                if (client.hidden) {
+                    animateWorker.postMessage({k: "pause"});
+                } else {
+                    animateWorker.postMessage({k: "resume"});
+                }
+            }
+        }
     }
 
     //Configure mode (demo, multiplay or normal)
