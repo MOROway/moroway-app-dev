@@ -419,7 +419,6 @@ function switchMode(mode: string = "normal", additionalParameters: Record<string
                 Uncaught TypeError: can't access property "cars", trains3D[i] is undefined
                     train.cars.forEach(function (car, j) {
                         if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
-            Car crash normal -> demo -> normal
             single listener visibilitychange
             …and more
         */
@@ -1057,6 +1056,10 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     }
     calcBackground();
     menus.outerContainer.width = background.width / client.devicePixelRatio;
+    if (window.innerWidth > window.innerHeight) {
+        const unsafeArea = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--unsafe-area-bottom"));
+        menus.outerContainer.width -= Math.min(background.width / client.devicePixelRatio / 20, unsafeArea);
+    }
     menus.innerWidthRelativeToItemLength = false;
     menus.innerWidth = ((getSetting("classicUI") && !gui.three) || menus.floating ? 0.5 : 1) * menus.outerContainer.width;
     var availableHeight = menus.floating ? client.y : menus.outerContainer.height;
@@ -5957,6 +5960,10 @@ function init(state: "load" | "reload" = "reload") {
             }
             return (currentObject.state === 0 || currentObject.state == -1) && stateNullAgain ? obj : defineCarWay(cType, isFirst, i, ++j, obj, currentObject, stateNullAgain);
         }
+        cars.forEach(function (car) {
+            car.collStop = true;
+            car.collStopNo = [];
+        });
         for (var i = 0; i < cars.length; i++) {
             var types = Object.keys(carPaths[i]);
             for (var cTypeNo = 0; cTypeNo < types.length; cTypeNo++) {
@@ -6003,18 +6010,6 @@ function init(state: "load" | "reload" = "reload") {
             }
         }
         return true;
-    }
-    function defineCarParams() {
-        cars.forEach(function (car, i) {
-            car.speed *= background.width;
-            car.collStop = true;
-            car.collStopNo = [];
-            if (i === 0) {
-                carParams.lowestSpeedNo = i;
-            } else if (car.speed < cars[carParams.lowestSpeedNo].speed) {
-                carParams.lowestSpeedNo = i;
-            }
-        });
     }
 
     function placeCarsAtInitialPositions() {
@@ -6480,7 +6475,14 @@ function init(state: "load" | "reload" = "reload") {
             resizeCars(JSON.parse(savedGameBgSession));
         }
     } else {
-        defineCarParams();
+        cars.forEach(function (car, i) {
+            car.speed *= background.width;
+            if (i === 0) {
+                carParams.lowestSpeedNo = i;
+            } else if (car.speed < cars[carParams.lowestSpeedNo].speed) {
+                carParams.lowestSpeedNo = i;
+            }
+        });
         if (defineCarWays()) {
             placeCarsAtInitialPositions();
             if (gui.demo) {
