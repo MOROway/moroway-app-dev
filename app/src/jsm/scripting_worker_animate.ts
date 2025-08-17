@@ -1,5 +1,5 @@
 "use strict";
-import {copyJSObject} from "./common/js_objects.js";
+import { copyJSObject } from "./common/js_objects.js";
 
 interface TrainBoogie {
     state?: number;

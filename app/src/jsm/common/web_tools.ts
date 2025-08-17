@@ -5,7 +5,7 @@ import { CURRENT_LANG, formatJSString, getString } from "./string_tools.js";
 export { followLink } from "{{jsm_platform}}/common/web_tools.js";
 
 //HANDLE QUERY String
-export function getQueryString(key: string): string {
+export function getQueryStringValue(key: string): string {
     var value = "";
     window.location.search
         .substring(1)

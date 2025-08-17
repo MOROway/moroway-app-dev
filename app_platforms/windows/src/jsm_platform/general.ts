@@ -7,7 +7,7 @@ if ("serviceWorker" in navigator && window.location.href.indexOf(Protocols.Http 
         navigator.serviceWorker.register(document.baseURI + "sw.js").then(
             function (registration) {
                 if (APP_DATA.debug) {
-                    console.error("ServiceWorker registration successful with scope: ", registration.scope);
+                    console.debug("ServiceWorker registration successful with scope: ", registration.scope);
                 }
             },
             function (error) {
