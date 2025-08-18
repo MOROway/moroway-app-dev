@@ -250,3 +250,5 @@
     translations: true
 10.3.7:
   year: 2025
+  general:
+    dependencies: true

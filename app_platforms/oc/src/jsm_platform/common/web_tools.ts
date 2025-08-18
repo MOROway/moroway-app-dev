@@ -25,7 +25,6 @@ export function followLink(input1, input2, input3) {
             input2 = "_system";
             break;
             case LinkStates.InternalHtml:
-            case LinkStates.InternalReload:
             var hash, queryString;
             if (input1.includes("#")) {
                 hash = input1.substr(input1.indexOf("#"));

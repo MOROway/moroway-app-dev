@@ -298,6 +298,9 @@ versions:
     10.3.4:
         general: |
             Exit app in demo mode after specified amount of time if supported by platform.
+    10.3.7:
+        general: |
+            Improve in-app navigation.
 hints:
     1.0.0:
         general: |

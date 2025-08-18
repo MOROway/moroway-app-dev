@@ -430,14 +430,9 @@ function switchMode(mode: string = "normal", additionalParameters: Record<string
     }
     const urlParamsString = new URLSearchParams(urlParams).toString();
     const url = "?" + urlParamsString;
-    if (APP_DATA.debug) {
-        // TODO: Multiplayer reset for create new game
-        if (!modeSwitching) {
-            modeSwitching = true;
-            requestModeSwitch();
-        }
-    } else {
-        followLink(url, "_self", LinkStates.InternalReload);
+    if (!modeSwitching) {
+        modeSwitching = true;
+        requestModeSwitch();
     }
 }
 
@@ -4505,7 +4500,7 @@ function drawObjects() {
         gui.controlCenter = false;
     }
 
-    /////Online Game Waiting Animation/////
+    /////Multiplayer Mode/Waiting Animation/////
     if (onlineGame.stop) {
         hardware.mouse.cursor = "default";
         onlineGame.waitingClock.draw();
@@ -4950,181 +4945,8 @@ const textControl: any = {
     }
 };
 
-//Multiplayer mode
-const onlineGame: any = {
-    animateInterval: 40,
-    syncInterval: 10000,
-    excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]},
-    chatSticker: 7,
-    resized: false,
-    waitingClock: {
-        init(): void {
-            const initialZoom = 0.45;
-            onlineGame.waitingClock.initTime = Date.now();
-            onlineGame.waitingClock.zoom = initialZoom;
-            onlineGame.waitingClock.secondHandBackwards = false;
-        },
-        draw(): void {
-            if (Date.now() - onlineGame.waitingClock.initTime < 5000) {
-                return;
-            }
-            onlineGame.waitingClock.visible = onlineGame.stop;
-            //WAITING CLOCK/GLOBAL/SETUP/1
-            contextForeground.save();
-            contextForeground.translate(canvasForeground.width / 2, canvasForeground.height / 2);
-            contextForeground.translate(0, (-menus.outerContainer.height * client.devicePixelRatio) / 2);
-            const size = Math.min(background.width, background.height);
-            const radius = size / 2.2;
-            //WAITING CLOCK/STATIC/BACKGROUND
-            contextForeground.save();
-            const bgGradient = contextForeground.createRadialGradient(0, 0, radius * onlineGame.waitingClock.zoom, 0, 0, radius * 2);
-            bgGradient.addColorStop(0, "rgba(239,224,227,1)");
-            bgGradient.addColorStop(0.1, "rgba(239,224,227,0.3)");
-            bgGradient.addColorStop(1, "rgba(100,92,130,0.3)");
-            contextForeground.fillStyle = bgGradient;
-            contextForeground.globalAlpha = 0.6;
-            contextForeground.fillStyle = bgGradient;
-            contextForeground.fillRect(-canvasForeground.width / 2, -canvasForeground.height / 2 + (menus.outerContainer.height * client.devicePixelRatio) / 2, canvasForeground.width, canvasForeground.height);
-            contextForeground.restore();
-            //WAITING CLOCK/GLOBAL/SCALE
-            contextForeground.scale(onlineGame.waitingClock.zoom, onlineGame.waitingClock.zoom);
-            //WAITING CLOCK/STATIC/CLOCK FACE
-            const circleWidth = size / 20;
-            contextForeground.beginPath();
-            contextForeground.arc(0, 0, radius - circleWidth / 4, 0, Math.PI * 2);
-            contextForeground.lineWidth = circleWidth / 2;
-            contextForeground.strokeStyle = "rgba(0,0,0,0.7)";
-            contextForeground.stroke();
-            for (let i = 0; i < 60; i++) {
-                var rectWidth = size / 70;
-                var rectHeight = size / 25;
-                if (i % 5 == 0) {
-                    rectWidth *= 2;
-                    rectHeight *= 2.5;
-                }
-                if (i % 15 == 0) {
-                    rectHeight *= 1.2;
-                }
-                var angle = (Math.PI * 2 * i) / 60;
-                contextForeground.save();
-                contextForeground.fillStyle = "rgba(15,15,15,0.5)";
-                contextForeground.translate(radius * Math.sin(angle), radius * Math.cos(angle));
-                contextForeground.rotate(-angle);
-                contextForeground.fillRect(-rectWidth / 2, -rectHeight - circleWidth / 1.5, rectWidth, rectHeight);
-                contextForeground.restore();
-            }
-            //WAITING CLOCK/DYNAMIC/CLOCK HANDS
-            const date = new Date();
-            //WAITING CLOCK/DYNAMIC/CLOCK HAND/HOURS
-            var hours = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
-            if (hours > 12) {
-                hours -= 12;
-            }
-            var rectWidth = size / 28;
-            var rectHeight = size / 4;
-            var angle = (Math.PI * 2 * hours) / 12;
-            contextForeground.save();
-            contextForeground.rotate(angle);
-            contextForeground.save();
-            contextForeground.globalCompositeOperation = "destination-out";
-            contextForeground.fillStyle = "white";
-            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-            contextForeground.restore();
-            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-            contextForeground.restore();
-            //WAITING CLOCK/DYNAMIC/CLOCK HAND/MINUTES
-            var minutes = date.getMinutes();
-            var rectWidth = size / 30;
-            var rectHeight = size / 3;
-            var angle = (Math.PI * 2 * minutes) / 60;
-            contextForeground.save();
-            contextForeground.rotate(angle);
-            contextForeground.save();
-            contextForeground.globalCompositeOperation = "destination-out";
-            contextForeground.fillStyle = "white";
-            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-            contextForeground.restore();
-            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-            contextForeground.restore();
-            //WAITING CLOCK/DYNAMIC/CLOCK HAND/SECONDS
-            var seconds = date.getSeconds() + date.getMilliseconds() / 1000;
-            var rectWidth = size / 100;
-            var rectHeight = size / 2.95;
-            var angle = Math.min(2 * Math.PI, (Math.PI * 2 * seconds) / 58);
-            if (Math.round(angle * 100) % Math.round(Math.PI * 100) == 0) {
-                onlineGame.waitingClock.secondHandBackwards = konamiState < 0;
-            }
-            if (onlineGame.waitingClock.secondHandBackwards) {
-                angle = Math.PI * 2 - angle;
-            }
-            contextForeground.save();
-            contextForeground.rotate(angle);
-            contextForeground.save();
-            contextForeground.globalCompositeOperation = "destination-out";
-            contextForeground.fillStyle = "white";
-            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-            contextForeground.restore();
-            contextForeground.fillStyle = "rgba(139,0,0,0.5)";
-            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-            contextForeground.restore();
-            var rectWidth = size / 55;
-            var rectHeight = size / 8;
-            contextForeground.save();
-            contextForeground.rotate(angle);
-            contextForeground.save();
-            contextForeground.globalCompositeOperation = "destination-out";
-            contextForeground.fillStyle = "white";
-            contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
-            contextForeground.restore();
-            contextForeground.fillStyle = "rgba(139,0,0,0.5)";
-            contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
-            contextForeground.restore();
-            //WAITING CLOCK/STATIC/CLOCK HANDS
-            contextForeground.save();
-            contextForeground.globalCompositeOperation = "destination-out";
-            contextForeground.beginPath();
-            contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
-            contextForeground.fillStyle = "white";
-            contextForeground.fill();
-            contextForeground.restore();
-            contextForeground.beginPath();
-            contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
-            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-            contextForeground.fill();
-            contextForeground.beginPath();
-            contextForeground.arc(0, 0, size / 60, 0, Math.PI * 2);
-            contextForeground.fillStyle = "rgba(192,192,192,0.5)";
-            contextForeground.fill();
-            contextForeground.beginPath();
-            contextForeground.arc(0, 0, size / 120, 0, Math.PI * 2);
-            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-            contextForeground.fill();
-            //WAITING CLOCK/GLOBAL/SETUP/2
-            contextForeground.restore();
-            onlineGame.waitingClock.zoom *= 1.0375;
-            if (onlineGame.waitingClock.zoom > 1) {
-                onlineGame.waitingClock.zoom = 1;
-            }
-        }
-    }
-};
-const onlineConnection: any = {
-    serverURI: getServerLink(Protocols.WebSocket) + "/multiplay",
-    send(mode: string, message?: string) {
-        if (onlineConnection.socket && onlineConnection.socket.readyState == WebSocket.OPEN) {
-            onlineConnection.socket.send(
-                JSON.stringify({
-                    mode: mode,
-                    data: message
-                })
-            );
-        } else if (APP_DATA.debug) {
-            console.error("Websocket: Error sending message");
-        }
-    }
-};
+//Control center
+const controlCenter: any = {showCarCenter: false, fontFamily: defaultFont, mouse: {}};
 
 //Demo mode
 const demoMode: any = {
@@ -5149,6 +4971,134 @@ const demoMode: any = {
     },
     reload() {
         switchMode("demo");
+    }
+};
+
+//Media
+const audio: any = {};
+const audioControl: any = {
+    playAndPauseAll() {
+        if (gui.demo) {
+            audioControl.stopAll();
+        }
+        if (typeof audio.context == "object") {
+            const play = audioControl.mayPlay();
+            if (play && audio.context.state == "suspended") {
+                audio.context.resume();
+            } else if (!play && audio.context.state == "running") {
+                audio.context.suspend();
+            }
+            return true;
+        }
+        return false;
+    },
+    mayPlay() {
+        return audio.active && !gui.demo && !client.hidden && !onlineGame.paused;
+    },
+    existsObject(destinationName, destinationIndex: number | undefined = undefined) {
+        if (typeof audio.context == "object") {
+            if (typeof destinationIndex == "number") {
+                if (typeof audio.source[destinationName][destinationIndex] == "object") {
+                    return true;
+                }
+            } else {
+                if (typeof audio.source[destinationName] == "object") {
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+    startObject(destinationName, destinationIndex, loop) {
+        if (typeof audio.context == "object") {
+            var source = audio.context.createBufferSource();
+            source.loop = loop;
+            if (typeof destinationIndex == "number") {
+                if (typeof audio.buffer[destinationName][destinationIndex] == "object" && typeof audio.gainNode[destinationName][destinationIndex] == "object") {
+                    source.buffer = audio.buffer[destinationName][destinationIndex];
+                    source.connect(audio.gainNode[destinationName][destinationIndex]);
+                    audio.source[destinationName][destinationIndex] = source;
+                } else {
+                    return false;
+                }
+            } else {
+                if (typeof audio.buffer[destinationName] == "object" && typeof audio.gainNode[destinationName] == "object") {
+                    source.buffer = audio.buffer[destinationName];
+                    source.connect(audio.gainNode[destinationName]);
+                    audio.source[destinationName] = source;
+                } else {
+                    return false;
+                }
+            }
+            source.start();
+            return true;
+        }
+        return false;
+    },
+    setObjectVolume(destinationName, destinationIndex, volume) {
+        if (typeof audio.context == "object") {
+            var gainNode;
+            if (typeof destinationIndex == "number") {
+                gainNode = audio.gainNode[destinationName][destinationIndex];
+            } else {
+                gainNode = audio.gainNode[destinationName];
+            }
+            if (typeof gainNode == "object" && volume != undefined) {
+                gainNode.gain.value = Math.round(volume) / 100;
+                return true;
+            }
+        }
+        return false;
+    },
+    stopObject(destinationName, destinationIndex: number | undefined = undefined) {
+        if (typeof audio.context == "object") {
+            if (typeof destinationIndex == "number") {
+                if (typeof audio.source[destinationName][destinationIndex] == "object") {
+                    audio.source[destinationName][destinationIndex].stop();
+                    delete audio.source[destinationName][destinationIndex];
+                    return true;
+                }
+            } else {
+                if (typeof audio.source[destinationName] == "object") {
+                    audio.source[destinationName].stop();
+                    delete audio.source[destinationName];
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+    stopAll() {
+        if (audio.gainNode) {
+            Object.keys(audio.gainNode).forEach((name) => {
+                const value = audio.gainNode[name];
+                if (typeof value != "object") {
+                    return;
+                }
+                if (Array.isArray(value)) {
+                    value.forEach((_element, index) => {
+                        audioControl.setObjectVolume(name, index, 50);
+                    });
+                } else {
+                    audioControl.setObjectVolume(name, undefined, 50);
+                }
+            });
+        }
+        if (audio.source) {
+            Object.keys(audio.source).forEach((name) => {
+                const value = audio.source[name];
+                if (typeof value != "object") {
+                    return;
+                }
+                if (Array.isArray(value)) {
+                    value.forEach((_element, index) => {
+                        audioControl.stopObject(name, index);
+                    });
+                } else {
+                    audioControl.stopObject(name, undefined);
+                }
+            });
+        }
     }
 };
 
@@ -5291,6 +5241,10 @@ const three: Three = {
 
 //Debug view
 const debug: Debug = {paint: true};
+
+//Client and input configuration
+const hardware: any = {mouse: {moveX: 0, moveY: 0, downX: 0, downY: 0, downTime: 0, upX: 0, upY: 0, upTime: 0, isMoving: false, isHold: false, cursor: "default"}, keyboard: {keysHold: []}};
+const client: any = {devicePixelRatio: 1, zoomAndTilt: {maxScale: 6, minScale: 1.2}};
 
 //Action definitions
 const trainActions = {
@@ -5472,11 +5426,6 @@ const carActions = {
     }
 };
 
-//Defaults
-const controlCenterDefault: any = {showCarCenter: false, fontFamily: defaultFont, mouse: {}};
-const hardwareDefault: any = {mouse: {moveX: 0, moveY: 0, downX: 0, downY: 0, downTime: 0, upX: 0, upY: 0, upTime: 0, isMoving: false, isHold: false, cursor: "default"}, keyboard: {keysHold: []}};
-const clientDefault: any = {devicePixelRatio: 1, zoomAndTilt: {maxScale: 6, minScale: 1.2}};
-
 /*******************************************
  *                Variables                *
  ******************************************/
@@ -5505,132 +5454,6 @@ var frameNo = 0;
 //Media
 var pics;
 var objects3D;
-const audio: any = {};
-const audioControl: any = {
-    playAndPauseAll() {
-        if (gui.demo) {
-            audioControl.stopAll();
-        }
-        if (typeof audio.context == "object") {
-            const play = audioControl.mayPlay();
-            if (play && audio.context.state == "suspended") {
-                audio.context.resume();
-            } else if (!play && audio.context.state == "running") {
-                audio.context.suspend();
-            }
-            return true;
-        }
-        return false;
-    },
-    mayPlay() {
-        return audio.active && !gui.demo && !client.hidden && !onlineGame.paused;
-    },
-    existsObject(destinationName, destinationIndex: number | undefined = undefined) {
-        if (typeof audio.context == "object") {
-            if (typeof destinationIndex == "number") {
-                if (typeof audio.source[destinationName][destinationIndex] == "object") {
-                    return true;
-                }
-            } else {
-                if (typeof audio.source[destinationName] == "object") {
-                    return true;
-                }
-            }
-        }
-        return false;
-    },
-    startObject(destinationName, destinationIndex, loop) {
-        if (typeof audio.context == "object") {
-            var source = audio.context.createBufferSource();
-            source.loop = loop;
-            if (typeof destinationIndex == "number") {
-                if (typeof audio.buffer[destinationName][destinationIndex] == "object" && typeof audio.gainNode[destinationName][destinationIndex] == "object") {
-                    source.buffer = audio.buffer[destinationName][destinationIndex];
-                    source.connect(audio.gainNode[destinationName][destinationIndex]);
-                    audio.source[destinationName][destinationIndex] = source;
-                } else {
-                    return false;
-                }
-            } else {
-                if (typeof audio.buffer[destinationName] == "object" && typeof audio.gainNode[destinationName] == "object") {
-                    source.buffer = audio.buffer[destinationName];
-                    source.connect(audio.gainNode[destinationName]);
-                    audio.source[destinationName] = source;
-                } else {
-                    return false;
-                }
-            }
-            source.start();
-            return true;
-        }
-        return false;
-    },
-    setObjectVolume(destinationName, destinationIndex, volume) {
-        if (typeof audio.context == "object") {
-            var gainNode;
-            if (typeof destinationIndex == "number") {
-                gainNode = audio.gainNode[destinationName][destinationIndex];
-            } else {
-                gainNode = audio.gainNode[destinationName];
-            }
-            if (typeof gainNode == "object" && volume != undefined) {
-                gainNode.gain.value = Math.round(volume) / 100;
-                return true;
-            }
-        }
-        return false;
-    },
-    stopObject(destinationName, destinationIndex: number | undefined = undefined) {
-        if (typeof audio.context == "object") {
-            if (typeof destinationIndex == "number") {
-                if (typeof audio.source[destinationName][destinationIndex] == "object") {
-                    audio.source[destinationName][destinationIndex].stop();
-                    delete audio.source[destinationName][destinationIndex];
-                    return true;
-                }
-            } else {
-                if (typeof audio.source[destinationName] == "object") {
-                    audio.source[destinationName].stop();
-                    delete audio.source[destinationName];
-                    return true;
-                }
-            }
-        }
-        return false;
-    },
-    stopAll() {
-        if (audio.gainNode) {
-            Object.keys(audio.gainNode).forEach((name) => {
-                const value = audio.gainNode[name];
-                if (typeof value != "object") {
-                    return;
-                }
-                if (Array.isArray(value)) {
-                    value.forEach((_element, index) => {
-                        audioControl.setObjectVolume(name, index, 50);
-                    });
-                } else {
-                    audioControl.setObjectVolume(name, undefined, 50);
-                }
-            });
-        }
-        if (audio.source) {
-            Object.keys(audio.source).forEach((name) => {
-                const value = audio.source[name];
-                if (typeof value != "object") {
-                    return;
-                }
-                if (Array.isArray(value)) {
-                    value.forEach((_element, index) => {
-                        audioControl.stopObject(name, index);
-                    });
-                } else {
-                    audioControl.stopObject(name, undefined);
-                }
-            });
-        }
-    }
-};
 
 //Resize
 var resizeTimeout;
@@ -5672,13 +5495,14 @@ var classicUI;
 //GUI configuration
 var gui: any = {};
 var menus: any = {};
-var controlCenter = controlCenterDefault;
 var konamiState = 0;
 var konamiTimeOut;
 
+//Multiplayer mode
+var onlineGame: any = {};
+var onlineConnection: any = {};
+
 //Client and input configuration
-var hardware = hardwareDefault;
-var client = clientDefault;
 var movingTimeOut;
 var clickTimeOut;
 
@@ -6055,8 +5879,7 @@ function init(state: "load" | "reload" = "reload") {
         //Reset animation worker
         animateWorker.terminate();
 
-        //Reset online game
-        onlineGame.enabled = false;
+        //Reset multiplayer mode
         if (onlineConnection.socket) {
             onlineConnection.socket.close();
         }
@@ -6098,17 +5921,6 @@ function init(state: "load" | "reload" = "reload") {
 
         //Reset GUI
         gui = {};
-        controlCenter = controlCenterDefault;
-
-        //Reset client and input configuration
-        hardware = hardwareDefault;
-        client = clientDefault;
-
-        //Reconfigure mode
-        setMode();
-
-        //Show loading image
-        loadingAnimation.show(gui.demo || onlineGame.enabled);
 
         //Reset all canvases
         canvas.style.display = "none";
@@ -6120,6 +5932,11 @@ function init(state: "load" | "reload" = "reload") {
             background3D.behindClone.remove();
         }
         three.renderer.domElement.style.display = "none";
+
+        //Reset three scene
+        while (three.scene.children.length > 0) {
+            three.scene.remove(three.scene.children[0]);
+        }
 
         //Reset previous event listeners
         //Load
@@ -6150,21 +5967,200 @@ function init(state: "load" | "reload" = "reload") {
         document.removeEventListener("mouseup", demoMode.leaveTimeoutEnd);
         document.removeEventListener("mouseout", demoMode.leaveTimeoutEnd);
 
+        //Reset konami state
+        konamiState = 0;
+
         //Reset gestures
         resetAll();
 
         //Reset resize
         resized = false;
-
-        //Reset konami state
-        konamiState = 0;
-
-        //Reset three scene
-        while (three.scene.children.length > 0) {
-            three.scene.remove(three.scene.children[0]);
-        }
     }
-    //Reset switches
+
+    //Default multiplayer mode
+    const onlineGameDefault: any = {
+        animateInterval: 40,
+        syncInterval: 10000,
+        excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]},
+        chatSticker: 7,
+        waitingClock: {
+            init(): void {
+                const initialZoom = 0.45;
+                onlineGame.waitingClock.initTime = Date.now();
+                onlineGame.waitingClock.zoom = initialZoom;
+                onlineGame.waitingClock.secondHandBackwards = false;
+            },
+            draw(): void {
+                if (Date.now() - onlineGame.waitingClock.initTime < 5000) {
+                    return;
+                }
+                onlineGame.waitingClock.visible = onlineGame.stop;
+                //WAITING CLOCK/GLOBAL/SETUP/1
+                contextForeground.save();
+                contextForeground.translate(canvasForeground.width / 2, canvasForeground.height / 2);
+                contextForeground.translate(0, (-menus.outerContainer.height * client.devicePixelRatio) / 2);
+                const size = Math.min(background.width, background.height);
+                const radius = size / 2.2;
+                //WAITING CLOCK/STATIC/BACKGROUND
+                contextForeground.save();
+                const bgGradient = contextForeground.createRadialGradient(0, 0, radius * onlineGame.waitingClock.zoom, 0, 0, radius * 2);
+                bgGradient.addColorStop(0, "rgba(239,224,227,1)");
+                bgGradient.addColorStop(0.1, "rgba(239,224,227,0.3)");
+                bgGradient.addColorStop(1, "rgba(100,92,130,0.3)");
+                contextForeground.fillStyle = bgGradient;
+                contextForeground.globalAlpha = 0.6;
+                contextForeground.fillStyle = bgGradient;
+                contextForeground.fillRect(-canvasForeground.width / 2, -canvasForeground.height / 2 + (menus.outerContainer.height * client.devicePixelRatio) / 2, canvasForeground.width, canvasForeground.height);
+                contextForeground.restore();
+                //WAITING CLOCK/GLOBAL/SCALE
+                contextForeground.scale(onlineGame.waitingClock.zoom, onlineGame.waitingClock.zoom);
+                //WAITING CLOCK/STATIC/CLOCK FACE
+                const circleWidth = size / 20;
+                contextForeground.beginPath();
+                contextForeground.arc(0, 0, radius - circleWidth / 4, 0, Math.PI * 2);
+                contextForeground.lineWidth = circleWidth / 2;
+                contextForeground.strokeStyle = "rgba(0,0,0,0.7)";
+                contextForeground.stroke();
+                for (let i = 0; i < 60; i++) {
+                    var rectWidth = size / 70;
+                    var rectHeight = size / 25;
+                    if (i % 5 == 0) {
+                        rectWidth *= 2;
+                        rectHeight *= 2.5;
+                    }
+                    if (i % 15 == 0) {
+                        rectHeight *= 1.2;
+                    }
+                    var angle = (Math.PI * 2 * i) / 60;
+                    contextForeground.save();
+                    contextForeground.fillStyle = "rgba(15,15,15,0.5)";
+                    contextForeground.translate(radius * Math.sin(angle), radius * Math.cos(angle));
+                    contextForeground.rotate(-angle);
+                    contextForeground.fillRect(-rectWidth / 2, -rectHeight - circleWidth / 1.5, rectWidth, rectHeight);
+                    contextForeground.restore();
+                }
+                //WAITING CLOCK/DYNAMIC/CLOCK HANDS
+                const date = new Date();
+                //WAITING CLOCK/DYNAMIC/CLOCK HAND/HOURS
+                var hours = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
+                if (hours > 12) {
+                    hours -= 12;
+                }
+                var rectWidth = size / 28;
+                var rectHeight = size / 4;
+                var angle = (Math.PI * 2 * hours) / 12;
+                contextForeground.save();
+                contextForeground.rotate(angle);
+                contextForeground.save();
+                contextForeground.globalCompositeOperation = "destination-out";
+                contextForeground.fillStyle = "white";
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+                contextForeground.restore();
+                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+                contextForeground.restore();
+                //WAITING CLOCK/DYNAMIC/CLOCK HAND/MINUTES
+                var minutes = date.getMinutes();
+                var rectWidth = size / 30;
+                var rectHeight = size / 3;
+                var angle = (Math.PI * 2 * minutes) / 60;
+                contextForeground.save();
+                contextForeground.rotate(angle);
+                contextForeground.save();
+                contextForeground.globalCompositeOperation = "destination-out";
+                contextForeground.fillStyle = "white";
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+                contextForeground.restore();
+                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+                contextForeground.restore();
+                //WAITING CLOCK/DYNAMIC/CLOCK HAND/SECONDS
+                var seconds = date.getSeconds() + date.getMilliseconds() / 1000;
+                var rectWidth = size / 100;
+                var rectHeight = size / 2.95;
+                var angle = Math.min(2 * Math.PI, (Math.PI * 2 * seconds) / 58);
+                if (Math.round(angle * 100) % Math.round(Math.PI * 100) == 0) {
+                    onlineGame.waitingClock.secondHandBackwards = konamiState < 0;
+                }
+                if (onlineGame.waitingClock.secondHandBackwards) {
+                    angle = Math.PI * 2 - angle;
+                }
+                contextForeground.save();
+                contextForeground.rotate(angle);
+                contextForeground.save();
+                contextForeground.globalCompositeOperation = "destination-out";
+                contextForeground.fillStyle = "white";
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+                contextForeground.restore();
+                contextForeground.fillStyle = "rgba(139,0,0,0.5)";
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+                contextForeground.restore();
+                var rectWidth = size / 55;
+                var rectHeight = size / 8;
+                contextForeground.save();
+                contextForeground.rotate(angle);
+                contextForeground.save();
+                contextForeground.globalCompositeOperation = "destination-out";
+                contextForeground.fillStyle = "white";
+                contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
+                contextForeground.restore();
+                contextForeground.fillStyle = "rgba(139,0,0,0.5)";
+                contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
+                contextForeground.restore();
+                //WAITING CLOCK/STATIC/CLOCK HANDS
+                contextForeground.save();
+                contextForeground.globalCompositeOperation = "destination-out";
+                contextForeground.beginPath();
+                contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
+                contextForeground.fillStyle = "white";
+                contextForeground.fill();
+                contextForeground.restore();
+                contextForeground.beginPath();
+                contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
+                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+                contextForeground.fill();
+                contextForeground.beginPath();
+                contextForeground.arc(0, 0, size / 60, 0, Math.PI * 2);
+                contextForeground.fillStyle = "rgba(192,192,192,0.5)";
+                contextForeground.fill();
+                contextForeground.beginPath();
+                contextForeground.arc(0, 0, size / 120, 0, Math.PI * 2);
+                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+                contextForeground.fill();
+                //WAITING CLOCK/GLOBAL/SETUP/2
+                contextForeground.restore();
+                onlineGame.waitingClock.zoom *= 1.0375;
+                if (onlineGame.waitingClock.zoom > 1) {
+                    onlineGame.waitingClock.zoom = 1;
+                }
+            }
+        }
+    };
+    onlineGame = onlineGameDefault;
+    const onlineConnectionDefault: any = {
+        serverURI: getServerLink(Protocols.WebSocket) + "/multiplay",
+        send(mode: string, message?: string) {
+            if (onlineConnection.socket && onlineConnection.socket.readyState == WebSocket.OPEN) {
+                onlineConnection.socket.send(
+                    JSON.stringify({
+                        mode: mode,
+                        data: message
+                    })
+                );
+            } else if (APP_DATA.debug) {
+                console.error("Websocket: Error sending message");
+            }
+        }
+    };
+    onlineConnection = onlineConnectionDefault;
+
+    //Reconfigure mode
+    setMode();
+
+    //Show loading image
+    loadingAnimation.show(gui.demo || onlineGame.enabled);
+
+    //Default switches
     const switchParamsDefault: any = {
         showDuration: 11,
         showDurationFade: 33,
@@ -6188,7 +6184,7 @@ function init(state: "load" | "reload" = "reload") {
     switches3D = {};
     switchParams = switchParamsDefault;
 
-    //Reset cars
+    //Default cars
     const carParamsDefault = {init: true, wayNo: 6};
     const carPathsDefault = [
         {
@@ -6265,7 +6261,7 @@ function init(state: "load" | "reload" = "reload") {
     cars = carsDefault;
     cars3D = [];
 
-    //Reset classic UI
+    //Default Classic UI
     const classicUIDefault: any = {
         trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {fontFamily: defaultFont}},
         transformer: {src: 12, onSrc: 13, readySrc: 23, angle: Math.PI / 5, wheelInput: {src: 14, angle: 0, maxAngle: 1.5 * Math.PI}, directionInput: {srcStandardDirection: 24, srcNotStandardDirection: 15}},
@@ -6370,7 +6366,7 @@ function init(state: "load" | "reload" = "reload") {
     };
     classicUI = classicUIDefault;
 
-    //Reset animations
+    //Default animations
     const taxOfficeDefault: any = {
         params: {
             number: 45,
@@ -6844,131 +6840,128 @@ function init(state: "load" | "reload" = "reload") {
                 animateWorker.postMessage({k: "setTrainPics", trainPics: trainPics});
             }
         } else if (message.data.k == "ready") {
-            if (state == "load") {
-                const chatNotify = document.querySelector("#tp-chat-notifier") as HTMLElementNotify;
-                const chat = document.querySelector("#chat") as HTMLElementChat;
-                const chatInner = chat.querySelector("#chat-inner") as HTMLElement;
-                const chatInnerNone = chatInner.querySelector("#chat-no-messages") as HTMLElement;
-                const chatInnerMessages = chatInner.querySelector("#chat-inner-messages") as HTMLElement;
-                const chatInnerScrollToBottom = chatInner.querySelector("#chat-scroll-to-bottom") as HTMLElementChatToBottom;
-                const chatControls = chat.querySelector("#chat-controls") as HTMLElement;
-                const chatControlsInner = chatControls.querySelectorAll("#chat-send > *") as NodeListOf<HTMLElement>;
-                const chatControlsReactions = chatControls.querySelector("#chat-msg-reactions") as HTMLElement;
-                const chatControlsReactionsSmiley = chatControlsReactions.querySelector("#chat-msg-smileys-inner") as HTMLElement;
-                const chatControlsReactionsSmileyButtons = chatControlsReactionsSmiley.querySelectorAll("button") as NodeListOf<HTMLElement>;
-                const chatControlsReactionsSticker = chatControlsReactions.querySelector("#chat-msg-stickers-inner") as HTMLElement;
-                const chatControlsSendMsg = chatControls.querySelector("#chat-msg-send-text") as HTMLInputElement;
-                const chatControlsSendButton = chatControls.querySelector("#chat-msg-send-button") as HTMLElement;
-                const chatControlsNavClose = chat.querySelector("#chat-close") as HTMLElement;
-                const chatControlsNavClear = chat.querySelector("#chat-clear") as HTMLElementChatClear;
-                chatInnerScrollToBottom.toggleDisplay = function () {
-                    if (chatInnerMessages.lastChild != null) {
-                        chatInnerScrollToBottom.style.display = chatInner.scrollHeight > chatInner.offsetHeight && chatInner.scrollHeight - chatInner.scrollTop > chatInner.offsetHeight + (chatInnerMessages.lastChild as HTMLElement).offsetHeight ? "flex" : "";
-                        chatInnerScrollToBottom.style.top = Math.max(0, chatInner.offsetHeight - chatInnerScrollToBottom.offsetHeight - 50) + "px";
-                    } else {
-                        chatInnerScrollToBottom.style.display = "";
-                    }
-                };
-                chat.resizeChat = function () {
-                    chatInner.style.maxHeight = Math.max(50, Math.min(client.height, chat.offsetHeight) - chatControls.offsetHeight) + "px";
-                    chatInnerScrollToBottom.toggleDisplay();
-                };
-                window.addEventListener("resize", chat.resizeChat);
-                chat.openChat = function () {
-                    if (typeof chatNotify.hide == "function") {
-                        chatNotify.hide(chatNotify, true);
-                    }
-                    chat.style.display = "block";
-                    gui.sidebarRight = true;
-                    drawMenu("invisible");
-                    chat.resizeChat();
-                };
-                chat.closeChat = function () {
-                    chat.style.display = "";
-                    gui.sidebarRight = false;
-                    drawMenu("visible");
-                };
-                window.addEventListener("keyup", function (event) {
-                    if (event.key === "Escape") {
-                        chat.closeChat();
-                    }
-                });
-                chatInner.onscroll = chatInnerScrollToBottom.toggleDisplay;
-                chatNotify.onclick = chat.openChat;
-                chatControlsNavClose.onclick = chat.closeChat;
-                chatControlsSendButton.onclick = function () {
-                    if (chatControlsSendMsg.value != "") {
+            const chatNotify = document.querySelector("#tp-chat-notifier") as HTMLElementNotify;
+            const chat = document.querySelector("#chat") as HTMLElementChat;
+            const chatInner = chat.querySelector("#chat-inner") as HTMLElement;
+            const chatInnerNone = chatInner.querySelector("#chat-no-messages") as HTMLElement;
+            const chatInnerMessages = chatInner.querySelector("#chat-inner-messages") as HTMLElement;
+            const chatInnerScrollToBottom = chatInner.querySelector("#chat-scroll-to-bottom") as HTMLElementChatToBottom;
+            const chatControls = chat.querySelector("#chat-controls") as HTMLElement;
+            const chatControlsInner = chatControls.querySelectorAll("#chat-send > *") as NodeListOf<HTMLElement>;
+            const chatControlsReactions = chatControls.querySelector("#chat-msg-reactions") as HTMLElement;
+            const chatControlsReactionsSmiley = chatControlsReactions.querySelector("#chat-msg-smileys-inner") as HTMLElement;
+            const chatControlsReactionsSmileyButtons = chatControlsReactionsSmiley.querySelectorAll("button") as NodeListOf<HTMLElement>;
+            const chatControlsReactionsSticker = chatControlsReactions.querySelector("#chat-msg-stickers-inner") as HTMLElement;
+            const chatControlsSendMsg = chatControls.querySelector("#chat-msg-send-text") as HTMLInputElement;
+            const chatControlsSendButton = chatControls.querySelector("#chat-msg-send-button") as HTMLElement;
+            const chatControlsNavClose = chat.querySelector("#chat-close") as HTMLElement;
+            const chatControlsNavClear = chat.querySelector("#chat-clear") as HTMLElementChatClear;
+            chatInnerScrollToBottom.toggleDisplay = function () {
+                if (chatInnerMessages.lastChild != null) {
+                    chatInnerScrollToBottom.style.display = chatInner.scrollHeight > chatInner.offsetHeight && chatInner.scrollHeight - chatInner.scrollTop > chatInner.offsetHeight + (chatInnerMessages.lastChild as HTMLElement).offsetHeight ? "flex" : "";
+                    chatInnerScrollToBottom.style.top = Math.max(0, chatInner.offsetHeight - chatInnerScrollToBottom.offsetHeight - 50) + "px";
+                } else {
+                    chatInnerScrollToBottom.style.display = "";
+                }
+            };
+            chat.resizeChat = function () {
+                chatInner.style.maxHeight = Math.max(50, Math.min(client.height, chat.offsetHeight) - chatControls.offsetHeight) + "px";
+                chatInnerScrollToBottom.toggleDisplay();
+            };
+            window.addEventListener("resize", chat.resizeChat);
+            chat.openChat = function () {
+                if (typeof chatNotify.hide == "function") {
+                    chatNotify.hide(chatNotify, true);
+                }
+                chat.style.display = "block";
+                gui.sidebarRight = true;
+                drawMenu("invisible");
+                chat.resizeChat();
+            };
+            chat.closeChat = function () {
+                chat.style.display = "";
+                gui.sidebarRight = false;
+                drawMenu("visible");
+            };
+            window.addEventListener("keyup", function (event) {
+                if (event.key === "Escape") {
+                    chat.closeChat();
+                }
+            });
+            chatInner.onscroll = chatInnerScrollToBottom.toggleDisplay;
+            chatNotify.onclick = chat.openChat;
+            chatControlsNavClose.onclick = chat.closeChat;
+            chatControlsSendButton.onclick = function () {
+                if (chatControlsSendMsg.value != "") {
+                    onlineConnection.send("chat-msg", chatControlsSendMsg.value);
+                    chatControlsSendMsg.value = "";
+                }
+            };
+            chatControlsSendMsg.onkeyup = function (event) {
+                if (chatControlsSendMsg.value != "") {
+                    if (event.key === "Enter") {
                         onlineConnection.send("chat-msg", chatControlsSendMsg.value);
                         chatControlsSendMsg.value = "";
                     }
-                };
-                chatControlsSendMsg.onkeyup = function (event) {
-                    if (chatControlsSendMsg.value != "") {
-                        if (event.key === "Enter") {
-                            onlineConnection.send("chat-msg", chatControlsSendMsg.value);
-                            chatControlsSendMsg.value = "";
+                }
+            };
+            for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
+                (chatControlsInner[cSI].querySelector(".chat-send-toggle") as HTMLElement).onclick = function (event) {
+                    const target = event.target as HTMLElement;
+                    var elem = target!.parentNode!.querySelector(".chat-send-inner") as HTMLElement;
+                    var display = getComputedStyle(elem).getPropertyValue("display");
+                    for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
+                        (chatControlsInner[cSI].querySelector(".chat-send-inner") as HTMLElement).style.display = "none";
+                    }
+                    elem.style.display = display == "none" ? "block" : "none";
+                    chat.resizeChat();
+                    var smileySupport = true;
+                    for (var smiley = 1; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
+                        if (chatControlsReactionsSmileyButtons[smiley].offsetWidth != chatControlsReactionsSmileyButtons[smiley - 1].offsetWidth) {
+                            smileySupport = false;
+                            break;
                         }
                     }
+                    if (!smileySupport) {
+                        notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
+                    }
                 };
-                for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
-                    (chatControlsInner[cSI].querySelector(".chat-send-toggle") as HTMLElement).onclick = function (event) {
-                        const target = event.target as HTMLElement;
-                        var elem = target!.parentNode!.querySelector(".chat-send-inner") as HTMLElement;
-                        var display = getComputedStyle(elem).getPropertyValue("display");
-                        for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
-                            (chatControlsInner[cSI].querySelector(".chat-send-inner") as HTMLElement).style.display = "none";
-                        }
-                        elem.style.display = display == "none" ? "block" : "none";
-                        chat.resizeChat();
-                        var smileySupport = true;
-                        for (var smiley = 1; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
-                            if (chatControlsReactionsSmileyButtons[smiley].offsetWidth != chatControlsReactionsSmileyButtons[smiley - 1].offsetWidth) {
-                                smileySupport = false;
-                                break;
-                            }
-                        }
-                        if (!smileySupport) {
-                            notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
-                        }
-                    };
-                }
-                for (var smiley = 0; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
-                    chatControlsReactionsSmileyButtons[smiley].onclick = function (event) {
-                        const target = event.target as HTMLElement;
-                        onlineConnection.send("chat-msg", target.textContent);
-                    };
-                }
-                chatControlsReactionsSticker.innerHTML = "";
-                for (var sticker = 0; sticker < onlineGame.chatSticker; sticker++) {
-                    var elem = document.createElement("img");
-                    elem.src = "./assets/chat_sticker_" + sticker + ".png";
-                    elem.dataset.stickerNumber = sticker.toString();
-                    elem.onclick = function (event) {
-                        const target = event.target as HTMLElement;
-                        onlineConnection.send("chat-msg", "{{sticker=" + target.dataset.stickerNumber + "}}");
-                    };
-                    chatControlsReactionsSticker.appendChild(elem);
-                }
-                chatControlsNavClear.clearChat = function () {
-                    document.querySelectorAll(".chat-inner-container")?.forEach(function (toDestroy) {
-                        if (toDestroy) {
-                            toDestroy.parentNode.removeChild(toDestroy);
-                        }
-                    });
-                    chatInnerNone.style.display = "";
-                    chatControlsReactions.style.display = "none";
+            }
+            for (var smiley = 0; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
+                chatControlsReactionsSmileyButtons[smiley].onclick = function (event) {
+                    const target = event.target as HTMLElement;
+                    onlineConnection.send("chat-msg", target.textContent);
+                };
+            }
+            chatControlsReactionsSticker.innerHTML = "";
+            for (var sticker = 0; sticker < onlineGame.chatSticker; sticker++) {
+                var elem = document.createElement("img");
+                elem.src = "./assets/chat_sticker_" + sticker + ".png";
+                elem.dataset.stickerNumber = sticker.toString();
+                elem.onclick = function (event) {
+                    const target = event.target as HTMLElement;
+                    onlineConnection.send("chat-msg", "{{sticker=" + target.dataset.stickerNumber + "}}");
+                };
+                chatControlsReactionsSticker.appendChild(elem);
+            }
+            chatControlsNavClear.clearChat = function () {
+                chatInnerMessages.innerHTML = "";
+                chatInnerNone.style.display = "";
+                chatControlsReactions.style.display = "none";
+                chatInnerScrollToBottom.toggleDisplay();
+            };
+            chatControlsNavClear.clearChat();
+            chatControlsNavClear.onclick = chatControlsNavClear.clearChat;
+            chatInnerScrollToBottom.onclick = function () {
+                if (chatInnerMessages.lastChild != null) {
+                    (chatInnerMessages.lastChild as HTMLElement).scrollIntoView();
                     chatInnerScrollToBottom.toggleDisplay();
-                };
-                chatControlsNavClear.onclick = chatControlsNavClear.clearChat;
-                chatInnerScrollToBottom.onclick = function () {
-                    if (chatInnerMessages.lastChild != null) {
-                        (chatInnerMessages.lastChild as HTMLElement).scrollIntoView();
-                        chatInnerScrollToBottom.toggleDisplay();
-                    }
-                };
-                (document.querySelector("#setup #setup-exit") as HTMLElement).onclick = function () {
-                    switchMode();
-                };
+                }
+            };
+            (document.querySelector("#setup #setup-exit") as HTMLElement).onclick = function () {
+                switchMode();
+            };
+            if (onlineGame.enabled) {
                 onlineConnection.connect = function () {
                     function resetForElement(parent, elem, to = "") {
                         var elements = parent.childNodes;
@@ -7523,8 +7516,6 @@ function init(state: "load" | "reload" = "reload") {
                         );
                     };
                 };
-            }
-            if (onlineGame.enabled) {
                 onlineGame.gameId = getQueryStringValue("id");
                 onlineGame.gameKey = getQueryStringValue("key");
                 (document.getElementById("setup") as HTMLElement).onmousemove = function (event) {

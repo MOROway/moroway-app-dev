@@ -10,7 +10,7 @@ jobs:
             tag: ${{ steps.prepare.outputs.tag }}
             version: ${{ steps.prepare.outputs.version }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - name: Prepare
               id: prepare
               shell: bash
@@ -52,7 +52,7 @@ jobs:
                       branch: master
                       subdir: .
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: FedericoCarboni/setup-ffmpeg@v3
               with:
                   ffmpeg-version: release

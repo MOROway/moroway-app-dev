@@ -240,6 +240,9 @@ versions:
     10.3.4:
         general: |
             Anwendung im Demo-Modus nach spezifiziertem Zeitraum beenden wenn von Plattform unterstützt.
+    10.3.7:
+        general: |
+            Verbesserte Navigation innerhalb der Anwendung.
 hints:
     1.0.0:
         general: |
