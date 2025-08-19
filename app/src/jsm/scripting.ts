@@ -7949,8 +7949,10 @@ function init(state: "load" | "reload" = "reload") {
             document.removeEventListener("keyup", preventKeyZoomDuringLoad);
 
             //Ready event
-            const event = new CustomEvent("moroway-app-ready");
-            document.dispatchEvent(event);
+            if (state == "load") {
+                const event = new CustomEvent("moroway-app-ready");
+                document.dispatchEvent(event);
+            }
 
             //Show app
             if (gui.demo) {
@@ -7960,10 +7962,10 @@ function init(state: "load" | "reload" = "reload") {
                     var localAppData = getLocalAppDataCopy();
                     if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.three) {
                         notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NotificationPriority.High, 3000, null, null, client.y + menus.outerContainer.height);
-                    } else if (localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor))) {
+                    } else if (state == "load" && localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor))) {
                         const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
                         document.dispatchEvent(event);
-                    } else {
+                    } else if (state == "load") {
                         const event = new CustomEvent("moroway-app-ready-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
                         document.dispatchEvent(event);
                     }
