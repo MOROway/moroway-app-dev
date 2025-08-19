@@ -431,6 +431,9 @@ function switchMode(mode: string = "normal", additionalParameters: Record<string
     const urlParamsString = new URLSearchParams(urlParams).toString();
     const url = "?" + urlParamsString;
     if (!modeSwitching) {
+        modeSwitchingReloadTimeout = setTimeout(function () {
+            location.reload();
+        }, 3000);
         modeSwitching = true;
         requestModeSwitch();
     }
@@ -1350,7 +1353,7 @@ function onMouseRight(event) {
         drawMenu("items-change");
     }
 }
-function preventMouseZoomDuringLoad(event) {
+function preventEvent(event) {
     event.preventDefault();
 }
 
@@ -4978,9 +4981,6 @@ const demoMode: any = {
 const audio: any = {};
 const audioControl: any = {
     playAndPauseAll() {
-        if (gui.demo) {
-            audioControl.stopAll();
-        }
         if (typeof audio.context == "object") {
             const play = audioControl.mayPlay();
             if (play && audio.context.state == "suspended") {
@@ -5069,21 +5069,6 @@ const audioControl: any = {
         return false;
     },
     stopAll() {
-        if (audio.gainNode) {
-            Object.keys(audio.gainNode).forEach((name) => {
-                const value = audio.gainNode[name];
-                if (typeof value != "object") {
-                    return;
-                }
-                if (Array.isArray(value)) {
-                    value.forEach((_element, index) => {
-                        audioControl.setObjectVolume(name, index, 50);
-                    });
-                } else {
-                    audioControl.setObjectVolume(name, undefined, 50);
-                }
-            });
-        }
         if (audio.source) {
             Object.keys(audio.source).forEach((name) => {
                 const value = audio.source[name];
@@ -5461,6 +5446,7 @@ var resized = false;
 
 //Mode switch
 var modeSwitchingTimeout;
+var modeSwitchingReloadTimeout;
 var modeSwitching = true;
 
 //Background
@@ -5870,7 +5856,7 @@ function init(state: "load" | "reload" = "reload") {
     }
 
     if (state == "load") {
-        //Reset background
+        //Default background
         const backgroundDefault: Background = {src: 9, secondLayer: 10};
         const background3DDefault: Background3D = {flat: {src: "background-flat"}, three: {src: "background-3d"}};
         background = backgroundDefault;
@@ -5940,7 +5926,8 @@ function init(state: "load" | "reload" = "reload") {
 
         //Reset previous event listeners
         //Load
-        document.removeEventListener("wheel", preventMouseZoomDuringLoad);
+        document.removeEventListener("contextmenu", preventEvent);
+        document.removeEventListener("wheel", preventEvent);
         document.removeEventListener("keydown", preventKeyZoomDuringLoad);
         document.removeEventListener("keyup", preventKeyZoomDuringLoad);
         window.removeEventListener("resize", requestResize);
@@ -6159,6 +6146,9 @@ function init(state: "load" | "reload" = "reload") {
 
     //Show loading image
     loadingAnimation.show(gui.demo || onlineGame.enabled);
+
+    //Audio context
+    audioControl.playAndPauseAll();
 
     //Default switches
     const switchParamsDefault: any = {
@@ -6428,7 +6418,8 @@ function init(state: "load" | "reload" = "reload") {
 
     //Input handling
     hardware.lastInputMouse = hardware.lastInputTouch = 0;
-    document.addEventListener("wheel", preventMouseZoomDuringLoad, {passive: false});
+    document.addEventListener("contextmenu", preventEvent, {passive: false});
+    document.addEventListener("wheel", preventEvent, {passive: false});
     document.addEventListener("keydown", preventKeyZoomDuringLoad, {passive: false});
     document.addEventListener("keyup", preventKeyZoomDuringLoad, {passive: false});
 
@@ -7886,6 +7877,9 @@ function init(state: "load" | "reload" = "reload") {
             });
 
             //Reset mode switch block
+            if (modeSwitchingReloadTimeout !== undefined && modeSwitchingReloadTimeout !== null) {
+                clearTimeout(modeSwitchingReloadTimeout);
+            }
             modeSwitching = false;
 
             //Trigger resize
@@ -7948,7 +7942,8 @@ function init(state: "load" | "reload" = "reload") {
                 canvasForeground.addEventListener("wheel", onMouseWheel, {passive: false});
                 document.addEventListener("keydown", onKeyDown);
                 document.addEventListener("keyup", onKeyUp);
-                document.removeEventListener("wheel", preventMouseZoomDuringLoad);
+                document.removeEventListener("contextmenu", preventEvent);
+                document.removeEventListener("wheel", preventEvent);
                 document.removeEventListener("keydown", preventKeyZoomDuringLoad);
             }
             document.removeEventListener("keyup", preventKeyZoomDuringLoad);
