@@ -40,7 +40,7 @@ class MenuActivity : MOROwayActivity() {
         }
         binding.animationTeamplayButton.setOnClickListener {
             val intent = Intent(this, WebGameActivity::class.java)
-            intent.putExtra("queryString", "mode=multiplay")
+            intent.putExtra("queryString", "mode=multiplayer")
             startActivity(intent)
         }
         binding.animationDemoButton.setOnClickListener {
@@ -103,7 +103,7 @@ class MenuActivity : MOROwayActivity() {
                 val intent = Intent(this, WebGameActivity::class.java)
                 intent.putExtra(
                     "queryString",
-                    "mode=demoStandalone&gui-3d=" + (if (demoModeDialogBinding.demoMode3d.isChecked) {
+                    "mode=demo&demo-standalone=1&gui-3d=" + (if (demoModeDialogBinding.demoMode3d.isChecked) {
                         1
                     } else {
                         0

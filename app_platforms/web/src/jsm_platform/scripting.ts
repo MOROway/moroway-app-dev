@@ -3,10 +3,10 @@ import { NotificationPriority, notify } from "{{jsm}}/common/notify.js";
 import { setSettingsHTML } from "{{jsm}}/common/settings.js";
 import { getString } from "{{jsm}}/common/string_tools.js";
 import { followLink, LinkStates, showServerNote } from "{{jsm}}/common/web_tools.js";
-import { getMode } from "{{jsm}}/scripting.js";
+import { getMode, Modes } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-ready", function () {
-    if (getMode() == "normal") {
+    if (getMode() == Modes.SINGLEPLAYER) {
         showServerNote(document.querySelector("#server-note") as HTMLElement);
     }
     setSettingsHTML(document.querySelector("#settings-inner"), false);

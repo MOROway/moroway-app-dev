@@ -49,7 +49,7 @@ class WebGameActivity : WebActivity() {
                 ) {
                     val id = pathSegments[0].toInt()
                     val key = pathSegments[1]
-                    "mode=multiplay&id=$id&key=$key"
+                    "mode=multiplayer&id=$id&key=$key"
                 } else {
                     uri.query
                 }
@@ -81,9 +81,9 @@ class WebGameActivity : WebActivity() {
             if (!queryString.isNullOrEmpty()) {
                 locationOutput += "?$queryString"
                 val locationUri = locationOutput.toUri()
-                if (locationUri.getQueryParameter("mode") == "multiplay") {
+                if (locationUri.getQueryParameter("mode") == "multiplayer") {
                     onlineGame = true
-                } else if (locationUri.getQueryParameter("mode") == "demoStandalone") {
+                } else if (locationUri.getQueryParameter("mode") == "demo") {
                     demoGame = true
                 }
             }

@@ -105,17 +105,18 @@ See file: [./ABOUT](./ABOUT).
 
 The following query parameters can be used with MOROway App (foremost web platform).
 
-- `mode`: normal, demo, demoStandalone, multiplay (*app mode*)
+- `mode`: singleplayer, multiplayer, demo (*app mode*)
 - all modes
   - `gui-3d`: 0, 1 (*3D view*)
   - `gui-3d-night`: 0, 1 (*3D night view*)
   - `gui-3d-cam-mode`: birds-eye, follow-train, follow-car (*3D camera mode*)
-- all modes except demo or demoStandalone mode
+- all modes except demo mode
   - `gui-3d-follow-object`: 0, 1, 2, … (*3D object to follow in camera modes follow-train and follow-car*)
-- only demo or demoStandalone mode
+- only multiplayer mode
+  - `key`: *game key*
+  - `id`: *game id*
+- only demo mode
   - `gui-demo-3d-rotation-speed-percent`: 0-100 (*3D demo mode canvas rotation speed in percent*)
   - `gui-demo-random`: 0, 1 (*Overrides all other GUI-related query parameters by random values*)
   - `exit-timeout`: 1, 2, 3, … (*Leave app after specified amount of minutes. Only works on supported platforms.*)
-- only multiplay mode
-  - `key`: *game key*
-  - `id`: *game id*
+  - `demo-standalone`:  0, 1 (*Demo mode cant't be left for normal mode*)

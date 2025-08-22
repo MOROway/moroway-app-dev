@@ -50,7 +50,7 @@ export interface Train extends Object {
     height?: number;
     displayAngle?: number;
     assetFlip?: boolean;
-    circleFamily: RotationPointsInner | RotationPointsOuter | string;
+    circleFamily: RotationPointsInner | RotationPointsOuter;
     circle: RotationPointCircle;
     move?: boolean;
     lastDirectionChange?: number;
@@ -169,6 +169,13 @@ export interface Switches {
     outerRightSidingTurn: LeftSwitch;
 }
 
+function safePostMessage(message) {
+    if (init) {
+        return;
+    }
+    postMessage(message);
+}
+
 function saveTrainCirclePrepare(train, trainOriginal) {
     delete train.lastDirectionChange;
     if (trainOriginal.circleFamily != null) {
@@ -184,14 +191,11 @@ function saveTrainCirclePrepare(train, trainOriginal) {
     return train;
 }
 function saveTheGameSend() {
-    if (saveTheGameSendTimeout !== undefined && saveTheGameSendTimeout !== null) {
-        clearTimeout(saveTheGameSendTimeout);
-    }
     var saveTrains = copyJSObject(trains);
     for (var t = 0; t < saveTrains.length; t++) {
         saveTrains[t] = saveTrainCirclePrepare(saveTrains[t], trains[t]);
     }
-    postMessage({k: "save-game", saveTrains: saveTrains});
+    safePostMessage({k: "save-game", saveTrains: saveTrains});
 }
 function getRealStandardDirection(cO, input1, reverse = false) {
     var realStandardDirection = (trains[input1].standardDirection && !reverse) || (!trains[input1].standardDirection && reverse);
@@ -1902,34 +1906,38 @@ function animateObjects() {
     if (animateTimeout !== undefined && animateTimeout !== null) {
         clearTimeout(animateTimeout);
     }
+    if (init) {
+        return;
+    }
     if (firstRun) {
         firstRun = false;
-        postMessage({k: "ready", trains: trains, rotationPoints: rotationPoints, animateInterval: animateInterval});
+        safePostMessage({k: "go",state: initState, switches: switches, trains: trains, rotationPoints: rotationPoints, animateInterval: animateTimeoutDelay});
+    } else {
+        safePostMessage({k: "setTrains", trains: trains, rotationPoints: rotationPoints});
     }
-    postMessage({k: "setTrains", trains: trains, rotationPoints: rotationPoints});
     for (var i = 0; i < newCrash.length; i++) {
-        postMessage({k: "trainCrash", i: newCrash[i].i, j: newCrash[i].j});
+        safePostMessage({k: "trainCrash", i: newCrash[i].i, j: newCrash[i].j});
     }
     if (debug) {
-        postMessage({k: "debugDrawPoints", p: debugDrawPoints, pC: debugDrawPointsCrash, tC: trainCollisions});
+        safePostMessage({k: "debugDrawPoints", p: debugDrawPoints, pC: debugDrawPointsCrash, tC: trainCollisions});
     }
     if (online && syncing) {
-        postMessage({k: "sync-ready", trains: trains, rotationPoints: rotationPoints});
+        safePostMessage({k: "sync-ready", trains: trains, rotationPoints: rotationPoints});
         syncing = false;
     } else if (!pause) {
-        var resttime = Math.max(animateInterval - (Date.now() - starttime), 0);
+        var resttime = Math.max(animateTimeoutDelay - (Date.now() - starttime), 0);
         animateTimeout = setTimeout(animateObjects, resttime);
     }
 }
 var animateTimeout;
-var animateInterval;
+var animateTimeoutDelay;
 
 const rotationPoints: RotationPoints = {
     inner: {narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}}, wide: {x: [], y: [], bezierLength: {left: 0, right: 0}}, sidings: {first: {x: [], y: [], bezierLength: 0}, firstS1: {x: [], y: []}, firstS2: {x: [], y: [], bezierLength: 0}, second: {x: [], y: [], bezierLength: 0}, secondS1: {x: [], y: []}, secondS2: {x: [], y: [], bezierLength: 0}, third: {x: [], y: [], bezierLength: 0}, thirdS1: {x: [], y: []}, thirdS2: {x: [], y: [], bezierLength: 0}}},
     outer: {narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}}, altState3: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}}, rightSiding: {enter: {x: [], y: []}, curve: {x: [], y: [], bezierLength: 0}, continueCurve0: {x: [], y: [], bezierLength: 0}, continueLine0: {x: [], y: [], bezierLength: 0}, continueCurve1: {x: [], y: [], bezierLength: 0}, continueLine1: {x: [], y: []}, continueCurve2: {x: [], y: [], bezierLength: 0}, rejoin: {x: [], y: []}, end: {x: [], y: []}}},
     inner2outer: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}}
 };
-var trains: TrainCalc[] = [
+const trainsDefault: TrainCalc[] = [
     {
         src: 1,
         fac: 0.051,
@@ -2060,24 +2068,25 @@ var trains: TrainCalc[] = [
         ]
     }
 ];
+var trains: TrainCalc[];
 var trainPics;
-const trainParams = {selected: Math.floor(Math.random() * trains.length), margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10};
+const trainParams = {margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10};
 
 var switches: Switches;
 var switchesBeforeAddSidings;
 var background;
 const switchesBeforeFac = 1.3;
 
+var init;
+var initState;
+var firstRun;
 var online;
-var pause = false;
-var syncing = false;
+var demoMode;
+var pause;
+var syncing;
+var debug;
 
 var saveTheGameSendTimeout;
-
-var firstRun = true;
-
-var demoMode = false;
-var debug = false;
 
 onmessage = function (message) {
     function resizeTrains(oldBackground, excludes: number[] = []) {
@@ -2139,18 +2148,37 @@ onmessage = function (message) {
             }
         }
     }
-    if (message.data.k == "start") {
+    if (message.data.k == "ready") {
+        init = true;
+        initState = message.data.state;
+        firstRun = true;
         online = message.data.online;
-        if (online) {
-            animateInterval = getAnimateInterval(message.data.onlineInterval);
-        } else {
-            animateInterval = getAnimateInterval();
+        demoMode = message.data.demo;
+        pause = false;
+        syncing = false;
+        debug = false;
+        if (animateTimeout !== undefined && animateTimeout !== null) {
+            clearTimeout(animateTimeout);
         }
-        background = message.data.background;
-        switchesBeforeAddSidings = [0.008 * background.width, 0.012 * background.width];
-        switches = message.data.switches;
-        if (message.data.demo) {
-            demoMode = true;
+        if (saveTheGameSendTimeout !== undefined && saveTheGameSendTimeout !== null) {
+            clearTimeout(saveTheGameSendTimeout);
+        }
+        trains = copyJSObject(trainsDefault);
+        for (var t = 0; t < trains.length; t++) {
+            trains[t] = saveTrainCirclePrepare(trains[t], trainsDefault[t]);
+            if (trains[t].circleFamily !== null) {
+                const cF = trains[t].circleFamily as unknown as string;
+                const c = trains[t].circle as unknown as string;
+                trains[t].circleFamily = rotationPoints[cF];
+                trains[t].circle = rotationPoints[cF][c];
+            }
+        }
+        if (online) {
+            animateTimeoutDelay = getAnimateInterval(message.data.onlineInterval);
+        } else {
+            animateTimeoutDelay = getAnimateInterval();
+        }
+        if (demoMode) {
             var i = Math.floor(Math.random() * trains.length);
             var j: number;
             do {
@@ -2252,9 +2280,15 @@ onmessage = function (message) {
             }
             trains = newTrains;
         }
-        postMessage({k: "getTrainPics", trains: trains, trainParams: trainParams});
-    } else if (message.data.k == "setTrainPics") {
+        postMessage({k: "ready", trains: trains, trainParams: trainParams});
+    } else if (message.data.k == "set") {
         trainPics = message.data.trainPics;
+        postMessage({k: "set", state: initState});
+    } else if (message.data.k == "go") {
+        background = message.data.background;
+        init = false;
+        switches = message.data.switches;
+        switchesBeforeAddSidings = [0.008 * background.width, 0.012 * background.width];
         defineTrainParams();
         if (typeof message.data.savedTrains == "object") {
             /* UPDATE: v7.4.0 */
@@ -2420,7 +2454,6 @@ onmessage = function (message) {
         } else {
             placeTrainsAtInitialPositions();
         }
-        postMessage({k: "switches", switches: switches});
         animateObjects();
         if (demoMode) {
             trains.forEach(function (train) {
@@ -2444,8 +2477,7 @@ onmessage = function (message) {
         for (var i = 0; i < switchesBeforeAddSidings.length; i++) {
             switchesBeforeAddSidings[i] *= background.width / message.data.oldBackground.width;
         }
-        postMessage({k: "switches", switches: switches});
-        postMessage({k: "setTrains", trains: trains, rotationPoints: rotationPoints, resized: true});
+        safePostMessage({k: "setTrains", switches: switches, trains: trains, rotationPoints: rotationPoints, resized: true});
         saveTheGameSend();
     } else if (message.data.k == "train") {
         message.data.params.forEach(function (param) {
@@ -2466,8 +2498,8 @@ onmessage = function (message) {
         trains[message.data.i].back.y = background.y + trains[message.data.i].back.y * background.height;
         trains[message.data.i].y = background.y + trains[message.data.i].y * background.height;
         if (trains[message.data.i].circleFamily != null) {
-            trains[message.data.i].circle = rotationPoints[trains[message.data.i].circleFamily as string][trains[message.data.i].circle];
-            trains[message.data.i].circleFamily = rotationPoints[trains[message.data.i].circleFamily as string];
+            trains[message.data.i].circle = rotationPoints[trains[message.data.i].circleFamily as unknown as string][trains[message.data.i].circle];
+            trains[message.data.i].circleFamily = rotationPoints[trains[message.data.i].circleFamily as unknown as string];
         }
         defineTrainSpeed(trains[message.data.i]);
     } else if (message.data.k == "sync-tc") {
@@ -2486,11 +2518,17 @@ onmessage = function (message) {
         pause = false;
         animateObjects();
     } else if (message.data.k == "game-saved") {
+        if (saveTheGameSendTimeout !== undefined && saveTheGameSendTimeout !== null) {
+            clearTimeout(saveTheGameSendTimeout);
+        }
+        if (init) {
+            return;
+        }
         saveTheGameSendTimeout = setTimeout(saveTheGameSend, 5000);
     } else if (message.data.k == "enable-save-game") {
         saveTheGameSend();
     } else if (message.data.k == "debug") {
         debug = true;
-        postMessage({k: "debug", animateInterval: animateInterval, trains: trains, switchesBeforeFac: switchesBeforeFac, switchesBeforeAddSidings: switchesBeforeAddSidings});
+        safePostMessage({k: "debug", animateInterval: animateTimeoutDelay, trains: trains, switchesBeforeFac: switchesBeforeFac, switchesBeforeAddSidings: switchesBeforeAddSidings});
     }
 };

@@ -23,6 +23,40 @@ import { RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_
  *          TypeScript Interfaces          *
  ******************************************/
 
+interface DemoMode {
+    leaveKeyUp(event: KeyboardEvent);
+    leaveTimeoutEnd();
+    leaveTimeoutStart();
+    reload();
+    leaveTimeMin?: 1500;
+    leaveTimeout?: number;
+    exitAppDelay?: number;
+    reloadOnExitTimeout?: number;
+    reloadTimeout?: number;
+    standalone?: boolean;
+}
+
+interface MultiplayerMode {
+    animateInterval: 40;
+    syncInterval: 10000;
+    chatSticker: 7;
+    excludeFromSync: {
+        t: string[];
+        tc: string[];
+    };
+    serverURI: string;
+    resizedTimeout?: number;
+    syncRequestTimeout?: number;
+    waitingClock: {
+        draw(): void;
+        init(): void;
+        initTime?: number;
+        secondHandBackwards?: boolean;
+        visible?: boolean;
+        zoom?: number;
+    };
+}
+
 interface Object3D {
     mesh?: any;
     resize?(): void;
@@ -114,7 +148,6 @@ interface Background3D {
 
 interface Gui {
     three?: boolean;
-    demo?: boolean;
     infoOverlay?: boolean;
     textControl?: boolean;
     sidebarRight?: boolean;
@@ -122,6 +155,7 @@ interface Gui {
     settings?: boolean;
     konamiOverlay?: boolean;
 }
+
 interface LoadingAnimation {
     updateProgress(progress: number): void;
     init(): void;
@@ -195,6 +229,12 @@ interface Debug {
     drawPoints?: TrainPoint[];
     drawPointsCrash?: TrainPoint[];
     trainCollisions?: any;
+}
+
+export enum Modes {
+    SINGLEPLAYER = "singleplayer",
+    MULTIPLAYER = "multiplayer",
+    DEMO = "demo"
 }
 
 /*******************************************
@@ -287,7 +327,7 @@ function showConfirmDialogLeaveMultiplayerMode() {
         const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes") as HTMLElement;
         if (confirmDialogYes != null) {
             confirmDialogYes.onclick = function () {
-                switchMode();
+                switchMode(Modes.SINGLEPLAYER);
                 closeConfirmDialog();
             };
         }
@@ -295,7 +335,7 @@ function showConfirmDialogLeaveMultiplayerMode() {
         if (confirmDialogNo != null) {
             confirmDialogNo.onclick = closeConfirmDialog;
         }
-        if (onlineGame.enabled && confirmDialog.style.display == "") {
+        if (currentMode == Modes.MULTIPLAYER && confirmDialog.style.display == "") {
             confirmDialog.style.display = "block";
         }
     }
@@ -373,18 +413,18 @@ function showConfirmDialogEnterDemoMode() {
                 }
                 setGuiState("demo-random", confirmDialogRandom.checked);
                 closeConfirmDialog();
+                const switchDemoModeAdditionalParams = {};
                 if (confirmDialogExitTimeout.value !== "") {
-                    switchMode("demo", {"exit-timeout": confirmDialogExitTimeout.value});
-                } else {
-                    switchMode("demo");
+                    switchDemoModeAdditionalParams["exit-timeout"] = confirmDialogExitTimeout.value;
                 }
+                switchMode(Modes.DEMO, switchDemoModeAdditionalParams);
             };
         }
         const confirmDialogNo: HTMLElement = document.querySelector("#confirm-dialog #confirm-dialog-no");
         if (confirmDialogNo != null) {
             confirmDialogNo.onclick = closeConfirmDialog;
         }
-        if (!gui.demo && confirmDialog.style.display == "") {
+        if (currentMode != Modes.DEMO && confirmDialog.style.display == "") {
             confirmDialog.style.display = "block";
         }
     }
@@ -405,7 +445,7 @@ function closeConfirmDialog() {
     }
 }
 
-function switchMode(mode: string = "normal", additionalParameters: Record<string, string> = {}): void {
+function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Record<string, string> = {}): void {
     function requestModeSwitch() {
         if (modeSwitchingTimeout !== undefined && modeSwitchingTimeout !== null) {
             clearTimeout(modeSwitchingTimeout);
@@ -420,12 +460,14 @@ function switchMode(mode: string = "normal", additionalParameters: Record<string
                 history.pushState({mode: mode}, "", url);
             }
             //Reload app
-            init("reload");
+            prepareInit();
+            animateWorker.postMessage({k: "ready", state: "reload", online: currentMode == Modes.MULTIPLAYER, onlineInterval: multiplayerMode.animateInterval, demo: currentMode == Modes.DEMO});
         }
     }
-    const urlParams = additionalParameters;
+    const lastUrlParams = new URLSearchParams(location.search);
+    const urlParams = Object.assign(Object.fromEntries(lastUrlParams.entries()),additionalParameters);
     urlParams.mode = mode;
-    if (urlParams.mode == "normal" || urlParams.mode.length == 0) {
+    if (urlParams.mode == Modes.SINGLEPLAYER || urlParams.mode.length == 0) {
         delete urlParams.mode;
     }
     const urlParamsString = new URLSearchParams(urlParams).toString();
@@ -433,20 +475,14 @@ function switchMode(mode: string = "normal", additionalParameters: Record<string
     if (!modeSwitching) {
         modeSwitchingReloadTimeout = setTimeout(function () {
             location.reload();
-        }, 3000);
+        }, 5000);
         modeSwitching = true;
         requestModeSwitch();
     }
 }
 
-export function getMode() {
-    if (onlineGame.enabled) {
-        return "online";
-    }
-    if (gui.demo) {
-        return "demo";
-    }
-    return "normal";
+export function getMode(): Modes {
+    return currentMode;
 }
 
 /*******************************************
@@ -679,7 +715,7 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
             drawMenuIcons(menus.options, state);
         }
     }
-    if (gui.demo) {
+    if (currentMode == Modes.DEMO) {
         drawOptionsMenu("hide");
         drawInfoOverlayMenu("hide");
     } else if (state == "menu-switch") {
@@ -947,7 +983,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         };
         elementTeamMode.onclick = function () {
             commonOnOptionsMenuClick();
-            switchMode("multiplay");
+            switchMode(Modes.MULTIPLAYER);
         };
         const settingsElem = document.querySelector("#settings") as HTMLElement;
         const settingsElemApply = settingsElem.querySelector("#settings-apply") as HTMLElement;
@@ -963,7 +999,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             settingsElem.style.display = "";
             calcMenusAndBackground("settings-change");
             drawMenu("visible");
-            if (getSetting("saveGame") && !onlineGame.enabled) {
+            if (getSetting("saveGame") && currentMode == Modes.SINGLEPLAYER) {
                 animateWorker.postMessage({k: "enable-save-game"});
             }
         };
@@ -983,7 +1019,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         };
         elementControlCenterTrains.onclick = function () {
             commonOnOptionsMenuClick();
-            gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineGame.stop;
+            gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineConnection.stop;
             controlCenter.showCarCenter = false;
             if (gui.infoOverlay) {
                 drawMenu("items-change");
@@ -991,7 +1027,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         };
         elementControlCenterCars.onclick = function () {
             commonOnOptionsMenuClick();
-            gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineGame.stop;
+            gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineConnection.stop;
             controlCenter.showCarCenter = true;
             if (gui.infoOverlay) {
                 drawMenu("items-change");
@@ -1026,7 +1062,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     }
     if (state == "load" || state == "reload") {
         set3DItems();
-        if (onlineGame.enabled) {
+        if (currentMode == Modes.MULTIPLAYER) {
             elementDemoMode.classList.add("mode-hidden");
             elementTeamMode.classList.add("mode-hidden");
             elementNormalMode.classList.remove("mode-hidden");
@@ -1276,9 +1312,9 @@ function onMouseDown(event) {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     hardware.lastInputMouse = hardware.mouse.downTime = Date.now();
-    hardware.mouse.isHold = event.button == 0 && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
-    controlCenter.mouse.hold = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
-    hardware.mouse.isWheelHold = event.button == 1 && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+    hardware.mouse.isHold = event.button == 0 && !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
+    controlCenter.mouse.hold = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
+    hardware.mouse.isWheelHold = event.button == 1 && !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
     hardware.mouse.moveX = hardware.mouse.downX = event.clientX * client.devicePixelRatio;
     hardware.mouse.moveY = hardware.mouse.downY = event.clientY * client.devicePixelRatio;
 }
@@ -1289,7 +1325,7 @@ function onMouseUp(event) {
     hardware.mouse.upX = event.clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+    controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
 }
 function onMouseEnter(_event) {
     client.chosenInputMethod = "mouse";
@@ -1326,8 +1362,8 @@ function onMouseWheel(event) {
         }
     } else {
         resetGestures();
-        hardware.mouse.wheelScrolls = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
-        controlCenter.mouse.wheelScrolls = gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+        hardware.mouse.wheelScrolls = !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
+        controlCenter.mouse.wheelScrolls = gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
         hardware.mouse.wheelX = event.clientX * client.devicePixelRatio;
         hardware.mouse.wheelY = event.clientY * client.devicePixelRatio;
         hardware.mouse.wheelScrollX = event.deltaX;
@@ -1338,11 +1374,11 @@ function onMouseWheel(event) {
 function onMouseRight(event) {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
-    if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
+    if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
         controlCenter.showCarCenter = true;
         notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
     } else {
-        gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
+        gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
         if (gui.controlCenter) {
             notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
         }
@@ -1452,8 +1488,8 @@ function getTouchStart(event) {
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
         hardware.mouse.moveX = hardware.mouse.downX = xTS;
         hardware.mouse.moveY = hardware.mouse.downY = yTS;
-        hardware.mouse.isHold = event.touches.length == 1 && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
-        controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+        hardware.mouse.isHold = event.touches.length == 1 && !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
+        controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
     }
 }
 function getTouchEnd(event) {
@@ -1469,14 +1505,14 @@ function getTouchEnd(event) {
     hardware.mouse.upX = event.changedTouches[0].clientX * client.devicePixelRatio;
     hardware.mouse.upY = event.changedTouches[0].clientY * client.devicePixelRatio;
     hardware.mouse.upTime = Date.now();
-    controlCenter.mouse.clickEvent = gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop;
+    controlCenter.mouse.clickEvent = gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
     if (controlCenter.mouse.prepare && event.touches.length == 0) {
-        if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
+        if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
             controlCenter.showCarCenter = true;
             notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         } else {
-            gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineGame.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
+            gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
             if (gui.controlCenter) {
                 notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y + menus.outerContainer.height);
             }
@@ -1777,11 +1813,11 @@ function resizeCars(oldBg) {
 function requestResize() {
     function resize() {
         resized = true;
-        if (onlineGame.enabled) {
-            if (onlineGame.resizedTimeout != undefined && onlineGame.resizedTimeout != null) {
-                clearTimeout(onlineGame.resizedTimeout);
+        if (currentMode == Modes.MULTIPLAYER) {
+            if (multiplayerMode.resizedTimeout != undefined && multiplayerMode.resizedTimeout != null) {
+                clearTimeout(multiplayerMode.resizedTimeout);
             }
-            onlineGame.resized = true;
+            onlineConnection.resized = true;
         }
         resetScale();
         resetTilt();
@@ -2358,7 +2394,7 @@ function drawObjects() {
             for (var i = 0; i < cCars.length; i++) {
                 for (var k = 0; k < cCars.length; k++) {
                     if (i != k && carCollisionCourse(i, false) && carCollisionCourse(k, false)) {
-                        if (gui.demo) {
+                        if (currentMode == Modes.DEMO) {
                             sessionStorage.removeItem("demoCars");
                             sessionStorage.removeItem("demoCarParams");
                             sessionStorage.removeItem("demoBg");
@@ -2377,7 +2413,7 @@ function drawObjects() {
                 }
             });
             if (collStopQuantity == cars.length) {
-                if (gui.demo) {
+                if (currentMode == Modes.DEMO) {
                     sessionStorage.removeItem("demoCars");
                     sessionStorage.removeItem("demoCarParams");
                     sessionStorage.removeItem("demoBg");
@@ -2727,7 +2763,7 @@ function drawObjects() {
     }
 
     /////CARS/////
-    if (!onlineGame.stop) {
+    if (!onlineConnection.stop) {
         calcCars();
     }
 
@@ -2848,7 +2884,7 @@ function drawObjects() {
                 cars3D[i].mesh.position.set(three.calcScale() * ((car.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.height / 2) / background.width) + three.calcPositionY(), cars3D[i].positionZ);
                 cars3D[i].mesh.rotation.z = -car.displayAngle;
             }
-            if (!gui.demo && cars3D[i] && cars3D[i].meshParkingLot) {
+            if (currentMode != Modes.DEMO && cars3D[i] && cars3D[i].meshParkingLot) {
                 cars3D[i].meshParkingLot.visible = !carParams.init && ((carParams.autoModeOff && cars[i].cType == "normal" && !cars[i].move) || (!carParams.autoModeOff && !carParams.autoModeRuns && !carParams.isBackToRoot));
                 cars3D[i].meshParkingLot.material.color.setHex(carParams.autoModeOff ? cars[i].hexColor : "0xffeeef");
             }
@@ -2856,7 +2892,7 @@ function drawObjects() {
 
         if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > cars.length - 1) {
-                three.followObject = gui.demo ? Math.floor(Math.random() * cars.length) : 0;
+                three.followObject = currentMode == Modes.DEMO ? Math.floor(Math.random() * cars.length) : 0;
             }
             if ((!carParams.autoModeOff && carParams.isBackToRoot) || (carParams.autoModeOff && (cars[three.followObject].backToInit || cars[three.followObject].backwardsState > 0))) {
                 background3D.animateBehind(false, (cars[three.followObject].displayAngle - Math.PI) / (2 * Math.PI));
@@ -2877,7 +2913,7 @@ function drawObjects() {
             three.followCamera.rotateOnAxis(axis, rad);
             three.renderer.render(three.scene, three.followCamera);
 
-            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.waitingClock.visible) {
+            if (currentMode != Modes.DEMO && !gui.controlCenter && !gui.konamiOverlay && !multiplayerMode.waitingClock.visible) {
                 contextForeground.save();
                 contextForeground.translate(three.followCamControls.x, three.followCamControls.y + three.followCamControls.textSize);
                 contextForeground.font = three.followCamControls.font;
@@ -2959,7 +2995,7 @@ function drawObjects() {
             }
         } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
             if (typeof three.followObject != "number" || !Number.isInteger(three.followObject) || three.followObject < 0 || three.followObject > trains.length - 1) {
-                three.followObject = gui.demo ? Math.floor(Math.random() * trains.length) : 0;
+                three.followObject = currentMode == Modes.DEMO ? Math.floor(Math.random() * trains.length) : 0;
             }
             const object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
             const object3D = trains[three.followObject].standardDirection || trains3D[three.followObject].cars.length == 0 ? trains3D[three.followObject] : trains3D[three.followObject].cars[trains3D[three.followObject].cars.length - 1];
@@ -2977,7 +3013,7 @@ function drawObjects() {
             var rad = Math.PI / 2;
             three.followCamera.rotateOnAxis(axis, rad);
 
-            if (!gui.demo && !gui.controlCenter && !gui.konamiOverlay && !onlineGame.waitingClock.visible) {
+            if (currentMode != Modes.DEMO && !gui.controlCenter && !gui.konamiOverlay && !multiplayerMode.waitingClock.visible) {
                 contextForeground.save();
                 contextForeground.translate(three.followCamControls.x, three.followCamControls.y);
                 contextForeground.beginPath();
@@ -3061,12 +3097,12 @@ function drawObjects() {
                     }
                 }
             }
-        } else if (gui.demo) {
+        } else if (currentMode == Modes.DEMO) {
             var rotation = (Math.random() / 500) * (three.demoRotationSpeedFac / 100);
             three.scene.rotation.x += three.demoRotationFacX * rotation;
             three.scene.rotation.y += three.demoRotationFacY * rotation;
         }
-        if (!gui.demo) {
+        if (currentMode != Modes.DEMO) {
             Object.keys(switches).forEach(function (key) {
                 Object.keys(switches[key]).forEach(function (currentKey) {
                     function getFadeColor(fadeProgress, maxColor = 255) {
@@ -3254,7 +3290,7 @@ function drawObjects() {
         }
 
         /////TAX OFFICE/////
-        if (getSetting("burnTheTaxOffice") && !onlineGame.waitingClock.visible) {
+        if (getSetting("burnTheTaxOffice") && !multiplayerMode.waitingClock.visible) {
             //General (BEGIN)
             contextForeground.save();
             contextForeground.translate(background.x, background.y);
@@ -4504,9 +4540,9 @@ function drawObjects() {
     }
 
     /////Multiplayer Mode/Waiting Animation/////
-    if (onlineGame.stop) {
+    if (onlineConnection.stop) {
         hardware.mouse.cursor = "default";
-        onlineGame.waitingClock.draw();
+        multiplayerMode.waitingClock.draw();
     }
 
     /////BACKGROUND/Margins-2////
@@ -4545,7 +4581,7 @@ function drawObjects() {
 
     /////CURSOR/////
     if (gui.three) {
-        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || gui.demo ? "none" : hardware.mouse.cursor;
+        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || currentMode == Modes.DEMO ? "none" : hardware.mouse.cursor;
     } else {
         if (getSetting("cursorascircle") && client.chosenInputMethod == "mouse" && (hardware.mouse.isMoving || hardware.mouse.isHold || client.zoomAndTilt.realScale > 1)) {
             contextForeground.save();
@@ -4561,7 +4597,7 @@ function drawObjects() {
             contextForeground.fill();
             contextForeground.restore();
         }
-        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || getSetting("cursorascircle") || gui.demo ? "none" : hardware.mouse.cursor;
+        canvasForeground.style.cursor = client.chosenInputMethod != "mouse" || getSetting("cursorascircle") || currentMode == Modes.DEMO ? "none" : hardware.mouse.cursor;
     }
     hardware.mouse.wheelScrolls = false;
 
@@ -4587,8 +4623,8 @@ function drawObjects() {
 }
 
 function actionSync(objectName: string, index: any[] | number | undefined = undefined, params: any[] | undefined = undefined, notification: any[] | undefined = undefined, notificationOnlyForOthers = false) {
-    if (onlineGame.enabled) {
-        if (!onlineGame.stop) {
+    if (currentMode == Modes.MULTIPLAYER) {
+        if (!onlineConnection.stop) {
             onlineConnection.send(
                 "action",
                 JSON.stringify({
@@ -4631,6 +4667,10 @@ const doubleTouchTime = 250;
 const doubleTouchWaitTime = doubleTouchTime + 50;
 const doubleClickTime = 200;
 const doubleClickWaitTime = doubleClickTime + 50;
+
+//Background
+const background: Background = {src: 9, secondLayer: 10};
+const background3D: Background3D = {flat: {src: "background-flat"}, three: {src: "background-3d"}};
 
 //Loading animation
 const loadingAnimation: LoadingAnimation = {
@@ -4952,10 +4992,10 @@ const textControl: any = {
 const controlCenter: any = {showCarCenter: false, fontFamily: defaultFont, mouse: {}};
 
 //Demo mode
-const demoMode: any = {
+const demoMode: DemoMode = {
     leaveKeyUp(event) {
         if (event.key == "Escape") {
-            switchMode();
+            switchMode(Modes.SINGLEPLAYER);
         }
     },
     leaveTimeMin: 1500,
@@ -4964,7 +5004,7 @@ const demoMode: any = {
             clearTimeout(demoMode.leaveTimeout);
         }
         demoMode.leaveTimeout = setTimeout(function () {
-            switchMode();
+            switchMode(Modes.SINGLEPLAYER);
         }, demoMode.leaveTimeMin);
     },
     leaveTimeoutEnd() {
@@ -4973,7 +5013,7 @@ const demoMode: any = {
         }
     },
     reload() {
-        switchMode("demo");
+        switchMode(Modes.DEMO);
     }
 };
 
@@ -4993,7 +5033,7 @@ const audioControl: any = {
         return false;
     },
     mayPlay() {
-        return audio.active && !gui.demo && !client.hidden && !onlineGame.paused;
+        return audio.active && currentMode != Modes.DEMO && !client.hidden && !onlineConnection.paused;
     },
     existsObject(destinationName, destinationIndex: number | undefined = undefined) {
         if (typeof audio.context == "object") {
@@ -5237,7 +5277,7 @@ const trainActions = {
         return i >= 0 && i < trains.length;
     },
     checkReady() {
-        return !gui.demo && !onlineGame.stop;
+        return currentMode != Modes.DEMO && !onlineConnection.stop;
     },
     checkAll(i) {
         return this.checkRange(i) && this.checkReady();
@@ -5290,7 +5330,7 @@ const trainActions = {
 };
 const switchActions = {
     turn(key, side) {
-        if (onlineGame.enabled) {
+        if (currentMode == Modes.MULTIPLAYER) {
             actionSync("switches", [key, side], [{turned: !switches[key][side].turned}], [{getString: ["appScreenSwitchTurns", "."]}]);
         } else {
             switches[key][side].turned = !switches[key][side].turned;
@@ -5309,7 +5349,7 @@ const switchActions = {
 const carActions = {
     auto: {
         checkReady() {
-            return !gui.demo && !onlineGame.stop;
+            return currentMode != Modes.DEMO && !onlineConnection.stop;
         },
         start() {
             if (this.checkReady() && carParams.init) {
@@ -5354,7 +5394,7 @@ const carActions = {
             return car >= 0 && car < cars.length;
         },
         checkReady() {
-            return !gui.demo && !onlineGame.stop;
+            return currentMode != Modes.DEMO && !onlineConnection.stop;
         },
         checkAll(car) {
             return this.checkRange(car) && this.checkReady();
@@ -5444,15 +5484,14 @@ var objects3D;
 var resizeTimeout;
 var resized = false;
 
-//Mode switch
+//Modes
+var currentMode: Modes;
 var modeSwitchingTimeout;
 var modeSwitchingReloadTimeout;
 var modeSwitching = true;
 
 //Background
-var background: Background;
 var oldBackground;
-var background3D: Background3D;
 
 //Trains
 var trains: Train[];
@@ -5479,13 +5518,171 @@ var taxOffice;
 var classicUI;
 
 //GUI configuration
-var gui: any = {};
+var gui: Gui;
 var menus: any = {};
 var konamiState = 0;
 var konamiTimeOut;
 
 //Multiplayer mode
-var onlineGame: any = {};
+var multiplayerMode: MultiplayerMode = {
+    animateInterval: 40,
+    syncInterval: 10000,
+    excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]},
+    chatSticker: 7,
+    serverURI: getServerLink(Protocols.WebSocket) + "/multiplay",
+    waitingClock: {
+        init(): void {
+            const initialZoom = 0.45;
+            multiplayerMode.waitingClock.initTime = Date.now();
+            multiplayerMode.waitingClock.zoom = initialZoom;
+            multiplayerMode.waitingClock.secondHandBackwards = false;
+        },
+        draw(): void {
+            if (Date.now() - multiplayerMode.waitingClock.initTime < 5000) {
+                return;
+            }
+            multiplayerMode.waitingClock.visible = onlineConnection.stop;
+            //WAITING CLOCK/GLOBAL/SETUP/1
+            contextForeground.save();
+            contextForeground.translate(canvasForeground.width / 2, canvasForeground.height / 2);
+            contextForeground.translate(0, (-menus.outerContainer.height * client.devicePixelRatio) / 2);
+            const size = Math.min(background.width, background.height);
+            const radius = size / 2.2;
+            //WAITING CLOCK/STATIC/BACKGROUND
+            contextForeground.save();
+            const bgGradient = contextForeground.createRadialGradient(0, 0, radius * multiplayerMode.waitingClock.zoom, 0, 0, radius * 2);
+            bgGradient.addColorStop(0, "rgba(239,224,227,1)");
+            bgGradient.addColorStop(0.1, "rgba(239,224,227,0.3)");
+            bgGradient.addColorStop(1, "rgba(100,92,130,0.3)");
+            contextForeground.fillStyle = bgGradient;
+            contextForeground.globalAlpha = 0.6;
+            contextForeground.fillStyle = bgGradient;
+            contextForeground.fillRect(-canvasForeground.width / 2, -canvasForeground.height / 2 + (menus.outerContainer.height * client.devicePixelRatio) / 2, canvasForeground.width, canvasForeground.height);
+            contextForeground.restore();
+            //WAITING CLOCK/GLOBAL/SCALE
+            contextForeground.scale(multiplayerMode.waitingClock.zoom, multiplayerMode.waitingClock.zoom);
+            //WAITING CLOCK/STATIC/CLOCK FACE
+            const circleWidth = size / 20;
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, radius - circleWidth / 4, 0, Math.PI * 2);
+            contextForeground.lineWidth = circleWidth / 2;
+            contextForeground.strokeStyle = "rgba(0,0,0,0.7)";
+            contextForeground.stroke();
+            for (let i = 0; i < 60; i++) {
+                var rectWidth = size / 70;
+                var rectHeight = size / 25;
+                if (i % 5 == 0) {
+                    rectWidth *= 2;
+                    rectHeight *= 2.5;
+                }
+                if (i % 15 == 0) {
+                    rectHeight *= 1.2;
+                }
+                var angle = (Math.PI * 2 * i) / 60;
+                contextForeground.save();
+                contextForeground.fillStyle = "rgba(15,15,15,0.5)";
+                contextForeground.translate(radius * Math.sin(angle), radius * Math.cos(angle));
+                contextForeground.rotate(-angle);
+                contextForeground.fillRect(-rectWidth / 2, -rectHeight - circleWidth / 1.5, rectWidth, rectHeight);
+                contextForeground.restore();
+            }
+            //WAITING CLOCK/DYNAMIC/CLOCK HANDS
+            const date = new Date();
+            //WAITING CLOCK/DYNAMIC/CLOCK HAND/HOURS
+            var hours = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
+            if (hours > 12) {
+                hours -= 12;
+            }
+            var rectWidth = size / 28;
+            var rectHeight = size / 4;
+            var angle = (Math.PI * 2 * hours) / 12;
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            //WAITING CLOCK/DYNAMIC/CLOCK HAND/MINUTES
+            var minutes = date.getMinutes();
+            var rectWidth = size / 30;
+            var rectHeight = size / 3;
+            var angle = (Math.PI * 2 * minutes) / 60;
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            //WAITING CLOCK/DYNAMIC/CLOCK HAND/SECONDS
+            var seconds = date.getSeconds() + date.getMilliseconds() / 1000;
+            var rectWidth = size / 100;
+            var rectHeight = size / 2.95;
+            var angle = Math.min(2 * Math.PI, (Math.PI * 2 * seconds) / 58);
+            if (Math.round(angle * 100) % Math.round(Math.PI * 100) == 0) {
+                multiplayerMode.waitingClock.secondHandBackwards = konamiState < 0;
+            }
+            if (multiplayerMode.waitingClock.secondHandBackwards) {
+                angle = Math.PI * 2 - angle;
+            }
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(139,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
+            contextForeground.restore();
+            var rectWidth = size / 55;
+            var rectHeight = size / 8;
+            contextForeground.save();
+            contextForeground.rotate(angle);
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.fillStyle = "white";
+            contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
+            contextForeground.restore();
+            contextForeground.fillStyle = "rgba(139,0,0,0.5)";
+            contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
+            contextForeground.restore();
+            //WAITING CLOCK/STATIC/CLOCK HANDS
+            contextForeground.save();
+            contextForeground.globalCompositeOperation = "destination-out";
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
+            contextForeground.fillStyle = "white";
+            contextForeground.fill();
+            contextForeground.restore();
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fill();
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 60, 0, Math.PI * 2);
+            contextForeground.fillStyle = "rgba(192,192,192,0.5)";
+            contextForeground.fill();
+            contextForeground.beginPath();
+            contextForeground.arc(0, 0, size / 120, 0, Math.PI * 2);
+            contextForeground.fillStyle = "rgba(0,0,0,0.5)";
+            contextForeground.fill();
+            //WAITING CLOCK/GLOBAL/SETUP/2
+            contextForeground.restore();
+            multiplayerMode.waitingClock.zoom *= 1.0375;
+            if (multiplayerMode.waitingClock.zoom > 1) {
+                multiplayerMode.waitingClock.zoom = 1;
+            }
+        }
+    }
+};
 var onlineConnection: any = {};
 
 //Client and input configuration
@@ -5496,27 +5693,40 @@ var clickTimeOut;
  *            Event Listeners              *
  ******************************************/
 function setMode() {
+    //Default mode
+    currentMode = Modes.SINGLEPLAYER;
+
     //Determine mode
     const queryStringMode = getQueryStringValue("mode");
+
+    //Set mode: multiplayer
+    if (queryStringMode == Modes.MULTIPLAYER) {
+        if ("WebSocket" in window) {
+            currentMode = Modes.MULTIPLAYER;
+        } else {
+            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
+        }
+    }
+
     //Set mode: demo
-    gui.demo = queryStringMode == "demo" || queryStringMode == "demoStandalone" || (getSetting("startDemoMode") && queryStringMode == "");
-    if (gui.demo) {
+    if (queryStringMode == Modes.DEMO || (getSetting("startDemoMode") && queryStringMode == "")) {
+        currentMode = Modes.DEMO;
         document.body.style.cursor = "none";
-        demoMode.standalone = queryStringMode == "demoStandalone";
+        demoMode.standalone = getQueryStringValue("demo-standalone") == "1";
     } else {
         document.body.style.cursor = "";
     }
-    //Set mode: multiplay
-    if (queryStringMode == "multiplay") {
-        if ("WebSocket" in window) {
-            onlineGame.enabled = true;
-        } else {
-            onlineGame.enabled = false;
-            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
-        }
-    } else {
-        onlineGame.enabled = false;
-    }
+}
+function prepareInit() {
+    //Reset GUI
+    gui = {};
+
+    //Reconfigure mode
+    setMode();
+
+    //Show loading image
+    loadingAnimation.init();
+    loadingAnimation.show(currentMode != Modes.SINGLEPLAYER);
 }
 function init(state: "load" | "reload" = "reload") {
     function defineCarWays() {
@@ -5855,20 +6065,9 @@ function init(state: "load" | "reload" = "reload") {
         return true;
     }
 
-    if (state == "load") {
-        //Default background
-        const backgroundDefault: Background = {src: 9, secondLayer: 10};
-        const background3DDefault: Background3D = {flat: {src: "background-flat"}, three: {src: "background-3d"}};
-        background = backgroundDefault;
-        background3D = background3DDefault;
-    } else {
-        //Reset animation worker
-        animateWorker.terminate();
-
+    if (state == "reload") {
         //Reset multiplayer mode
-        if (onlineConnection.socket) {
-            onlineConnection.socket.close();
-        }
+        onlineConnection.socket?.close();
 
         //Reset timeouts
         if (drawTimeout !== undefined && drawTimeout !== null) {
@@ -5895,18 +6094,15 @@ function init(state: "load" | "reload" = "reload") {
         if (demoMode.reloadOnExitTimeout != undefined && demoMode.reloadOnExitTimeout != null) {
             clearTimeout(demoMode.reloadOnExitTimeout);
         }
-        if (onlineGame.resizedTimeout !== undefined && onlineGame.resizedTimeout !== null) {
-            clearTimeout(onlineGame.resizedTimeout);
+        if (multiplayerMode.resizedTimeout !== undefined && multiplayerMode.resizedTimeout !== null) {
+            clearTimeout(multiplayerMode.resizedTimeout);
         }
-        if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
-            clearTimeout(onlineGame.syncRequest);
+        if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+            clearTimeout(multiplayerMode.syncRequestTimeout);
         }
         if (menus.infoOverlay.textTimeout != undefined && menus.infoOverlay.textTimeout != null) {
             clearTimeout(menus.infoOverlay.textTimeout);
         }
-
-        //Reset GUI
-        gui = {};
 
         //Reset all canvases
         canvas.style.display = "none";
@@ -5965,167 +6161,7 @@ function init(state: "load" | "reload" = "reload") {
     }
 
     //Default multiplayer mode
-    const onlineGameDefault: any = {
-        animateInterval: 40,
-        syncInterval: 10000,
-        excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]},
-        chatSticker: 7,
-        waitingClock: {
-            init(): void {
-                const initialZoom = 0.45;
-                onlineGame.waitingClock.initTime = Date.now();
-                onlineGame.waitingClock.zoom = initialZoom;
-                onlineGame.waitingClock.secondHandBackwards = false;
-            },
-            draw(): void {
-                if (Date.now() - onlineGame.waitingClock.initTime < 5000) {
-                    return;
-                }
-                onlineGame.waitingClock.visible = onlineGame.stop;
-                //WAITING CLOCK/GLOBAL/SETUP/1
-                contextForeground.save();
-                contextForeground.translate(canvasForeground.width / 2, canvasForeground.height / 2);
-                contextForeground.translate(0, (-menus.outerContainer.height * client.devicePixelRatio) / 2);
-                const size = Math.min(background.width, background.height);
-                const radius = size / 2.2;
-                //WAITING CLOCK/STATIC/BACKGROUND
-                contextForeground.save();
-                const bgGradient = contextForeground.createRadialGradient(0, 0, radius * onlineGame.waitingClock.zoom, 0, 0, radius * 2);
-                bgGradient.addColorStop(0, "rgba(239,224,227,1)");
-                bgGradient.addColorStop(0.1, "rgba(239,224,227,0.3)");
-                bgGradient.addColorStop(1, "rgba(100,92,130,0.3)");
-                contextForeground.fillStyle = bgGradient;
-                contextForeground.globalAlpha = 0.6;
-                contextForeground.fillStyle = bgGradient;
-                contextForeground.fillRect(-canvasForeground.width / 2, -canvasForeground.height / 2 + (menus.outerContainer.height * client.devicePixelRatio) / 2, canvasForeground.width, canvasForeground.height);
-                contextForeground.restore();
-                //WAITING CLOCK/GLOBAL/SCALE
-                contextForeground.scale(onlineGame.waitingClock.zoom, onlineGame.waitingClock.zoom);
-                //WAITING CLOCK/STATIC/CLOCK FACE
-                const circleWidth = size / 20;
-                contextForeground.beginPath();
-                contextForeground.arc(0, 0, radius - circleWidth / 4, 0, Math.PI * 2);
-                contextForeground.lineWidth = circleWidth / 2;
-                contextForeground.strokeStyle = "rgba(0,0,0,0.7)";
-                contextForeground.stroke();
-                for (let i = 0; i < 60; i++) {
-                    var rectWidth = size / 70;
-                    var rectHeight = size / 25;
-                    if (i % 5 == 0) {
-                        rectWidth *= 2;
-                        rectHeight *= 2.5;
-                    }
-                    if (i % 15 == 0) {
-                        rectHeight *= 1.2;
-                    }
-                    var angle = (Math.PI * 2 * i) / 60;
-                    contextForeground.save();
-                    contextForeground.fillStyle = "rgba(15,15,15,0.5)";
-                    contextForeground.translate(radius * Math.sin(angle), radius * Math.cos(angle));
-                    contextForeground.rotate(-angle);
-                    contextForeground.fillRect(-rectWidth / 2, -rectHeight - circleWidth / 1.5, rectWidth, rectHeight);
-                    contextForeground.restore();
-                }
-                //WAITING CLOCK/DYNAMIC/CLOCK HANDS
-                const date = new Date();
-                //WAITING CLOCK/DYNAMIC/CLOCK HAND/HOURS
-                var hours = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
-                if (hours > 12) {
-                    hours -= 12;
-                }
-                var rectWidth = size / 28;
-                var rectHeight = size / 4;
-                var angle = (Math.PI * 2 * hours) / 12;
-                contextForeground.save();
-                contextForeground.rotate(angle);
-                contextForeground.save();
-                contextForeground.globalCompositeOperation = "destination-out";
-                contextForeground.fillStyle = "white";
-                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-                contextForeground.restore();
-                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-                contextForeground.restore();
-                //WAITING CLOCK/DYNAMIC/CLOCK HAND/MINUTES
-                var minutes = date.getMinutes();
-                var rectWidth = size / 30;
-                var rectHeight = size / 3;
-                var angle = (Math.PI * 2 * minutes) / 60;
-                contextForeground.save();
-                contextForeground.rotate(angle);
-                contextForeground.save();
-                contextForeground.globalCompositeOperation = "destination-out";
-                contextForeground.fillStyle = "white";
-                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-                contextForeground.restore();
-                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-                contextForeground.restore();
-                //WAITING CLOCK/DYNAMIC/CLOCK HAND/SECONDS
-                var seconds = date.getSeconds() + date.getMilliseconds() / 1000;
-                var rectWidth = size / 100;
-                var rectHeight = size / 2.95;
-                var angle = Math.min(2 * Math.PI, (Math.PI * 2 * seconds) / 58);
-                if (Math.round(angle * 100) % Math.round(Math.PI * 100) == 0) {
-                    onlineGame.waitingClock.secondHandBackwards = konamiState < 0;
-                }
-                if (onlineGame.waitingClock.secondHandBackwards) {
-                    angle = Math.PI * 2 - angle;
-                }
-                contextForeground.save();
-                contextForeground.rotate(angle);
-                contextForeground.save();
-                contextForeground.globalCompositeOperation = "destination-out";
-                contextForeground.fillStyle = "white";
-                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-                contextForeground.restore();
-                contextForeground.fillStyle = "rgba(139,0,0,0.5)";
-                contextForeground.fillRect(-rectWidth / 2, -rectHeight, rectWidth, rectHeight);
-                contextForeground.restore();
-                var rectWidth = size / 55;
-                var rectHeight = size / 8;
-                contextForeground.save();
-                contextForeground.rotate(angle);
-                contextForeground.save();
-                contextForeground.globalCompositeOperation = "destination-out";
-                contextForeground.fillStyle = "white";
-                contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
-                contextForeground.restore();
-                contextForeground.fillStyle = "rgba(139,0,0,0.5)";
-                contextForeground.fillRect(-rectWidth / 2, 0, rectWidth, rectHeight);
-                contextForeground.restore();
-                //WAITING CLOCK/STATIC/CLOCK HANDS
-                contextForeground.save();
-                contextForeground.globalCompositeOperation = "destination-out";
-                contextForeground.beginPath();
-                contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
-                contextForeground.fillStyle = "white";
-                contextForeground.fill();
-                contextForeground.restore();
-                contextForeground.beginPath();
-                contextForeground.arc(0, 0, size / 30, 0, Math.PI * 2);
-                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-                contextForeground.fill();
-                contextForeground.beginPath();
-                contextForeground.arc(0, 0, size / 60, 0, Math.PI * 2);
-                contextForeground.fillStyle = "rgba(192,192,192,0.5)";
-                contextForeground.fill();
-                contextForeground.beginPath();
-                contextForeground.arc(0, 0, size / 120, 0, Math.PI * 2);
-                contextForeground.fillStyle = "rgba(0,0,0,0.5)";
-                contextForeground.fill();
-                //WAITING CLOCK/GLOBAL/SETUP/2
-                contextForeground.restore();
-                onlineGame.waitingClock.zoom *= 1.0375;
-                if (onlineGame.waitingClock.zoom > 1) {
-                    onlineGame.waitingClock.zoom = 1;
-                }
-            }
-        }
-    };
-    onlineGame = onlineGameDefault;
-    const onlineConnectionDefault: any = {
-        serverURI: getServerLink(Protocols.WebSocket) + "/multiplay",
+    onlineConnection = {
         send(mode: string, message?: string) {
             if (onlineConnection.socket && onlineConnection.socket.readyState == WebSocket.OPEN) {
                 onlineConnection.socket.send(
@@ -6139,13 +6175,8 @@ function init(state: "load" | "reload" = "reload") {
             }
         }
     };
-    onlineConnection = onlineConnectionDefault;
 
-    //Reconfigure mode
-    setMode();
-
-    //Show loading image
-    loadingAnimation.show(gui.demo || onlineGame.enabled);
+    trainParams.selected = Math.floor(Math.random() * trains.length);
 
     //Audio context
     audioControl.playAndPauseAll();
@@ -6256,7 +6287,7 @@ function init(state: "load" | "reload" = "reload") {
         trainSwitch: {src: 11, srcFill: 31, selectedTrainDisplay: {fontFamily: defaultFont}},
         transformer: {src: 12, onSrc: 13, readySrc: 23, angle: Math.PI / 5, wheelInput: {src: 14, angle: 0, maxAngle: 1.5 * Math.PI}, directionInput: {srcStandardDirection: 24, srcNotStandardDirection: 15}},
         ready(displayOnly: boolean = false): boolean {
-            return getSetting("classicUI") && !(gui.controlCenter || gui.konamiOverlay || gui.three || gui.demo || onlineGame.waitingClock.visible || canvasGesture == undefined || contextGesture == undefined) && (displayOnly || !onlineGame.stop);
+            return getSetting("classicUI") && !(gui.controlCenter || gui.konamiOverlay || gui.three || currentMode == Modes.DEMO || multiplayerMode.waitingClock.visible || canvasGesture == undefined || contextGesture == undefined) && (displayOnly || !onlineConnection.stop);
         },
         pointInTransformerImage(x, y): boolean {
             if (!classicUI.ready()) {
@@ -6392,10 +6423,10 @@ function init(state: "load" | "reload" = "reload") {
     const queryString3DCamMode = getQueryStringValue("gui-3d-cam-mode");
     three.cameraMode = getGuiState("3d-cam-mode", queryString3DCamMode);
     const queryString3DFollowObject = getQueryStringValue("gui-3d-follow-object");
-    three.followObject = gui.demo ? -1 : getGuiState("3d-follow-object", parseInt(queryString3DFollowObject, 10));
+    three.followObject = currentMode == Modes.DEMO ? -1 : getGuiState("3d-follow-object", parseInt(queryString3DFollowObject, 10));
     three.demoRotationSpeedFac = getGuiState("3d-rotation-speed", parseInt(getQueryStringValue("gui-demo-3d-rotation-speed-percent"), 10));
 
-    if (gui.demo) {
+    if (currentMode == Modes.DEMO) {
         const queryStringDemoRandom = getQueryStringValue("gui-demo-random");
         var randomDemoMode;
         if (queryStringDemoRandom == "0" || queryStringDemoRandom == "1") {
@@ -6412,7 +6443,7 @@ function init(state: "load" | "reload" = "reload") {
         }
         const queryStringDemoExitTimeout = parseInt(getQueryStringValue("exit-timeout"), 10);
         if (typeof queryStringDemoExitTimeout == "number" && Number.isInteger(queryStringDemoExitTimeout) && queryStringDemoExitTimeout > 0) {
-            demoMode.exitTimeout = queryStringDemoExitTimeout * 60000;
+            demoMode.exitAppDelay = queryStringDemoExitTimeout * 60000;
         }
     }
 
@@ -6424,7 +6455,7 @@ function init(state: "load" | "reload" = "reload") {
     document.addEventListener("keyup", preventKeyZoomDuringLoad, {passive: false});
 
     //Prepare game
-    if (!onlineGame.enabled) {
+    if (currentMode != Modes.MULTIPLAYER) {
         var elements = document.querySelectorAll("#content > *:not(#game), #game > *:not(#game-gameplay)");
         for (var i = 0; i < elements.length; i++) {
             (elements[i] as HTMLElement).style.display = "none";
@@ -6456,7 +6487,7 @@ function init(state: "load" | "reload" = "reload") {
 
     //Cars
     if (defineCarWays()) {
-        if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && savedGameCars != null && savedGameCarParams != null && savedGameBg != null) {
+        if (getSetting("saveGame") && currentMode == Modes.SINGLEPLAYER && savedGameCars != null && savedGameCarParams != null && savedGameBg != null) {
             /* UPDATE: v9.0.0 */
             var carColors: string[] = [];
             for (var i = 0; i < cars.length; i++) {
@@ -6471,7 +6502,7 @@ function init(state: "load" | "reload" = "reload") {
             /* END UPDATE: v9.0.0 */
             carParams = JSON.parse(savedGameCarParams);
             resizeCars(JSON.parse(savedGameBg));
-        } else if (gui.demo && savedGameCarsSession != null && savedGameCarParamsSession != null && savedGameBgSession != null) {
+        } else if (currentMode == Modes.DEMO && savedGameCarsSession != null && savedGameCarParamsSession != null && savedGameBgSession != null) {
             cars = JSON.parse(savedGameCarsSession);
             carParams = JSON.parse(savedGameCarParamsSession);
             resizeCars(JSON.parse(savedGameBgSession));
@@ -6497,7 +6528,7 @@ function init(state: "load" | "reload" = "reload") {
                     carParams.thickestCar = i;
                 }
             });
-            if (gui.demo) {
+            if (currentMode == Modes.DEMO) {
                 carParams.init = false;
                 carParams.autoModeOff = false;
                 carParams.autoModeRuns = true;
@@ -6558,14 +6589,14 @@ function init(state: "load" | "reload" = "reload") {
 
     //Switches
     switchParams.set();
-    if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && savedGameTrains != null && savedGameSwitches != null && savedGameBg != null) {
+    if (getSetting("saveGame") && currentMode == Modes.SINGLEPLAYER && savedGameTrains != null && savedGameSwitches != null && savedGameBg != null) {
         var savedSwitches = JSON.parse(savedGameSwitches);
         Object.keys(savedSwitches).forEach(function (key) {
             Object.keys(savedSwitches[key]).forEach(function (side) {
                 switches[key][side].turned = savedSwitches[key][side];
             });
         });
-    } else if (gui.demo) {
+    } else if (currentMode == Modes.DEMO) {
         Object.keys(switches).forEach(function (key) {
             Object.keys(switches[key]).forEach(function (side) {
                 if (key == "inner2outer" || key == "outer2inner") {
@@ -6638,10 +6669,9 @@ function init(state: "load" | "reload" = "reload") {
         }
     };
     if (objects3D[background3D.flat.src]) {
-        const material: any = new THREE.MeshStandardMaterial({
+        const material: any = new THREE.MeshLambertMaterial({
             map: objects3D[background3D.flat.src].clone(),
-            roughness: 0.85,
-            metalness: 0.15
+            reflectivity: 1
         });
         const geometry = new THREE.PlaneGeometry(1, background.height / background.width);
         background3D.flat.mesh = new THREE.Mesh(geometry, material);
@@ -6775,7 +6805,7 @@ function init(state: "load" | "reload" = "reload") {
 
     three.activeCamera = three.cameraMode == ThreeCameraModes.BIRDS_EYE ? three.camera : three.followCamera;
 
-    if (gui.demo) {
+    if (currentMode == Modes.DEMO) {
         three.demoRotationFacX = Math.round(Math.random()) * 2 - 1;
         three.demoRotationFacY = Math.round(Math.random()) * 2 - 1;
     }
@@ -6785,305 +6815,273 @@ function init(state: "load" | "reload" = "reload") {
         three.scene.add(axesHelper);
     }
 
-    //Animation worker
-    animateWorker = new Worker("./src/jsm/scripting_worker_animate.js", {type: "module"});
-    animateWorker.onerror = function () {
-        notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NotificationPriority.High, 950, null, null, client.height);
-        setTimeout(function () {
-            followLink("error#animate", "_self", LinkStates.InternalHtml);
-        }, 1000);
-    };
-    animateWorker.onmessage = function (message) {
-        if (message.data.k == "getTrainPics") {
-            trainParams = message.data.trainParams;
-            trains = message.data.trains;
-            var trainPics: any = [];
-            for (var i = 0; i < trains.length; i++) {
-                trainPics[i] = {};
-                trainPics[i].height = pics[trains[i].src].height;
-                trainPics[i].width = pics[trains[i].src].width;
-                trainPics[i].cars = [];
-                for (var j = 0; j < trains[i].cars.length; j++) {
-                    trainPics[i].cars[j] = {};
-                    trainPics[i].cars[j].height = pics[trains[i].cars[j].src].height;
-                    trainPics[i].cars[j].width = pics[trains[i].cars[j].src].width;
+    if (currentMode == Modes.SINGLEPLAYER && getSetting("saveGame") && savedGameTrains != null && savedGameSwitches != null && savedGameBg != null) {
+        animateWorker.postMessage({k: "go", background: background, switches: switches, savedTrains: JSON.parse(savedGameTrains), savedBg: JSON.parse(savedGameBg)});
+    } else {
+        animateWorker.postMessage({k: "go", background: background, switches: switches});
+    }
+}
+window.addEventListener("load", function () {
+    function initAnimateWorker() {
+        //Animation worker
+        animateWorker = new Worker("./src/jsm/scripting_worker_animate.js", {type: "module"});
+        animateWorker.onerror = function () {
+            notify("#canvas-notifier", getString("generalIsFail", "!", "upper"), NotificationPriority.High, 950, null, null, client.height);
+            setTimeout(function () {
+                followLink("error#animate", "_self", LinkStates.InternalHtml);
+            }, 1000);
+        };
+        animateWorker.onmessage = function (message) {
+            if (message.data.k == "ready") {
+                trainParams = message.data.trainParams;
+                trains = message.data.trains;
+                if (currentMode == Modes.MULTIPLAYER) {
+                    const chatControlsReactionsTrain = document.querySelector("#chat #chat-msg-trains-inner") as HTMLElement;
+                    chatControlsReactionsTrain.innerHTML = "";
+                    for (var stickerTrain = 0; stickerTrain < trains.length; stickerTrain++) {
+                        var elem = document.createElement("img");
+                        elem.src = "./assets/chat_train_" + stickerTrain + ".png";
+                        elem.alt = getString(["appScreenTrainNames", stickerTrain]);
+                        elem.dataset.tooltip = getString(["appScreenTrainNames", stickerTrain]);
+                        initTooltip(elem);
+                        elem.dataset.stickerNumber = stickerTrain.toString();
+                        elem.onclick = function (event) {
+                            onlineConnection.send("chat-msg", "{{stickerTrain=" + (event.target as HTMLElement).dataset.stickerNumber + "}}");
+                        };
+                        chatControlsReactionsTrain.appendChild(elem);
+                    }
                 }
-            }
-            if (onlineGame.enabled) {
-                const chatControlsReactionsTrain = document.querySelector("#chat #chat-msg-trains-inner") as HTMLElement;
-                chatControlsReactionsTrain.innerHTML = "";
-                for (var stickerTrain = 0; stickerTrain < trains.length; stickerTrain++) {
-                    var elem = document.createElement("img");
-                    elem.src = "./assets/chat_train_" + stickerTrain + ".png";
-                    elem.alt = getString(["appScreenTrainNames", stickerTrain]);
-                    elem.dataset.tooltip = getString(["appScreenTrainNames", stickerTrain]);
-                    initTooltip(elem);
-                    elem.dataset.stickerNumber = stickerTrain.toString();
-                    elem.onclick = function (event) {
-                        onlineConnection.send("chat-msg", "{{stickerTrain=" + (event.target as HTMLElement).dataset.stickerNumber + "}}");
-                    };
-                    chatControlsReactionsTrain.appendChild(elem);
+                var trainPics: any = [];
+                for (var i = 0; i < trains.length; i++) {
+                    trainPics[i] = {};
+                    trainPics[i].height = pics[trains[i].src].height;
+                    trainPics[i].width = pics[trains[i].src].width;
+                    trainPics[i].cars = [];
+                    for (var j = 0; j < trains[i].cars.length; j++) {
+                        trainPics[i].cars[j] = {};
+                        trainPics[i].cars[j].height = pics[trains[i].cars[j].src].height;
+                        trainPics[i].cars[j].width = pics[trains[i].cars[j].src].width;
+                    }
                 }
-            }
-            if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo && savedGameTrains != null && savedGameSwitches != null && savedGameBg != null) {
-                animateWorker.postMessage({k: "setTrainPics", trainPics: trainPics, savedTrains: JSON.parse(savedGameTrains), savedBg: JSON.parse(savedGameBg)});
-            } else {
-                animateWorker.postMessage({k: "setTrainPics", trainPics: trainPics});
-            }
-        } else if (message.data.k == "ready") {
-            const chatNotify = document.querySelector("#tp-chat-notifier") as HTMLElementNotify;
-            const chat = document.querySelector("#chat") as HTMLElementChat;
-            const chatInner = chat.querySelector("#chat-inner") as HTMLElement;
-            const chatInnerNone = chatInner.querySelector("#chat-no-messages") as HTMLElement;
-            const chatInnerMessages = chatInner.querySelector("#chat-inner-messages") as HTMLElement;
-            const chatInnerScrollToBottom = chatInner.querySelector("#chat-scroll-to-bottom") as HTMLElementChatToBottom;
-            const chatControls = chat.querySelector("#chat-controls") as HTMLElement;
-            const chatControlsInner = chatControls.querySelectorAll("#chat-send > *") as NodeListOf<HTMLElement>;
-            const chatControlsReactions = chatControls.querySelector("#chat-msg-reactions") as HTMLElement;
-            const chatControlsReactionsSmiley = chatControlsReactions.querySelector("#chat-msg-smileys-inner") as HTMLElement;
-            const chatControlsReactionsSmileyButtons = chatControlsReactionsSmiley.querySelectorAll("button") as NodeListOf<HTMLElement>;
-            const chatControlsReactionsSticker = chatControlsReactions.querySelector("#chat-msg-stickers-inner") as HTMLElement;
-            const chatControlsSendMsg = chatControls.querySelector("#chat-msg-send-text") as HTMLInputElement;
-            const chatControlsSendButton = chatControls.querySelector("#chat-msg-send-button") as HTMLElement;
-            const chatControlsNavClose = chat.querySelector("#chat-close") as HTMLElement;
-            const chatControlsNavClear = chat.querySelector("#chat-clear") as HTMLElementChatClear;
-            chatInnerScrollToBottom.toggleDisplay = function () {
-                if (chatInnerMessages.lastChild != null) {
-                    chatInnerScrollToBottom.style.display = chatInner.scrollHeight > chatInner.offsetHeight && chatInner.scrollHeight - chatInner.scrollTop > chatInner.offsetHeight + (chatInnerMessages.lastChild as HTMLElement).offsetHeight ? "flex" : "";
-                    chatInnerScrollToBottom.style.top = Math.max(0, chatInner.offsetHeight - chatInnerScrollToBottom.offsetHeight - 50) + "px";
-                } else {
-                    chatInnerScrollToBottom.style.display = "";
-                }
-            };
-            chat.resizeChat = function () {
-                chatInner.style.maxHeight = Math.max(50, Math.min(client.height, chat.offsetHeight) - chatControls.offsetHeight) + "px";
-                chatInnerScrollToBottom.toggleDisplay();
-            };
-            window.addEventListener("resize", chat.resizeChat);
-            chat.openChat = function () {
-                if (typeof chatNotify.hide == "function") {
-                    chatNotify.hide(chatNotify, true);
-                }
-                chat.style.display = "block";
-                gui.sidebarRight = true;
-                drawMenu("invisible");
-                chat.resizeChat();
-            };
-            chat.closeChat = function () {
-                chat.style.display = "";
-                gui.sidebarRight = false;
-                drawMenu("visible");
-            };
-            window.addEventListener("keyup", function (event) {
-                if (event.key === "Escape") {
-                    chat.closeChat();
-                }
-            });
-            chatInner.onscroll = chatInnerScrollToBottom.toggleDisplay;
-            chatNotify.onclick = chat.openChat;
-            chatControlsNavClose.onclick = chat.closeChat;
-            chatControlsSendButton.onclick = function () {
-                if (chatControlsSendMsg.value != "") {
-                    onlineConnection.send("chat-msg", chatControlsSendMsg.value);
-                    chatControlsSendMsg.value = "";
-                }
-            };
-            chatControlsSendMsg.onkeyup = function (event) {
-                if (chatControlsSendMsg.value != "") {
-                    if (event.key === "Enter") {
+                animateWorker.postMessage({k: "set", trainPics: trainPics});
+            } else if (message.data.k == "set") {
+                init(message.data.state);
+            } else if (message.data.k == "go") {
+                const chatNotify = document.querySelector("#tp-chat-notifier") as HTMLElementNotify;
+                const chat = document.querySelector("#chat") as HTMLElementChat;
+                const chatInner = chat.querySelector("#chat-inner") as HTMLElement;
+                const chatInnerNone = chatInner.querySelector("#chat-no-messages") as HTMLElement;
+                const chatInnerMessages = chatInner.querySelector("#chat-inner-messages") as HTMLElement;
+                const chatInnerScrollToBottom = chatInner.querySelector("#chat-scroll-to-bottom") as HTMLElementChatToBottom;
+                const chatControls = chat.querySelector("#chat-controls") as HTMLElement;
+                const chatControlsInner = chatControls.querySelectorAll("#chat-send > *") as NodeListOf<HTMLElement>;
+                const chatControlsReactions = chatControls.querySelector("#chat-msg-reactions") as HTMLElement;
+                const chatControlsReactionsSmiley = chatControlsReactions.querySelector("#chat-msg-smileys-inner") as HTMLElement;
+                const chatControlsReactionsSmileyButtons = chatControlsReactionsSmiley.querySelectorAll("button") as NodeListOf<HTMLElement>;
+                const chatControlsReactionsSticker = chatControlsReactions.querySelector("#chat-msg-stickers-inner") as HTMLElement;
+                const chatControlsSendMsg = chatControls.querySelector("#chat-msg-send-text") as HTMLInputElement;
+                const chatControlsSendButton = chatControls.querySelector("#chat-msg-send-button") as HTMLElement;
+                const chatControlsNavClose = chat.querySelector("#chat-close") as HTMLElement;
+                const chatControlsNavClear = chat.querySelector("#chat-clear") as HTMLElementChatClear;
+                chatInnerScrollToBottom.toggleDisplay = function () {
+                    if (chatInnerMessages.lastChild != null) {
+                        chatInnerScrollToBottom.style.display = chatInner.scrollHeight > chatInner.offsetHeight && chatInner.scrollHeight - chatInner.scrollTop > chatInner.offsetHeight + (chatInnerMessages.lastChild as HTMLElement).offsetHeight ? "flex" : "";
+                        chatInnerScrollToBottom.style.top = Math.max(0, chatInner.offsetHeight - chatInnerScrollToBottom.offsetHeight - 50) + "px";
+                    } else {
+                        chatInnerScrollToBottom.style.display = "";
+                    }
+                };
+                chat.resizeChat = function () {
+                    chatInner.style.maxHeight = Math.max(50, Math.min(client.height, chat.offsetHeight) - chatControls.offsetHeight) + "px";
+                    chatInnerScrollToBottom.toggleDisplay();
+                };
+                window.addEventListener("resize", chat.resizeChat);
+                chat.openChat = function () {
+                    if (typeof chatNotify.hide == "function") {
+                        chatNotify.hide(chatNotify, true);
+                    }
+                    chat.style.display = "block";
+                    gui.sidebarRight = true;
+                    drawMenu("invisible");
+                    chat.resizeChat();
+                };
+                chat.closeChat = function () {
+                    chat.style.display = "";
+                    gui.sidebarRight = false;
+                    drawMenu("visible");
+                };
+                window.addEventListener("keyup", function (event) {
+                    if (event.key === "Escape") {
+                        chat.closeChat();
+                    }
+                });
+                chatInner.onscroll = chatInnerScrollToBottom.toggleDisplay;
+                chatNotify.onclick = chat.openChat;
+                chatControlsNavClose.onclick = chat.closeChat;
+                chatControlsSendButton.onclick = function () {
+                    if (chatControlsSendMsg.value != "") {
                         onlineConnection.send("chat-msg", chatControlsSendMsg.value);
                         chatControlsSendMsg.value = "";
                     }
-                }
-            };
-            for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
-                (chatControlsInner[cSI].querySelector(".chat-send-toggle") as HTMLElement).onclick = function (event) {
-                    const target = event.target as HTMLElement;
-                    var elem = target!.parentNode!.querySelector(".chat-send-inner") as HTMLElement;
-                    var display = getComputedStyle(elem).getPropertyValue("display");
-                    for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
-                        (chatControlsInner[cSI].querySelector(".chat-send-inner") as HTMLElement).style.display = "none";
-                    }
-                    elem.style.display = display == "none" ? "block" : "none";
-                    chat.resizeChat();
-                    var smileySupport = true;
-                    for (var smiley = 1; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
-                        if (chatControlsReactionsSmileyButtons[smiley].offsetWidth != chatControlsReactionsSmileyButtons[smiley - 1].offsetWidth) {
-                            smileySupport = false;
-                            break;
+                };
+                chatControlsSendMsg.onkeyup = function (event) {
+                    if (chatControlsSendMsg.value != "") {
+                        if (event.key === "Enter") {
+                            onlineConnection.send("chat-msg", chatControlsSendMsg.value);
+                            chatControlsSendMsg.value = "";
                         }
                     }
-                    if (!smileySupport) {
-                        notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
-                    }
                 };
-            }
-            for (var smiley = 0; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
-                chatControlsReactionsSmileyButtons[smiley].onclick = function (event) {
-                    const target = event.target as HTMLElement;
-                    onlineConnection.send("chat-msg", target.textContent);
-                };
-            }
-            chatControlsReactionsSticker.innerHTML = "";
-            for (var sticker = 0; sticker < onlineGame.chatSticker; sticker++) {
-                var elem = document.createElement("img");
-                elem.src = "./assets/chat_sticker_" + sticker + ".png";
-                elem.dataset.stickerNumber = sticker.toString();
-                elem.onclick = function (event) {
-                    const target = event.target as HTMLElement;
-                    onlineConnection.send("chat-msg", "{{sticker=" + target.dataset.stickerNumber + "}}");
-                };
-                chatControlsReactionsSticker.appendChild(elem);
-            }
-            chatControlsNavClear.clearChat = function () {
-                chatInnerMessages.innerHTML = "";
-                chatInnerNone.style.display = "";
-                chatControlsReactions.style.display = "none";
-                chatInnerScrollToBottom.toggleDisplay();
-            };
-            chatControlsNavClear.clearChat();
-            chatControlsNavClear.onclick = chatControlsNavClear.clearChat;
-            chatInnerScrollToBottom.onclick = function () {
-                if (chatInnerMessages.lastChild != null) {
-                    (chatInnerMessages.lastChild as HTMLElement).scrollIntoView();
+                for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
+                    (chatControlsInner[cSI].querySelector(".chat-send-toggle") as HTMLElement).onclick = function (event) {
+                        const target = event.target as HTMLElement;
+                        var elem = target!.parentNode!.querySelector(".chat-send-inner") as HTMLElement;
+                        var display = getComputedStyle(elem).getPropertyValue("display");
+                        for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
+                            (chatControlsInner[cSI].querySelector(".chat-send-inner") as HTMLElement).style.display = "none";
+                        }
+                        elem.style.display = display == "none" ? "block" : "none";
+                        chat.resizeChat();
+                        var smileySupport = true;
+                        for (var smiley = 1; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
+                            if (chatControlsReactionsSmileyButtons[smiley].offsetWidth != chatControlsReactionsSmileyButtons[smiley - 1].offsetWidth) {
+                                smileySupport = false;
+                                break;
+                            }
+                        }
+                        if (!smileySupport) {
+                            notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
+                        }
+                    };
+                }
+                for (var smiley = 0; smiley < chatControlsReactionsSmileyButtons.length; smiley++) {
+                    chatControlsReactionsSmileyButtons[smiley].onclick = function (event) {
+                        const target = event.target as HTMLElement;
+                        onlineConnection.send("chat-msg", target.textContent);
+                    };
+                }
+                chatControlsReactionsSticker.innerHTML = "";
+                for (var sticker = 0; sticker < multiplayerMode.chatSticker; sticker++) {
+                    var elem = document.createElement("img");
+                    elem.src = "./assets/chat_sticker_" + sticker + ".png";
+                    elem.dataset.stickerNumber = sticker.toString();
+                    elem.onclick = function (event) {
+                        const target = event.target as HTMLElement;
+                        onlineConnection.send("chat-msg", "{{sticker=" + target.dataset.stickerNumber + "}}");
+                    };
+                    chatControlsReactionsSticker.appendChild(elem);
+                }
+                chatControlsNavClear.clearChat = function () {
+                    chatInnerMessages.innerHTML = "";
+                    chatInnerNone.style.display = "";
+                    chatControlsReactions.style.display = "none";
                     chatInnerScrollToBottom.toggleDisplay();
-                }
-            };
-            (document.querySelector("#setup #setup-exit") as HTMLElement).onclick = function () {
-                switchMode();
-            };
-            if (onlineGame.enabled) {
-                onlineConnection.connect = function () {
-                    function resetForElement(parent, elem, to = "") {
-                        var elements = parent.childNodes;
-                        for (var i = 0; i < elements.length; i++) {
-                            if (elements[i].nodeName.substr(0, 1) != "#") {
-                                elements[i].style.display = elements[i] == elem ? to : "none";
+                };
+                chatControlsNavClear.clearChat();
+                chatControlsNavClear.onclick = chatControlsNavClear.clearChat;
+                chatInnerScrollToBottom.onclick = function () {
+                    if (chatInnerMessages.lastChild != null) {
+                        (chatInnerMessages.lastChild as HTMLElement).scrollIntoView();
+                        chatInnerScrollToBottom.toggleDisplay();
+                    }
+                };
+                (document.querySelector("#setup #setup-exit") as HTMLElement).onclick = function () {
+                    switchMode(Modes.SINGLEPLAYER);
+                };
+                if (currentMode == Modes.MULTIPLAYER) {
+                    onlineConnection.connect = function () {
+                        function resetForElement(parent, elem, to = "") {
+                            var elements = parent.childNodes;
+                            for (var i = 0; i < elements.length; i++) {
+                                if (elements[i].nodeName.substr(0, 1) != "#") {
+                                    elements[i].style.display = elements[i] == elem ? to : "none";
+                                }
                             }
                         }
-                    }
-                    function endLoading() {
-                        loadingAnimation.hide();
-                        chat.closeChat();
-                        chatControlsNavClear.clearChat();
-                    }
-                    function showStartGame(teamNum) {
-                        endLoading();
-                        var parent = document.querySelector("#content") as HTMLElement;
-                        var elem = parent.querySelector("#game") as HTMLElement;
-                        resetForElement(parent, elem, "block");
-                        var parent = document.querySelector("#game") as HTMLElement;
-                        var elem = parent.querySelector("#game-start") as HTMLElement;
-                        (elem.querySelector("#game-start-text") as HTMLElement).textContent = formatJSString(getString("appScreenTeamplayGameStart"), teamNum);
-                        resetForElement(parent, elem);
-                        (elem.querySelector("#game-start-button") as HTMLElement).onclick = function () {
-                            onlineConnection.send("start");
-                        };
-                    }
-                    function showNewGameLink() {
-                        endLoading();
-                        audioControl.playAndPauseAll();
-                        var parent = document.querySelector("#content") as HTMLElement;
-                        var elem = parent.querySelector("#setup") as HTMLElement;
-                        resetForElement(parent, elem, "block");
-                        var parent = document.querySelector("#setup-inner-content") as HTMLElement;
-                        var elem = parent.querySelector("#setup-create") as HTMLElement;
-                        resetForElement(parent, elem);
-                        var elem = document.querySelector("#setup #setup-create #setup-create-link") as HTMLElement;
-                        elem.onclick = function () {
-                            switchMode("multiplay");
-                        };
-                        var elem = document.querySelector("#setup #setup-create #setup-create-escape") as HTMLElement;
-                        elem.onclick = function () {
-                            switchMode();
-                        };
-                    }
-                    function getPlayerNameFromInput() {
-                        var elem = document.querySelector("#setup-init-name") as HTMLInputElement;
-                        var name = elem.value;
-                        var nameCheck = name.replace(/[^a-zA-Z0-9]/g, "");
-                        if (name.length > 0 && name == nameCheck) {
-                            sessionStorage.setItem("playername", name);
-                            return name;
-                        } else {
-                            elem.value = nameCheck;
+                        function endLoading() {
+                            loadingAnimation.hide();
+                            chat.closeChat();
+                            chatControlsNavClear.clearChat();
                         }
-                        return false;
-                    }
-                    function sendPlayerName(name) {
-                        onlineConnection.send("init", name);
-                    }
-                    function sendSyncRequest() {
-                        if (!onlineGame.syncing) {
-                            if (onlineGame.resized) {
-                                if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
-                                    clearTimeout(onlineGame.syncRequest);
-                                }
-                                if (onlineGame.locomotive) {
-                                    onlineGame.syncRequest = setTimeout(sendSyncRequest, onlineGame.syncInterval);
-                                }
-                            } else if (!onlineGame.paused) {
-                                var number = 0;
-                                number += trains.length;
-                                trains.forEach(function (train) {
-                                    number += train.cars.length;
-                                });
-                                number++; //Switches
-                                onlineConnection.send("sync-request", number.toString());
-                            }
+                        function showStartGame(teamNum) {
+                            endLoading();
+                            var parent = document.querySelector("#content") as HTMLElement;
+                            var elem = parent.querySelector("#game") as HTMLElement;
+                            resetForElement(parent, elem, "block");
+                            var parent = document.querySelector("#game") as HTMLElement;
+                            var elem = parent.querySelector("#game-start") as HTMLElement;
+                            (elem.querySelector("#game-start-text") as HTMLElement).textContent = formatJSString(getString("appScreenTeamplayGameStart"), teamNum);
+                            resetForElement(parent, elem);
+                            (elem.querySelector("#game-start-button") as HTMLElement).onclick = function () {
+                                onlineConnection.send("start");
+                            };
                         }
-                    }
-                    function sendSyncData() {
-                        var task: any = {};
-                        task.o = "s";
-                        var obj = copyJSObject(switches);
-                        task.d = obj;
-                        if (!onlineGame.resized) {
-                            onlineConnection.send("sync-task", JSON.stringify(task));
+                        function showNewGameLink() {
+                            endLoading();
+                            audioControl.playAndPauseAll();
+                            var parent = document.querySelector("#content") as HTMLElement;
+                            var elem = parent.querySelector("#setup") as HTMLElement;
+                            resetForElement(parent, elem, "block");
+                            var parent = document.querySelector("#setup-inner-content") as HTMLElement;
+                            var elem = parent.querySelector("#setup-create") as HTMLElement;
+                            resetForElement(parent, elem);
+                            var elem = document.querySelector("#setup #setup-create #setup-create-link") as HTMLElement;
+                            elem.onclick = function () {
+                                switchMode(Modes.MULTIPLAYER);
+                            };
+                            var elem = document.querySelector("#setup #setup-create #setup-create-escape") as HTMLElement;
+                            elem.onclick = function () {
+                                switchMode(Modes.SINGLEPLAYER);
+                            };
                         }
-                        for (var i = 0; i < trains.length; i++) {
-                            task = {};
-                            task.o = "t";
-                            task.i = i;
-                            obj = copyJSObject(trains[i]);
-                            obj.front.x = (obj.front.x - background.x) / background.width;
-                            obj.back.x = (obj.back.x - background.x) / background.width;
-                            obj.x = (obj.x - background.x) / background.width;
-                            obj.front.y = (obj.front.y - background.y) / background.height;
-                            obj.back.y = (obj.back.y - background.y) / background.height;
-                            obj.y = (obj.y - background.y) / background.height;
-                            obj.width = obj.width / background.width;
-                            obj.height = obj.height / background.height;
-                            onlineGame.excludeFromSync[task.o].forEach(function (key) {
-                                delete obj[key];
-                            });
-                            if (obj.circleFamily != null) {
-                                Object.keys(rotationPoints).forEach(function (key) {
-                                    if (trains[i].circleFamily == rotationPoints[key]) {
-                                        obj.circleFamily = key;
-                                    }
-                                });
-                                if (typeof obj.circleFamily == "string") {
-                                    Object.keys(rotationPoints[obj.circleFamily]).forEach(function (key) {
-                                        if (trains[i].circle == rotationPoints[obj.circleFamily][key]) {
-                                            obj.circle = key;
-                                        }
-                                    });
-                                } else {
-                                    delete obj.circle;
-                                }
+                        function getPlayerNameFromInput() {
+                            var elem = document.querySelector("#setup-init-name") as HTMLInputElement;
+                            var name = elem.value;
+                            var nameCheck = name.replace(/[^a-zA-Z0-9]/g, "");
+                            if (name.length > 0 && name == nameCheck) {
+                                sessionStorage.setItem("playername", name);
+                                return name;
                             } else {
-                                delete obj.circle;
+                                elem.value = nameCheck;
                             }
+                            return false;
+                        }
+                        function sendPlayerName(name) {
+                            onlineConnection.send("init", name);
+                        }
+                        function sendSyncRequest() {
+                            if (!onlineConnection.syncing) {
+                                if (onlineConnection.resized) {
+                                    if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                        clearTimeout(multiplayerMode.syncRequestTimeout);
+                                    }
+                                    if (onlineConnection.locomotive) {
+                                        multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
+                                    }
+                                } else if (!onlineConnection.paused) {
+                                    var number = 0;
+                                    number += trains.length;
+                                    trains.forEach(function (train) {
+                                        number += train.cars.length;
+                                    });
+                                    number++; //Switches
+                                    onlineConnection.send("sync-request", number.toString());
+                                }
+                            }
+                        }
+                        function sendSyncData() {
+                            var task: any = {};
+                            task.o = "s";
+                            var obj = copyJSObject(switches);
                             task.d = obj;
-                            if (!onlineGame.resized) {
+                            if (!onlineConnection.resized) {
                                 onlineConnection.send("sync-task", JSON.stringify(task));
                             }
-                            for (var j = 0; j < trains[i].cars.length; j++) {
+                            for (var i = 0; i < trains.length; i++) {
                                 task = {};
-                                task.o = "tc";
-                                task.i = [i, j];
-                                obj = copyJSObject(trains[i].cars[j]);
+                                task.o = "t";
+                                task.i = i;
+                                obj = copyJSObject(trains[i]);
                                 obj.front.x = (obj.front.x - background.x) / background.width;
                                 obj.back.x = (obj.back.x - background.x) / background.width;
                                 obj.x = (obj.x - background.x) / background.width;
@@ -7092,161 +7090,131 @@ function init(state: "load" | "reload" = "reload") {
                                 obj.y = (obj.y - background.y) / background.height;
                                 obj.width = obj.width / background.width;
                                 obj.height = obj.height / background.height;
-                                onlineGame.excludeFromSync[task.o].forEach(function (key) {
+                                multiplayerMode.excludeFromSync[task.o].forEach(function (key) {
                                     delete obj[key];
                                 });
+                                if (obj.circleFamily != null) {
+                                    Object.keys(rotationPoints).forEach(function (key) {
+                                        if (trains[i].circleFamily == rotationPoints[key]) {
+                                            obj.circleFamily = key;
+                                        }
+                                    });
+                                    if (typeof obj.circleFamily == "string") {
+                                        Object.keys(rotationPoints[obj.circleFamily]).forEach(function (key) {
+                                            if (trains[i].circle == rotationPoints[obj.circleFamily][key]) {
+                                                obj.circle = key;
+                                            }
+                                        });
+                                    } else {
+                                        delete obj.circle;
+                                    }
+                                } else {
+                                    delete obj.circle;
+                                }
                                 task.d = obj;
-                                if (!onlineGame.resized) {
+                                if (!onlineConnection.resized) {
                                     onlineConnection.send("sync-task", JSON.stringify(task));
+                                }
+                                for (var j = 0; j < trains[i].cars.length; j++) {
+                                    task = {};
+                                    task.o = "tc";
+                                    task.i = [i, j];
+                                    obj = copyJSObject(trains[i].cars[j]);
+                                    obj.front.x = (obj.front.x - background.x) / background.width;
+                                    obj.back.x = (obj.back.x - background.x) / background.width;
+                                    obj.x = (obj.x - background.x) / background.width;
+                                    obj.front.y = (obj.front.y - background.y) / background.height;
+                                    obj.back.y = (obj.back.y - background.y) / background.height;
+                                    obj.y = (obj.y - background.y) / background.height;
+                                    obj.width = obj.width / background.width;
+                                    obj.height = obj.height / background.height;
+                                    multiplayerMode.excludeFromSync[task.o].forEach(function (key) {
+                                        delete obj[key];
+                                    });
+                                    task.d = obj;
+                                    if (!onlineConnection.resized) {
+                                        onlineConnection.send("sync-task", JSON.stringify(task));
+                                    }
                                 }
                             }
                         }
-                    }
-                    onlineConnection.socket = new WebSocket(onlineConnection.serverURI);
-                    onlineConnection.socket.onopen = function () {
-                        onlineConnection.send("hello", (APP_DATA.version.major + APP_DATA.version.minor / 10).toString());
-                    };
-                    onlineConnection.socket.onclose = function () {
-                        if (onlineGame.enabled) {
-                            showNewGameLink();
-                            notify("#canvas-notifier", getString("appScreenTeamplayGameEnded", "."), NotificationPriority.High, 900, null, null, client.height);
-                        }
-                    };
-                    onlineConnection.socket.onmessage = function (message) {
-                        const ERROR_LEVEL_OKAY = 0;
-                        const ERROR_LEVEL_WARNING = 1;
-                        const ERROR_LEVEL_ERROR = 2;
-                        const json = JSON.parse(message.data);
-                        if (APP_DATA.debug) {
-                            if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                console.error(json);
-                            } else if (json.errorLevel === ERROR_LEVEL_WARNING) {
-                                console.warn(json);
-                            } else {
-                                console.debug(json);
+                        onlineConnection.socket = new WebSocket(multiplayerMode.serverURI);
+                        onlineConnection.socket.onopen = function () {
+                            onlineConnection.send("hello", (APP_DATA.version.major + APP_DATA.version.minor / 10).toString());
+                        };
+                        onlineConnection.socket.onclose = function () {
+                            if (currentMode == Modes.MULTIPLAYER) {
+                                showNewGameLink();
+                                notify("#canvas-notifier", getString("appScreenTeamplayGameEnded", "."), NotificationPriority.High, 900, null, null, client.height);
                             }
-                        }
-                        switch (json.mode) {
-                            case "hello":
+                        };
+                        onlineConnection.socket.onmessage = function (message) {
+                            const ERROR_LEVEL_OKAY = 0;
+                            const ERROR_LEVEL_WARNING = 1;
+                            const ERROR_LEVEL_ERROR = 2;
+                            const json = JSON.parse(message.data);
+                            if (APP_DATA.debug) {
                                 if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                    (document.querySelector("#content") as HTMLElement).style.display = "none";
-                                    setTimeout(function () {
-                                        followLink("error#tp-update", "_self", LinkStates.InternalHtml);
-                                    }, 1000);
-                                    notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NotificationPriority.High, 6000, null, null, client.height);
+                                    console.error(json);
+                                } else if (json.errorLevel === ERROR_LEVEL_WARNING) {
+                                    console.warn(json);
                                 } else {
-                                    if (json.errorLevel === ERROR_LEVEL_WARNING) {
-                                        notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NotificationPriority.Default, 900, null, null, client.height);
-                                    }
-                                    var parent = document.querySelector("#content") as HTMLElement;
-                                    var elem = parent.querySelector("#setup") as HTMLElement;
-                                    resetForElement(parent, elem, "block");
-                                    if (sessionStorage.getItem("playername") != null) {
-                                        sendPlayerName(sessionStorage.getItem("playername"));
+                                    console.debug(json);
+                                }
+                            }
+                            switch (json.mode) {
+                                case "hello":
+                                    if (json.errorLevel === ERROR_LEVEL_ERROR) {
+                                        (document.querySelector("#content") as HTMLElement).style.display = "none";
+                                        setTimeout(function () {
+                                            followLink("error#tp-update", "_self", LinkStates.InternalHtml);
+                                        }, 1000);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NotificationPriority.High, 6000, null, null, client.height);
                                     } else {
-                                        endLoading();
-                                        parent = document.querySelector("#setup-inner-content") as HTMLElement;
-                                        elem = parent.querySelector("#setup-init") as HTMLElement;
-                                        resetForElement(parent, elem);
-                                        (elem.querySelector("#setup-init-button") as HTMLElement).onclick = function (_event) {
-                                            var name = getPlayerNameFromInput();
-                                            if (name !== false) {
-                                                sendPlayerName(name);
-                                            }
-                                        };
-                                        (elem.querySelector("#setup-init-name") as HTMLElement).onkeyup = function (event) {
-                                            if (event.key === "Enter") {
+                                        if (json.errorLevel === ERROR_LEVEL_WARNING) {
+                                            notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NotificationPriority.Default, 900, null, null, client.height);
+                                        }
+                                        var parent = document.querySelector("#content") as HTMLElement;
+                                        var elem = parent.querySelector("#setup") as HTMLElement;
+                                        resetForElement(parent, elem, "block");
+                                        if (sessionStorage.getItem("playername") != null) {
+                                            sendPlayerName(sessionStorage.getItem("playername"));
+                                        } else {
+                                            endLoading();
+                                            parent = document.querySelector("#setup-inner-content") as HTMLElement;
+                                            elem = parent.querySelector("#setup-init") as HTMLElement;
+                                            resetForElement(parent, elem);
+                                            (elem.querySelector("#setup-init-button") as HTMLElement).onclick = function (_event) {
                                                 var name = getPlayerNameFromInput();
                                                 if (name !== false) {
                                                     sendPlayerName(name);
                                                 }
-                                            }
-                                        };
-                                        (elem.querySelector("#setup-init-name") as HTMLElement).focus();
+                                            };
+                                            (elem.querySelector("#setup-init-name") as HTMLElement).onkeyup = function (event) {
+                                                if (event.key === "Enter") {
+                                                    var name = getPlayerNameFromInput();
+                                                    if (name !== false) {
+                                                        sendPlayerName(name);
+                                                    }
+                                                }
+                                            };
+                                            (elem.querySelector("#setup-init-name") as HTMLElement).focus();
+                                        }
                                     }
-                                }
-                                break;
-                            case "init":
-                                if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                    onlineGame.sessionId = json.sessionId;
-                                    if (onlineGame.gameId == "" || onlineGame.gameKey == "") {
-                                        onlineConnection.send("connect");
-                                    } else {
-                                        onlineConnection.send("join", JSON.stringify({key: onlineGame.gameKey, id: onlineGame.gameId}));
-                                    }
-                                } else {
-                                    showNewGameLink();
-                                    notify(
-                                        "#canvas-notifier",
-                                        getString("appScreenTeamplayConnectionError", "."),
-                                        NotificationPriority.High,
-                                        6000,
-                                        function () {
-                                            followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                                        },
-                                        getString("appScreenFurtherInformation"),
-                                        client.height
-                                    );
-                                }
-                                break;
-                            case "connect":
-                                if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                    onlineGame.locomotive = true;
-                                    const connectData = JSON.parse(json.data);
-                                    onlineGame.gameId = connectData.id;
-                                    onlineGame.gameKey = connectData.key;
-                                    endLoading();
-                                    var parent = document.querySelector("#setup-inner-content") as HTMLElement;
-                                    var elem = parent.querySelector("#setup-start") as HTMLElement;
-                                    resetForElement(parent, elem);
-                                    (elem.querySelector("#setup-start-gamelink") as HTMLElement).textContent = getShareLink(onlineGame.gameId, onlineGame.gameKey);
-                                    (elem.querySelector("#setup-start-button") as HTMLElement).onclick = function () {
-                                        copy("#setup #setup-start #setup-start-gamelink", null, function () {
-                                            notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NotificationPriority.High, 6000, null, null, client.height);
-                                        });
-                                    };
-                                } else {
-                                    showNewGameLink();
-                                    notify(
-                                        "#canvas-notifier",
-                                        getString("appScreenTeamplayCreateError", "!"),
-                                        NotificationPriority.High,
-                                        6000,
-                                        function () {
-                                            followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                                        },
-                                        getString("appScreenFurtherInformation"),
-                                        client.height
-                                    );
-                                }
-                                break;
-                            case "join":
-                                if (json.sessionId == onlineGame.sessionId) {
+                                    break;
+                                case "init":
                                     if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                        onlineGame.locomotive = false;
-                                        showStartGame(json.data);
+                                        onlineConnection.sessionId = json.sessionId;
+                                        if (onlineConnection.gameId == "" || onlineConnection.gameKey == "") {
+                                            onlineConnection.send("connect");
+                                        } else {
+                                            onlineConnection.send("join", JSON.stringify({key: onlineConnection.gameKey, id: onlineConnection.gameId}));
+                                        }
                                     } else {
                                         showNewGameLink();
                                         notify(
                                             "#canvas-notifier",
-                                            getString("appScreenTeamplayJoinError", "!"),
-                                            NotificationPriority.High,
-                                            6000,
-                                            function () {
-                                                followLink("error#tp-join", "_self", LinkStates.InternalHtml);
-                                            },
-                                            getString("appScreenFurtherInformation"),
-                                            client.height
-                                        );
-                                    }
-                                } else {
-                                    if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                        showStartGame(json.data);
-                                    } else {
-                                        showNewGameLink();
-                                        notify(
-                                            "#canvas-notifier",
-                                            getString("appScreenTeamplayJoinTeammateError", "!"),
+                                            getString("appScreenTeamplayConnectionError", "."),
                                             NotificationPriority.High,
                                             6000,
                                             function () {
@@ -7256,565 +7224,362 @@ function init(state: "load" | "reload" = "reload") {
                                             client.height
                                         );
                                     }
-                                }
-                                break;
-                            case "start":
-                                if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                    showNewGameLink();
-                                    notify(
-                                        "#canvas-notifier",
-                                        getString("appScreenTeamplayStartError", "!"),
-                                        NotificationPriority.High,
-                                        6000,
-                                        function () {
-                                            followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                                        },
-                                        getString("appScreenFurtherInformation"),
-                                        client.height
-                                    );
-                                } else {
-                                    switch (json.data) {
-                                        case "wait":
-                                            if (json.sessionId == onlineGame.sessionId) {
-                                                var parent = document.querySelector("#game") as HTMLElement;
-                                                var elem = parent.querySelector("#game-wait") as HTMLElement;
-                                                resetForElement(parent, elem);
-                                            } else {
-                                                notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NotificationPriority.Default, 1000, null, null, client.height);
-                                            }
-                                            break;
-                                        case "run":
-                                            onlineGame.stop = false;
-                                            onlineGame.paused = false;
-                                            onlineGame.syncing = false;
-                                            onlineGame.waitingClock.visible = false;
-                                            if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
-                                                clearTimeout(onlineGame.syncRequest);
-                                            }
-                                            if (onlineGame.locomotive) {
-                                                onlineGame.syncRequest = setTimeout(sendSyncRequest, onlineGame.syncInterval);
-                                            }
-                                            var parent = document.querySelector("#game") as HTMLElement;
-                                            var elem = parent.querySelector("#game-gameplay") as HTMLElement;
-                                            resetForElement(parent, elem);
-                                            calcMenusAndBackground("resize");
-                                            break;
+                                    break;
+                                case "connect":
+                                    if (json.errorLevel === ERROR_LEVEL_OKAY) {
+                                        onlineConnection.locomotive = true;
+                                        const connectData = JSON.parse(json.data);
+                                        onlineConnection.gameId = connectData.id;
+                                        onlineConnection.gameKey = connectData.key;
+                                        endLoading();
+                                        var parent = document.querySelector("#setup-inner-content") as HTMLElement;
+                                        var elem = parent.querySelector("#setup-start") as HTMLElement;
+                                        resetForElement(parent, elem);
+                                        (elem.querySelector("#setup-start-gamelink") as HTMLElement).textContent = getShareLink(onlineConnection.gameId, onlineConnection.gameKey);
+                                        (elem.querySelector("#setup-start-button") as HTMLElement).onclick = function () {
+                                            copy("#setup #setup-start #setup-start-gamelink", null, function () {
+                                                notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NotificationPriority.High, 6000, null, null, client.height);
+                                            });
+                                        };
+                                    } else {
+                                        showNewGameLink();
+                                        notify(
+                                            "#canvas-notifier",
+                                            getString("appScreenTeamplayCreateError", "!"),
+                                            NotificationPriority.High,
+                                            6000,
+                                            function () {
+                                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                            },
+                                            getString("appScreenFurtherInformation"),
+                                            client.height
+                                        );
                                     }
-                                }
-                                break;
-                            case "action":
-                                const input = JSON.parse(json.data);
-                                var notifyArr: string[] = [];
-                                if (typeof input.notification == "object" && Array.isArray(input.notification)) {
-                                    input.notification.forEach(function (elem) {
-                                        if (typeof elem == "object" && Array.isArray(elem.getString)) {
-                                            notifyArr.push(getString.apply(null, elem.getString));
-                                        } else if (typeof elem == "string") {
-                                            notifyArr.push(elem);
+                                    break;
+                                case "join":
+                                    if (json.sessionId == onlineConnection.sessionId) {
+                                        if (json.errorLevel === ERROR_LEVEL_OKAY) {
+                                            onlineConnection.locomotive = false;
+                                            showStartGame(json.data);
+                                        } else {
+                                            showNewGameLink();
+                                            notify(
+                                                "#canvas-notifier",
+                                                getString("appScreenTeamplayJoinError", "!"),
+                                                NotificationPriority.High,
+                                                6000,
+                                                function () {
+                                                    followLink("error#tp-join", "_self", LinkStates.InternalHtml);
+                                                },
+                                                getString("appScreenFurtherInformation"),
+                                                client.height
+                                            );
                                         }
-                                    });
-                                    var notifyStr = formatJSString.apply(null, notifyArr);
-                                    if (onlineGame.sessionId != json.sessionId) {
-                                        notifyStr = json.sessionName + ": " + notifyStr;
+                                    } else {
+                                        if (json.errorLevel === ERROR_LEVEL_OKAY) {
+                                            showStartGame(json.data);
+                                        } else {
+                                            showNewGameLink();
+                                            notify(
+                                                "#canvas-notifier",
+                                                getString("appScreenTeamplayJoinTeammateError", "!"),
+                                                NotificationPriority.High,
+                                                6000,
+                                                function () {
+                                                    followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                                },
+                                                getString("appScreenFurtherInformation"),
+                                                client.height
+                                            );
+                                        }
                                     }
-                                    if (onlineGame.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
-                                        notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
+                                    break;
+                                case "start":
+                                    if (json.errorLevel === ERROR_LEVEL_ERROR) {
+                                        showNewGameLink();
+                                        notify(
+                                            "#canvas-notifier",
+                                            getString("appScreenTeamplayStartError", "!"),
+                                            NotificationPriority.High,
+                                            6000,
+                                            function () {
+                                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                            },
+                                            getString("appScreenFurtherInformation"),
+                                            client.height
+                                        );
+                                    } else {
+                                        switch (json.data) {
+                                            case "wait":
+                                                if (json.sessionId == onlineConnection.sessionId) {
+                                                    var parent = document.querySelector("#game") as HTMLElement;
+                                                    var elem = parent.querySelector("#game-wait") as HTMLElement;
+                                                    resetForElement(parent, elem);
+                                                } else {
+                                                    notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NotificationPriority.Default, 1000, null, null, client.height);
+                                                }
+                                                break;
+                                            case "run":
+                                                onlineConnection.stop = false;
+                                                onlineConnection.paused = false;
+                                                onlineConnection.syncing = false;
+                                                multiplayerMode.waitingClock.visible = false;
+                                                if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                                    clearTimeout(multiplayerMode.syncRequestTimeout);
+                                                }
+                                                if (onlineConnection.locomotive) {
+                                                    multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
+                                                }
+                                                var parent = document.querySelector("#game") as HTMLElement;
+                                                var elem = parent.querySelector("#game-gameplay") as HTMLElement;
+                                                resetForElement(parent, elem);
+                                                calcMenusAndBackground("resize");
+                                                break;
+                                        }
                                     }
-                                }
-                                switch (input.objectName) {
-                                    case "trains":
-                                        if (onlineGame.sessionId != json.sessionId) {
-                                            onlineGame.excludeFromSync["t"].forEach(function (key) {
-                                                input.params.forEach(function (param, paramNo) {
-                                                    if (Object.keys(param)[0] == key) {
-                                                        delete input.params[paramNo];
+                                    break;
+                                case "action":
+                                    const input = JSON.parse(json.data);
+                                    var notifyArr: string[] = [];
+                                    if (typeof input.notification == "object" && Array.isArray(input.notification)) {
+                                        input.notification.forEach(function (elem) {
+                                            if (typeof elem == "object" && Array.isArray(elem.getString)) {
+                                                notifyArr.push(getString.apply(null, elem.getString));
+                                            } else if (typeof elem == "string") {
+                                                notifyArr.push(elem);
+                                            }
+                                        });
+                                        var notifyStr = formatJSString.apply(null, notifyArr);
+                                        if (onlineConnection.sessionId != json.sessionId) {
+                                            notifyStr = json.sessionName + ": " + notifyStr;
+                                        }
+                                        if (onlineConnection.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
+                                            notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
+                                        }
+                                    }
+                                    switch (input.objectName) {
+                                        case "trains":
+                                            if (onlineConnection.sessionId != json.sessionId) {
+                                                multiplayerMode.excludeFromSync["t"].forEach(function (key) {
+                                                    input.params.forEach(function (param, paramNo) {
+                                                        if (Object.keys(param)[0] == key) {
+                                                            delete input.params[paramNo];
+                                                        }
+                                                    });
+                                                });
+                                            }
+                                            animateWorker.postMessage({k: "train", i: input.index, params: input.params});
+                                            break;
+                                        case "train-crash":
+                                            if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                                clearTimeout(multiplayerMode.syncRequestTimeout);
+                                            }
+                                            if (onlineConnection.locomotive) {
+                                                multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, 200);
+                                            }
+                                            break;
+                                        case "switches":
+                                            if (Object.hasOwn(switches, input.index[0]) && Object.hasOwn(switches[input.index[0]], input.index[1])) {
+                                                const obj = switches[input.index[0]][input.index[1]];
+                                                input.params.forEach(function (param) {
+                                                    const key = Object.keys(param)[0];
+                                                    if (Object.hasOwn(obj, key)) {
+                                                        obj[key] = Object.values(param)[0];
                                                     }
                                                 });
-                                            });
-                                        }
-                                        animateWorker.postMessage({k: "train", i: input.index, params: input.params});
-                                        break;
-                                    case "train-crash":
-                                        if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
-                                            clearTimeout(onlineGame.syncRequest);
-                                        }
-                                        if (onlineGame.locomotive) {
-                                            onlineGame.syncRequest = setTimeout(sendSyncRequest, 200);
-                                        }
-                                        break;
-                                    case "switches":
-                                        if (Object.hasOwn(switches, input.index[0]) && Object.hasOwn(switches[input.index[0]], input.index[1])) {
-                                            const obj = switches[input.index[0]][input.index[1]];
-                                            input.params.forEach(function (param) {
-                                                const key = Object.keys(param)[0];
-                                                if (Object.hasOwn(obj, key)) {
-                                                    obj[key] = Object.values(param)[0];
-                                                }
-                                            });
-                                            obj.lastStateChange = frameNo;
-                                            animateWorker.postMessage({k: "switches", switches: switches});
-                                        }
-                                        break;
-                                }
-                                break;
-                            case "sync-request":
-                                onlineGame.syncingCounter = 0;
-                                onlineGame.syncingCounterFinal = parseInt(json.data, 10);
-                                if (!onlineGame.stop) {
-                                    onlineGame.waitingClock.init();
-                                    onlineGame.stop = true;
-                                }
-                                onlineGame.syncing = true;
-                                animateWorker.postMessage({k: "sync-request"});
-                                break;
-                            case "sync-ready":
-                                if (onlineGame.locomotive) {
-                                    sendSyncData();
-                                }
-                                break;
-                            case "sync-task":
-                                if (onlineGame.syncing) {
-                                    onlineGame.syncingCounter++;
-                                    const task = JSON.parse(json.data);
-                                    switch (task.o) {
-                                        case "t":
-                                            animateWorker.postMessage({k: "sync-t", i: task.i, d: task.d});
+                                                obj.lastStateChange = frameNo;
+                                                animateWorker.postMessage({k: "switches", switches: switches});
+                                            }
                                             break;
-                                        case "tc":
-                                            animateWorker.postMessage({k: "sync-tc", i: task.i, d: task.d});
-                                            break;
-                                        case "s":
-                                            Object.keys(task.d).forEach(function (key) {
-                                                Object.keys(switches[key]).forEach(function (currentKey) {
-                                                    switches[key][currentKey].turned = task["d"][key][currentKey].turned;
+                                    }
+                                    break;
+                                case "sync-request":
+                                    onlineConnection.syncingCounter = 0;
+                                    onlineConnection.syncingCounterFinal = parseInt(json.data, 10);
+                                    if (!onlineConnection.stop) {
+                                        multiplayerMode.waitingClock.init();
+                                        onlineConnection.stop = true;
+                                    }
+                                    onlineConnection.syncing = true;
+                                    animateWorker.postMessage({k: "sync-request"});
+                                    break;
+                                case "sync-ready":
+                                    if (onlineConnection.locomotive) {
+                                        sendSyncData();
+                                    }
+                                    break;
+                                case "sync-task":
+                                    if (onlineConnection.syncing) {
+                                        onlineConnection.syncingCounter++;
+                                        const task = JSON.parse(json.data);
+                                        switch (task.o) {
+                                            case "t":
+                                                animateWorker.postMessage({k: "sync-t", i: task.i, d: task.d});
+                                                break;
+                                            case "tc":
+                                                animateWorker.postMessage({k: "sync-tc", i: task.i, d: task.d});
+                                                break;
+                                            case "s":
+                                                Object.keys(task.d).forEach(function (key) {
+                                                    Object.keys(switches[key]).forEach(function (currentKey) {
+                                                        switches[key][currentKey].turned = task["d"][key][currentKey].turned;
+                                                    });
                                                 });
-                                            });
-                                            animateWorker.postMessage({k: "switches", switches: switches});
-                                            break;
-                                    }
-                                    if (onlineGame.syncingCounter == onlineGame.syncingCounterFinal) {
-                                        onlineConnection.send("sync-done");
-                                    }
-                                }
-                                break;
-                            case "sync-done":
-                                onlineGame.stop = onlineGame.paused;
-                                onlineGame.syncing = false;
-                                if (!onlineGame.stop) {
-                                    onlineGame.waitingClock.visible = false;
-                                }
-                                if (json.errorLevel !== ERROR_LEVEL_OKAY) {
-                                    notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                }
-                                if (!onlineGame.paused) {
-                                    if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
-                                        clearTimeout(onlineGame.syncRequest);
-                                    }
-                                    if (onlineGame.locomotive) {
-                                        onlineGame.syncRequest = setTimeout(sendSyncRequest, onlineGame.syncInterval);
-                                    }
-                                    animateWorker.postMessage({k: "resume"});
-                                }
-                                break;
-                            case "pause":
-                                if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
-                                    clearTimeout(onlineGame.syncRequest);
-                                }
-                                if (!onlineGame.stop) {
-                                    onlineGame.waitingClock.init();
-                                    onlineGame.stop = true;
-                                }
-                                onlineGame.paused = true;
-                                audioControl.playAndPauseAll();
-                                animateWorker.postMessage({k: "pause"});
-                                notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                break;
-                            case "resume":
-                                if (onlineGame.paused) {
-                                    if (onlineGame.syncRequest !== undefined && onlineGame.syncRequest !== null) {
-                                        clearTimeout(onlineGame.syncRequest);
-                                    }
-                                    if (onlineGame.locomotive) {
-                                        onlineGame.syncRequest = setTimeout(sendSyncRequest, onlineGame.syncInterval);
-                                    }
-                                    onlineGame.stop = onlineGame.syncing;
-                                    onlineGame.paused = false;
-                                    if (!onlineGame.stop) {
-                                        onlineGame.waitingClock.visible = false;
-                                    }
-                                    audioControl.playAndPauseAll();
-                                    notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                    animateWorker.postMessage({k: "resume"});
-                                }
-                                break;
-                            case "leave":
-                                notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                break;
-                            case "chat-msg":
-                                chatInnerNone.style.display = "none";
-                                chatControlsReactions.style.display = "";
-                                const chatInnerContainerMsg = document.createElement("div");
-                                const chatInnerPlayerName = document.createElement(onlineGame.sessionId != json.sessionId ? "i" : "b");
-                                const chatInnerMessageImg = document.createElement("img");
-                                const chatInnerMessage = document.createElement("p");
-                                const chatInnerSeparator = document.createElement("br");
-                                chatInnerContainerMsg.className = "chat-inner-container";
-                                chatInnerPlayerName.textContent = (onlineGame.sessionId != json.sessionId ? json.sessionName : json.sessionName + " (" + getString("appScreenTeamplayChatMe") + ")") + " - " + new Date().toLocaleTimeString();
-                                var isSticker = json.data.match(/^\{\{sticker=[0-9]+\}\}$/);
-                                var isTrainSticker = json.data.match(/^\{\{stickerTrain=[0-9]+\}\}$/);
-                                if (isSticker || isTrainSticker) {
-                                    var stickerNumber = json.data.replace(/[^0-9]/g, "");
-                                    if ((isSticker && stickerNumber < onlineGame.chatSticker) || (isTrainSticker && stickerNumber < trains.length)) {
-                                        chatInnerMessageImg.src = "./assets/chat_" + (isTrainSticker ? "train_" : "sticker_") + stickerNumber + ".png";
-                                        chatInnerMessageImg.className = isTrainSticker ? "train-sticker" : "sticker";
-                                        json.data = isTrainSticker ? getString(["appScreenTrainIcons", parseInt(stickerNumber, 10)]) + " " + getString(["appScreenTrainNames", parseInt(stickerNumber, 10)]) : formatJSString(getString("appScreenTeamplayChatStickerNote"), getString(["appScreenTeamplayChatStickerEmojis", parseInt(stickerNumber, 10)]));
-                                    } else {
-                                        isSticker = isTrainSticker = false;
-                                    }
-                                }
-                                chatInnerMessage.textContent = json.data;
-                                chatInnerContainerMsg.appendChild(chatInnerPlayerName);
-                                chatInnerContainerMsg.appendChild(chatInnerSeparator);
-                                if (isSticker || isTrainSticker) {
-                                    chatInnerContainerMsg.appendChild(chatInnerMessageImg);
-                                }
-                                if (!isSticker) {
-                                    chatInnerContainerMsg.appendChild(chatInnerMessage);
-                                }
-                                chatInnerMessages.appendChild(chatInnerContainerMsg);
-                                if (onlineGame.sessionId != json.sessionId && chat.style.display == "") {
-                                    notify("#tp-chat-notifier", json.sessionName + ": " + json.data, NotificationPriority.Default, 4000, null, null, client.height, NotificationChannel.MultiplayerChat + json.sessionId);
-                                }
-                                chat.resizeChat();
-                                break;
-                            case "unknown":
-                                notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y + menus.outerContainer.height);
-                                break;
-                        }
-                    };
-                    onlineConnection.socket.onerror = function () {
-                        showNewGameLink();
-                        notify(
-                            "#canvas-notifier",
-                            getString("appScreenTeamplayConnectionError", "!"),
-                            NotificationPriority.High,
-                            6000,
-                            function () {
-                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                            },
-                            getString("appScreenFurtherInformation"),
-                            client.height
-                        );
-                    };
-                };
-                onlineGame.gameId = getQueryStringValue("id");
-                onlineGame.gameKey = getQueryStringValue("key");
-                (document.getElementById("setup") as HTMLElement).onmousemove = function (event) {
-                    (document.getElementById("setup-ball") as HTMLElement).style.left = event.pageX + "px";
-                    (document.getElementById("setup-ball") as HTMLElement).style.top = event.pageY + "px";
-                };
-                (document.getElementById("setup") as HTMLElement).onmouseout = function (_event) {
-                    (document.getElementById("setup-ball") as HTMLElement).style.left = "-1vw";
-                    (document.getElementById("setup-ball") as HTMLElement).style.top = "-1vw";
-                };
-                onlineConnection.connect();
-            }
-
-            //Initialize trains
-            rotationPoints = message.data.rotationPoints;
-            trains = message.data.trains;
-            trains3D = [];
-            trains.forEach(function (train, i) {
-                const trainCallback = function (downIntersects, upIntersects) {
-                    if (hardware.lastInputTouch < hardware.lastInputMouse) {
-                        hardware.mouse.isHold = false;
-                    }
-                    if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
-                        if (clickTimeOut !== undefined && clickTimeOut !== null) {
-                            clearTimeout(clickTimeOut);
-                            clickTimeOut = null;
-                        }
-                        if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                            hardware.mouse.isHold = false;
-                        } else {
-                            hardware.mouse.lastClickDoubleClick = true;
-                        }
-                        if (trains[i].accelerationSpeed <= 0 && Math.abs(trains[i].accelerationSpeed) < 0.2) {
-                            trainActions.changeDirection(i, true);
-                        }
-                    } else {
-                        if (clickTimeOut !== undefined && clickTimeOut !== null) {
-                            clearTimeout(clickTimeOut);
-                            clickTimeOut = null;
-                        }
-                        clickTimeOut = setTimeout(
-                            function () {
-                                clickTimeOut = null;
-                                if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                                    hardware.mouse.isHold = false;
-                                }
-                                if (!trains[i].crash) {
-                                    if (trains[i].move && trains[i].accelerationSpeed > 0) {
-                                        trainActions.stop(i);
-                                    } else {
-                                        trainActions.start(i, 50);
-                                    }
-                                }
-                            },
-                            hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
-                        );
-                    }
-                };
-
-                //Three.js
-                trains3D[i] = {};
-                if (objects3D[train.src]) {
-                    trains3D[i].mesh = three.cloneNode(objects3D[train.src], true);
-                    trains3D[i].resize = function () {
-                        const scale = three.calcScale();
-                        trains3D[i].mesh.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                        if (train.assetFlip) {
-                            trains3D[i].mesh.scale.x *= -1;
-                        }
-                        if (trains3D[i].meshFront) {
-                            trains3D[i].meshFront.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                            trains3D[i].meshFront.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                            if (train.assetFlip) {
-                                trains3D[i].meshFront.left.scale.x *= -1;
-                                trains3D[i].meshFront.right.scale.x *= -1;
-                            }
-                        }
-                        if (trains3D[i].meshBack) {
-                            trains3D[i].meshBack.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                            trains3D[i].meshBack.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
-                            if (train.assetFlip) {
-                                trains3D[i].meshBack.left.scale.x *= -1;
-                                trains3D[i].meshBack.right.scale.x *= -1;
-                            }
-                        }
-                        trains3D[i].mesh.position.set(0, 0, 0);
-                        trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
-                    };
-                    trains3D[i].resize();
-                    trains3D[i].mesh.callback = trainCallback;
-                    three.mainGroup.add(trains3D[i].mesh);
-                    if (train.wheels?.front?.use3d && objects3D[train.src + "_front"]) {
-                        trains3D[i].meshFront = {};
-                        trains3D[i].meshFront.left = three.cloneNode(objects3D[train.src + "_front"], true);
-                        trains3D[i].meshFront.right = three.cloneNode(objects3D[train.src + "_front"], true);
-                        trains3D[i].resize();
-                        trains3D[i].meshFront.left.callback = trainCallback;
-                        trains3D[i].meshFront.right.callback = trainCallback;
-                        three.mainGroup.add(trains3D[i].meshFront.left);
-                        three.mainGroup.add(trains3D[i].meshFront.right);
-                    }
-                    if (train.wheels?.back?.use3d && objects3D[train.src + "_back"]) {
-                        trains3D[i].meshBack = {};
-                        trains3D[i].meshBack.left = three.cloneNode(objects3D[train.src + "_back"], true);
-                        trains3D[i].meshBack.right = three.cloneNode(objects3D[train.src + "_back"], true);
-                        trains3D[i].resize();
-                        trains3D[i].meshBack.left.callback = trainCallback;
-                        trains3D[i].meshBack.right.callback = trainCallback;
-                        three.mainGroup.add(trains3D[i].meshBack.left);
-                        three.mainGroup.add(trains3D[i].meshBack.right);
-                    }
-                } else {
-                    var height3D = 0.0125;
-                    trains3D[i].resize = function () {
-                        if (three.mainGroup.getObjectByName("train_" + i)) {
-                            three.mainGroup.remove(trains3D[i].mesh);
-                        }
-                        const scale = three.calcScale();
-                        trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
-                        trains3D[i].mesh.position.set(0, 0, 0);
-                        trains3D[i].positionZ = (scale * height3D) / 2;
-                        trains3D[i].mesh.callback = trainCallback;
-                        trains3D[i].mesh.name = "train_" + i;
-                        three.mainGroup.add(trains3D[i].mesh);
-                    };
-                    trains3D[i].resize();
-                }
-                trains3D[i].cars = [];
-                train.cars.forEach(function (car, j) {
-                    trains3D[i].cars[j] = {};
-                    if (objects3D[car.src]) {
-                        trains3D[i].cars[j].mesh = three.cloneNode(objects3D[car.src], true);
-                        trains3D[i].cars[j].resize = function () {
-                            const scale = three.calcScale();
-                            trains3D[i].cars[j].mesh.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                            if (car.assetFlip) {
-                                trains3D[i].cars[j].mesh.scale.x *= -1;
-                            }
-                            if (trains3D[i].cars[j].meshFront) {
-                                trains3D[i].cars[j].meshFront.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                trains3D[i].cars[j].meshFront.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                if (car.assetFlip) {
-                                    trains3D[i].cars[j].meshFront.left.scale.x *= -1;
-                                    trains3D[i].cars[j].meshFront.right.scale.x *= -1;
-                                }
-                            }
-                            if (trains3D[i].cars[j].meshBack) {
-                                trains3D[i].cars[j].meshBack.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                trains3D[i].cars[j].meshBack.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
-                                if (car.assetFlip) {
-                                    trains3D[i].cars[j].meshBack.left.scale.x *= -1;
-                                    trains3D[i].cars[j].meshBack.right.scale.x *= -1;
-                                }
-                            }
-                            trains3D[i].cars[j].mesh.position.set(0, 0, 0);
-                            trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
-                        };
-                        trains3D[i].cars[j].resize();
-                        trains3D[i].cars[j].mesh.callback = trainCallback;
-                        three.mainGroup.add(trains3D[i].cars[j].mesh);
-                        if (car.wheels?.front?.use3d && objects3D[car.src + "_front"]) {
-                            trains3D[i].cars[j].meshFront = {};
-                            trains3D[i].cars[j].meshFront.left = three.cloneNode(objects3D[car.src + "_front"], true);
-                            trains3D[i].cars[j].meshFront.right = three.cloneNode(objects3D[car.src + "_front"], true);
-                            trains3D[i].cars[j].resize();
-                            trains3D[i].cars[j].meshFront.left.callback = trainCallback;
-                            trains3D[i].cars[j].meshFront.right.callback = trainCallback;
-                            three.mainGroup.add(trains3D[i].cars[j].meshFront.left);
-                            three.mainGroup.add(trains3D[i].cars[j].meshFront.right);
-                        }
-                        if (car.wheels?.back?.use3d && objects3D[car.src + "_back"]) {
-                            trains3D[i].cars[j].meshBack = {};
-                            trains3D[i].cars[j].meshBack.left = three.cloneNode(objects3D[car.src + "_back"], true);
-                            trains3D[i].cars[j].meshBack.right = three.cloneNode(objects3D[car.src + "_back"], true);
-                            trains3D[i].cars[j].resize();
-                            trains3D[i].cars[j].meshBack.left.callback = trainCallback;
-                            trains3D[i].cars[j].meshBack.right.callback = trainCallback;
-                            three.mainGroup.add(trains3D[i].cars[j].meshBack.left);
-                            three.mainGroup.add(trains3D[i].cars[j].meshBack.right);
-                        }
-                    } else {
-                        var height3D = 0.01;
-                        trains3D[i].cars[j].resize = function () {
-                            if (three.mainGroup.getObjectByName("train_" + i + "_car_" + j)) {
-                                three.mainGroup.remove(trains3D[i].cars[j].mesh);
-                            }
-                            const scale = three.calcScale();
-                            trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
-                            trains3D[i].cars[j].mesh.position.set(0, 0, 0);
-                            trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
-                            trains3D[i].cars[j].mesh.callback = trainCallback;
-                            trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
-                            three.mainGroup.add(trains3D[i].cars[j].mesh);
-                        };
-                        trains3D[i].cars[j].resize();
-                    }
-                });
-            });
-            cars.forEach(function (car, i) {
-                const carCallback = function (downIntersects, upIntersects) {
-                    if (hardware.lastInputTouch < hardware.lastInputMouse) {
-                        hardware.mouse.isHold = false;
-                    }
-                    if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
-                        if (clickTimeOut !== undefined && clickTimeOut !== null) {
-                            clearTimeout(clickTimeOut);
-                            clickTimeOut = null;
-                        }
-                        if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                            hardware.mouse.isHold = false;
-                        } else {
-                            hardware.mouse.lastClickDoubleClick = true;
-                        }
-                        if (carParams.init) {
-                            carActions.auto.start();
-                        } else if (carParams.autoModeOff && !cars[i].move && cars[i].backwardsState === 0) {
-                            carActions.manual.backwards(i);
-                        }
-                    } else {
-                        if (clickTimeOut !== undefined && clickTimeOut !== null) {
-                            clearTimeout(clickTimeOut);
-                            clickTimeOut = null;
-                        }
-                        clickTimeOut = setTimeout(
-                            function () {
-                                clickTimeOut = null;
-                                if (hardware.lastInputTouch > hardware.lastInputMouse) {
-                                    hardware.mouse.isHold = false;
-                                }
-                                if (!carCollisionCourse(i, false)) {
-                                    if (carParams.autoModeRuns) {
-                                        carActions.auto.pause();
-                                    } else if (carParams.init || carParams.autoModeOff) {
-                                        if (cars[i].move) {
-                                            carActions.manual.stop(i);
-                                        } else {
-                                            carActions.manual.start(i);
+                                                animateWorker.postMessage({k: "switches", switches: switches});
+                                                break;
                                         }
-                                    } else {
-                                        carActions.auto.resume();
+                                        if (onlineConnection.syncingCounter == onlineConnection.syncingCounterFinal) {
+                                            onlineConnection.send("sync-done");
+                                        }
                                     }
-                                }
-                            },
-                            hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
-                        );
-                    }
-                };
-                cars3D[i] = {};
-                var radius = 0.0036;
-                var height3D = 0.0005;
-                cars3D[i].meshParkingLot = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.5, transparent: true}));
-                cars3D[i].meshParkingLot.rotation.x = Math.PI / 2;
-                cars3D[i].resizeParkingLot = function () {
-                    const scale = three.calcScale();
-                    cars3D[i].meshParkingLot.scale.set(scale, scale, scale);
-                    cars3D[i].meshParkingLot.position.set(scale * ((carWays[i].start[cars[i].startFrame].x - background.width / 2) / background.width), scale * (-(carWays[i].start[cars[i].startFrame].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
-                };
-                cars3D[i].meshParkingLot.callback = function () {
-                    if (carParams.autoModeOff) {
-                        carActions.manual.park(i);
-                    } else {
-                        carActions.auto.end();
-                    }
-                };
-                cars3D[i].meshParkingLot.visible = false;
-                cars3D[i].resizeParkingLot();
-                if (objects3D[car.src]) {
-                    cars3D[i].mesh = three.cloneNode(objects3D[car.src]);
-                    cars3D[i].resize = function () {
-                        const scale = three.calcScale();
-                        cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
-                        cars3D[i].mesh.position.set(0, 0, 0);
-                        cars3D[i].positionZ = new THREE.Box3().setFromObject(cars3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
-                        cars3D[i].resizeParkingLot();
+                                    break;
+                                case "sync-done":
+                                    onlineConnection.stop = onlineConnection.paused;
+                                    onlineConnection.syncing = false;
+                                    if (!onlineConnection.stop) {
+                                        multiplayerMode.waitingClock.visible = false;
+                                    }
+                                    if (json.errorLevel !== ERROR_LEVEL_OKAY) {
+                                        notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                    }
+                                    if (!onlineConnection.paused) {
+                                        if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                            clearTimeout(multiplayerMode.syncRequestTimeout);
+                                        }
+                                        if (onlineConnection.locomotive) {
+                                            multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
+                                        }
+                                        animateWorker.postMessage({k: "resume"});
+                                    }
+                                    break;
+                                case "pause":
+                                    if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                        clearTimeout(multiplayerMode.syncRequestTimeout);
+                                    }
+                                    if (!onlineConnection.stop) {
+                                        multiplayerMode.waitingClock.init();
+                                        onlineConnection.stop = true;
+                                    }
+                                    onlineConnection.paused = true;
+                                    audioControl.playAndPauseAll();
+                                    animateWorker.postMessage({k: "pause"});
+                                    notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                    break;
+                                case "resume":
+                                    if (onlineConnection.paused) {
+                                        if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                            clearTimeout(multiplayerMode.syncRequestTimeout);
+                                        }
+                                        if (onlineConnection.locomotive) {
+                                            multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
+                                        }
+                                        onlineConnection.stop = onlineConnection.syncing;
+                                        onlineConnection.paused = false;
+                                        if (!onlineConnection.stop) {
+                                            multiplayerMode.waitingClock.visible = false;
+                                        }
+                                        audioControl.playAndPauseAll();
+                                        notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                        animateWorker.postMessage({k: "resume"});
+                                    }
+                                    break;
+                                case "leave":
+                                    notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                    break;
+                                case "chat-msg":
+                                    chatInnerNone.style.display = "none";
+                                    chatControlsReactions.style.display = "";
+                                    const chatInnerContainerMsg = document.createElement("div");
+                                    const chatInnerPlayerName = document.createElement(onlineConnection.sessionId != json.sessionId ? "i" : "b");
+                                    const chatInnerMessageImg = document.createElement("img");
+                                    const chatInnerMessage = document.createElement("p");
+                                    const chatInnerSeparator = document.createElement("br");
+                                    chatInnerContainerMsg.className = "chat-inner-container";
+                                    chatInnerPlayerName.textContent = (onlineConnection.sessionId != json.sessionId ? json.sessionName : json.sessionName + " (" + getString("appScreenTeamplayChatMe") + ")") + " - " + new Date().toLocaleTimeString();
+                                    var isSticker = json.data.match(/^\{\{sticker=[0-9]+\}\}$/);
+                                    var isTrainSticker = json.data.match(/^\{\{stickerTrain=[0-9]+\}\}$/);
+                                    if (isSticker || isTrainSticker) {
+                                        var stickerNumber = json.data.replace(/[^0-9]/g, "");
+                                        if ((isSticker && stickerNumber < multiplayerMode.chatSticker) || (isTrainSticker && stickerNumber < trains.length)) {
+                                            chatInnerMessageImg.src = "./assets/chat_" + (isTrainSticker ? "train_" : "sticker_") + stickerNumber + ".png";
+                                            chatInnerMessageImg.className = isTrainSticker ? "train-sticker" : "sticker";
+                                            json.data = isTrainSticker ? getString(["appScreenTrainIcons", parseInt(stickerNumber, 10)]) + " " + getString(["appScreenTrainNames", parseInt(stickerNumber, 10)]) : formatJSString(getString("appScreenTeamplayChatStickerNote"), getString(["appScreenTeamplayChatStickerEmojis", parseInt(stickerNumber, 10)]));
+                                        } else {
+                                            isSticker = isTrainSticker = false;
+                                        }
+                                    }
+                                    chatInnerMessage.textContent = json.data;
+                                    chatInnerContainerMsg.appendChild(chatInnerPlayerName);
+                                    chatInnerContainerMsg.appendChild(chatInnerSeparator);
+                                    if (isSticker || isTrainSticker) {
+                                        chatInnerContainerMsg.appendChild(chatInnerMessageImg);
+                                    }
+                                    if (!isSticker) {
+                                        chatInnerContainerMsg.appendChild(chatInnerMessage);
+                                    }
+                                    chatInnerMessages.appendChild(chatInnerContainerMsg);
+                                    if (onlineConnection.sessionId != json.sessionId && chat.style.display == "") {
+                                        notify("#tp-chat-notifier", json.sessionName + ": " + json.data, NotificationPriority.Default, 4000, null, null, client.height, NotificationChannel.MultiplayerChat + json.sessionId);
+                                    }
+                                    chat.resizeChat();
+                                    break;
+                                case "unknown":
+                                    notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y + menus.outerContainer.height);
+                                    break;
+                            }
+                        };
+                        onlineConnection.socket.onerror = function () {
+                            showNewGameLink();
+                            notify(
+                                "#canvas-notifier",
+                                getString("appScreenTeamplayConnectionError", "!"),
+                                NotificationPriority.High,
+                                6000,
+                                function () {
+                                    followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                },
+                                getString("appScreenFurtherInformation"),
+                                client.height
+                            );
+                        };
                     };
-                    cars3D[i].resize();
-                    cars3D[i].mesh.callback = carCallback;
-                    three.mainGroup.add(cars3D[i].mesh);
-                } else {
-                    var height3D = 0.005;
-                    cars3D[i].resize = function () {
-                        if (three.mainGroup.getObjectByName("car_" + i)) {
-                            three.mainGroup.remove(cars3D[i].mesh);
-                        }
-                        const scale = three.calcScale();
-                        cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
-                        cars3D[i].mesh.position.set(0, 0, 0);
-                        cars3D[i].positionZ = (scale * height3D) / 2;
-                        cars3D[i].mesh.callback = carCallback;
-                        cars3D[i].mesh.name = "car_" + i;
-                        three.mainGroup.add(cars3D[i].mesh);
-                        cars3D[i].resizeParkingLot();
+                    onlineConnection.gameId = getQueryStringValue("id");
+                    onlineConnection.gameKey = getQueryStringValue("key");
+                    (document.getElementById("setup") as HTMLElement).onmousemove = function (event) {
+                        (document.getElementById("setup-ball") as HTMLElement).style.left = event.pageX + "px";
+                        (document.getElementById("setup-ball") as HTMLElement).style.top = event.pageY + "px";
                     };
-                    cars3D[i].resize();
+                    (document.getElementById("setup") as HTMLElement).onmouseout = function (_event) {
+                        (document.getElementById("setup-ball") as HTMLElement).style.left = "-1vw";
+                        (document.getElementById("setup-ball") as HTMLElement).style.top = "-1vw";
+                    };
+                    onlineConnection.connect();
                 }
-                three.mainGroup.add(cars3D[i].meshParkingLot);
-            });
-            if (!gui.demo) {
-                Object.keys(switches).forEach(function (key) {
-                    switches3D[key] = {};
-                    Object.keys(switches[key]).forEach(function (currentKey) {
-                        switches3D[key][currentKey] = {};
 
-                        const radius = 0.01;
-                        const length = radius * 1.25;
-                        const height3D = 0.0005;
-
-                        const meshCallback = function () {
+                //Initialize trains
+                switches = message.data.switches;
+                rotationPoints = message.data.rotationPoints;
+                trains = message.data.trains;
+                trains3D = [];
+                trains.forEach(function (train, i) {
+                    const trainCallback = function (downIntersects, upIntersects) {
+                        if (hardware.lastInputTouch < hardware.lastInputMouse) {
+                            hardware.mouse.isHold = false;
+                        }
+                        if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                            if (clickTimeOut !== undefined && clickTimeOut !== null) {
+                                clearTimeout(clickTimeOut);
+                                clickTimeOut = null;
+                            }
+                            if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                hardware.mouse.isHold = false;
+                            } else {
+                                hardware.mouse.lastClickDoubleClick = true;
+                            }
+                            if (trains[i].accelerationSpeed <= 0 && Math.abs(trains[i].accelerationSpeed) < 0.2) {
+                                trainActions.changeDirection(i, true);
+                            }
+                        } else {
                             if (clickTimeOut !== undefined && clickTimeOut !== null) {
                                 clearTimeout(clickTimeOut);
                                 clickTimeOut = null;
@@ -7822,310 +7587,584 @@ function init(state: "load" | "reload" = "reload") {
                             clickTimeOut = setTimeout(
                                 function () {
                                     clickTimeOut = null;
-                                    hardware.mouse.isHold = false;
-                                    switchActions.turn(key, currentKey);
+                                    if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                        hardware.mouse.isHold = false;
+                                    }
+                                    if (!trains[i].crash) {
+                                        if (trains[i].move && trains[i].accelerationSpeed > 0) {
+                                            trainActions.stop(i);
+                                        } else {
+                                            trainActions.start(i, 50);
+                                        }
+                                    }
                                 },
-                                hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
+                                hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
                             );
-                        };
-
-                        switches3D[key][currentKey].circleMesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.25, transparent: true}));
-                        switches3D[key][currentKey].circleMesh.rotation.x = Math.PI / 2;
-                        switches3D[key][currentKey].circleMesh.callback = meshCallback;
-                        switches3D[key][currentKey].circleMeshSmall = new THREE.Mesh(new THREE.CylinderGeometry(radius / 8, radius / 8, radius / 4, 24), new THREE.MeshBasicMaterial({color: 0xffffff}));
-                        switches3D[key][currentKey].circleMeshSmall.rotation.x = Math.PI / 2;
-                        switches3D[key][currentKey].circleMeshSmall.callback = meshCallback;
-                        switches3D[key][currentKey].squareMeshHighlight = new THREE.Mesh(new THREE.BoxGeometry(length * 1.25, radius / 4, radius / 4), new THREE.MeshBasicMaterial({color: 0xffffff}));
-                        switches3D[key][currentKey].squareMeshHighlight.rotation.x = Math.PI / 2;
-                        switches3D[key][currentKey].squareMeshHighlight.callback = meshCallback;
-                        switches3D[key][currentKey].squareMeshNormal = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
-                        switches3D[key][currentKey].squareMeshNormal.rotation.x = Math.PI / 2;
-                        switches3D[key][currentKey].squareMeshNormal.callback = meshCallback;
-                        switches3D[key][currentKey].squareMeshTurned = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
-                        switches3D[key][currentKey].squareMeshTurned.rotation.x = Math.PI / 2;
-                        switches3D[key][currentKey].squareMeshTurned.callback = meshCallback;
-                        switches3D[key][currentKey].resize = function () {
-                            const scale = three.calcScale();
-                            switches3D[key][currentKey].circleMesh.scale.set(scale, scale, scale);
-                            switches3D[key][currentKey].circleMeshSmall.scale.set(scale, scale, scale);
-                            switches3D[key][currentKey].squareMeshHighlight.scale.set(scale, scale, scale);
-                            switches3D[key][currentKey].squareMeshNormal.scale.set(scale, scale, scale);
-                            switches3D[key][currentKey].squareMeshTurned.scale.set(scale, scale, scale);
-                            switches3D[key][currentKey].circleMesh.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
-                            switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
-                        };
-                        switches3D[key][currentKey].resize();
-                        three.mainGroup.add(switches3D[key][currentKey].circleMesh);
-                        three.mainGroup.add(switches3D[key][currentKey].circleMeshSmall);
-                        three.mainGroup.add(switches3D[key][currentKey].squareMeshHighlight);
-                        three.mainGroup.add(switches3D[key][currentKey].squareMeshNormal);
-                        three.mainGroup.add(switches3D[key][currentKey].squareMeshTurned);
-                    });
-                });
-            }
-
-            //Calc and show UI
-            calcClassicUIElements();
-            calcControlCenter();
-            drawMenu("menu-switch");
-
-            document.fonts.ready.then(() => {
-                //Recalc canvas fonts (font loading may take longer than resize)
-                calcClassicUIElements();
-                calcControlCenter();
-                three.followCamControls.recalc();
-            });
-
-            //Reset mode switch block
-            if (modeSwitchingReloadTimeout !== undefined && modeSwitchingReloadTimeout !== null) {
-                clearTimeout(modeSwitchingReloadTimeout);
-            }
-            modeSwitching = false;
-
-            //Trigger resize
-            window.addEventListener("resize", requestResize);
-            requestResize();
-
-            //Initialize canvas
-            drawInterval = message.data.animateInterval;
-            drawObjects();
-
-            //Gestures
-            if (gui.demo) {
-                const demoModeTimeoutDelay = 90000;
-                demoMode.reloadTimeout = setTimeout(function () {
-                    if (carParams.autoModeRuns) {
-                        sessionStorage.setItem("demoCars", JSON.stringify(cars));
-                        sessionStorage.setItem("demoCarParams", JSON.stringify(carParams));
-                        sessionStorage.setItem("demoBg", JSON.stringify(background));
-                    }
-                    if (Object.hasOwn(demoMode, "exitTimeout")) {
-                        var elapsedTime = demoModeTimeoutDelay;
-                        const storedElapsedTime = parseInt(sessionStorage.getItem("demoElapsedTime"), 10);
-                        if (Number.isInteger(storedElapsedTime)) {
-                            elapsedTime += storedElapsedTime;
                         }
-                        if (elapsedTime >= demoMode.exitTimeout) {
-                            sessionStorage.removeItem("demoElapsedTime");
-                            SYSTEM_TOOLS.exitApp();
-                            demoMode.reloadOnExitTimeout = setTimeout(function () {
-                                demoMode.reload();
-                            }, 500);
-                        } else {
-                            sessionStorage.setItem("demoElapsedTime", JSON.stringify(elapsedTime));
-                            demoMode.reload();
+                    };
+
+                    //Three.js
+                    trains3D[i] = {};
+                    if (objects3D[train.src]) {
+                        trains3D[i].mesh = three.cloneNode(objects3D[train.src], true);
+                        trains3D[i].resize = function () {
+                            const scale = three.calcScale();
+                            trains3D[i].mesh.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                            if (train.assetFlip) {
+                                trains3D[i].mesh.scale.x *= -1;
+                            }
+                            if (trains3D[i].meshFront) {
+                                trains3D[i].meshFront.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                trains3D[i].meshFront.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                if (train.assetFlip) {
+                                    trains3D[i].meshFront.left.scale.x *= -1;
+                                    trains3D[i].meshFront.right.scale.x *= -1;
+                                }
+                            }
+                            if (trains3D[i].meshBack) {
+                                trains3D[i].meshBack.left.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                trains3D[i].meshBack.right.scale.set(scale * (trains[i].width / background.width), scale * (trains[i].width / background.width), scale * (trains[i].width / background.width));
+                                if (train.assetFlip) {
+                                    trains3D[i].meshBack.left.scale.x *= -1;
+                                    trains3D[i].meshBack.right.scale.x *= -1;
+                                }
+                            }
+                            trains3D[i].mesh.position.set(0, 0, 0);
+                            trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
+                        };
+                        trains3D[i].resize();
+                        trains3D[i].mesh.callback = trainCallback;
+                        three.mainGroup.add(trains3D[i].mesh);
+                        if (train.wheels?.front?.use3d && objects3D[train.src + "_front"]) {
+                            trains3D[i].meshFront = {};
+                            trains3D[i].meshFront.left = three.cloneNode(objects3D[train.src + "_front"], true);
+                            trains3D[i].meshFront.right = three.cloneNode(objects3D[train.src + "_front"], true);
+                            trains3D[i].resize();
+                            trains3D[i].meshFront.left.callback = trainCallback;
+                            trains3D[i].meshFront.right.callback = trainCallback;
+                            three.mainGroup.add(trains3D[i].meshFront.left);
+                            three.mainGroup.add(trains3D[i].meshFront.right);
+                        }
+                        if (train.wheels?.back?.use3d && objects3D[train.src + "_back"]) {
+                            trains3D[i].meshBack = {};
+                            trains3D[i].meshBack.left = three.cloneNode(objects3D[train.src + "_back"], true);
+                            trains3D[i].meshBack.right = three.cloneNode(objects3D[train.src + "_back"], true);
+                            trains3D[i].resize();
+                            trains3D[i].meshBack.left.callback = trainCallback;
+                            trains3D[i].meshBack.right.callback = trainCallback;
+                            three.mainGroup.add(trains3D[i].meshBack.left);
+                            three.mainGroup.add(trains3D[i].meshBack.right);
                         }
                     } else {
-                        demoMode.reload();
+                        var height3D = 0.0125;
+                        trains3D[i].resize = function () {
+                            if (three.mainGroup.getObjectByName("train_" + i)) {
+                                three.mainGroup.remove(trains3D[i].mesh);
+                            }
+                            const scale = three.calcScale();
+                            trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
+                            trains3D[i].mesh.position.set(0, 0, 0);
+                            trains3D[i].positionZ = (scale * height3D) / 2;
+                            trains3D[i].mesh.callback = trainCallback;
+                            trains3D[i].mesh.name = "train_" + i;
+                            three.mainGroup.add(trains3D[i].mesh);
+                        };
+                        trains3D[i].resize();
                     }
-                }, demoModeTimeoutDelay);
-                if (!demoMode.standalone) {
-                    document.addEventListener("keyup", demoMode.leaveKeyUp);
-                    document.addEventListener("touchstart", demoMode.leaveTimeoutStart, {passive: false});
-                    document.addEventListener("touchend", demoMode.leaveTimeoutEnd, {passive: false});
-                    document.addEventListener("touchcancel", demoMode.leaveTimeoutEnd, {passive: false});
-                    document.addEventListener("mousedown", demoMode.leaveTimeoutStart, {passive: false});
-                    document.addEventListener("mouseup", demoMode.leaveTimeoutEnd, {passive: false});
-                    document.addEventListener("mouseout", demoMode.leaveTimeoutEnd, {passive: false});
-                }
-            } else {
-                canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
-                canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
-                canvasForeground.addEventListener("touchend", getTouchEnd, {passive: false});
-                canvasForeground.addEventListener("touchcancel", getTouchCancel, {passive: false});
-                canvasForeground.addEventListener("mousemove", onMouseMove, {passive: false});
-                canvasForeground.addEventListener("mousedown", onMouseDown, {passive: false});
-                canvasForeground.addEventListener("mouseup", onMouseUp, {passive: false});
-                canvasForeground.addEventListener("mouseout", onMouseOut, {passive: false});
-                canvasForeground.addEventListener("mouseenter", onMouseEnter, {passive: false});
-                canvasForeground.addEventListener("contextmenu", onMouseRight, {passive: false});
-                canvasForeground.addEventListener("wheel", onMouseWheel, {passive: false});
-                document.addEventListener("keydown", onKeyDown);
-                document.addEventListener("keyup", onKeyUp);
-                document.removeEventListener("contextmenu", preventEvent);
-                document.removeEventListener("wheel", preventEvent);
-                document.removeEventListener("keydown", preventKeyZoomDuringLoad);
-            }
-            document.removeEventListener("keyup", preventKeyZoomDuringLoad);
-
-            //Ready event
-            if (state == "load") {
-                const event = new CustomEvent("moroway-app-ready");
-                document.dispatchEvent(event);
-            }
-
-            //Show app
-            if (gui.demo) {
-                loadingAnimation.hide();
-            } else if (!onlineGame.enabled) {
-                loadingAnimation.fade(function () {
-                    var localAppData = getLocalAppDataCopy();
-                    if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.three) {
-                        notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NotificationPriority.High, 3000, null, null, client.y + menus.outerContainer.height);
-                    } else if (state == "load" && localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor))) {
-                        const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
-                        document.dispatchEvent(event);
-                    } else if (state == "load") {
-                        const event = new CustomEvent("moroway-app-ready-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
-                        document.dispatchEvent(event);
-                    }
-                    setLocalAppDataCopy();
-                });
-            }
-        } else if (message.data.k == "setTrains") {
-            rotationPoints = message.data.rotationPoints;
-            message.data.trains.forEach(function (train, i) {
-                trains[i].x = train.x;
-                trains[i].y = train.y;
-                trains[i].front.state = train.front.state;
-                trains[i].back.state = train.back.state;
-                trains[i].front.x = train.front.x;
-                trains[i].front.y = train.front.y;
-                trains[i].front.angle = train.front.angle;
-                trains[i].back.x = train.back.x;
-                trains[i].back.y = train.back.y;
-                trains[i].back.angle = train.back.angle;
-                trains[i].width = train.width;
-                trains[i].height = train.height;
-                trains[i].displayAngle = train.displayAngle;
-                trains[i].outerX = train.outerX;
-                trains[i].outerY = train.outerY;
-                trains[i].assetFlip = train.assetFlip;
-                trains[i].circleFamily = train.circleFamily;
-                trains[i].move = train.move;
-                trains[i].lastDirectionChange = train.lastDirectionChange;
-                trains[i].speedInPercent = train.speedInPercent;
-                trains[i].currentSpeedInPercent = train.currentSpeedInPercent;
-                trains[i].accelerationSpeed = train.accelerationSpeed;
-                trains[i].accelerationSpeedCustom = train.accelerationSpeedCustom;
-                trains[i].standardDirection = train.standardDirection;
-                trains[i].crash = train.crash;
-                trains[i].mute = train.mute;
-                trains[i].volume = train.volume;
-                trains[i].invisible = train.invisible;
-                trains[i].opacity = train.opacity;
-                trains[i].wheels = train.wheels;
-                train.cars.forEach(function (car, j) {
-                    trains[i].cars[j].x = car.x;
-                    trains[i].cars[j].y = car.y;
-                    trains[i].cars[j].width = car.width;
-                    trains[i].cars[j].height = car.height;
-                    trains[i].cars[j].displayAngle = car.displayAngle;
-                    trains[i].cars[j].assetFlip = car.assetFlip;
-                    trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
-                    trains[i].cars[j].invisible = car.invisible;
-                    trains[i].cars[j].opacity = car.opacity;
-                    trains[i].cars[j].front.state = car.front.state;
-                    trains[i].cars[j].back.state = car.back.state;
-                    trains[i].cars[j].front.x = car.front.x;
-                    trains[i].cars[j].front.y = car.front.y;
-                    trains[i].cars[j].front.angle = car.front.angle;
-                    trains[i].cars[j].back.x = car.back.x;
-                    trains[i].cars[j].back.y = car.back.y;
-                    trains[i].cars[j].back.angle = car.back.angle;
-                    trains[i].cars[j].wheels = car.wheels;
-                });
-                if (train.move && !train.mute && audioControl.mayPlay()) {
-                    if (!audioControl.existsObject("train", i)) {
-                        audioControl.startObject("train", i, true);
-                    }
-                    if (train.currentSpeedInPercent == undefined) {
-                        train.currentSpeedInPercent = 0;
-                    }
-                    audioControl.setObjectVolume("train", i, train.volume);
-                } else if (audioControl.existsObject("train", i)) {
-                    audioControl.stopObject("train", i);
-                }
-            });
-            if (message.data.resized) {
-                trains3D.forEach(function (train) {
-                    if (train.resize) {
-                        train.resize();
-                    }
-                    train.cars.forEach(function (car) {
-                        if (car.resize) {
-                            car.resize();
+                    trains3D[i].cars = [];
+                    train.cars.forEach(function (car, j) {
+                        trains3D[i].cars[j] = {};
+                        if (objects3D[car.src]) {
+                            trains3D[i].cars[j].mesh = three.cloneNode(objects3D[car.src], true);
+                            trains3D[i].cars[j].resize = function () {
+                                const scale = three.calcScale();
+                                trains3D[i].cars[j].mesh.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                if (car.assetFlip) {
+                                    trains3D[i].cars[j].mesh.scale.x *= -1;
+                                }
+                                if (trains3D[i].cars[j].meshFront) {
+                                    trains3D[i].cars[j].meshFront.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    trains3D[i].cars[j].meshFront.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    if (car.assetFlip) {
+                                        trains3D[i].cars[j].meshFront.left.scale.x *= -1;
+                                        trains3D[i].cars[j].meshFront.right.scale.x *= -1;
+                                    }
+                                }
+                                if (trains3D[i].cars[j].meshBack) {
+                                    trains3D[i].cars[j].meshBack.left.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    trains3D[i].cars[j].meshBack.right.scale.set(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].width / background.width));
+                                    if (car.assetFlip) {
+                                        trains3D[i].cars[j].meshBack.left.scale.x *= -1;
+                                        trains3D[i].cars[j].meshBack.right.scale.x *= -1;
+                                    }
+                                }
+                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
+                                trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
+                            };
+                            trains3D[i].cars[j].resize();
+                            trains3D[i].cars[j].mesh.callback = trainCallback;
+                            three.mainGroup.add(trains3D[i].cars[j].mesh);
+                            if (car.wheels?.front?.use3d && objects3D[car.src + "_front"]) {
+                                trains3D[i].cars[j].meshFront = {};
+                                trains3D[i].cars[j].meshFront.left = three.cloneNode(objects3D[car.src + "_front"], true);
+                                trains3D[i].cars[j].meshFront.right = three.cloneNode(objects3D[car.src + "_front"], true);
+                                trains3D[i].cars[j].resize();
+                                trains3D[i].cars[j].meshFront.left.callback = trainCallback;
+                                trains3D[i].cars[j].meshFront.right.callback = trainCallback;
+                                three.mainGroup.add(trains3D[i].cars[j].meshFront.left);
+                                three.mainGroup.add(trains3D[i].cars[j].meshFront.right);
+                            }
+                            if (car.wheels?.back?.use3d && objects3D[car.src + "_back"]) {
+                                trains3D[i].cars[j].meshBack = {};
+                                trains3D[i].cars[j].meshBack.left = three.cloneNode(objects3D[car.src + "_back"], true);
+                                trains3D[i].cars[j].meshBack.right = three.cloneNode(objects3D[car.src + "_back"], true);
+                                trains3D[i].cars[j].resize();
+                                trains3D[i].cars[j].meshBack.left.callback = trainCallback;
+                                trains3D[i].cars[j].meshBack.right.callback = trainCallback;
+                                three.mainGroup.add(trains3D[i].cars[j].meshBack.left);
+                                three.mainGroup.add(trains3D[i].cars[j].meshBack.right);
+                            }
+                        } else {
+                            var height3D = 0.01;
+                            trains3D[i].cars[j].resize = function () {
+                                if (three.mainGroup.getObjectByName("train_" + i + "_car_" + j)) {
+                                    three.mainGroup.remove(trains3D[i].cars[j].mesh);
+                                }
+                                const scale = three.calcScale();
+                                trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
+                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
+                                trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
+                                trains3D[i].cars[j].mesh.callback = trainCallback;
+                                trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
+                                three.mainGroup.add(trains3D[i].cars[j].mesh);
+                            };
+                            trains3D[i].cars[j].resize();
                         }
                     });
                 });
-                if (!gui.demo) {
+                cars.forEach(function (car, i) {
+                    const carCallback = function (downIntersects, upIntersects) {
+                        if (hardware.lastInputTouch < hardware.lastInputMouse) {
+                            hardware.mouse.isHold = false;
+                        }
+                        if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && upIntersects && downIntersects && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && downIntersects && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                            if (clickTimeOut !== undefined && clickTimeOut !== null) {
+                                clearTimeout(clickTimeOut);
+                                clickTimeOut = null;
+                            }
+                            if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                hardware.mouse.isHold = false;
+                            } else {
+                                hardware.mouse.lastClickDoubleClick = true;
+                            }
+                            if (carParams.init) {
+                                carActions.auto.start();
+                            } else if (carParams.autoModeOff && !cars[i].move && cars[i].backwardsState === 0) {
+                                carActions.manual.backwards(i);
+                            }
+                        } else {
+                            if (clickTimeOut !== undefined && clickTimeOut !== null) {
+                                clearTimeout(clickTimeOut);
+                                clickTimeOut = null;
+                            }
+                            clickTimeOut = setTimeout(
+                                function () {
+                                    clickTimeOut = null;
+                                    if (hardware.lastInputTouch > hardware.lastInputMouse) {
+                                        hardware.mouse.isHold = false;
+                                    }
+                                    if (!carCollisionCourse(i, false)) {
+                                        if (carParams.autoModeRuns) {
+                                            carActions.auto.pause();
+                                        } else if (carParams.init || carParams.autoModeOff) {
+                                            if (cars[i].move) {
+                                                carActions.manual.stop(i);
+                                            } else {
+                                                carActions.manual.start(i);
+                                            }
+                                        } else {
+                                            carActions.auto.resume();
+                                        }
+                                    }
+                                },
+                                hardware.lastInputTouch > hardware.lastInputMouse ? longTouchWaitTime : doubleClickWaitTime
+                            );
+                        }
+                    };
+                    cars3D[i] = {};
+                    var radius = 0.0036;
+                    var height3D = 0.0005;
+                    cars3D[i].meshParkingLot = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.5, transparent: true}));
+                    cars3D[i].meshParkingLot.rotation.x = Math.PI / 2;
+                    cars3D[i].resizeParkingLot = function () {
+                        const scale = three.calcScale();
+                        cars3D[i].meshParkingLot.scale.set(scale, scale, scale);
+                        cars3D[i].meshParkingLot.position.set(scale * ((carWays[i].start[cars[i].startFrame].x - background.width / 2) / background.width), scale * (-(carWays[i].start[cars[i].startFrame].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
+                    };
+                    cars3D[i].meshParkingLot.callback = function () {
+                        if (carParams.autoModeOff) {
+                            carActions.manual.park(i);
+                        } else {
+                            carActions.auto.end();
+                        }
+                    };
+                    cars3D[i].meshParkingLot.visible = false;
+                    cars3D[i].resizeParkingLot();
+                    if (objects3D[car.src]) {
+                        cars3D[i].mesh = three.cloneNode(objects3D[car.src]);
+                        cars3D[i].resize = function () {
+                            const scale = three.calcScale();
+                            cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
+                            cars3D[i].mesh.position.set(0, 0, 0);
+                            cars3D[i].positionZ = new THREE.Box3().setFromObject(cars3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
+                            cars3D[i].resizeParkingLot();
+                        };
+                        cars3D[i].resize();
+                        cars3D[i].mesh.callback = carCallback;
+                        three.mainGroup.add(cars3D[i].mesh);
+                    } else {
+                        var height3D = 0.005;
+                        cars3D[i].resize = function () {
+                            if (three.mainGroup.getObjectByName("car_" + i)) {
+                                three.mainGroup.remove(cars3D[i].mesh);
+                            }
+                            const scale = three.calcScale();
+                            cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
+                            cars3D[i].mesh.position.set(0, 0, 0);
+                            cars3D[i].positionZ = (scale * height3D) / 2;
+                            cars3D[i].mesh.callback = carCallback;
+                            cars3D[i].mesh.name = "car_" + i;
+                            three.mainGroup.add(cars3D[i].mesh);
+                            cars3D[i].resizeParkingLot();
+                        };
+                        cars3D[i].resize();
+                    }
+                    three.mainGroup.add(cars3D[i].meshParkingLot);
+                });
+                if (currentMode != Modes.DEMO) {
                     Object.keys(switches).forEach(function (key) {
+                        switches3D[key] = {};
                         Object.keys(switches[key]).forEach(function (currentKey) {
-                            switches3D[key][currentKey].resize();
-                        });
-                    });
-                }
-                if (onlineGame.enabled) {
-                    if (onlineGame.resizedTimeout != undefined && onlineGame.resizedTimeout != null) {
-                        clearTimeout(onlineGame.resizedTimeout);
-                    }
-                    onlineGame.resizedTimeout = setTimeout(function () {
-                        onlineGame.resized = false;
-                    }, 3000);
-                }
-                resized = false;
-                if (APP_DATA.debug) {
-                    animateWorker.postMessage({k: "debug"});
-                }
-            }
-        } else if (message.data.k == "trainCrash") {
-            actionSync("trains", message.data.i, [{move: false}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
-            actionSync("train-crash");
-            if (audioControl.existsObject("trainCrash")) {
-                audioControl.stopObject("trainCrash");
-            }
-            if (audioControl.mayPlay()) {
-                audioControl.startObject("trainCrash", null, false);
-            }
-        } else if (message.data.k == "switches") {
-            switches = message.data.switches;
-        } else if (message.data.k == "sync-ready") {
-            rotationPoints = message.data.rotationPoints;
-            trains = message.data.trains;
-            onlineConnection.send("sync-ready");
-        } else if (message.data.k == "save-game") {
-            if (getSetting("saveGame") && !onlineGame.enabled && !gui.demo) {
-                try {
-                    localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
-                    var saveSwitches = {};
-                    Object.keys(switches).forEach(function (key) {
-                        saveSwitches[key] = {};
-                        Object.keys(switches[key]).forEach(function (side) {
-                            saveSwitches[key][side] = switches[key][side].turned;
-                        });
-                    });
-                    localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
-                    if (cars.length == carWays.length && cars.length > 0) {
-                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
-                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
-                    }
-                    localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
-                } catch (e) {
-                    if (APP_DATA.debug) {
-                        console.error(e.name, e.message);
-                    }
-                    notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y + menus.outerContainer.height);
-                }
-                animateWorker.postMessage({k: "game-saved"});
-            }
-        } else if (message.data.k == "debug") {
-            switchParams.beforeFac = message.data.switchesBeforeFac;
-            switchParams.beforeAddSidings = message.data.switchesBeforeAddSidings;
-            if (!debug.trainReady) {
-                console.debug("Animate Interval:", message.data.animateInterval);
-            }
-            console.debug("Trains: ", message.data.trains);
-        } else if (message.data.k == "debugDrawPoints") {
-            debug.drawPoints = message.data.p;
-            debug.drawPointsCrash = message.data.pC;
-            debug.trainCollisions = message.data.tC;
-            debug.trainReady = true;
-        }
-    };
-    animateWorker.postMessage({k: "start", background: background, switches: switches, online: onlineGame.enabled, onlineInterval: onlineGame.animateInterval, demo: gui.demo});
-}
+                            switches3D[key][currentKey] = {};
 
-window.addEventListener("load", function () {
+                            const radius = 0.01;
+                            const length = radius * 1.25;
+                            const height3D = 0.0005;
+
+                            const meshCallback = function () {
+                                if (clickTimeOut !== undefined && clickTimeOut !== null) {
+                                    clearTimeout(clickTimeOut);
+                                    clickTimeOut = null;
+                                }
+                                clickTimeOut = setTimeout(
+                                    function () {
+                                        clickTimeOut = null;
+                                        hardware.mouse.isHold = false;
+                                        switchActions.turn(key, currentKey);
+                                    },
+                                    hardware.lastInputTouch > hardware.lastInputMouse ? doubleTouchWaitTime : 0
+                                );
+                            };
+
+                            switches3D[key][currentKey].circleMesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height3D, 48), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.25, transparent: true}));
+                            switches3D[key][currentKey].circleMesh.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].circleMesh.callback = meshCallback;
+                            switches3D[key][currentKey].circleMeshSmall = new THREE.Mesh(new THREE.CylinderGeometry(radius / 8, radius / 8, radius / 4, 24), new THREE.MeshBasicMaterial({color: 0xffffff}));
+                            switches3D[key][currentKey].circleMeshSmall.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].circleMeshSmall.callback = meshCallback;
+                            switches3D[key][currentKey].squareMeshHighlight = new THREE.Mesh(new THREE.BoxGeometry(length * 1.25, radius / 4, radius / 4), new THREE.MeshBasicMaterial({color: 0xffffff}));
+                            switches3D[key][currentKey].squareMeshHighlight.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].squareMeshHighlight.callback = meshCallback;
+                            switches3D[key][currentKey].squareMeshNormal = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
+                            switches3D[key][currentKey].squareMeshNormal.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].squareMeshNormal.callback = meshCallback;
+                            switches3D[key][currentKey].squareMeshTurned = new THREE.Mesh(new THREE.BoxGeometry(length, radius / 6, radius / 6), new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.45, transparent: true}));
+                            switches3D[key][currentKey].squareMeshTurned.rotation.x = Math.PI / 2;
+                            switches3D[key][currentKey].squareMeshTurned.callback = meshCallback;
+                            switches3D[key][currentKey].resize = function () {
+                                const scale = three.calcScale();
+                                switches3D[key][currentKey].circleMesh.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].circleMeshSmall.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].squareMeshHighlight.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].squareMeshNormal.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].squareMeshTurned.scale.set(scale, scale, scale);
+                                switches3D[key][currentKey].circleMesh.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
+                                switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
+                            };
+                            switches3D[key][currentKey].resize();
+                            three.mainGroup.add(switches3D[key][currentKey].circleMesh);
+                            three.mainGroup.add(switches3D[key][currentKey].circleMeshSmall);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshHighlight);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshNormal);
+                            three.mainGroup.add(switches3D[key][currentKey].squareMeshTurned);
+                        });
+                    });
+                }
+
+                //Calc and show UI
+                calcClassicUIElements();
+                calcControlCenter();
+                drawMenu("menu-switch");
+
+                document.fonts.ready.then(() => {
+                    //Recalc canvas fonts (font loading may take longer than resize)
+                    calcClassicUIElements();
+                    calcControlCenter();
+                    three.followCamControls.recalc();
+                });
+
+                //Reset mode switch block
+                if (modeSwitchingReloadTimeout !== undefined && modeSwitchingReloadTimeout !== null) {
+                    clearTimeout(modeSwitchingReloadTimeout);
+                }
+                modeSwitching = false;
+
+                //Trigger resize
+                window.addEventListener("resize", requestResize);
+                requestResize();
+
+                //Initialize canvas
+                drawInterval = message.data.animateInterval;
+                drawObjects();
+
+                //Gestures
+                if (currentMode == Modes.DEMO) {
+                    const demoModeTimeoutDelay = 90000;
+                    demoMode.reloadTimeout = setTimeout(function () {
+                        if (carParams.autoModeRuns) {
+                            sessionStorage.setItem("demoCars", JSON.stringify(cars));
+                            sessionStorage.setItem("demoCarParams", JSON.stringify(carParams));
+                            sessionStorage.setItem("demoBg", JSON.stringify(background));
+                        }
+                        if (Object.hasOwn(demoMode, "exitTimeout")) {
+                            var elapsedTime = demoModeTimeoutDelay;
+                            const storedElapsedTime = parseInt(sessionStorage.getItem("demoElapsedTime"), 10);
+                            if (Number.isInteger(storedElapsedTime)) {
+                                elapsedTime += storedElapsedTime;
+                            }
+                            if (elapsedTime >= demoMode.exitAppDelay) {
+                                sessionStorage.removeItem("demoElapsedTime");
+                                SYSTEM_TOOLS.exitApp();
+                                demoMode.reloadOnExitTimeout = setTimeout(function () {
+                                    demoMode.reload();
+                                }, 500);
+                            } else {
+                                sessionStorage.setItem("demoElapsedTime", JSON.stringify(elapsedTime));
+                                demoMode.reload();
+                            }
+                        } else {
+                            demoMode.reload();
+                        }
+                    }, demoModeTimeoutDelay);
+                    if (!demoMode.standalone) {
+                        document.addEventListener("keyup", demoMode.leaveKeyUp);
+                        document.addEventListener("touchstart", demoMode.leaveTimeoutStart, {passive: false});
+                        document.addEventListener("touchend", demoMode.leaveTimeoutEnd, {passive: false});
+                        document.addEventListener("touchcancel", demoMode.leaveTimeoutEnd, {passive: false});
+                        document.addEventListener("mousedown", demoMode.leaveTimeoutStart, {passive: false});
+                        document.addEventListener("mouseup", demoMode.leaveTimeoutEnd, {passive: false});
+                        document.addEventListener("mouseout", demoMode.leaveTimeoutEnd, {passive: false});
+                    }
+                } else {
+                    canvasForeground.addEventListener("touchmove", getTouchMove, {passive: false});
+                    canvasForeground.addEventListener("touchstart", getTouchStart, {passive: false});
+                    canvasForeground.addEventListener("touchend", getTouchEnd, {passive: false});
+                    canvasForeground.addEventListener("touchcancel", getTouchCancel, {passive: false});
+                    canvasForeground.addEventListener("mousemove", onMouseMove, {passive: false});
+                    canvasForeground.addEventListener("mousedown", onMouseDown, {passive: false});
+                    canvasForeground.addEventListener("mouseup", onMouseUp, {passive: false});
+                    canvasForeground.addEventListener("mouseout", onMouseOut, {passive: false});
+                    canvasForeground.addEventListener("mouseenter", onMouseEnter, {passive: false});
+                    canvasForeground.addEventListener("contextmenu", onMouseRight, {passive: false});
+                    canvasForeground.addEventListener("wheel", onMouseWheel, {passive: false});
+                    document.addEventListener("keydown", onKeyDown);
+                    document.addEventListener("keyup", onKeyUp);
+                    document.removeEventListener("contextmenu", preventEvent);
+                    document.removeEventListener("wheel", preventEvent);
+                    document.removeEventListener("keydown", preventKeyZoomDuringLoad);
+                }
+                document.removeEventListener("keyup", preventKeyZoomDuringLoad);
+
+                const state = message.data.state;
+                //Ready event
+                if (state == "load") {
+                    const event = new CustomEvent("moroway-app-ready");
+                    document.dispatchEvent(event);
+                }
+
+                //Show app
+                if (currentMode == Modes.DEMO) {
+                    loadingAnimation.hide();
+                } else if (currentMode == Modes.SINGLEPLAYER) {
+                    loadingAnimation.fade(function () {
+                        var localAppData = getLocalAppDataCopy();
+                        if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.three) {
+                            notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NotificationPriority.High, 3000, null, null, client.y + menus.outerContainer.height);
+                        } else if (state == "load" && localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor))) {
+                            const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
+                            document.dispatchEvent(event);
+                        } else if (state == "load") {
+                            const event = new CustomEvent("moroway-app-ready-notification", {detail: {notifyMinHeight: client.y + menus.outerContainer.height}});
+                            document.dispatchEvent(event);
+                        }
+                        setLocalAppDataCopy();
+                    });
+                }
+            } else if (message.data.k == "setTrains") {
+                if (message.data.switches) {
+                    switches = message.data.switches;
+                }
+                rotationPoints = message.data.rotationPoints;
+                message.data.trains.forEach(function (train, i) {
+                    trains[i].x = train.x;
+                    trains[i].y = train.y;
+                    trains[i].front.state = train.front.state;
+                    trains[i].back.state = train.back.state;
+                    trains[i].front.x = train.front.x;
+                    trains[i].front.y = train.front.y;
+                    trains[i].front.angle = train.front.angle;
+                    trains[i].back.x = train.back.x;
+                    trains[i].back.y = train.back.y;
+                    trains[i].back.angle = train.back.angle;
+                    trains[i].width = train.width;
+                    trains[i].height = train.height;
+                    trains[i].displayAngle = train.displayAngle;
+                    trains[i].outerX = train.outerX;
+                    trains[i].outerY = train.outerY;
+                    trains[i].assetFlip = train.assetFlip;
+                    trains[i].circleFamily = train.circleFamily;
+                    trains[i].move = train.move;
+                    trains[i].lastDirectionChange = train.lastDirectionChange;
+                    trains[i].speedInPercent = train.speedInPercent;
+                    trains[i].currentSpeedInPercent = train.currentSpeedInPercent;
+                    trains[i].accelerationSpeed = train.accelerationSpeed;
+                    trains[i].accelerationSpeedCustom = train.accelerationSpeedCustom;
+                    trains[i].standardDirection = train.standardDirection;
+                    trains[i].crash = train.crash;
+                    trains[i].mute = train.mute;
+                    trains[i].volume = train.volume;
+                    trains[i].invisible = train.invisible;
+                    trains[i].opacity = train.opacity;
+                    trains[i].wheels = train.wheels;
+                    train.cars.forEach(function (car, j) {
+                        trains[i].cars[j].x = car.x;
+                        trains[i].cars[j].y = car.y;
+                        trains[i].cars[j].width = car.width;
+                        trains[i].cars[j].height = car.height;
+                        trains[i].cars[j].displayAngle = car.displayAngle;
+                        trains[i].cars[j].assetFlip = car.assetFlip;
+                        trains[i].cars[j].konamiUseTrainIcon = car.konamiUseTrainIcon;
+                        trains[i].cars[j].invisible = car.invisible;
+                        trains[i].cars[j].opacity = car.opacity;
+                        trains[i].cars[j].front.state = car.front.state;
+                        trains[i].cars[j].back.state = car.back.state;
+                        trains[i].cars[j].front.x = car.front.x;
+                        trains[i].cars[j].front.y = car.front.y;
+                        trains[i].cars[j].front.angle = car.front.angle;
+                        trains[i].cars[j].back.x = car.back.x;
+                        trains[i].cars[j].back.y = car.back.y;
+                        trains[i].cars[j].back.angle = car.back.angle;
+                        trains[i].cars[j].wheels = car.wheels;
+                    });
+                    if (train.move && !train.mute && audioControl.mayPlay()) {
+                        if (!audioControl.existsObject("train", i)) {
+                            audioControl.startObject("train", i, true);
+                        }
+                        if (train.currentSpeedInPercent == undefined) {
+                            train.currentSpeedInPercent = 0;
+                        }
+                        audioControl.setObjectVolume("train", i, train.volume);
+                    } else if (audioControl.existsObject("train", i)) {
+                        audioControl.stopObject("train", i);
+                    }
+                });
+                if (message.data.resized) {
+                    trains3D.forEach(function (train) {
+                        if (train.resize) {
+                            train.resize();
+                        }
+                        train.cars.forEach(function (car) {
+                            if (car.resize) {
+                                car.resize();
+                            }
+                        });
+                    });
+                    if (currentMode != Modes.DEMO) {
+                        Object.keys(switches).forEach(function (key) {
+                            Object.keys(switches[key]).forEach(function (currentKey) {
+                                switches3D[key][currentKey].resize();
+                            });
+                        });
+                    }
+                    if (currentMode == Modes.MULTIPLAYER) {
+                        if (multiplayerMode.resizedTimeout != undefined && multiplayerMode.resizedTimeout != null) {
+                            clearTimeout(multiplayerMode.resizedTimeout);
+                        }
+                        multiplayerMode.resizedTimeout = setTimeout(function () {
+                            onlineConnection.resized = false;
+                        }, 3000);
+                    }
+                    resized = false;
+                    if (APP_DATA.debug) {
+                        animateWorker.postMessage({k: "debug"});
+                    }
+                }
+            } else if (message.data.k == "trainCrash") {
+                actionSync("trains", message.data.i, [{move: false}], [{getString: ["appScreenObjectHasCrashed", "."]}, {getString: [["appScreenTrainNames", message.data.i]]}, {getString: [["appScreenTrainNames", message.data.j]]}]);
+                actionSync("train-crash");
+                if (audioControl.existsObject("trainCrash")) {
+                    audioControl.stopObject("trainCrash");
+                }
+                if (audioControl.mayPlay()) {
+                    audioControl.startObject("trainCrash", null, false);
+                }
+            } else if (message.data.k == "sync-ready") {
+                rotationPoints = message.data.rotationPoints;
+                trains = message.data.trains;
+                onlineConnection.send("sync-ready");
+            } else if (message.data.k == "save-game") {
+                if (getSetting("saveGame") && currentMode == Modes.SINGLEPLAYER) {
+                    try {
+                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
+                        var saveSwitches = {};
+                        Object.keys(switches).forEach(function (key) {
+                            saveSwitches[key] = {};
+                            Object.keys(switches[key]).forEach(function (side) {
+                                saveSwitches[key][side] = switches[key][side].turned;
+                            });
+                        });
+                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
+                        if (cars.length == carWays.length && cars.length > 0) {
+                            localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
+                            localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
+                        }
+                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
+                    } catch (e) {
+                        if (APP_DATA.debug) {
+                            console.error(e.name, e.message);
+                        }
+                        notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y + menus.outerContainer.height);
+                    }
+                    animateWorker.postMessage({k: "game-saved"});
+                }
+            } else if (message.data.k == "debug") {
+                switchParams.beforeFac = message.data.switchesBeforeFac;
+                switchParams.beforeAddSidings = message.data.switchesBeforeAddSidings;
+                if (!debug.trainReady) {
+                    console.debug("Animate Interval:", message.data.animateInterval);
+                }
+                console.debug("Trains: ", message.data.trains);
+            } else if (message.data.k == "debugDrawPoints") {
+                debug.drawPoints = message.data.p;
+                debug.drawPointsCrash = message.data.pC;
+                debug.trainCollisions = message.data.tC;
+                debug.trainReady = true;
+            }
+        };
+
+        animateWorker.postMessage({k: "ready", state: "load", online: currentMode == Modes.MULTIPLAYER, onlineInterval: multiplayerMode.animateInterval, demo: currentMode == Modes.DEMO});
+    }
+
     function onVisibilityChange() {
         client.hidden = document.visibilityState == "hidden";
         resetGestures();
@@ -8139,7 +8178,7 @@ window.addEventListener("load", function () {
                 }
                 drawObjects();
             }
-            if (onlineGame.enabled) {
+            if (currentMode == Modes.MULTIPLAYER) {
                 if (client.hidden) {
                     onlineConnection.send("pause-request");
                 } else {
@@ -8155,8 +8194,7 @@ window.addEventListener("load", function () {
         }
     }
 
-    //Configure mode (demo, multiplay or normal)
-    setMode();
+    prepareInit();
 
     //Visibility handling
     document.addEventListener("visibilitychange", onVisibilityChange);
@@ -8173,10 +8211,6 @@ window.addEventListener("load", function () {
     contextBackground = canvasBackground.getContext("2d");
     contextSemiForeground = canvasSemiForeground.getContext("2d");
     contextForeground = canvasForeground.getContext("2d");
-
-    //Show loading image
-    loadingAnimation.init();
-    loadingAnimation.show(gui.demo || onlineGame.enabled);
 
     //Load media
     var finalLoadNo = 0;
@@ -8253,7 +8287,7 @@ window.addEventListener("load", function () {
                     loadingAnimation.updateProgress(progressPercent);
                     if (currentLoadNo == finalLoadNo) {
                         //Initialize content
-                        init("load");
+                        initAnimateWorker();
                     }
                 },
                 null,
@@ -8264,7 +8298,7 @@ window.addEventListener("load", function () {
                     loadingAnimation.updateProgress(progressPercent);
                     if (currentLoadNo == finalLoadNo) {
                         //Initialize content
-                        init("load");
+                        initAnimateWorker();
                     }
                 }
             );
@@ -8279,7 +8313,7 @@ window.addEventListener("load", function () {
                     loadingAnimation.updateProgress(progressPercent);
                     if (currentLoadNo == finalLoadNo) {
                         //Initialize content
-                        init("load");
+                        initAnimateWorker();
                     }
                 },
                 null,
@@ -8290,7 +8324,7 @@ window.addEventListener("load", function () {
                     loadingAnimation.updateProgress(progressPercent);
                     if (currentLoadNo == finalLoadNo) {
                         //Initialize content
-                        init("load");
+                        initAnimateWorker();
                     }
                 }
             );
@@ -8352,7 +8386,7 @@ window.addEventListener("load", function () {
             loadingAnimation.updateProgress(progressPercent);
             if (currentLoadNo == finalLoadNo) {
                 //Initialize content
-                init("load");
+                initAnimateWorker();
             }
         };
         pics[pic.id].onerror = function () {
@@ -8365,9 +8399,7 @@ window.addEventListener("load", function () {
 });
 
 window.addEventListener("error", function () {
-    if (onlineConnection.socket) {
-        onlineConnection.socket.close();
-    }
+    onlineConnection.socket?.close();
     audioControl.stopAll();
 });
 

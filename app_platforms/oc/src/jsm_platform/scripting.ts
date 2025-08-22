@@ -2,7 +2,7 @@
 import { getSetting } from "{{jsm}}/common/settings.js";
 import { getString } from "{{jsm}}/common/string_tools.js";
 import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
-import { getMode, optionsMenuEditorHide } from "{{jsm}}/scripting.js";
+import { getMode, Modes, optionsMenuEditorHide } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-after-calc-options-menu-load", function () {
     optionsMenuEditorHide("canvas-team");
@@ -17,7 +17,7 @@ document.addEventListener("deviceready", function () {
         "backbutton",
         function (e) {
             e.preventDefault();
-            if (getMode() != "demo" && (!getSetting("saveGame") || getMode() == "online")) {
+            if (getMode() == Modes.MULTIPLAYER || (getMode() == Modes.SINGLEPLAYER && getSetting("saveGame"))) {
                 // Cordova wrapper contains this function
                 // @ts-ignore
                 navigator.notification.confirm(
