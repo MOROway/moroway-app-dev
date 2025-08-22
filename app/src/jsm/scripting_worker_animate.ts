@@ -179,10 +179,10 @@ function safePostMessage(message) {
 function saveTrainCirclePrepare(train, trainOriginal) {
     delete train.lastDirectionChange;
     if (trainOriginal.circleFamily != null) {
-        var cF = Object.keys(rotationPoints).filter(function (key) {
+        const cF = Object.keys(rotationPoints).filter(function (key) {
             return rotationPoints[key] === trainOriginal.circleFamily;
         })[0];
-        var c = Object.keys(rotationPoints[cF]).filter(function (key) {
+        const c = Object.keys(rotationPoints[cF]).filter(function (key) {
             return rotationPoints[cF][key] === trainOriginal.circle;
         })[0];
         train.circleFamily = cF;
@@ -1911,7 +1911,7 @@ function animateObjects() {
     }
     if (firstRun) {
         firstRun = false;
-        safePostMessage({k: "go",state: initState, switches: switches, trains: trains, rotationPoints: rotationPoints, animateInterval: animateTimeoutDelay});
+        safePostMessage({k: "go", state: initState, switches: switches, trains: trains, rotationPoints: rotationPoints, animateInterval: animateTimeoutDelay});
     } else {
         safePostMessage({k: "setTrains", trains: trains, rotationPoints: rotationPoints});
     }
@@ -2498,8 +2498,10 @@ onmessage = function (message) {
         trains[message.data.i].back.y = background.y + trains[message.data.i].back.y * background.height;
         trains[message.data.i].y = background.y + trains[message.data.i].y * background.height;
         if (trains[message.data.i].circleFamily != null) {
-            trains[message.data.i].circle = rotationPoints[trains[message.data.i].circleFamily as unknown as string][trains[message.data.i].circle];
-            trains[message.data.i].circleFamily = rotationPoints[trains[message.data.i].circleFamily as unknown as string];
+            const cF = trains[t].circleFamily as unknown as string;
+            const c = trains[t].circle as unknown as string;
+            trains[t].circleFamily = rotationPoints[cF];
+            trains[t].circle = rotationPoints[cF][c];
         }
         defineTrainSpeed(trains[message.data.i]);
     } else if (message.data.k == "sync-tc") {

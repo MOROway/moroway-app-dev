@@ -465,7 +465,7 @@ function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Rec
         }
     }
     const lastUrlParams = new URLSearchParams(location.search);
-    const urlParams = Object.assign(Object.fromEntries(lastUrlParams.entries()),additionalParameters);
+    const urlParams = Object.assign(Object.fromEntries(lastUrlParams.entries()), additionalParameters);
     urlParams.mode = mode;
     if (urlParams.mode == Modes.SINGLEPLAYER || urlParams.mode.length == 0) {
         delete urlParams.mode;
@@ -5507,7 +5507,6 @@ var switchParams;
 //Cars
 var cars: Car[];
 var cars3D: Car3D[];
-var carPaths;
 var carWays: CarWays[];
 var carParams: CarParams;
 
@@ -6013,6 +6012,71 @@ function init(state: "load" | "reload" = "reload") {
             }
             return (currentObject.state === 0 || currentObject.state == -1) && stateNullAgain ? obj : defineCarWay(cType, isFirst, i, ++j, obj, currentObject, stateNullAgain);
         }
+
+        const carPaths = [
+            {
+                start: [{type: "curve_right", x: [0.29, 0.29], y: [0.38, 0.227]}],
+                normal: [
+                    {type: "curve_hright", x: [0.29, 0.29], y: [0.227, 0.347]},
+                    {type: "linear_vertical", x: [0, 0], y: [0, 0]},
+                    {type: "curve_hright2", x: [0, 0], y: [0.282, 0.402]},
+                    {type: "curve_l2r", x: [0, 0.25], y: [0.402, 0.412]},
+                    {type: "linear", x: [0.25, 0.225], y: [0.412, 0.412]},
+                    {type: "curve_right", x: [0.225, 0.225], y: [0.412, 0.227]},
+                    {type: "linear", x: [0.225, 0.29], y: [0.227, 0.227]}
+                ]
+            },
+            {
+                start: [
+                    {type: "curve_left", x: [0.26, 0.26], y: [0.3, 0.198]},
+                    {type: "curve_r2l", x: [0.26, 0.216], y: [0.198, 0.197]}
+                ],
+                normal: [
+                    {type: "curve_left", x: [0.216, 0.216], y: [0.197, 0.419]},
+                    {type: "linear", x: [0.216, 0.246], y: [0.419, 419]},
+                    {type: "curve_r2l", x: [0.246, 0.286], y: [0.419, 0.43]},
+                    {type: "linear", x: [0.286, 0.31], y: [0.43, 0.43]},
+                    {type: "curve_hleft", x: [0.31, 0.31], y: [0.43, 0.33]},
+                    {type: "linear_vertical", x: [0, 0], y: [0, 0]},
+                    {type: "curve_hleft2", x: [0, 0], y: [0.347, 0.197]},
+                    {type: "linear", x: [0, 0.216], y: [0.197, 0.197]},
+                    {type: "curve_left", x: [0.216, 0.216], y: [0.197, 0.419]},
+                    {type: "linear", x: [0.216, 0.246], y: [0.419, 419]},
+                    {type: "curve_r2l", x: [0.246, 0.276], y: [0.419, 0.434]},
+                    {type: "linear", x: [0.276, 0.38], y: [0.434, 434]},
+                    {type: "curve_l2r", x: [0.38, 0.46], y: [0.434, 0.419]},
+                    {type: "linear", x: [0.46, 0.631], y: [0.419, 0.419]},
+                    {type: "curve_r2l", x: [0.631, 0.665], y: [0.419, 0.43]},
+                    {type: "curve_left", x: [0.665, 0.665], y: [0.43, 0.322]},
+                    {type: "curve_l2r", x: [0.665, 0.59], y: [0.322, 0.39]},
+                    {type: "linear", x: [0.59, 0.339], y: [0.39, 0.39]},
+                    {type: "curve_hright", x: [0.339, 0.339], y: [0.39, 0.32]},
+                    {type: "linear_vertical", x: [0, 0], y: [0, 0]},
+                    {type: "curve_hleft2", x: [0, 0], y: [0.347, 0.197]},
+                    {type: "linear", x: [0, 0.216], y: [0.197, 0.197]}
+                ]
+            },
+            {
+                start: [
+                    {type: "curve_right", x: [0.2773, 0.2773], y: [0.38, 0.227]},
+                    {type: "linear", x: [0.2773, 0.29], y: [0.227, 0.227]}
+                ],
+                normal: [
+                    {type: "curve_hright", x: [0.29, 0.29], y: [0.227, 0.347]},
+                    {type: "linear_vertical", x: [0, 0], y: [0, 0]},
+                    {type: "curve_hleft2", x: [0, 0], y: [0.299, 0.419]},
+                    {type: "linear", x: [0, 0.631], y: [0.419, 0.419]},
+                    {type: "curve_r2l", x: [0.631, 0.665], y: [0.419, 0.43]},
+                    {type: "curve_left", x: [0.665, 0.665], y: [0.43, 0.322]},
+                    {type: "curve_l2r", x: [0.665, 0.59], y: [0.322, 0.39]},
+                    {type: "linear", x: [0.59, 0.339], y: [0.39, 0.39]},
+                    {type: "curve_l2r", x: [0.339, 0.25], y: [0.39, 0.412]},
+                    {type: "linear", x: [0.25, 0.225], y: [0.412, 0.412]},
+                    {type: "curve_right", x: [0.225, 0.225], y: [0.412, 0.227]},
+                    {type: "linear", x: [0.225, 0.29], y: [0.227, 0.227]}
+                ]
+            }
+        ];
         cars.forEach(function (car) {
             car.collStop = true;
             car.collStopNo = [];
@@ -6207,77 +6271,12 @@ function init(state: "load" | "reload" = "reload") {
 
     //Default cars
     const carParamsDefault = {init: true, wayNo: 6};
-    const carPathsDefault = [
-        {
-            start: [{type: "curve_right", x: [0.29, 0.29], y: [0.38, 0.227]}],
-            normal: [
-                {type: "curve_hright", x: [0.29, 0.29], y: [0.227, 0.347]},
-                {type: "linear_vertical", x: [0, 0], y: [0, 0]},
-                {type: "curve_hright2", x: [0, 0], y: [0.282, 0.402]},
-                {type: "curve_l2r", x: [0, 0.25], y: [0.402, 0.412]},
-                {type: "linear", x: [0.25, 0.225], y: [0.412, 0.412]},
-                {type: "curve_right", x: [0.225, 0.225], y: [0.412, 0.227]},
-                {type: "linear", x: [0.225, 0.29], y: [0.227, 0.227]}
-            ]
-        },
-        {
-            start: [
-                {type: "curve_left", x: [0.26, 0.26], y: [0.3, 0.198]},
-                {type: "curve_r2l", x: [0.26, 0.216], y: [0.198, 0.197]}
-            ],
-            normal: [
-                {type: "curve_left", x: [0.216, 0.216], y: [0.197, 0.419]},
-                {type: "linear", x: [0.216, 0.246], y: [0.419, 419]},
-                {type: "curve_r2l", x: [0.246, 0.286], y: [0.419, 0.43]},
-                {type: "linear", x: [0.286, 0.31], y: [0.43, 0.43]},
-                {type: "curve_hleft", x: [0.31, 0.31], y: [0.43, 0.33]},
-                {type: "linear_vertical", x: [0, 0], y: [0, 0]},
-                {type: "curve_hleft2", x: [0, 0], y: [0.347, 0.197]},
-                {type: "linear", x: [0, 0.216], y: [0.197, 0.197]},
-                {type: "curve_left", x: [0.216, 0.216], y: [0.197, 0.419]},
-                {type: "linear", x: [0.216, 0.246], y: [0.419, 419]},
-                {type: "curve_r2l", x: [0.246, 0.276], y: [0.419, 0.434]},
-                {type: "linear", x: [0.276, 0.38], y: [0.434, 434]},
-                {type: "curve_l2r", x: [0.38, 0.46], y: [0.434, 0.419]},
-                {type: "linear", x: [0.46, 0.631], y: [0.419, 0.419]},
-                {type: "curve_r2l", x: [0.631, 0.665], y: [0.419, 0.43]},
-                {type: "curve_left", x: [0.665, 0.665], y: [0.43, 0.322]},
-                {type: "curve_l2r", x: [0.665, 0.59], y: [0.322, 0.39]},
-                {type: "linear", x: [0.59, 0.339], y: [0.39, 0.39]},
-                {type: "curve_hright", x: [0.339, 0.339], y: [0.39, 0.32]},
-                {type: "linear_vertical", x: [0, 0], y: [0, 0]},
-                {type: "curve_hleft2", x: [0, 0], y: [0.347, 0.197]},
-                {type: "linear", x: [0, 0.216], y: [0.197, 0.197]}
-            ]
-        },
-        {
-            start: [
-                {type: "curve_right", x: [0.2773, 0.2773], y: [0.38, 0.227]},
-                {type: "linear", x: [0.2773, 0.29], y: [0.227, 0.227]}
-            ],
-            normal: [
-                {type: "curve_hright", x: [0.29, 0.29], y: [0.227, 0.347]},
-                {type: "linear_vertical", x: [0, 0], y: [0, 0]},
-                {type: "curve_hleft2", x: [0, 0], y: [0.299, 0.419]},
-                {type: "linear", x: [0, 0.631], y: [0.419, 0.419]},
-                {type: "curve_r2l", x: [0.631, 0.665], y: [0.419, 0.43]},
-                {type: "curve_left", x: [0.665, 0.665], y: [0.43, 0.322]},
-                {type: "curve_l2r", x: [0.665, 0.59], y: [0.322, 0.39]},
-                {type: "linear", x: [0.59, 0.339], y: [0.39, 0.39]},
-                {type: "curve_l2r", x: [0.339, 0.25], y: [0.39, 0.412]},
-                {type: "linear", x: [0.25, 0.225], y: [0.412, 0.412]},
-                {type: "curve_right", x: [0.225, 0.225], y: [0.412, 0.227]},
-                {type: "linear", x: [0.225, 0.29], y: [0.227, 0.227]}
-            ]
-        }
-    ];
     const carsDefault = [
         {src: 16, fac: 0.02, speedFac: 0.0008, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xff0000"},
         {src: 17, fac: 0.02, speedFac: 0.001, startFrameFac: 0.335, angles: {start: 0, normal: Math.PI}, hexColor: "0xffffff"},
         {src: 0, fac: 0.0202, speedFac: 0.00082, startFrameFac: 0.65, angles: {start: Math.PI, normal: 0}, hexColor: "0xffee00"}
     ];
     carParams = carParamsDefault;
-    carPaths = carPathsDefault;
     carWays = [];
     cars = carsDefault;
     cars3D = [];
