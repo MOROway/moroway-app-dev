@@ -232,8 +232,8 @@ canvas {
 }
 #settings .nav-wrapper {
     position: fixed;
-    bottom: 0;
     right: 0;
+    bottom: 0;
     padding: 10px 0px;
     background: floralwhite;
     border-top: 2px solid rgb(48, 48, 48);
@@ -391,6 +391,7 @@ canvas {
     transition: 2s;
     width: 200vw;
     position: fixed;
+    left: 0;
     bottom: 0;
     transform: translate(-25%, 50%);
     background-image: radial-gradient(ellipse at 50% 60%, rgba(139, 0, 0, 0.7) 10%, rgba(139, 0, 0, 0.3) 40%, rgba(139, 0, 0, 0) 70%);
@@ -623,6 +624,7 @@ canvas {
 #text-control {
     display: none;
     position: fixed;
+    left: 0;
     bottom: 0;
     z-index: 10;
     width: 100%;

@@ -454,7 +454,9 @@ function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Rec
             modeSwitchingTimeout = setTimeout(requestModeSwitch, 10);
         } else {
             //Update URL
-            if (history.state?.mode == mode) {
+            if (SYSTEM_TOOLS.canExitApp()) {
+                history.replaceState(null, "", url);
+            } else if (history.state?.mode == mode) {
                 history.replaceState({mode: mode}, "", url);
             } else {
                 history.pushState({mode: mode}, "", url);
@@ -7935,7 +7937,7 @@ window.addEventListener("load", function () {
                             sessionStorage.setItem("demoCarParams", JSON.stringify(carParams));
                             sessionStorage.setItem("demoBg", JSON.stringify(background));
                         }
-                        if (Object.hasOwn(demoMode, "exitTimeout")) {
+                        if (Object.hasOwn(demoMode, "exitAppDelay")) {
                             var elapsedTime = demoModeTimeoutDelay;
                             const storedElapsedTime = parseInt(sessionStorage.getItem("demoElapsedTime"), 10);
                             if (Number.isInteger(storedElapsedTime)) {
