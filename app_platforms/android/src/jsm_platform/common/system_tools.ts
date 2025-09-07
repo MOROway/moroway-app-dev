@@ -9,6 +9,7 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
         // @ts-ignore
         WebJSInterface.exitApp();
     },
+    getAppMode: () => "app",
     keepAlive(acquire) {
         if (acquire) {
             try {

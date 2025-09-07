@@ -2498,10 +2498,10 @@ onmessage = function (message) {
         trains[message.data.i].back.y = background.y + trains[message.data.i].back.y * background.height;
         trains[message.data.i].y = background.y + trains[message.data.i].y * background.height;
         if (trains[message.data.i].circleFamily != null) {
-            const cF = trains[t].circleFamily as unknown as string;
-            const c = trains[t].circle as unknown as string;
-            trains[t].circleFamily = rotationPoints[cF];
-            trains[t].circle = rotationPoints[cF][c];
+            const cF = trains[message.data.i].circleFamily as unknown as string;
+            const c = trains[message.data.i].circle as unknown as string;
+            trains[message.data.i].circleFamily = rotationPoints[cF];
+            trains[message.data.i].circle = rotationPoints[cF][c];
         }
         defineTrainSpeed(trains[message.data.i]);
     } else if (message.data.k == "sync-tc") {

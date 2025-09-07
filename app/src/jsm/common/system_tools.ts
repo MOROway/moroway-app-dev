@@ -5,6 +5,7 @@ export { SYSTEM_TOOLS } from "{{jsm_platform}}/common/system_tools.js";
 export interface SYSTEM_TOOLS_INTERFACE {
     canExitApp: () => boolean;
     exitApp: () => void;
+    getAppMode: () => "app" | "webapp" | "website";
     keepAlive: (acquire: boolean) => void;
     navigateBack: () => void;
 }

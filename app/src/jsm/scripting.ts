@@ -454,7 +454,7 @@ function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Rec
             modeSwitchingTimeout = setTimeout(requestModeSwitch, 10);
         } else {
             //Update URL
-            if (SYSTEM_TOOLS.canExitApp()) {
+            if (SYSTEM_TOOLS.getAppMode() != "website") {
                 history.replaceState(null, "", url);
             } else if (history.state?.mode == mode) {
                 history.replaceState({mode: mode}, "", url);
@@ -734,48 +734,11 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
         drawOptionsMenu(state);
     }
 }
-function commonOnOptionsMenuClick() {
+function beforeOptionsMenuChange() {
     closeConfirmDialog();
 }
 
 function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-change" | "settings-change") {
-    function createAudio(destinationName, destinationIndex, buffer, volume) {
-        var gainNode = audio.context.createGain();
-        gainNode.gain.value = volume;
-        gainNode.connect(audio.context.destination);
-        if (typeof destinationIndex == "number") {
-            audio.gainNode[destinationName][destinationIndex] = gainNode;
-            audio.buffer[destinationName][destinationIndex] = buffer;
-        } else {
-            audio.gainNode[destinationName] = gainNode;
-            audio.buffer[destinationName] = buffer;
-        }
-    }
-    function createTrainAudio(cTrainNumber) {
-        try {
-            fetch("./assets/audio_asset_" + cTrainNumber + "." + soundFileExtension)
-                .then((response) => {
-                    if (response.ok) {
-                        return response.arrayBuffer();
-                    }
-                    throw new Error("response not ok");
-                })
-                .then((response) => {
-                    audio.context.decodeAudioData(response, function (buffer) {
-                        createAudio("train", cTrainNumber, buffer, 0);
-                    });
-                })
-                .catch((error) => {
-                    if (APP_DATA.debug) {
-                        console.error("Fetch-Error:", error);
-                    }
-                });
-        } catch (e) {
-            if (APP_DATA.debug) {
-                console.error(e);
-            }
-        }
-    }
     function calcBackground(simulate = false) {
         var additionalHeight;
         if (simulate) {
@@ -813,85 +776,90 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     }
     function set3DItems() {
         if (gui.three) {
-            elementInfoToggle.classList.add("gui-hidden");
-            element3DViewNightToggle.classList.remove("gui-hidden");
-            element3DViewToggle.querySelector("i")!.textContent = "2d";
-            element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
-            element3DViewCameraSwitcherBackwards.classList.remove("gui-hidden");
-            element3DViewCameraSwitcherForwards.classList.remove("gui-hidden");
+            menus.options.elements.infoToggle.classList.add("gui-hidden");
+            menus.options.elements.view3DNightToggle.classList.remove("gui-hidden");
+            menus.options.elements.view3DToggle.querySelector("i")!.textContent = "2d";
+            menus.options.elements.view3DToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
+            menus.options.elements.view3DCameraSwitcherBackwards.classList.remove("gui-hidden");
+            menus.options.elements.view3DCameraSwitcherForwards.classList.remove("gui-hidden");
         } else {
-            elementInfoToggle.classList.remove("gui-hidden");
-            element3DViewNightToggle.classList.add("gui-hidden");
-            element3DViewToggle.querySelector("i")!.textContent = "view_in_ar";
-            element3DViewToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
-            element3DViewCameraSwitcherBackwards.classList.add("gui-hidden");
-            element3DViewCameraSwitcherForwards.classList.add("gui-hidden");
+            menus.options.elements.infoToggle.classList.remove("gui-hidden");
+            menus.options.elements.view3DNightToggle.classList.add("gui-hidden");
+            menus.options.elements.view3DToggle.querySelector("i")!.textContent = "view_in_ar";
+            menus.options.elements.view3DToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
+            menus.options.elements.view3DCameraSwitcherBackwards.classList.add("gui-hidden");
+            menus.options.elements.view3DCameraSwitcherForwards.classList.add("gui-hidden");
         }
     }
-    const soundFileExtension = "{{sound_file_extension}}";
-    const elementNormalMode = document.querySelector("#canvas-single") as HTMLElement;
-    const elementTeamMode = document.querySelector("#canvas-team") as HTMLElement;
-    const elementDemoMode = document.querySelector("#canvas-demo-mode") as HTMLElement;
-    const elementHelp = document.querySelector("#canvas-help") as HTMLElement;
-    const elementSettings = document.querySelector("#canvas-settings") as HTMLElement;
-    const elementInfoToggle = document.querySelector("#canvas-info-toggle") as HTMLElement;
-    const elementSoundToggle = document.querySelector("#canvas-sound-toggle") as HTMLElement;
-    const element3DViewToggle = document.querySelector("#canvas-3d-view-toggle") as HTMLElement;
-    const element3DViewNightToggle = document.querySelector("#canvas-3d-view-day-night") as HTMLElement;
-    const element3DViewCameraSwitcherBackwards = document.querySelector("#canvas-3d-view-camera-switcher-backwards") as HTMLElement;
-    const element3DViewCameraSwitcherForwards = document.querySelector("#canvas-3d-view-camera-switcher-forwards") as HTMLElement;
-    const elementControlCenterTrains = document.querySelector("#canvas-control-center") as HTMLElement;
-    const elementControlCenterCars = document.querySelector("#canvas-car-control-center") as HTMLElement;
-    const elementTeamChat = document.querySelector("#canvas-chat-open") as HTMLElement;
+    if (!Object.hasOwn(menus, "options")) {
+        menus.options = {};
+    }
+    if (!Object.hasOwn(menus.options, "elements")) {
+        menus.options.elements = {};
+        menus.options.elements.modeSingleplayer = document.querySelector("#canvas-single") as HTMLElement;
+        menus.options.elements.modeMultiplayer = document.querySelector("#canvas-team") as HTMLElement;
+        menus.options.elements.modeDemo = document.querySelector("#canvas-demo-mode") as HTMLElement;
+        menus.options.elements.help = document.querySelector("#canvas-help") as HTMLElement;
+        menus.options.elements.settings = document.querySelector("#canvas-settings") as HTMLElement;
+        menus.options.elements.controlCenterTrains = document.querySelector("#canvas-control-center") as HTMLElement;
+        menus.options.elements.controlCenterCars = document.querySelector("#canvas-car-control-center") as HTMLElement;
+        menus.options.elements.infoToggle = document.querySelector("#canvas-info-toggle") as HTMLElement;
+        menus.options.elements.soundToggle = document.querySelector("#canvas-sound-toggle") as HTMLElement;
+        menus.options.elements.view3DToggle = document.querySelector("#canvas-3d-view-toggle") as HTMLElement;
+        menus.options.elements.view3DNightToggle = document.querySelector("#canvas-3d-view-day-night") as HTMLElement;
+        menus.options.elements.view3DCameraSwitcherBackwards = document.querySelector("#canvas-3d-view-camera-switcher-backwards") as HTMLElement;
+        menus.options.elements.view3DCameraSwitcherForwards = document.querySelector("#canvas-3d-view-camera-switcher-forwards") as HTMLElement;
+        menus.options.elements.multiplayerChat = document.querySelector("#canvas-chat-open") as HTMLElement;
+    }
     if (getSetting("reduceOptMenuHideGraphicalInfoToggle")) {
-        elementInfoToggle.classList.add("settings-hidden");
+        menus.options.elements.infoToggle.classList.add("settings-hidden");
         if (gui.infoOverlay) {
             gui.infoOverlay = false;
             drawMenu("menu-switch");
         }
     } else {
-        elementInfoToggle.classList.remove("settings-hidden");
+        menus.options.elements.infoToggle.classList.remove("settings-hidden");
     }
     if (getSetting("reduceOptMenuHideTrainControlCenter")) {
-        elementControlCenterTrains.classList.add("settings-hidden");
+        menus.options.elements.controlCenterTrains.classList.add("settings-hidden");
     } else {
-        elementControlCenterTrains.classList.remove("settings-hidden");
+        menus.options.elements.controlCenterTrains.classList.remove("settings-hidden");
     }
     if (getSetting("reduceOptMenuHideCarControlCenter")) {
-        elementControlCenterCars.classList.add("settings-hidden");
+        menus.options.elements.controlCenterCars.classList.add("settings-hidden");
     } else {
-        elementControlCenterCars.classList.remove("settings-hidden");
+        menus.options.elements.controlCenterCars.classList.remove("settings-hidden");
     }
     if (getSetting("reduceOptMenuHideAudioToggle")) {
-        elementSoundToggle.classList.add("settings-hidden");
+        menus.options.elements.soundToggle.classList.add("settings-hidden");
         audio.active = false;
         audioControl.playAndPauseAll();
-        elementSoundToggle!.querySelector("i")!.textContent = "volume_off";
-        elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+        menus.options.elements.soundToggle.querySelector("i")!.textContent = "volume_off";
+        menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
     } else {
-        elementSoundToggle.classList.remove("settings-hidden");
+        menus.options.elements.soundToggle.classList.remove("settings-hidden");
     }
     if (getSetting("reduceOptMenuHideDemoMode")) {
-        elementDemoMode.classList.add("settings-hidden");
+        menus.options.elements.modeDemo.classList.add("settings-hidden");
     } else {
-        elementDemoMode.classList.remove("settings-hidden");
+        menus.options.elements.modeDemo.classList.remove("settings-hidden");
     }
     if (getSetting("reduceOptMenuHide3DViewToggle")) {
-        element3DViewToggle.classList.add("settings-hidden");
+        menus.options.elements.view3DToggle.classList.add("settings-hidden");
     } else {
-        element3DViewToggle.classList.remove("settings-hidden");
+        menus.options.elements.view3DToggle.classList.remove("settings-hidden");
     }
     if (getSetting("reduceOptMenuHide3DViewNightToggle")) {
-        element3DViewNightToggle.classList.add("settings-hidden");
+        menus.options.elements.view3DNightToggle.classList.add("settings-hidden");
     } else {
-        element3DViewNightToggle.classList.remove("settings-hidden");
+        menus.options.elements.view3DNightToggle.classList.remove("settings-hidden");
     }
     if (getSetting("reduceOptMenuHide3DViewCameraSwitcher")) {
-        element3DViewCameraSwitcherBackwards.classList.add("settings-hidden");
-        element3DViewCameraSwitcherForwards.classList.add("settings-hidden");
+        menus.options.elements.view3DCameraSwitcherBackwards.classList.add("settings-hidden");
+        menus.options.elements.view3DCameraSwitcherForwards.classList.add("settings-hidden");
     } else {
-        element3DViewCameraSwitcherBackwards.classList.remove("settings-hidden");
-        element3DViewCameraSwitcherForwards.classList.remove("settings-hidden");
+        menus.options.elements.view3DCameraSwitcherBackwards.classList.remove("settings-hidden");
+        menus.options.elements.view3DCameraSwitcherForwards.classList.remove("settings-hidden");
     }
     if (state == "load") {
         menus.outerContainer = {};
@@ -899,98 +867,48 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         menus.outerContainer.element.onwheel = function (event) {
             event.preventDefault();
         };
-        menus.options = {};
         menus.options.container = {};
         menus.options.container.elementInner = document.querySelector("#canvas-options-inner");
         menus.infoOverlay = {};
         menus.infoOverlay.container = {};
         menus.infoOverlay.container.elementInner = document.querySelector("#canvas-info-inner");
         menus.infoOverlay.overlayText = document.querySelector("#info-overlay-text");
-        elementDemoMode.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.modeDemo.onclick = function () {
+            beforeOptionsMenuChange();
             showConfirmDialogEnterDemoMode();
         };
-        elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
-        elementSoundToggle.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+        menus.options.elements.soundToggle.onclick = function () {
+            beforeOptionsMenuChange();
             if (audio.context == undefined) {
-                audio.context = new AudioContext();
-                audio.buffer = {};
-                audio.buffer.train = [];
-                audio.gainNode = {};
-                audio.gainNode.train = [];
-                audio.source = {};
-                audio.source.train = [];
-                try {
-                    fetch("./assets/audio_asset_crash." + soundFileExtension)
-                        .then((response) => {
-                            return response.arrayBuffer();
-                        })
-                        .catch((error) => {
-                            if (APP_DATA.debug) {
-                                console.error("Fetch-Error:", error);
-                            }
-                        })
-                        .then((response) => {
-                            audio.context.decodeAudioData(response, function (buffer) {
-                                createAudio("trainCrash", null, buffer, 1);
-                            });
-                        });
-                } catch (e) {
-                    if (APP_DATA.debug) {
-                        console.error(e);
-                    }
-                }
-                try {
-                    fetch("./assets/audio_asset_switch." + soundFileExtension)
-                        .then((response) => {
-                            return response.arrayBuffer();
-                        })
-                        .catch((error) => {
-                            if (APP_DATA.debug) {
-                                console.error("Fetch-Error:", error);
-                            }
-                        })
-                        .then((response) => {
-                            audio.context.decodeAudioData(response, function (buffer) {
-                                createAudio("switch", null, buffer, 1);
-                            });
-                        });
-                } catch (e) {
-                    if (APP_DATA.debug) {
-                        console.error(e);
-                    }
-                }
-                for (var i = 0; i < trains.length; i++) {
-                    createTrainAudio(i);
-                }
+                audioControl.init();
             }
             audio.active = !audio.active;
             audioControl.playAndPauseAll();
             if (audio.active) {
-                elementSoundToggle.querySelector("i")!.textContent = "volume_up";
-                elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
+                menus.options.elements.soundToggle.querySelector("i").textContent = "volume_up";
+                menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
             } else {
-                elementSoundToggle.querySelector("i")!.textContent = "volume_off";
-                elementSoundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+                menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
+                menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
             }
         };
-        elementNormalMode.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.modeSingleplayer.onclick = function () {
+            beforeOptionsMenuChange();
             showConfirmDialogLeaveMultiplayerMode();
         };
-        elementTeamChat.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.multiplayerChat.onclick = function () {
+            beforeOptionsMenuChange();
             (document.querySelector("#chat") as HTMLElementChat).openChat();
         };
-        elementTeamMode.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.modeMultiplayer.onclick = function () {
+            beforeOptionsMenuChange();
             switchMode(Modes.MULTIPLAYER);
         };
         const settingsElem = document.querySelector("#settings") as HTMLElement;
         const settingsElemApply = settingsElem.querySelector("#settings-apply") as HTMLElement;
-        elementSettings.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.settings.onclick = function () {
+            beforeOptionsMenuChange();
             gui.settings = gui.sidebarRight = true;
             settingsElem.style.display = "block";
             drawMenu("invisible");
@@ -1005,12 +923,12 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
                 animateWorker.postMessage({k: "enable-save-game"});
             }
         };
-        elementHelp.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.help.onclick = function () {
+            beforeOptionsMenuChange();
             followLink("help", "_blank", LinkStates.InternalHtml);
         };
-        elementInfoToggle.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.infoToggle.onclick = function () {
+            beforeOptionsMenuChange();
             gui.infoOverlay = true;
             drawMenu("menu-switch");
         };
@@ -1019,24 +937,24 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             gui.infoOverlay = false;
             drawMenu("menu-switch");
         };
-        elementControlCenterTrains.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.controlCenterTrains.onclick = function () {
+            beforeOptionsMenuChange();
             gui.controlCenter = (!gui.controlCenter || controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineConnection.stop;
             controlCenter.showCarCenter = false;
             if (gui.infoOverlay) {
                 drawMenu("items-change");
             }
         };
-        elementControlCenterCars.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.controlCenterCars.onclick = function () {
+            beforeOptionsMenuChange();
             gui.controlCenter = (!gui.controlCenter || !controlCenter.showCarCenter) && !gui.konamiOverlay && !onlineConnection.stop;
             controlCenter.showCarCenter = true;
             if (gui.infoOverlay) {
                 drawMenu("items-change");
             }
         };
-        element3DViewToggle.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.view3DToggle.onclick = function () {
+            beforeOptionsMenuChange();
             gui.three = !gui.three;
             setGuiState("3d", gui.three);
             resetScale();
@@ -1047,33 +965,33 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
                 notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected])), NotificationPriority.High, 1250, null, null, client.y + menus.outerContainer.height);
             }
         };
-        element3DViewNightToggle.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.view3DNightToggle.onclick = function () {
+            beforeOptionsMenuChange();
             three.night = !three.night;
             background3D.animateBehind(true);
             setGuiState("3d-night", three.night);
         };
-        element3DViewCameraSwitcherBackwards.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.view3DCameraSwitcherBackwards.onclick = function () {
+            beforeOptionsMenuChange();
             three.switchCamera(false);
         };
-        element3DViewCameraSwitcherForwards.onclick = function () {
-            commonOnOptionsMenuClick();
+        menus.options.elements.view3DCameraSwitcherForwards.onclick = function () {
+            beforeOptionsMenuChange();
             three.switchCamera(true);
         };
     }
     if (state == "load" || state == "reload") {
         set3DItems();
         if (currentMode == Modes.MULTIPLAYER) {
-            elementDemoMode.classList.add("mode-hidden");
-            elementTeamMode.classList.add("mode-hidden");
-            elementNormalMode.classList.remove("mode-hidden");
-            elementTeamChat.classList.remove("mode-hidden");
+            menus.options.elements.modeDemo.classList.add("mode-hidden");
+            menus.options.elements.modeMultiplayer.classList.add("mode-hidden");
+            menus.options.elements.modeSingleplayer.classList.remove("mode-hidden");
+            menus.options.elements.multiplayerChat.classList.remove("mode-hidden");
         } else {
-            elementDemoMode.classList.remove("mode-hidden");
-            elementTeamMode.classList.remove("mode-hidden");
-            elementNormalMode.classList.add("mode-hidden");
-            elementTeamChat.classList.add("mode-hidden");
+            menus.options.elements.modeDemo.classList.remove("mode-hidden");
+            menus.options.elements.modeMultiplayer.classList.remove("mode-hidden");
+            menus.options.elements.modeSingleplayer.classList.add("mode-hidden");
+            menus.options.elements.multiplayerChat.classList.add("mode-hidden");
         }
     }
     menus.floating = false;
@@ -1155,7 +1073,7 @@ export function optionsMenuEditorAdd(id, title, icon, onClickFunction) {
     itemToAddChild.textContent = icon;
     itemToAddChild.classList.add("material-icons");
     itemToAdd.onclick = function () {
-        commonOnOptionsMenuClick();
+        beforeOptionsMenuChange();
         onClickFunction();
     };
     itemToAdd.appendChild(itemToAddChild);
@@ -1549,9 +1467,21 @@ function onKeyDown(event) {
         textControl.elements.output.textContent = textControl.execute();
         textControl.elements.root.style.display = "block";
         textControl.elements.input.focus();
-    } else if ((event.key == "c" || event.key == "C") && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && gui.three) {
+    } else if (event.key == "." && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
         event.preventDefault();
-        three.switchCamera(event.key == "c");
+        menus.options?.elements?.view3DToggle?.click();
+    } else if (event.key == "-" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
+        event.preventDefault();
+        menus.options?.elements?.controlCenterTrains?.click();
+    } else if (event.key == "_" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
+        event.preventDefault();
+        menus.options?.elements?.controlCenterCars?.click();
+    } else if (event.key == "c" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && gui.three) {
+        event.preventDefault();
+        menus.options?.elements?.view3DCameraSwitcherForwards?.click();
+    } else if (event.key == "C" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && gui.three) {
+        event.preventDefault();
+        menus.options?.elements?.view3DCameraSwitcherBackwards?.click();
     } else if (event.ctrlKey && event.key == "0" && client.zoomAndTilt.realScale > 1) {
         event.preventDefault();
         getGesture({type: "doubletap", deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
@@ -5022,6 +4952,98 @@ const demoMode: DemoMode = {
 //Media
 const audio: any = {};
 const audioControl: any = {
+    init() {
+        function createAudio(destinationName, destinationIndex, buffer, volume) {
+            var gainNode = audio.context.createGain();
+            gainNode.gain.value = volume;
+            gainNode.connect(audio.context.destination);
+            if (typeof destinationIndex == "number") {
+                audio.gainNode[destinationName][destinationIndex] = gainNode;
+                audio.buffer[destinationName][destinationIndex] = buffer;
+            } else {
+                audio.gainNode[destinationName] = gainNode;
+                audio.buffer[destinationName] = buffer;
+            }
+        }
+        function createTrainAudio(cTrainNumber) {
+            try {
+                fetch("./assets/audio_asset_" + cTrainNumber + "." + soundFileExtension)
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.arrayBuffer();
+                        }
+                        throw new Error("response not ok");
+                    })
+                    .then((response) => {
+                        audio.context.decodeAudioData(response, function (buffer) {
+                            createAudio("train", cTrainNumber, buffer, 0);
+                        });
+                    })
+                    .catch((error) => {
+                        if (APP_DATA.debug) {
+                            console.error("Fetch-Error:", error);
+                        }
+                    });
+            } catch (e) {
+                if (APP_DATA.debug) {
+                    console.error(e);
+                }
+            }
+        }
+        const soundFileExtension = "{{sound_file_extension}}";
+        if (trains) {
+            audio.context = new AudioContext();
+            audio.buffer = {};
+            audio.buffer.train = [];
+            audio.gainNode = {};
+            audio.gainNode.train = [];
+            audio.source = {};
+            audio.source.train = [];
+            try {
+                fetch("./assets/audio_asset_crash." + soundFileExtension)
+                    .then((response) => {
+                        return response.arrayBuffer();
+                    })
+                    .catch((error) => {
+                        if (APP_DATA.debug) {
+                            console.error("Fetch-Error:", error);
+                        }
+                    })
+                    .then((response) => {
+                        audio.context.decodeAudioData(response, function (buffer) {
+                            createAudio("trainCrash", null, buffer, 1);
+                        });
+                    });
+            } catch (e) {
+                if (APP_DATA.debug) {
+                    console.error(e);
+                }
+            }
+            try {
+                fetch("./assets/audio_asset_switch." + soundFileExtension)
+                    .then((response) => {
+                        return response.arrayBuffer();
+                    })
+                    .catch((error) => {
+                        if (APP_DATA.debug) {
+                            console.error("Fetch-Error:", error);
+                        }
+                    })
+                    .then((response) => {
+                        audio.context.decodeAudioData(response, function (buffer) {
+                            createAudio("switch", null, buffer, 1);
+                        });
+                    });
+            } catch (e) {
+                if (APP_DATA.debug) {
+                    console.error(e);
+                }
+            }
+            for (var i = 0; i < trains.length; i++) {
+                createTrainAudio(i);
+            }
+        }
+    },
     playAndPauseAll() {
         if (typeof audio.context == "object") {
             const play = audioControl.mayPlay();
