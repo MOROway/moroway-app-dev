@@ -1460,79 +1460,83 @@ function onKeyDown(event) {
     if (event.key == "Tab" || event.key == "Enter") {
         event.preventDefault();
     }
-    if (event.key == "/" && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && !gui.sidebarRight && !gui.textControl) {
-        event.preventDefault();
-        gui.textControl = true;
-        drawMenu("hide-outer");
-        textControl.elements.output.textContent = textControl.execute();
-        textControl.elements.root.style.display = "block";
-        textControl.elements.input.focus();
-    } else if (event.key == "." && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
-        event.preventDefault();
-        menus.options?.elements?.view3DToggle?.click();
-    } else if (event.key == "-" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
-        event.preventDefault();
-        menus.options?.elements?.controlCenterTrains?.click();
-    } else if (event.key == "_" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
-        event.preventDefault();
-        menus.options?.elements?.controlCenterCars?.click();
-    } else if (event.key == "c" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && gui.three) {
-        event.preventDefault();
-        menus.options?.elements?.view3DCameraSwitcherForwards?.click();
-    } else if (event.key == "C" && !event.ctrlKey && event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && gui.three) {
-        event.preventDefault();
-        menus.options?.elements?.view3DCameraSwitcherBackwards?.click();
-    } else if (event.ctrlKey && event.key == "0" && client.zoomAndTilt.realScale > 1) {
-        event.preventDefault();
-        getGesture({type: "doubletap", deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
-    } else if (event.ctrlKey && (event.key == "+" || event.key == "-")) {
-        event.preventDefault();
-        if (client.zoomAndTilt.realScale < client.zoomAndTilt.maxScale || event.key == "-") {
-            if (typeof client.zoomAndTilt.pinchHypot == "undefined") {
-                var deltaX = hardware.mouse.moveX;
-                var deltaY = hardware.mouse.moveY;
-                if (client.zoomAndTilt.realScale == 1) {
-                    getGesture({type: "pinchinit", deltaX: deltaX, deltaY: deltaY, pinchOHypot: client.zoomAndTilt.realScale});
-                } else {
-                    getGesture({type: "pinchoffset", deltaX: deltaX, deltaY: deltaY, pinchOHypot: client.zoomAndTilt.realScale});
+    if (event.ctrlKey) {
+        if (event.key == "0" && client.zoomAndTilt.realScale > 1) {
+            event.preventDefault();
+            getGesture({type: "doubletap", deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
+        } else if (event.key == "+" || event.key == "-") {
+            event.preventDefault();
+            if (client.zoomAndTilt.realScale < client.zoomAndTilt.maxScale || event.key == "-") {
+                if (typeof client.zoomAndTilt.pinchHypot == "undefined") {
+                    var deltaX = hardware.mouse.moveX;
+                    var deltaY = hardware.mouse.moveY;
+                    if (client.zoomAndTilt.realScale == 1) {
+                        getGesture({type: "pinchinit", deltaX: deltaX, deltaY: deltaY, pinchOHypot: client.zoomAndTilt.realScale});
+                    } else {
+                        getGesture({type: "pinchoffset", deltaX: deltaX, deltaY: deltaY, pinchOHypot: client.zoomAndTilt.realScale});
+                    }
                 }
+                var hypot = client.zoomAndTilt.realScale;
+                if (event.key == "+") {
+                    hypot *= client.zoomAndTilt.minScale;
+                } else {
+                    hypot /= client.zoomAndTilt.minScale;
+                }
+                getGesture({type: "pinch", scale: hypot / client.zoomAndTilt.pinchHypot, deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
             }
-            var hypot = client.zoomAndTilt.realScale;
-            if (event.key == "+") {
-                hypot *= client.zoomAndTilt.minScale;
-            } else {
-                hypot /= client.zoomAndTilt.minScale;
+        }
+    } else if (event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && !gui.konamiOverlay) {
+        if (event.key == "/" && !gui.sidebarRight && !gui.textControl) {
+            event.preventDefault();
+            gui.textControl = true;
+            drawMenu("hide-outer");
+            textControl.elements.output.textContent = textControl.execute();
+            textControl.elements.root.style.display = "block";
+            textControl.elements.input.focus();
+        } else if (event.key == " ") {
+            event.preventDefault();
+            menus.options?.elements?.view3DToggle?.click();
+        } else if (event.key == "-") {
+            event.preventDefault();
+            menus.options?.elements?.controlCenterTrains?.click();
+        } else if (event.key == "_") {
+            event.preventDefault();
+            menus.options?.elements?.controlCenterCars?.click();
+        } else if (event.key == "c" && gui.three) {
+            event.preventDefault();
+            menus.options?.elements?.view3DCameraSwitcherForwards?.click();
+        } else if (event.key == "C" && gui.three) {
+            event.preventDefault();
+            menus.options?.elements?.view3DCameraSwitcherBackwards?.click();
+        } else if ((event.key == "ArrowUp" && (konamiState === 0 || konamiState == 1)) || (event.key == "ArrowDown" && (konamiState == 2 || konamiState == 3)) || (event.key == "ArrowLeft" && (konamiState == 4 || konamiState == 6)) || (event.key == "ArrowRight" && (konamiState == 5 || konamiState == 7)) || (event.key == "b" && konamiState == 8)) {
+            if (konamiTimeOut !== undefined && konamiTimeOut !== null) {
+                clearTimeout(konamiTimeOut);
             }
-            getGesture({type: "pinch", scale: hypot / client.zoomAndTilt.pinchHypot, deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
-        }
-    } else if ((event.key == "ArrowUp" && (konamiState === 0 || konamiState == 1)) || (event.key == "ArrowDown" && (konamiState == 2 || konamiState == 3)) || (event.key == "ArrowLeft" && (konamiState == 4 || konamiState == 6)) || (event.key == "ArrowRight" && (konamiState == 5 || konamiState == 7)) || (event.key == "b" && konamiState == 8)) {
-        if (konamiTimeOut !== undefined && konamiTimeOut !== null) {
-            clearTimeout(konamiTimeOut);
-        }
-        konamiState++;
-        konamiTimeOut = setTimeout(function () {
-            konamiState = 0;
-        }, 500);
-    } else if (event.key == "a" && konamiState == 9) {
-        if (konamiTimeOut !== undefined && konamiTimeOut !== null) {
-            clearTimeout(konamiTimeOut);
-        }
-        konamiState = -1;
-        gui.konamiOverlay = true;
-        drawBackground();
-        background3D.animateBehind(true);
-    } else if (konamiState < 0 && (event.key == "Enter" || event.key == " " || event.key == "a" || event.key == "b")) {
-        konamiState = konamiState > -2 ? --konamiState : 0;
-        gui.konamiOverlay = false;
-        if (konamiState == 0) {
+            konamiState++;
+            konamiTimeOut = setTimeout(function () {
+                konamiState = 0;
+            }, 500);
+        } else if (event.key == "a" && konamiState == 9) {
+            if (konamiTimeOut !== undefined && konamiTimeOut !== null) {
+                clearTimeout(konamiTimeOut);
+            }
+            konamiState = -1;
+            gui.konamiOverlay = true;
             drawBackground();
             background3D.animateBehind(true);
+        } else if (konamiState < 0 && (event.key == "Enter" || event.key == "a" || event.key == "b")) {
+            konamiState = konamiState > -2 ? --konamiState : 0;
+            gui.konamiOverlay = false;
+            if (konamiState == 0) {
+                drawBackground();
+                background3D.animateBehind(true);
+            }
+        } else if (konamiState > 0) {
+            if (konamiTimeOut !== undefined && konamiTimeOut !== null) {
+                clearTimeout(konamiTimeOut);
+            }
+            konamiState = 0;
         }
-    } else if (konamiState > 0) {
-        if (konamiTimeOut !== undefined && konamiTimeOut !== null) {
-            clearTimeout(konamiTimeOut);
-        }
-        konamiState = 0;
     }
 }
 function onKeyUp(event) {
