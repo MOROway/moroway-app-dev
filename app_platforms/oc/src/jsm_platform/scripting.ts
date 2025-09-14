@@ -17,7 +17,7 @@ document.addEventListener("deviceready", function () {
         "backbutton",
         function (e) {
             e.preventDefault();
-            if (getMode() == Modes.MULTIPLAYER || (getMode() == Modes.SINGLEPLAYER && getSetting("saveGame"))) {
+            if (getMode() == Modes.MULTIPLAYER || (getMode() == Modes.SINGLEPLAYER && !getSetting("saveGame"))) {
                 // Cordova wrapper contains this function
                 // @ts-ignore
                 navigator.notification.confirm(

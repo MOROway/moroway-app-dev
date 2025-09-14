@@ -11,6 +11,9 @@ export var SYSTEM_TOOLS = {
         // @ts-ignore
         WebJSInterface.exitApp();
     },
+    forceModeSwitchHandling: function (newMode) {
+        return newMode ? "navigate" : false;
+    },
     keepAlive: function (acquire) {
         if (acquire) {
             try {

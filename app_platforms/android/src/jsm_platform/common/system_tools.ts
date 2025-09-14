@@ -9,7 +9,9 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
         // @ts-ignore
         WebJSInterface.exitApp();
     },
-    getAppMode: () => "app",
+    forceModeSwitchHandling(newMode) {
+        return newMode ? "navigate" : false;
+    },
     keepAlive(acquire) {
         if (acquire) {
             try {

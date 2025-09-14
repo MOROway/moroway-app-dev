@@ -8,12 +8,12 @@ import { setSettingsHTML } from "../jsm/common/settings.js";
 import { getString } from "../jsm/common/string_tools.js";
 import { SYSTEM_TOOLS } from "../jsm/common/system_tools.js";
 import { followLink, LinkStates, showServerNote } from "../jsm/common/web_tools.js";
-import { getMode, optionsMenuEditorAdd } from "../jsm/scripting.js";
+import { getMode, Modes, optionsMenuEditorAdd } from "../jsm/scripting.js";
 document.addEventListener("moroway-app-after-calc-options-menu-load", function () {
     optionsMenuEditorAdd("canvas-platform-exit", getString("platformSnapAppExit"), "close", SYSTEM_TOOLS.exitApp);
 });
 document.addEventListener("moroway-app-ready", function () {
-    if (getMode() == "normal") {
+    if (getMode() == Modes.SINGLEPLAYER) {
         showServerNote(document.querySelector("#server-note"));
     }
     setSettingsHTML(document.querySelector("#settings-inner"), false);

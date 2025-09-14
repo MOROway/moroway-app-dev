@@ -318,8 +318,9 @@ function getFontSize(font, unit) {
  ******************************************/
 
 function showConfirmDialogLeaveMultiplayerMode() {
+    resetConfirmDialog();
     const confirmDialog = document.querySelector("#confirm-dialog") as HTMLElement;
-    if (confirmDialog != null) {
+    if (confirmDialog) {
         const confirmDialogTitle = confirmDialog.querySelector("#confirm-dialog-title") as HTMLElement;
         const confirmDialogText = confirmDialog.querySelector("#confirm-dialog-text") as HTMLElement;
         confirmDialogTitle.textContent = getString("appScreenTeamplayLeaveDialogTitle");
@@ -327,21 +328,22 @@ function showConfirmDialogLeaveMultiplayerMode() {
         const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes") as HTMLElement;
         if (confirmDialogYes != null) {
             confirmDialogYes.onclick = function () {
-                switchMode(Modes.SINGLEPLAYER);
                 closeConfirmDialog();
+                switchMode(Modes.SINGLEPLAYER);
             };
         }
         const confirmDialogNo = document.querySelector("#confirm-dialog #confirm-dialog-no") as HTMLElement;
         if (confirmDialogNo != null) {
             confirmDialogNo.onclick = closeConfirmDialog;
         }
-        if (currentMode == Modes.MULTIPLAYER && confirmDialog.style.display == "") {
+        if (currentMode == Modes.MULTIPLAYER) {
             confirmDialog.style.display = "block";
         }
     }
 }
 
 function showConfirmDialogEnterDemoMode() {
+    resetConfirmDialog();
     const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
     if (confirmDialog) {
         const confirmDialogTitle: HTMLElement = confirmDialog.querySelector("#confirm-dialog-title");
@@ -407,12 +409,12 @@ function showConfirmDialogEnterDemoMode() {
         const confirmDialogYes: HTMLElement = document.querySelector("#confirm-dialog #confirm-dialog-yes");
         if (confirmDialogYes) {
             confirmDialogYes.onclick = function () {
+                closeConfirmDialog();
                 const param3DRotationSpeedElem: HTMLInputElement = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
                 if (param3DRotationSpeedElem) {
                     setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
                 }
                 setGuiState("demo-random", confirmDialogRandom.checked);
-                closeConfirmDialog();
                 const switchDemoModeAdditionalParams = {};
                 if (confirmDialogExitTimeout.value !== "") {
                     switchDemoModeAdditionalParams["exit-timeout"] = confirmDialogExitTimeout.value;
@@ -424,7 +426,7 @@ function showConfirmDialogEnterDemoMode() {
         if (confirmDialogNo != null) {
             confirmDialogNo.onclick = closeConfirmDialog;
         }
-        if (currentMode != Modes.DEMO && confirmDialog.style.display == "") {
+        if (currentMode != Modes.DEMO) {
             confirmDialog.style.display = "block";
         }
     }
@@ -432,8 +434,13 @@ function showConfirmDialogEnterDemoMode() {
 
 function closeConfirmDialog() {
     const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
-    if (confirmDialog != null) {
+    if (confirmDialog) {
         confirmDialog.style.display = "";
+    }
+}
+function resetConfirmDialog() {
+    const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
+    if (confirmDialog) {
         const confirmDialogTitle: HTMLElement = confirmDialog.querySelector("#confirm-dialog-title");
         const confirmDialogText: HTMLElement = confirmDialog.querySelector("#confirm-dialog-text");
         const confirmDialogParams: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params");
@@ -445,7 +452,7 @@ function closeConfirmDialog() {
     }
 }
 
-function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Record<string, string> = {}): void {
+function switchMode(mode: Modes = Modes.SINGLEPLAYER, additionalParameters: Record<string, string> = {}): void {
     function requestModeSwitch() {
         if (modeSwitchingTimeout !== undefined && modeSwitchingTimeout !== null) {
             clearTimeout(modeSwitchingTimeout);
@@ -454,7 +461,9 @@ function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Rec
             modeSwitchingTimeout = setTimeout(requestModeSwitch, 10);
         } else {
             //Update URL
-            if (SYSTEM_TOOLS.getAppMode() != "website") {
+            if (SYSTEM_TOOLS.forceModeSwitchHandling(currentMode != mode) == "navigate") {
+                followLink(url, "_self", LinkStates.InternalHtml);
+            } else if (SYSTEM_TOOLS.forceModeSwitchHandling(currentMode != mode) == "historyReplace") {
                 history.replaceState(null, "", url);
             } else if (history.state?.mode == mode) {
                 history.replaceState({mode: mode}, "", url);
@@ -462,10 +471,14 @@ function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Rec
                 history.pushState({mode: mode}, "", url);
             }
             //Reload app
-            prepareInit();
+            prepareInit(mode);
             animateWorker.postMessage({k: "ready", state: "reload", online: currentMode == Modes.MULTIPLAYER, onlineInterval: multiplayerMode.animateInterval, demo: currentMode == Modes.DEMO});
         }
     }
+    if (modeSwitching) {
+        return;
+    }
+    modeSwitching = true;
     const lastUrlParams = new URLSearchParams(location.search);
     const urlParams = Object.assign(Object.fromEntries(lastUrlParams.entries()), additionalParameters);
     urlParams.mode = mode;
@@ -474,13 +487,10 @@ function switchMode(mode: string = Modes.SINGLEPLAYER, additionalParameters: Rec
     }
     const urlParamsString = new URLSearchParams(urlParams).toString();
     const url = "?" + urlParamsString;
-    if (!modeSwitching) {
-        modeSwitchingReloadTimeout = setTimeout(function () {
-            location.reload();
-        }, 5000);
-        modeSwitching = true;
-        requestModeSwitch();
-    }
+    modeSwitchingReloadTimeout = setTimeout(function () {
+        location.reload();
+    }, 5000);
+    requestModeSwitch();
 }
 
 export function getMode(): Modes {
@@ -1748,6 +1758,9 @@ function resizeCars(oldBg) {
 
 function requestResize() {
     function resize() {
+        if (modeSwitching) {
+            return;
+        }
         resized = true;
         if (currentMode == Modes.MULTIPLAYER) {
             if (multiplayerMode.resizedTimeout != undefined && multiplayerMode.resizedTimeout != null) {
@@ -5719,32 +5732,37 @@ var clickTimeOut;
 /*******************************************
  *            Event Listeners              *
  ******************************************/
-function setMode() {
-    //Default mode
-    currentMode = Modes.SINGLEPLAYER;
 
-    //Determine mode
-    const queryStringMode = getQueryStringValue("mode");
+function prepareInit(selectedMode?: Modes) {
+    function setMode() {
+        if (selectedMode == undefined) {
+            //Default mode
+            currentMode = Modes.SINGLEPLAYER;
 
-    //Set mode: multiplayer
-    if (queryStringMode == Modes.MULTIPLAYER) {
-        if ("WebSocket" in window) {
-            currentMode = Modes.MULTIPLAYER;
+            //Demo by settings
+            if (getSetting("startDemoMode")) {
+                currentMode = Modes.DEMO;
+            }
+
+            //Determine mode
+            const queryStringMode = getQueryStringValue("mode");
+            if ((<any>Object).values(Modes).includes(queryStringMode)) {
+                currentMode = queryStringMode as Modes;
+            }
         } else {
-            notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
+            currentMode = selectedMode;
+        }
+        document.body.style.cursor = "";
+        if (currentMode == Modes.MULTIPLAYER) {
+            if (!("WebSocket" in window)) {
+                notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NotificationPriority.High, 6000, null, null, client.y + menus.outerContainer.height);
+                currentMode = Modes.SINGLEPLAYER;
+            }
+        } else if (currentMode == Modes.DEMO) {
+            document.body.style.cursor = "none";
+            demoMode.standalone = getQueryStringValue("demo-standalone") == "1";
         }
     }
-
-    //Set mode: demo
-    if (queryStringMode == Modes.DEMO || (getSetting("startDemoMode") && queryStringMode == "")) {
-        currentMode = Modes.DEMO;
-        document.body.style.cursor = "none";
-        demoMode.standalone = getQueryStringValue("demo-standalone") == "1";
-    } else {
-        document.body.style.cursor = "";
-    }
-}
-function prepareInit() {
     //Reset GUI
     gui = {};
 
@@ -7054,7 +7072,7 @@ window.addEventListener("load", function () {
                             resetForElement(parent, elem);
                             var elem = document.querySelector("#setup #setup-create #setup-create-link") as HTMLElement;
                             elem.onclick = function () {
-                                switchMode(Modes.MULTIPLAYER);
+                                switchMode(Modes.MULTIPLAYER, {id: "", key: ""});
                             };
                             var elem = document.querySelector("#setup #setup-create #setup-create-escape") as HTMLElement;
                             elem.onclick = function () {
@@ -8432,9 +8450,19 @@ window.addEventListener("error", function () {
 
 window.addEventListener("popstate", function (event) {
     if (event.state) {
-        switchMode(event.state.mode);
+        const historyStateMode = event.state.mode;
+        if ((<any>Object).values(Modes).includes(historyStateMode)) {
+            switchMode(historyStateMode as Modes);
+        } else {
+            switchMode(Modes.SINGLEPLAYER);
+        }
     } else {
-        switchMode(getQueryStringValue("mode"));
+        const queryStringMode = getQueryStringValue("mode");
+        if ((<any>Object).values(Modes).includes(queryStringMode)) {
+            switchMode(queryStringMode as Modes);
+        } else {
+            switchMode(Modes.SINGLEPLAYER);
+        }
     }
 });
 

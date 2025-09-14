@@ -22,6 +22,7 @@
   <string name="generalStartDemoMode3DCameraModeFollowCar">காரைப் பின்தொடரவும்</string>
   <string name="generalStartDemoMode3DCameraModeFollowTrain">ரயிலைப் பின்தொடரவும்</string>
   <string name="generalStartDemoMode3DRotationSpeed">3D: சுழற்சி விரைவு</string>
+  <string name="generalStartDemoModeExitTimeout">குறிப்பிட்ட நேரத்திற்குப் பிறகு பயன்பாட்டிலிருந்து வெளியேற முயற்சிக்கவும்.</string>
   <string name="generalStartDemoModeRandom">சீரற்ற உள்ளமைவுடன் டெமோ பயன்முறையைத் தொடங்கவும்</string>
   <string name="generalStartGame">விளையாடுங்கள்</string>
   <string name="generalStartGameDemoMode">டெமோ பயன்முறையைத் தொடங்கவும்</string>

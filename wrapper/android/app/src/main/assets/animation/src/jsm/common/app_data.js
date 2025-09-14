@@ -12,16 +12,16 @@ var APP_DATA = {
         // @ts-ignore
         minor: 3,
         // @ts-ignore
-        patch: 4,
+        patch: 7,
         // @ts-ignore
-        beta: 0,
+        beta: 9,
         date: {
             // @ts-ignore
             year: 2025,
             // @ts-ignore
-            month: 6,
+            month: 9,
             // @ts-ignore
-            day: 14
+            day: 13
         }
     },
     platform: "android",

@@ -10,7 +10,7 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
         // @ts-ignore
         _exitApp.exec();
     },
-    getAppMode: () => "app",
+    forceModeSwitchHandling: () => false,
     keepAlive(acquire) {
         try {
             // Electron wrapper contains this function

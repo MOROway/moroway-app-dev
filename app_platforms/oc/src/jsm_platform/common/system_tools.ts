@@ -10,7 +10,7 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
         // @ts-ignore
         cordova.commitSuicide();
     },
-    getAppMode: () => "app",
+    forceModeSwitchHandling: () => false,
     keepAlive(acquire) {
         if (acquire) {
             try {

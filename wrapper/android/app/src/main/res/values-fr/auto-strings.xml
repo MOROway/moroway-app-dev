@@ -8,7 +8,7 @@
   <string name="generalLeaveAndDestroyGameNo">Continuer jeu</string>
   <string name="generalLeaveAndDestroyGameTitle">Êtes-vous sur(e) ?</string>
   <string name="generalLeaveAndDestroyGameYes">Quitter jeu</string>
-  <string name="generalLicense">License</string>
+  <string name="generalLicense">Licence</string>
   <string name="generalNewVersion">Nouvelle version</string>
   <string name="generalNo">non</string>
   <string name="generalOK">okay</string>
@@ -20,6 +20,7 @@
   <string name="generalStartDemoMode3DCameraModeFollowCar">suivre voiture</string>
   <string name="generalStartDemoMode3DCameraModeFollowTrain">suivre train</string>
   <string name="generalStartDemoMode3DRotationSpeed">3D : vitesse rotation</string>
+  <string name="generalStartDemoModeExitTimeout">Essayer de quitter l’app après une durée spécifiée en minutes.</string>
   <string name="generalStartDemoModeRandom">Démarrer mode démo avec configuration aléatoire</string>
   <string name="generalStartGame">Jouer</string>
   <string name="generalStartGameDemoMode">Démarrer mode démo</string>
@@ -30,6 +31,7 @@
   <string name="generalTitleHelpScreenShort">Aide</string>
   <string name="generalTitleSettingsScreen">Paramètres</string>
   <string name="generalTitleTeamplay">Multijoueur</string>
+  <string name="generalTitleWhatsNewScreen">Historique des modifications</string>
   <string name="generalXAreY">{{0}} sont {{1}}</string>
   <string name="generalXIsY">{{0}} est {{1}}.</string>
   <string name="generalYes">oui</string>

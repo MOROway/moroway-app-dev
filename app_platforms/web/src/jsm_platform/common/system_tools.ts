@@ -5,7 +5,7 @@ import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
     canExitApp() {
-        return SYSTEM_TOOLS.getAppMode() == "webapp" && window.history.length === 1;
+        return !window.matchMedia("(display-mode: browser)").matches && window.history.length === 1;
     },
     exitApp() {
         try {
@@ -16,11 +16,11 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
             }
         }
     },
-    getAppMode() {
+    forceModeSwitchHandling() {
         if (window.matchMedia("(display-mode: browser)").matches) {
-            return "website";
+            return false;
         }
-        return "webapp";
+        return "historyReplace";
     },
     keepAlive(acquire) {
         if (acquire) {
