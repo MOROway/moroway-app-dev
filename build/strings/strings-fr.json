@@ -276,12 +276,14 @@
 	"helpScreenLegalFontsRobotoPs": [
 		"MOROway App utilise la police « Roboto » de Google Inc."
 	],
+	"helpScreenLegalLibraries": "Bibliothèques {{0}}",
 	"helpScreenLegalLibrariesThreeJsPs": [
 		"MOROway App utilise la bibliothèque 3D « Three.js »."
 	],
 	"helpScreenLegalMedia": "Média {{0}}",
 	"helpScreenLegalMedia3DModels": "Modèles 3D",
 	"helpScreenLegalMediaSound": "Son",
+	"helpScreenLegalOwn": "App MOROway {{0}}",
 	"helpScreenLegalOwnCode": "Général",
 	"helpScreenLegalOwnCodePs": [
 		"MOROway App est sous licence « GNU General Public License v3.0 »."
