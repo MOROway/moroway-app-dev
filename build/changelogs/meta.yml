@@ -256,3 +256,5 @@
   year: 2025
   general:
     fixes: true
+  snap:
+    dependencies: true

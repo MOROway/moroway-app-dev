@@ -115,7 +115,7 @@ function showConfirmDialogLeaveMultiplayerMode() {
         if (confirmDialogYes != null) {
             confirmDialogYes.onclick = function () {
                 closeConfirmDialog();
-                switchMode(Modes.SINGLEPLAYER);
+                switchMode(Modes.SINGLEPLAYER, { id: "", key: "" });
             };
         }
         var confirmDialogNo = document.querySelector("#confirm-dialog #confirm-dialog-no");
@@ -6919,7 +6919,7 @@ window.addEventListener("load", function () {
                     }
                 };
                 document.querySelector("#setup #setup-exit").onclick = function () {
-                    switchMode(Modes.SINGLEPLAYER);
+                    switchMode(Modes.SINGLEPLAYER, { id: "", key: "" });
                 };
                 if (currentMode == Modes.MULTIPLAYER) {
                     onlineConnection.connect = function () {
@@ -6965,7 +6965,7 @@ window.addEventListener("load", function () {
                             };
                             var elem = document.querySelector("#setup #setup-create #setup-create-escape");
                             elem.onclick = function () {
-                                switchMode(Modes.SINGLEPLAYER);
+                                switchMode(Modes.SINGLEPLAYER, { id: "", key: "" });
                             };
                         }
                         function getPlayerNameFromInput() {
