@@ -1006,7 +1006,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     }
     menus.floating = false;
     menus.options.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
-    if (menus.options.items.length > 0) {
+    if (currentMode != Modes.DEMO && menus.options.items.length > 0) {
         menus.small = !client.isSmall;
         menus.outerContainer.height = menus.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
         menus.outerContainer.element.style.display = "";
