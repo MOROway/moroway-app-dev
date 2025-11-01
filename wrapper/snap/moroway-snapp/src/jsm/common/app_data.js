@@ -12,16 +12,16 @@ var APP_DATA = {
         // @ts-ignore
         minor: 3,
         // @ts-ignore
-        patch: 8,
+        patch: 9,
         // @ts-ignore
-        beta: 0,
+        beta: 2,
         date: {
             // @ts-ignore
             year: 2025,
             // @ts-ignore
-            month: 10,
+            month: 11,
             // @ts-ignore
-            day: 18
+            day: 1
         }
     },
     platform: "snap",
