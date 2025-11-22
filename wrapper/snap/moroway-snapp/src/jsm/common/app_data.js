@@ -14,14 +14,14 @@ var APP_DATA = {
         // @ts-ignore
         patch: 9,
         // @ts-ignore
-        beta: 2,
+        beta: 0,
         date: {
             // @ts-ignore
             year: 2025,
             // @ts-ignore
             month: 11,
             // @ts-ignore
-            day: 1
+            day: 22
         }
     },
     platform: "snap",
