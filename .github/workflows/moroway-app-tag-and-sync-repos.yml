@@ -61,7 +61,7 @@ jobs:
                   python-version: "3.x"
             - name: Install fonttools
               run: pip install fonttools
-            - uses: actions/cache/restore@v4
+            - uses: actions/cache/restore@v5
               with:
                   path: build/.cache/
                   key: build-cache
@@ -104,7 +104,7 @@ jobs:
                       git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git" "$TAG"
                       git push "https://$GIT_USER:$API_TOKEN_GITHUB@github.com/MOROway/$REPO.git"
                   fi
-            - uses: actions/cache/save@v4
+            - uses: actions/cache/save@v5
               with:
                   path: build/.cache/
                   key: build-cache
