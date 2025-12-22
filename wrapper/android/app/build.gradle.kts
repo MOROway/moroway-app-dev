@@ -9,14 +9,14 @@ android {
         applicationId = "appinventor.ai_Jonathan_Herrmann_Engel.MOROway"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1003072
-        versionName = "10.3.7"
+        versionCode = 1003100
+        versionName = "10.3.10"
     }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android.txt"),
+                getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
@@ -44,8 +44,8 @@ dependencies {
     val kotlinVersion = rootProject.extra.get("kotlinVersion") as String
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.activity:activity-ktx:1.11.0")
-    implementation("androidx.webkit:webkit:1.14.0")
+    implementation("androidx.activity:activity-ktx:1.12.2")
+    implementation("androidx.webkit:webkit:1.15.0")
     implementation("io.coil-kt.coil3:coil:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 }

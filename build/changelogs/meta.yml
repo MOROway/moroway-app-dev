@@ -263,3 +263,7 @@
   general:
     dependencies: true
     fixes: true
+10.3.10:
+  year: 2025
+  general:
+    dependencies: true
