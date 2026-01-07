@@ -1,7 +1,7 @@
 {
     "name": "moroway-app",
     "license": "GPL-3.0-only",
-    "version": "10.3.10",
+    "version": "10.3.11",
     "description": "Play with the MORO model railroad…",
     "author": "Jonathan Herrmann-Engel",
     "build": {
@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "electron": "^39.0.0",
-        "electron-builder": "^26.0.0"
+        "electron-builder": "^26.4.0"
     },
     "main": "www/app.js"
 }
