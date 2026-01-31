@@ -1,2 +1,7 @@
 translations: Mise à jour traductions
 fixes: Corrections de bugs
+dependencies: Mise à jour de dépendance(s)
+versions:
+    3.1.0:
+        general: |
+            Section info ajoutée.
