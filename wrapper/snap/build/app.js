@@ -5,12 +5,11 @@ function newWindow(urlToLoad) {
     const path = require("path");
     const windowOptions = {
         fullscreen: true,
+        autoHideMenuBar: false,
         menuBarVisible: false,
         titleBarStyle: "hidden",
-        frame: false,
         icon: path.join(__dirname, "icon.png"),
         webPreferences: {
-            nativeWindowOpen: true,
             devTools: false,
             sandbox: false,
             preload: path.join(__dirname, "preload.js")

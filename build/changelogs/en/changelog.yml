@@ -301,6 +301,9 @@ versions:
     10.3.7:
         general: |
             Improve in-app navigation.
+    10.3.11:
+        snap: |
+            Added workaround for issue with Wayland.
 hints:
     1.0.0:
         general: |

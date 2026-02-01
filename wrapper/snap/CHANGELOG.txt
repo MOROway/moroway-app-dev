@@ -440,3 +440,12 @@ Update dependencies.
 
 ---
 
+
+
+10.3.11
+
+Added workaround for issue with Wayland.
+Update dependencies.
+
+---
+
