@@ -3,6 +3,7 @@ import { APP_DATA } from "./app_data.js";
 import { NotificationPriority, notify } from "./notify.js";
 import { isGameSaved, removeSavedGame } from "./saved_game.js";
 import { CURRENT_LANG, getLanguageList, getString, setCurrentLang } from "./string_tools.js";
+import { SYSTEM_TOOLS } from "./system_tools.js";
 import { followLink, LinkStates } from "./web_tools.js";
 
 //SETTINGS
@@ -12,10 +13,10 @@ export function getSettings() {
         values = JSON.parse(window.localStorage.getItem(SETTINGS_NAME) || "{}");
     } catch (e) {}
 
-    var defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false, lockOrientationLandscape: false, showVersionNoteAgain: false, reduceOptMenuHide3DViewToggle: false, reduceOptMenuHide3DViewNightToggle: false, reduceOptMenuHide3DViewCameraSwitcher: false, reduceOptMenuHideExit: false};
-    var dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"], reduceOptMenuHide3DViewToggle: ["reduceOptMenu"], reduceOptMenuHide3DViewNightToggle: ["reduceOptMenu"], reduceOptMenuHide3DViewCameraSwitcher: ["reduceOptMenu"], reduceOptMenuHideExit: ["reduceOptMenu"]};
-    var hardware = {cursorascircle: ["mouse"]};
-    var platforms = {reduceOptMenuHideDemoMode: ["snap", "web", "windows"], reduceOptMenuHideExit: ["android"], startDemoMode: ["snap", "windows"], lockOrientationLandscape: ["android"], showVersionNoteAgain: ["android"]};
+    const defaults = {showNotifications: true, classicUI: true, alwaysShowSelectedTrain: true, cursorascircle: true, burnTheTaxOffice: true, saveGame: true, autoplayAudio: false, reduceOptMenu: false, reduceOptMenuHideGraphicalInfoToggle: false, reduceOptMenuHideTrainControlCenter: false, reduceOptMenuHideCarControlCenter: false, reduceOptMenuHideAudioToggle: false, reduceOptMenuHideDemoMode: false, startDemoMode: false, lockOrientationLandscape: false, showVersionNoteAgain: false, reduceOptMenuHide3DViewToggle: false, reduceOptMenuHide3DViewNightToggle: false, reduceOptMenuHide3DViewCameraSwitcher: false, reduceOptMenuHideExit: false};
+    const dependencies = {alwaysShowSelectedTrain: ["classicUI"], reduceOptMenuHideGraphicalInfoToggle: ["reduceOptMenu"], reduceOptMenuHideTrainControlCenter: ["reduceOptMenu"], reduceOptMenuHideCarControlCenter: ["reduceOptMenu"], reduceOptMenuHideAudioToggle: ["reduceOptMenu"], reduceOptMenuHideDemoMode: ["reduceOptMenu"], reduceOptMenuHide3DViewToggle: ["reduceOptMenu"], reduceOptMenuHide3DViewNightToggle: ["reduceOptMenu"], reduceOptMenuHide3DViewCameraSwitcher: ["reduceOptMenu"], reduceOptMenuHideExit: ["reduceOptMenu"]};
+    const hardware = {cursorascircle: ["mouse"], autoplayAudio: ["autoplay"]};
+    const platforms = {reduceOptMenuHideDemoMode: ["snap", "web", "windows"], reduceOptMenuHideExit: ["android"], startDemoMode: ["snap", "windows"], lockOrientationLandscape: ["android"], showVersionNoteAgain: ["android"]};
 
     Object.keys(defaults).forEach(function (key) {
         if (typeof values[key] !== "boolean") {
@@ -32,7 +33,7 @@ export function getSettings() {
 }
 
 function isSettingActive(a) {
-    var settingsComplete = getSettings();
+    const settingsComplete = getSettings();
     var isSettingActive = true;
     if (settingsComplete.dependencies[a] != null) {
         settingsComplete.dependencies[a].forEach(function (key) {
@@ -45,7 +46,7 @@ function isSettingActive(a) {
 }
 
 function isHardwareAvailable(a) {
-    var settingsComplete = getSettings();
+    const settingsComplete = getSettings();
     var isHardwareAvailable = true;
     if (settingsComplete.hardware[a] != null) {
         settingsComplete.hardware[a].forEach(function (current) {
@@ -60,7 +61,7 @@ function isHardwareAvailable(a) {
 }
 
 function isInPlatformList(a) {
-    var settingsComplete = getSettings();
+    const settingsComplete = getSettings();
     var isInPlatformList = true;
     if (settingsComplete.platforms[a] != null) {
         isInPlatformList = settingsComplete.platforms[a].indexOf(APP_DATA.platform) > -1;
@@ -282,4 +283,7 @@ const SETTINGS_NAME = "morowayApp";
 const AVAILABLE_HARDWARE: string[] = [];
 if (window.matchMedia("(pointer: fine)").matches) {
     AVAILABLE_HARDWARE[AVAILABLE_HARDWARE.length] = "mouse";
+}
+if (SYSTEM_TOOLS.canAutoplayMedia()) {
+    AVAILABLE_HARDWARE[AVAILABLE_HARDWARE.length] = "autoplay";
 }

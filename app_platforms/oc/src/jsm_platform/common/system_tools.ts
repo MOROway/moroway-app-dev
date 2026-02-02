@@ -4,6 +4,7 @@ import { SYSTEM_TOOLS_INTERFACE } from "{{jsm}}/common/system_tools.js";
 import { followLink, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
+    canAutoplayMedia: () => true,
     canExitApp: () => true,
     exitApp() {
         // Cordova wrapper contains this function

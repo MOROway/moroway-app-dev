@@ -4,6 +4,7 @@ import { APP_DATA } from "{{jsm}}/common/app_data.js";
 import { SYSTEM_TOOLS_INTERFACE } from "{{jsm}}/common/system_tools.js";
 
 export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
+    canAutoplayMedia: () => true,
     canExitApp: () => true,
     exitApp() {
         // Electron wrapper contains this function

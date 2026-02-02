@@ -304,6 +304,9 @@ versions:
     10.3.11:
         snap: |
             Added workaround for issue with Wayland.
+    10.3.12:
+        general: |
+            Improve sound effects handling.
 hints:
     1.0.0:
         general: |

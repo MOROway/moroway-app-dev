@@ -10,6 +10,7 @@ function newWindow(urlToLoad) {
         titleBarStyle: "hidden",
         icon: path.join(__dirname, "icon.png"),
         webPreferences: {
+            autoplayPolicy: "no-user-gesture-required",
             devTools: false,
             sandbox: false,
             preload: path.join(__dirname, "preload.js")

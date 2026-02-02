@@ -33,6 +33,7 @@ abstract class WebActivity : MOROwayActivity() {
     private fun initWeb(webView: WebView) {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
+        webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.settings.useWideViewPort = true
         webView.settings.builtInZoomControls = false
         webView.settings.setSupportZoom(false)

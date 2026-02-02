@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 Jonathan Herrmann-Engel
+ * Copyright 2026 Jonathan Herrmann-Engel
  * SPDX-License-Identifier: GPL-3.0-only
  */
 "use strict";
@@ -640,10 +640,12 @@ function calcMenusAndBackground(state) {
     }
     if (getSetting("reduceOptMenuHideAudioToggle")) {
         menus.options.elements.soundToggle.classList.add("settings-hidden");
-        audio.active = false;
-        audioControl.playAndPauseAll();
-        menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
-        menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+        if (!getSetting("autoplayAudio")) {
+            audio.active = false;
+            audioControl.playAndPauseAll();
+            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
+            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+        }
     }
     else {
         menus.options.elements.soundToggle.classList.remove("settings-hidden");
@@ -690,12 +692,20 @@ function calcMenusAndBackground(state) {
             beforeOptionsMenuChange();
             showConfirmDialogEnterDemoMode();
         };
-        menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+        if (getSetting("autoplayAudio")) {
+            audioControl.init();
+            audio.active = true;
+            audioControl.playAndPauseAll();
+            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
+            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_up";
+        }
+        else {
+            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
+        }
         menus.options.elements.soundToggle.onclick = function () {
             beforeOptionsMenuChange();
-            if (audio.context == undefined) {
-                audioControl.init();
-            }
+            audioControl.init();
             audio.active = !audio.active;
             audioControl.playAndPauseAll();
             if (audio.active) {
@@ -4891,6 +4901,10 @@ var audioControl = {
             }
         }
         var soundFileExtension = "ogg";
+        if (audio.context) {
+            audioControl.stopAll();
+            audio.context.close();
+        }
         if (trains) {
             audio.context = new AudioContext();
             audio.buffer = {};
@@ -4942,7 +4956,7 @@ var audioControl = {
                 }
             }
             for (var i = 0; i < trains.length; i++) {
-                createTrainAudio(i);
+                createTrainAudio(trains[i].audioSrc);
             }
         }
     },
@@ -4960,7 +4974,7 @@ var audioControl = {
         return false;
     },
     mayPlay: function () {
-        return audio.active && currentMode != Modes.DEMO && !client.hidden && !onlineConnection.paused;
+        return audio.active && (getSetting("autoplayAudio") || currentMode != Modes.DEMO) && !client.hidden && !onlineConnection.paused;
     },
     existsObject: function (destinationName, destinationIndex) {
         if (destinationIndex === void 0) { destinationIndex = undefined; }
@@ -4971,7 +4985,7 @@ var audioControl = {
                 }
             }
             else {
-                if (typeof audio.source[destinationName] == "object") {
+                if (typeof audio.source[destinationName] == "object" && !Array.isArray(audio.source[destinationName])) {
                     return true;
                 }
             }
@@ -4979,6 +4993,9 @@ var audioControl = {
         return false;
     },
     startObject: function (destinationName, destinationIndex, loop) {
+        if (audioControl.existsObject(destinationName, destinationIndex)) {
+            return false;
+        }
         if (typeof audio.context == "object") {
             var source = audio.context.createBufferSource();
             source.loop = loop;
@@ -4993,7 +5010,7 @@ var audioControl = {
                 }
             }
             else {
-                if (typeof audio.buffer[destinationName] == "object" && typeof audio.gainNode[destinationName] == "object") {
+                if (typeof audio.buffer[destinationName] == "object" && typeof audio.gainNode[destinationName] == "object" && !Array.isArray(audio.buffer[destinationName]) && !Array.isArray(audio.gainNode[destinationName])) {
                     source.buffer = audio.buffer[destinationName];
                     source.connect(audio.gainNode[destinationName]);
                     audio.source[destinationName] = source;
@@ -5016,7 +5033,7 @@ var audioControl = {
             else {
                 gainNode = audio.gainNode[destinationName];
             }
-            if (typeof gainNode == "object" && volume != undefined) {
+            if (typeof gainNode == "object" && !Array.isArray(gainNode) && volume != undefined) {
                 gainNode.gain.value = Math.round(volume) / 100;
                 return true;
             }
@@ -5025,6 +5042,9 @@ var audioControl = {
     },
     stopObject: function (destinationName, destinationIndex) {
         if (destinationIndex === void 0) { destinationIndex = undefined; }
+        if (!audioControl.existsObject(destinationName, destinationIndex)) {
+            return false;
+        }
         if (typeof audio.context == "object") {
             if (typeof destinationIndex == "number") {
                 if (typeof audio.source[destinationName][destinationIndex] == "object") {
@@ -6178,6 +6198,7 @@ function init(state) {
     };
     trainParams.selected = Math.floor(Math.random() * trains.length);
     //Audio context
+    audioControl.init();
     audioControl.playAndPauseAll();
     //Default switches
     var switchParamsDefault = {
@@ -7971,16 +7992,14 @@ window.addEventListener("load", function () {
                         trains[i].cars[j].wheels = car.wheels;
                     });
                     if (train.move && !train.mute && audioControl.mayPlay()) {
-                        if (!audioControl.existsObject("train", i)) {
-                            audioControl.startObject("train", i, true);
-                        }
+                        audioControl.startObject("train", trains[i].audioSrc, true);
                         if (train.currentSpeedInPercent == undefined) {
                             train.currentSpeedInPercent = 0;
                         }
-                        audioControl.setObjectVolume("train", i, train.volume);
+                        audioControl.setObjectVolume("train", trains[i].audioSrc, train.volume);
                     }
-                    else if (audioControl.existsObject("train", i)) {
-                        audioControl.stopObject("train", i);
+                    else {
+                        audioControl.stopObject("train", trains[i].audioSrc);
                     }
                 });
                 if (message.data.resized) {
