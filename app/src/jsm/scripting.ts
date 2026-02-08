@@ -616,7 +616,7 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
         }
         for (var i = 0; i < menu.items.length; i++) {
             menu.items[i].style.display = "";
-            var textItem = menu.items[i].querySelector("i") == undefined ? menu.items[i] : menu.items[i].querySelector("i");
+            const textItem = menu.items[i].querySelector("i") ? menu.items[i].querySelector("i") : menu.items[i];
             menu.items[i].style.width = menu.items[i].style.height = textItem.style.fontSize = textItem.style.lineHeight = itemSize + "px";
             if (gui.three) {
                 menu.items[i].style.textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
@@ -797,14 +797,14 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         if (gui.three) {
             menus.options.elements.infoToggle.classList.add("gui-hidden");
             menus.options.elements.view3DNightToggle.classList.remove("gui-hidden");
-            menus.options.elements.view3DToggle.querySelector("i")!.textContent = "2d";
+            menus.options.elements.view3DToggle.querySelector("i").textContent = "2d";
             menus.options.elements.view3DToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOn"));
             menus.options.elements.view3DCameraSwitcherBackwards.classList.remove("gui-hidden");
             menus.options.elements.view3DCameraSwitcherForwards.classList.remove("gui-hidden");
         } else {
             menus.options.elements.infoToggle.classList.remove("gui-hidden");
             menus.options.elements.view3DNightToggle.classList.add("gui-hidden");
-            menus.options.elements.view3DToggle.querySelector("i")!.textContent = "view_in_ar";
+            menus.options.elements.view3DToggle.querySelector("i").textContent = "view_in_ar";
             menus.options.elements.view3DToggle.dataset.tooltip = formatJSString(getString("generalXIsY"), getString("general3DView"), getString("generalOff"));
             menus.options.elements.view3DCameraSwitcherBackwards.classList.add("gui-hidden");
             menus.options.elements.view3DCameraSwitcherForwards.classList.add("gui-hidden");
@@ -6530,6 +6530,13 @@ function init(state: "load" | "reload" = "reload") {
         removeSavedGame();
     }
 
+    //Audio context
+    if (state == "load") {
+        audioControl.setActivation(getSetting("autoplayAudio"));
+    } else {
+        audioControl.setActivation(audio.active);
+    }
+
     measureViewSpace();
     context.clearRect(0, 0, canvas.width, canvas.height);
     calcMenusAndBackground(state);
@@ -6664,13 +6671,6 @@ function init(state: "load" | "reload" = "reload") {
                 }
             });
         });
-    }
-
-    //Audio context
-    if (state == "load") {
-        audioControl.setActivation(getSetting("autoplayAudio"));
-    } else {
-        audioControl.setActivation(audio.active);
     }
 
     //Three.js

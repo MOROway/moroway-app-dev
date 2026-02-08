@@ -402,7 +402,7 @@ function drawMenu(state) {
         }
         for (var i = 0; i < menu.items.length; i++) {
             menu.items[i].style.display = "";
-            var textItem = menu.items[i].querySelector("i") == undefined ? menu.items[i] : menu.items[i].querySelector("i");
+            var textItem = menu.items[i].querySelector("i") ? menu.items[i].querySelector("i") : menu.items[i];
             menu.items[i].style.width = menu.items[i].style.height = textItem.style.fontSize = textItem.style.lineHeight = itemSize + "px";
             if (gui.three) {
                 menu.items[i].style.textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
@@ -578,6 +578,16 @@ function calcMenusAndBackground(state) {
             drawBackground();
         }
     }
+    function setMediaItems() {
+        if (audio.active) {
+            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_up";
+            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
+        }
+        else {
+            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
+            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+        }
+    }
     function set3DItems() {
         if (gui.three) {
             menus.options.elements.infoToggle.classList.add("gui-hidden");
@@ -641,10 +651,8 @@ function calcMenusAndBackground(state) {
     if (getSetting("reduceOptMenuHideAudioToggle")) {
         menus.options.elements.soundToggle.classList.add("settings-hidden");
         if (!getSetting("autoplayAudio")) {
-            audio.active = false;
-            audioControl.playAndPauseAll();
-            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
-            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
+            audioControl.setActivation(false);
+            setMediaItems();
         }
     }
     else {
@@ -692,30 +700,10 @@ function calcMenusAndBackground(state) {
             beforeOptionsMenuChange();
             showConfirmDialogEnterDemoMode();
         };
-        if (getSetting("autoplayAudio")) {
-            audioControl.init();
-            audio.active = true;
-            audioControl.playAndPauseAll();
-            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
-            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_up";
-        }
-        else {
-            menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
-            menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
-        }
         menus.options.elements.soundToggle.onclick = function () {
             beforeOptionsMenuChange();
-            audioControl.init();
-            audio.active = !audio.active;
-            audioControl.playAndPauseAll();
-            if (audio.active) {
-                menus.options.elements.soundToggle.querySelector("i").textContent = "volume_up";
-                menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
-            }
-            else {
-                menus.options.elements.soundToggle.querySelector("i").textContent = "volume_off";
-                menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
-            }
+            audioControl.setActivation(!audio.active);
+            setMediaItems();
         };
         menus.options.elements.modeSingleplayer.onclick = function () {
             beforeOptionsMenuChange();
@@ -805,6 +793,7 @@ function calcMenusAndBackground(state) {
         };
     }
     if (state == "load" || state == "reload") {
+        setMediaItems();
         set3DItems();
         if (currentMode == Modes.MULTIPLAYER) {
             menus.options.elements.modeDemo.classList.add("mode-hidden");
@@ -4960,6 +4949,13 @@ var audioControl = {
             }
         }
     },
+    setActivation: function (activate) {
+        if (activate) {
+            audioControl.init();
+        }
+        audio.active = activate;
+        audioControl.playAndPauseAll();
+    },
     playAndPauseAll: function () {
         if (typeof audio.context == "object") {
             var play = audioControl.mayPlay();
@@ -4974,7 +4970,7 @@ var audioControl = {
         return false;
     },
     mayPlay: function () {
-        return audio.active && (getSetting("autoplayAudio") || currentMode != Modes.DEMO) && !client.hidden && !onlineConnection.paused;
+        return audio.active && !client.hidden && !onlineConnection.paused;
     },
     existsObject: function (destinationName, destinationIndex) {
         if (destinationIndex === void 0) { destinationIndex = undefined; }
@@ -6197,9 +6193,6 @@ function init(state) {
         }
     };
     trainParams.selected = Math.floor(Math.random() * trains.length);
-    //Audio context
-    audioControl.init();
-    audioControl.playAndPauseAll();
     //Default switches
     var switchParamsDefault = {
         showDuration: 11,
@@ -6421,6 +6414,13 @@ function init(state) {
     }
     else {
         removeSavedGame();
+    }
+    //Audio context
+    if (state == "load") {
+        audioControl.setActivation(getSetting("autoplayAudio"));
+    }
+    else {
+        audioControl.setActivation(audio.active);
     }
     measureViewSpace();
     context.clearRect(0, 0, canvas.width, canvas.height);

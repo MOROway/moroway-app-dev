@@ -41,6 +41,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { APP_DATA } from "../../jsm/common/app_data.js";
 export var SYSTEM_TOOLS = {
+    canAutoplayMedia: function () { return true; },
     canExitApp: function () { return true; },
     exitApp: function () {
         // Electron wrapper contains this function

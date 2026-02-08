@@ -181,16 +181,14 @@ class HomeActivity : MOROwayActivity() {
             versionNoteBinding.popupMainText.text = serverMsgSettings.getString("text", "")
             versionNoteBinding.showAgainContainer.visibility = View.VISIBLE
             versionNoteBinding.showAgainText.visibility = View.VISIBLE
-            try {
-                val linkToServer = serverMsgSettings.getString("link", null)?.toUri()
+            val linkToServer = serverMsgSettings.getString("link", null)
+            if (!linkToServer.isNullOrEmpty()) {
                 versionNoteBinding.linkbutton.visibility = View.VISIBLE
                 versionNoteBinding.linkbutton.setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = linkToServer
+                    intent.data = linkToServer.toUri()
                     startActivity(intent)
                 }
-            } catch (exception: NullPointerException) {
-                exception.printStackTrace()
             }
             val imageSrc = serverMsgSettings.getString("image", null)
             if (!imageSrc.isNullOrEmpty()) {
@@ -199,13 +197,9 @@ class HomeActivity : MOROwayActivity() {
                 val imageLink = serverMsgSettings.getString("imageLink", null)
                 if (!imageLink.isNullOrEmpty()) {
                     versionNoteBinding.versioNoteImage.setOnClickListener {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = imageLink.toUri()
-                            startActivity(intent)
-                        } catch (exception: NullPointerException) {
-                            exception.printStackTrace()
-                        }
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = imageLink.toUri()
+                        startActivity(intent)
                     }
                 }
             }

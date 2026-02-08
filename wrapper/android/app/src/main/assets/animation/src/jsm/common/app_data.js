@@ -14,14 +14,14 @@ var APP_DATA = {
         // @ts-ignore
         patch: 12,
         // @ts-ignore
-        beta: 1,
+        beta: 0,
         date: {
             // @ts-ignore
             year: 2026,
             // @ts-ignore
             month: 2,
             // @ts-ignore
-            day: 1
+            day: 8
         }
     },
     platform: "android",

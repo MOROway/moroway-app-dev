@@ -449,3 +449,11 @@ Update dependencies.
 
 ---
 
+
+
+10.3.12
+
+Improve sound effects handling.
+
+---
+
