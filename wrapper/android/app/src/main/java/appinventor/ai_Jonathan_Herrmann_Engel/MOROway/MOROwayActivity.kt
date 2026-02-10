@@ -15,9 +15,17 @@ open class MOROwayActivity : AppCompatActivity() {
         if (language != null) {
             if (language.isNotEmpty()) {
                 val locale = if (region.isNullOrEmpty()) {
-                    Locale(language)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.BAKLAVA) {
+                        Locale.of(language)
+                    } else {
+                        Locale(language)
+                    }
                 } else {
-                    Locale(language, region)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.BAKLAVA) {
+                        Locale.of(language, region)
+                    } else {
+                        Locale(language, region)
+                    }
                 }
                 Locale.setDefault(locale)
                 configuration.setLocale(locale)

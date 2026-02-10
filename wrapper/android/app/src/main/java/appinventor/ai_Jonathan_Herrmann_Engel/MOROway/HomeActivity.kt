@@ -23,6 +23,7 @@ import androidx.core.net.toUri
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMorowayAppBinding
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogPopupBinding
 import coil3.load
+import coil3.request.allowHardware
 import kotlin.math.abs
 
 
@@ -192,7 +193,7 @@ class HomeActivity : MOROwayActivity() {
             }
             val imageSrc = serverMsgSettings.getString("image", null)
             if (!imageSrc.isNullOrEmpty()) {
-                versionNoteBinding.versioNoteImage.load(imageSrc)
+                versionNoteBinding.versioNoteImage.load(imageSrc) { allowHardware(false) }
                 versionNoteBinding.versioNoteImage.visibility = View.VISIBLE
                 val imageLink = serverMsgSettings.getString("imageLink", null)
                 if (!imageLink.isNullOrEmpty()) {
@@ -205,7 +206,11 @@ class HomeActivity : MOROwayActivity() {
             }
             val imageSrcBackground = serverMsgSettings.getString("backgroundImage", null)
             if (!imageSrcBackground.isNullOrEmpty()) {
-                versionNoteBinding.versioNoteBackgroundImage.load(imageSrcBackground)
+                versionNoteBinding.versioNoteBackgroundImage.load(imageSrcBackground) {
+                    allowHardware(
+                        false
+                    )
+                }
                 versionNoteBinding.versioNoteBackgroundImage.visibility = View.VISIBLE
             }
             versionNoteBinding.button.setOnClickListener {
