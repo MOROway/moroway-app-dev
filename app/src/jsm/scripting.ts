@@ -5583,7 +5583,7 @@ var konamiTimeOut;
 var multiplayerMode: MultiplayerMode = {
     animateInterval: 40,
     syncInterval: 10000,
-    excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "fac", "margin", "bogieDistance", "accelerationSpeedStartFac", "accelerationSpeedFac", "speed", "speedFac", "wheels", "cars"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "fac", "bogieDistance", "wheels"]},
+    excludeFromSync: {t: ["width", "height", "assetFlip", "lastDirectionChange", "crash", "src", "trainSwitchSrc", "audioSrc", "wheels", "flickerFacFront", "flickerFacFrontOffset", "flickerFacBack", "flickerFacBackOffset", "cars", "fac", "margin", "bogieDistance", "accelerationSpeedFac", "accelerationSpeedStartFac", "speed", "speedFac"], tc: ["width", "height", "assetFlip", "konamiUseTrainIcon", "src", "wheels", "fac", "bogieDistance"]},
     chatSticker: 7,
     serverURI: getServerLink(Protocols.WebSocket) + "/multiplay",
     waitingClock: {
