@@ -7054,7 +7054,7 @@ window.addEventListener("load", function () {
                     switchMode(Modes.SINGLEPLAYER, {id: "", key: ""});
                 };
                 if (currentMode == Modes.MULTIPLAYER) {
-                    onlineConnection.connect = function () {
+                    onlineConnection.connect = function (reconnect: number = 0) {
                         function resetForElement(parent, elem, to = "") {
                             var elements = parent.childNodes;
                             for (var i = 0; i < elements.length; i++) {
@@ -7082,6 +7082,8 @@ window.addEventListener("load", function () {
                             };
                         }
                         function showNewGameLink() {
+                            onlineConnection.gameKey = "";
+                            onlineConnection.socket?.close();
                             endLoading();
                             audioControl.playAndPauseAll();
                             var parent = document.querySelector("#content") as HTMLElement;
@@ -7203,14 +7205,37 @@ window.addEventListener("load", function () {
                                 }
                             }
                         }
+                        const maxReconnect = 8;
+                        const reconnectTime = 5000;
+                        if (onlineConnection.reconnectTimeout) {
+                            clearTimeout(onlineConnection.reconnectTimeout);
+                        }
+                        if (reconnect > 0 && onlineConnection.gameKey == "") {
+                            return;
+                        } else if (reconnect == 0) {
+                            onlineConnection.run = false;
+                        }
                         onlineConnection.socket = new WebSocket(multiplayerMode.serverURI);
                         onlineConnection.socket.onopen = function () {
-                            onlineConnection.send("hello", (APP_DATA.version.major + APP_DATA.version.minor / 10).toString());
+                            if (reconnect > 0) {
+                                onlineConnection.send("rejoin", JSON.stringify({sessionId: onlineConnection.sessionId, sessionName: sessionStorage.getItem("playername"), gameId: onlineConnection.gameId, gameKey: onlineConnection.gameKey}));
+                            } else {
+                                onlineConnection.send("hello", (APP_DATA.version.major + APP_DATA.version.minor / 10).toString());
+                            }
                         };
                         onlineConnection.socket.onclose = function () {
                             if (currentMode == Modes.MULTIPLAYER) {
-                                showNewGameLink();
-                                notify("#canvas-notifier", getString("appScreenTeamplayGameEnded", "."), NotificationPriority.High, 900, null, null, client.height);
+                                if (reconnect > maxReconnect || onlineConnection.gameKey == "" || !onlineConnection.run) {
+                                    showNewGameLink();
+                                    notify("#canvas-notifier", getString("appScreenTeamplayGameEnded", "."), NotificationPriority.High, 900, null, null, client.height);
+                                } else {
+                                    if (onlineConnection.reconnectTimeout) {
+                                        clearTimeout(onlineConnection.reconnectTimeout);
+                                    }
+                                    onlineConnection.reconnectTimeout = setTimeout(function () {
+                                        onlineConnection.connect(++reconnect);
+                                    }, reconnectTime);
+                                }
                             }
                         };
                         onlineConnection.socket.onmessage = function (message) {
@@ -7385,6 +7410,7 @@ window.addEventListener("load", function () {
                                                 }
                                                 break;
                                             case "run":
+                                                onlineConnection.run = true;
                                                 onlineConnection.stop = false;
                                                 onlineConnection.paused = false;
                                                 onlineConnection.syncing = false;
@@ -7588,24 +7614,42 @@ window.addEventListener("load", function () {
                                     }
                                     chat.resizeChat();
                                     break;
+                                case "rejoin":
+                                    if (json.errorLevel === ERROR_LEVEL_ERROR) {
+                                        reconnect = maxReconnect + 1;
+                                    } else {
+                                        reconnect = 0;
+                                    }
+                                    break;
                                 case "unknown":
                                     notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y + menus.outerContainer.height);
                                     break;
                             }
                         };
                         onlineConnection.socket.onerror = function () {
-                            showNewGameLink();
-                            notify(
-                                "#canvas-notifier",
-                                getString("appScreenTeamplayConnectionError", "!"),
-                                NotificationPriority.High,
-                                6000,
-                                function () {
-                                    followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                                },
-                                getString("appScreenFurtherInformation"),
-                                client.height
-                            );
+                            if (currentMode == Modes.MULTIPLAYER) {
+                                if (reconnect > maxReconnect || onlineConnection.gameKey == "" || !onlineConnection.run) {
+                                    showNewGameLink();
+                                    notify(
+                                        "#canvas-notifier",
+                                        getString("appScreenTeamplayConnectionError", "!"),
+                                        NotificationPriority.High,
+                                        6000,
+                                        function () {
+                                            followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                        },
+                                        getString("appScreenFurtherInformation"),
+                                        client.height
+                                    );
+                                } else {
+                                    if (onlineConnection.reconnectTimeout) {
+                                        clearTimeout(onlineConnection.reconnectTimeout);
+                                    }
+                                    onlineConnection.reconnectTimeout = setTimeout(function () {
+                                        onlineConnection.connect(++reconnect);
+                                    }, reconnectTime);
+                                }
+                            }
                         };
                     };
                     onlineConnection.gameId = getQueryStringValue("id");
