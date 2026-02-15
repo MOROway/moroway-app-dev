@@ -1494,27 +1494,27 @@ function onKeyDown(event) {
                 getGesture({type: "pinch", scale: hypot / client.zoomAndTilt.pinchHypot, deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
             }
         }
-    } else if (event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA" && !gui.konamiOverlay) {
-        if (event.key == "/" && !gui.sidebarRight && !gui.textControl) {
+    } else if (event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
+        if (event.key == "/" && !gui.sidebarRight && !gui.textControl && !gui.konamiOverlay) {
             event.preventDefault();
             gui.textControl = true;
             drawMenu("hide-outer");
             textControl.elements.output.textContent = textControl.execute();
             textControl.elements.root.style.display = "block";
             textControl.elements.input.focus();
-        } else if (event.key == " ") {
+        } else if (event.key == " " && !gui.konamiOverlay) {
             event.preventDefault();
             menus.options?.elements?.view3DToggle?.click();
-        } else if (event.key == "-") {
+        } else if (event.key == "-" && !gui.konamiOverlay) {
             event.preventDefault();
             menus.options?.elements?.controlCenterTrains?.click();
-        } else if (event.key == "_") {
+        } else if (event.key == "_" && !gui.konamiOverlay) {
             event.preventDefault();
             menus.options?.elements?.controlCenterCars?.click();
-        } else if (event.key == "c" && gui.three) {
+        } else if (event.key == "c" && gui.three && !gui.konamiOverlay) {
             event.preventDefault();
             menus.options?.elements?.view3DCameraSwitcherForwards?.click();
-        } else if (event.key == "C" && gui.three) {
+        } else if (event.key == "C" && gui.three && !gui.konamiOverlay) {
             event.preventDefault();
             menus.options?.elements?.view3DCameraSwitcherBackwards?.click();
         } else if ((event.key == "ArrowUp" && (konamiState === 0 || konamiState == 1)) || (event.key == "ArrowDown" && (konamiState == 2 || konamiState == 3)) || (event.key == "ArrowLeft" && (konamiState == 4 || konamiState == 6)) || (event.key == "ArrowRight" && (konamiState == 5 || konamiState == 7)) || (event.key == "b" && konamiState == 8)) {
