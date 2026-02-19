@@ -4738,7 +4738,7 @@ const loadingAnimation: LoadingAnimation = {
 
 //Text control
 const textControl = {
-    elements: {} as any,
+    elements: {} as {input?: HTMLInputElement; output?: HTMLElement; root?: HTMLElement},
     validateSubcommand(command: string, args: string[]) {
         if (args.length - 1 < this.commands[command].subcommands[args[0]].args.min || args.length - 1 > this.commands[command].subcommands[args[0]].args.max) {
             return false;
