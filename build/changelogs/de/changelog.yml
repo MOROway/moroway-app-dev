@@ -246,6 +246,9 @@ versions:
     10.3.12:
         general: |
             Handhabung der Audioeffekte verbessert.
+    10.3.13:
+        general: |
+            Mehrspieler: Kurzes Fenster für automatische Neu-Konnektion nach Verbindungsverlust.
 hints:
     1.0.0:
         general: |

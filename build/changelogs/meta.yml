@@ -275,3 +275,5 @@
   year: 2026
 10.3.13:
   year: 2026
+  snap:
+    dependencies: true

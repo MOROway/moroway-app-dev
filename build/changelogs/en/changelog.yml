@@ -307,6 +307,9 @@ versions:
     10.3.12:
         general: |
             Improve sound effects handling.
+    10.3.13:
+        general: |
+            Multiplayer: Short window for automatic reconnect after connection loss.
 hints:
     1.0.0:
         general: |
