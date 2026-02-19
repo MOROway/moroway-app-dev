@@ -239,9 +239,11 @@ for platform in ${platforms[@]}; do
 		# Three.js imports
 		file="$to/src/lib/open_code/jsm/three.js/BufferGeometryUtils.js"
 		perl -0pi -e 's/(import\s*[{][^}]+[}]\s*from\s*).three.;/\1".\/three.module.min.js"; \/\/Import statement modified by MOROway build script/' "$file"
+		file="$to/src/lib/open_code/jsm/three.js/SkeletonUtils.js"
+		perl -0pi -e 's/(import\s*[{][^}]+[}]\s*from\s*).three.;/\1".\/three.module.min.js"; \/\/Import statement modified by MOROway build script/' "$file"
 		file="$to/src/lib/open_code/jsm/three.js/GLTFLoader.js"
 		perl -0pi -e 's/(import\s*[{][^}]+[}]\s*from\s*).three.;/\1".\/three.module.min.js"; \/\/Import statement modified by MOROway build script/' "$file"
-		perl -0pi -e 's/(import\s*[{][^}]+[}]\s*from\s*).\.\.\/utils\/BufferGeometryUtils.js.;/\1".\/BufferGeometryUtils.js"; \/\/Import statement modified by MOROway build script/' "$file"
+		perl -0pi -e 's/(import\s*[{][^}]+[}]\s*from\s*).\.\.\/utils\/([^.]*).js.;/\1".\/\2.js"; \/\/Import statement modified by MOROway build script/g' "$file"
 		# HTML Content
 		for html_file in ${all_files[@]}; do
 			if [[ "$html_file" =~ .html$ ]]; then
