@@ -503,12 +503,12 @@ export function getMode(): Modes {
 
 function drawBackground() {
     /////DRAW/BACKGROUND/Layer-1/////
-    contextBackground.clearRect(0, 0, canvas.width, canvas.height);
+    contextBackground.clearRect(0, 0, canvasBackground.width, canvasBackground.height);
     contextBackground.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasBackground.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasBackground.height) / 2 + client.zoomAndTilt.offsetY);
     var pic = pics[background.src];
     drawImage(pic, background.x, background.y, background.width, background.height, contextBackground);
 
-    contextSemiForeground.clearRect(0, 0, canvas.width, canvas.height);
+    contextSemiForeground.clearRect(0, 0, canvasSemiForeground.width, canvasSemiForeground.height);
     contextSemiForeground.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasSemiForeground.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasSemiForeground.height) / 2 + client.zoomAndTilt.offsetY);
     /////BACKGROUND/Layer-2/////
     drawImage(pics[background.secondLayer], background.x, background.y, background.width, background.height, contextSemiForeground);
@@ -516,13 +516,13 @@ function drawBackground() {
     if (konamiState >= 0) {
         contextSemiForeground.save();
         if (client.zoomAndTilt.realScale == 1) {
-            var width = pic.height / pic.width - canvas.height / canvas.width < 0 ? canvas.height * (pic.width / pic.height) : canvas.width;
-            var height = pic.height / pic.width - canvas.height / canvas.width < 0 ? canvas.height : canvas.width * (pic.height / pic.width);
+            var width = pic.height / pic.width - canvasSemiForeground.height / canvasSemiForeground.width < 0 ? canvasSemiForeground.height * (pic.width / pic.height) : canvasSemiForeground.width;
+            var height = pic.height / pic.width - canvasSemiForeground.height / canvasSemiForeground.width < 0 ? canvasSemiForeground.height : canvasSemiForeground.width * (pic.height / pic.width);
             var posX = 0;
             var posY = 0;
-            var picPosX = (((width - canvas.width) / 2) * pic.width) / width;
-            var picPosY = (((height - canvas.height) / 2) * pic.height) / height;
-            var fillWidth = canvas.width;
+            var picPosX = (((width - canvasSemiForeground.width) / 2) * pic.width) / width;
+            var picPosY = (((height - canvasSemiForeground.height) / 2) * pic.height) / height;
+            var fillWidth = canvasSemiForeground.width;
             var fillHeight = background.y;
             var picWidth = (fillWidth * pic.width) / width;
             var picHeight = (fillHeight * pic.height) / height;
@@ -532,17 +532,17 @@ function drawBackground() {
             drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
             posX = 0;
             posY = 0;
-            picPosX = (((width - canvas.width) / 2) * pic.width) / width;
-            picPosY = (((height - canvas.height) / 2) * pic.height) / height;
+            picPosX = (((width - canvasSemiForeground.width) / 2) * pic.width) / width;
+            picPosY = (((height - canvasSemiForeground.height) / 2) * pic.height) / height;
             fillWidth = background.x;
-            fillHeight = canvas.height;
+            fillHeight = canvasSemiForeground.height;
             picWidth = (fillWidth * pic.width) / width;
             picHeight = (fillHeight * pic.height) / height;
             drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
             posX += background.x + background.width;
             picPosX += ((background.x + background.width) * pic.width) / width;
             drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
-            var bgGradient = contextSemiForeground.createLinearGradient(0, 0, canvas.width, canvas.height / 2);
+            var bgGradient = contextSemiForeground.createLinearGradient(0, 0, canvasSemiForeground.width, canvasSemiForeground.height / 2);
             bgGradient.addColorStop(0, "rgba(0,0,0,1)");
             bgGradient.addColorStop(0.2, "rgba(0,0,0,0.95)");
             bgGradient.addColorStop(0.4, "rgba(0,0,0,0.85)");
@@ -553,17 +553,17 @@ function drawBackground() {
         } else {
             contextSemiForeground.fillStyle = "black";
         }
-        contextSemiForeground.fillRect(0, 0, background.x, canvas.height);
-        contextSemiForeground.fillRect(0, 0, canvas.width, background.y);
-        contextSemiForeground.fillRect(background.x + background.width, 0, background.x, canvas.height);
-        contextSemiForeground.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvas.width, background.y);
+        contextSemiForeground.fillRect(0, 0, background.x, canvasSemiForeground.height);
+        contextSemiForeground.fillRect(0, 0, canvasSemiForeground.width, background.y);
+        contextSemiForeground.fillRect(background.x + background.width, 0, background.x, canvasSemiForeground.height);
+        contextSemiForeground.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvasSemiForeground.width, background.y);
         contextSemiForeground.restore();
     }
 
     /////DRAW/BACKGROUND/Konami/////
     if (konamiState < 0) {
         /////DRAW/BACKGROUND/Layer-1/////
-        var imgData = contextBackground.getImageData(0, 0, canvas.width, canvas.height);
+        var imgData = contextBackground.getImageData(0, 0, canvasBackground.width, canvasBackground.height);
         var data = imgData.data;
         for (var i = 0; i < data.length; i += 4) {
             data[i] = Math.min(255, data[i] < 120 ? data[i] / 1.2 : data[i] * 1.1);
@@ -572,7 +572,7 @@ function drawBackground() {
         }
         contextBackground.putImageData(imgData, 0, 0);
         /////DRAW/BACKGROUND/Layer-2/////
-        imgData = contextSemiForeground.getImageData(0, 0, canvas.width, canvas.height);
+        imgData = contextSemiForeground.getImageData(0, 0, canvasSemiForeground.width, canvasSemiForeground.height);
         data = imgData.data;
         for (i = 0; i < data.length; i += 4) {
             data[i] = Math.min(255, data[i] < 120 ? data[i] / 1.2 : data[i] * 1.1);
@@ -760,7 +760,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         if (canvasBackground.width / canvasBackground.height / ((canvasBackground.height - additionalHeight) / canvasBackground.height) < pics[background.src].width / pics[background.src].height) {
             client.normalRatio = true;
             background.width = canvasBackground.width;
-            background.height = pics[background.src].height * (canvas.width / pics[background.src].width);
+            background.height = pics[background.src].height * (canvasBackground.width / pics[background.src].width);
             background.x = 0;
             background.y = canvasBackground.height / 2 - background.height / 2 - additionalHeight / 2;
         } else {
@@ -4495,7 +4495,7 @@ function drawObjects() {
 
     /////BACKGROUND/Margins-2////
     if (konamiState < 0) {
-        var bgGradient = contextForeground.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
+        var bgGradient = contextForeground.createRadialGradient(0, canvasForeground.height / 2, canvasForeground.height / 2, canvasForeground.width + canvasForeground.height / 2, canvasForeground.height / 2, canvasForeground.height / 2);
         bgGradient.addColorStop(0, "red");
         bgGradient.addColorStop(0.2, "orange");
         bgGradient.addColorStop(0.4, "yellow");
@@ -4535,7 +4535,7 @@ function drawObjects() {
             contextForeground.save();
             contextForeground.translate(adjustScaleX(hardware.mouse.moveX), adjustScaleY(hardware.mouse.moveY));
             contextForeground.fillStyle = hardware.mouse.cursor == "move" ? "rgba(155,155,69," + (Math.random() * 0.3 + 0.6) + ")" : hardware.mouse.cursor == "grabbing" ? "rgba(65,56,65," + (Math.random() * 0.3 + 0.6) + ")" : hardware.mouse.cursor == "pointer" ? "rgba(99,118,140," + (Math.random() * 0.3 + 0.6) + ")" : hardware.mouse.isHold ? "rgba(144,64,64," + (Math.random() * 0.3 + 0.6) + ")" : "rgba(255,250,240,0.5)";
-            var rectSize = canvas.width / 75;
+            var rectSize = canvasForeground.width / 75;
             contextForeground.beginPath();
             contextForeground.arc(0, 0, rectSize / 2, 0, 2 * Math.PI);
             contextForeground.fill();
@@ -6808,7 +6808,7 @@ function init(state: "load" | "reload" = "reload") {
                 const behindContext = background3D.behind.getContext("2d");
                 behindContext.save();
                 if (konamiState < 0 && !three.night) {
-                    var bgGradient = behindContext.createRadialGradient(0, canvas.height / 2, canvas.height / 2, canvas.width + canvas.height / 2, canvas.height / 2, canvas.height / 2);
+                    var bgGradient = behindContext.createRadialGradient(0, background3D.behind.height / 2, background3D.behind.height / 2, background3D.behind.width + background3D.behind.height / 2, background3D.behind.height / 2, background3D.behind.height / 2);
                     bgGradient.addColorStop(0, "#550400");
                     bgGradient.addColorStop(0.2, "#542400");
                     bgGradient.addColorStop(0.4, "#442200");
