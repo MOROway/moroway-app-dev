@@ -164,6 +164,39 @@ interface LoadingAnimation {
     fade(fadeOutFunction: () => void): void;
 }
 
+interface ControlCenter {
+    showCarCenter: boolean;
+    fontFamily: string;
+    mouse: {clickEvent: boolean; hold: boolean; prepare: boolean; wheelScrolls: boolean};
+    fontSizes?: {
+        carSizes?: {
+            auto?: {
+                backToRoot?: number;
+                backToRootLength?: number;
+                pause?: number;
+                pauseLength?: number;
+                resume?: number;
+                resumeLength?: number;
+            };
+            init?: {
+                autoModeActivate?: number;
+                autoModeActivateLength?: number;
+                carNames?: number[];
+                carNamesLength?: number[];
+            };
+            manual?: {
+                carNames?: number[];
+                carNamesLength?: number[];
+            };
+        };
+        closeTextHeight?: number;
+        trainSizes?: any;
+    };
+    maxTextHeight?: number;
+    maxTextWidth?: number;
+    translateOffset?: number;
+}
+
 interface ThreeFollowCamControls {
     recalc(): void;
     dragging: boolean;
@@ -4704,9 +4737,9 @@ const loadingAnimation: LoadingAnimation = {
 };
 
 //Text control
-const textControl: any = {
-    elements: {},
-    validateSubcommand(command, args) {
+const textControl = {
+    elements: {} as any,
+    validateSubcommand(command: string, args: string[]) {
         if (args.length - 1 < this.commands[command].subcommands[args[0]].args.min || args.length - 1 > this.commands[command].subcommands[args[0]].args.max) {
             return false;
         }
@@ -4722,16 +4755,16 @@ const textControl: any = {
         }
         return true;
     },
-    getSubcommandNames(command) {
+    getSubcommandNames(command: string) {
         return Object.keys(this.commands[command].subcommands);
     },
-    execute(command, args) {
+    execute(command?: string, args?: string[]) {
         var commandNames = Object.keys(this.commands);
         if (!commandNames.includes(command)) {
             commandNames.shift();
             return formatJSString(getString("appScreenTextCommandsGeneralCommands"), "", commandNames.join(", "));
         }
-        if (typeof args == "object" && args.length > 0 && this.getSubcommandNames(command).includes(args[0])) {
+        if (Array.isArray(args) && args.length > 0 && this.getSubcommandNames(command).includes(args[0])) {
             if (this.validateSubcommand(command, args)) {
                 return this.commands[command].subcommands[args[0]].execute(args);
             }
@@ -4937,7 +4970,7 @@ const textControl: any = {
 };
 
 //Control center
-const controlCenter: any = {showCarCenter: false, fontFamily: defaultFont, mouse: {}};
+const controlCenter: ControlCenter = {showCarCenter: false, fontFamily: defaultFont, mouse: {clickEvent: false, hold: false, prepare: false, wheelScrolls: false}};
 
 //Demo mode
 const demoMode: DemoMode = {
