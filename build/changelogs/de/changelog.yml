@@ -249,6 +249,8 @@ versions:
     10.3.13:
         general: |
             Mehrspieler: Kurzes Fenster für automatische Neu-Konnektion nach Verbindungsverlust.
+        oc: |
+            Aktualisierung von Apache Cordova Android auf Version 15.0.0.
 hints:
     1.0.0:
         general: |

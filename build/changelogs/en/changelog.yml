@@ -310,6 +310,8 @@ versions:
     10.3.13:
         general: |
             Multiplayer: Short window for automatic reconnect after connection loss.
+        oc: |
+            Update Apache Cordova Android to 15.0.0.
 hints:
     1.0.0:
         general: |
