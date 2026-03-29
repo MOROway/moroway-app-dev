@@ -29,7 +29,7 @@ window.addEventListener("load", function () {
     });
 });
 document.addEventListener("moroway-app-after-set-settings-html", function (event) {
-    var eventCustom = event;
+    const eventCustom = event;
     if (eventCustom.detail && eventCustom.detail.elem) {
         var elems = eventCustom.detail.elem.querySelectorAll("#langoption .langvalue");
         for (var i = 0; i < elems.length; i++) {
@@ -52,13 +52,13 @@ document.addEventListener("moroway-app-after-set-settings-html", function (event
                 var leftButton = settingElem.querySelector(".settings-opts-left-button");
                 var textButton = settingElem.querySelector(".settings-opts-text-button");
                 leftButton.addEventListener("click", function (event) {
-                    var currentKey = event.target.parentNode.parentNode.dataset.settingsId;
+                    const currentKey = event.target.parentNode.parentNode.dataset.settingsId;
                     // Android wrapper contains WebJSInterface
                     // @ts-ignore
                     WebJSInterface.setSetting(currentKey, getSetting(currentKey));
                 });
                 textButton.addEventListener("click", function (event) {
-                    var currentKey = event.target.parentNode.parentNode.dataset.settingsId;
+                    const currentKey = event.target.parentNode.parentNode.dataset.settingsId;
                     // Android wrapper contains WebJSInterface
                     // @ts-ignore
                     WebJSInterface.setSetting(currentKey, getSetting(currentKey));

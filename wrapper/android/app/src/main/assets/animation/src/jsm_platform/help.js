@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
             privacy.appendChild(span);
         });
     });
-    var about = document.querySelector("#website-about");
+    const about = document.querySelector("#website-about");
     handleServerJSONValues("about", function (res) {
         if (typeof res == "object" && Array.isArray(res)) {
             res.forEach(function (aboutText) {

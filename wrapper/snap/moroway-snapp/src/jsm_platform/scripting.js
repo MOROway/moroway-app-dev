@@ -19,7 +19,7 @@ document.addEventListener("moroway-app-ready", function () {
     setSettingsHTML(document.querySelector("#settings-inner"), false);
 });
 document.addEventListener("moroway-app-ready-notification", function (event) {
-    var eventCustom = event;
+    const eventCustom = event;
     var minHeight = 0;
     if (eventCustom.detail && eventCustom.detail.notifyMinHeight) {
         minHeight = eventCustom.detail.notifyMinHeight;
@@ -29,7 +29,7 @@ document.addEventListener("moroway-app-ready-notification", function (event) {
     }, getString("generalTitleHelpScreen", "", "upper"), minHeight);
 });
 document.addEventListener("moroway-app-update-notification", function (event) {
-    var eventCustom = event;
+    const eventCustom = event;
     var minHeight = 0;
     if (eventCustom.detail && eventCustom.detail.notifyMinHeight) {
         minHeight = eventCustom.detail.notifyMinHeight;

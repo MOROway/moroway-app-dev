@@ -4,18 +4,18 @@
  */
 "use strict";
 import { APP_DATA } from "../../jsm/common/app_data.js";
-export var SYSTEM_TOOLS = {
-    canAutoplayMedia: function () { return true; },
-    canExitApp: function () { return true; },
-    exitApp: function () {
+export const SYSTEM_TOOLS = {
+    canAutoplayMedia: () => true,
+    canExitApp: () => true,
+    exitApp() {
         // Android wrapper contains WebJSInterface
         // @ts-ignore
         WebJSInterface.exitApp();
     },
-    forceModeSwitchHandling: function (newMode) {
+    forceModeSwitchHandling(newMode) {
         return newMode ? "navigate" : false;
     },
-    keepAlive: function (acquire) {
+    keepAlive(acquire) {
         if (acquire) {
             try {
                 navigator.wakeLock.request("screen");
@@ -27,7 +27,7 @@ export var SYSTEM_TOOLS = {
             }
         }
     },
-    navigateBack: function () {
+    navigateBack() {
         // Android wrapper contains WebJSInterface
         // @ts-ignore
         WebJSInterface.goBack();

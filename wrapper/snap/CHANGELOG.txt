@@ -457,3 +457,12 @@ Improve sound effects handling.
 
 ---
 
+
+
+10.3.13
+
+Multiplayer: Short window for automatic reconnect after connection loss.
+Update dependencies.
+
+---
+
