@@ -9,14 +9,14 @@ export function followLink(input1, input2, input3) {
         case LinkStates.InternalHtml:
             var hash, queryString;
             if (input1.includes("#")) {
-                hash = input1.substr(input1.indexOf("#"));
-                input1 = input1.substr(0, input1.length - (input1.length - input1.indexOf("#")));
+                hash = input1.substring(input1.indexOf("#"));
+                input1 = input1.substring(0, input1.indexOf("#"));
             }
             if (input1.includes("?")) {
-                queryString = input1.substr(input1.indexOf("?"));
-                input1 = input1.substr(0, input1.length - (input1.length - input1.indexOf("?")));
+                queryString = input1.substring(input1.indexOf("?"));
+                input1 = input1.substring(0, input1.indexOf("?"));
             }
-            input1 = input1.length == 0 ? "./index.html" : input1.substr(input1.length - 1, 1) == "/" ? input1 + "index.html" : input1.substr(input1.length - 5, 5) == ".html" ? input1 : input1 + "/index.html";
+            input1 = input1.length == 0 ? "./index.html" : input1.endsWith("/") ? input1 + "index.html" : input1.endsWith(".html") ? input1 : input1 + "/index.html";
             if (queryString !== undefined) {
                 input1 += queryString;
             }

@@ -180,10 +180,10 @@ function safePostMessage(message) {
 function saveTrainCirclePrepare(train, trainOriginal) {
     delete train.lastDirectionChange;
     if (trainOriginal.circleFamily != null) {
-        const cF = Object.keys(rotationPoints).filter(function (key) {
+        const cF = Object.keys(rotationPoints).filter(function (key: string) {
             return rotationPoints[key] === trainOriginal.circleFamily;
         })[0];
-        const c = Object.keys(rotationPoints[cF]).filter(function (key) {
+        const c = Object.keys(rotationPoints[cF]).filter(function (key: string) {
             return rotationPoints[cF][key] === trainOriginal.circle;
         })[0];
         train.circleFamily = cF;
@@ -2080,18 +2080,18 @@ var trainPics;
 const trainParams = {margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10};
 
 var switches: Switches;
-var switchesBeforeAddSidings;
+var switchesBeforeAddSidings: number[] = [];
 var background;
 const switchesBeforeFac = 1.3;
 
-var init;
+var init: boolean;
 var initState;
-var firstRun;
-var online;
-var demoMode;
-var pause;
-var syncing;
-var debug;
+var firstRun: boolean;
+var online: boolean;
+var demoMode: boolean;
+var pause: boolean;
+var syncing: boolean;
+var debug: boolean;
 
 var saveTheGameSendTimeout;
 

@@ -286,8 +286,8 @@ function measureViewSpace() {
     canvasForeground.height = canvasSemiForeground.height = canvasBackground.height = canvasGesture.height = canvas.height = client.height * client.devicePixelRatio;
 }
 
-function drawImage(pic, x, y, width, height, cxt = context, sx: number | undefined = undefined, sy: number | undefined = undefined, sWidth: number | undefined = undefined, sHeight: number | undefined = undefined) {
-    function floorIfBigEnough(num) {
+function drawImage(pic: CanvasImageSource, x: number, y: number, width: number, height: number, cxt: CanvasRenderingContext2D = context, sx: number | undefined = undefined, sy: number | undefined = undefined, sWidth: number | undefined = undefined, sHeight: number | undefined = undefined) {
+    function floorIfBigEnough(num: number): number {
         if (client.isTiny) {
             return num;
         }
@@ -328,7 +328,7 @@ function resetTilt() {
     three.scene.rotation.y = 0;
 }
 
-function measureFontSize(text, fontFamily, fontSize, wantedTextWidth, approximation, tolerance, recursion = 0) {
+function measureFontSize(text: string, fontFamily: string, fontSize: number, wantedTextWidth: number, approximation: number, tolerance: number, recursion: number = 0): string {
     context.save();
     var font = fontSize + "px " + fontFamily;
     context.font = font;
@@ -342,8 +342,8 @@ function measureFontSize(text, fontFamily, fontSize, wantedTextWidth, approximat
     }
 }
 
-function getFontSize(font, unit) {
-    return parseInt(font.substr(0, font.length - (font.length - font.indexOf(unit))), 10);
+function getFontSize(font: string, unit: string): number {
+    return parseInt(font.replace(unit, ""), 10);
 }
 
 /*******************************************
@@ -5546,16 +5546,16 @@ const carActions = {
  ******************************************/
 
 //Canvas and drawing
-var canvas;
-var canvasGesture;
-var canvasBackground;
-var canvasSemiForeground;
-var canvasForeground;
-var context;
-var contextGesture;
-var contextBackground;
-var contextSemiForeground;
-var contextForeground;
+var canvas: HTMLCanvasElement;
+var canvasGesture: HTMLCanvasElement;
+var canvasBackground: HTMLCanvasElement;
+var canvasSemiForeground: HTMLCanvasElement;
+var canvasForeground: HTMLCanvasElement;
+var context: CanvasRenderingContext2D;
+var contextGesture: CanvasRenderingContext2D;
+var contextBackground: CanvasRenderingContext2D;
+var contextSemiForeground: CanvasRenderingContext2D;
+var contextForeground: CanvasRenderingContext2D;
 var drawInterval;
 var drawTimeout;
 var drawing = false;
@@ -5564,21 +5564,21 @@ var drawing = false;
 var animateWorker: Worker;
 
 //Animation Counter
-var frameNo = 0;
+var frameNo: number = 0;
 
 //Media
 var pics;
-var objects3D;
+var objects3D: Record<string, any> = {};
 
 //Resize
 var resizeTimeout;
-var resized = false;
+var resized: boolean = false;
 
 //Modes
 var currentMode: Modes;
 var modeSwitchingTimeout;
 var modeSwitchingReloadTimeout;
-var modeSwitching = true;
+var modeSwitching: boolean = true;
 
 //Background
 var oldBackground;
@@ -7091,7 +7091,7 @@ window.addEventListener("load", function () {
                         function resetForElement(parent, elem, to = "") {
                             var elements = parent.childNodes;
                             for (var i = 0; i < elements.length; i++) {
-                                if (elements[i].nodeName.substr(0, 1) != "#") {
+                                if (!elements[i].nodeName.startsWith("#")) {
                                     elements[i].style.display = elements[i] == elem ? to : "none";
                                 }
                             }
