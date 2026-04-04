@@ -2080,7 +2080,7 @@ var trainPics;
 const trainParams = {margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10};
 
 var switches: Switches;
-var switchesBeforeAddSidings: number[] = [];
+var switchesBeforeAddSidings: number[];
 var background;
 const switchesBeforeFac = 1.3;
 

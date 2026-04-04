@@ -5568,7 +5568,7 @@ var frameNo: number = 0;
 
 //Media
 var pics;
-var objects3D: Record<string, any> = {};
+var objects3D;
 
 //Resize
 var resizeTimeout;
