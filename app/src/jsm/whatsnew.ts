@@ -98,8 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    const backButton: HTMLElement = document.querySelector("#backOption");
-    backButton.addEventListener("click", function () {
+    document.querySelector("#backOption")?.addEventListener("click", function () {
         SYSTEM_TOOLS.navigateBack();
     });
 

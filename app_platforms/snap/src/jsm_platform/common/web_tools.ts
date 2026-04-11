@@ -1,10 +1,7 @@
 "use strict";
 import { LinkStates } from "{{jsm}}/common/web_tools.js";
 
-export function followLink(input1, input2, input3) {
-    if (typeof input2 !== "string") {
-        input2 = "";
-    }
+export function followLink(input1: string, input2: string, input3: LinkStates) {
     switch (input3) {
         case LinkStates.External:
             // Electron wrapper contains this function

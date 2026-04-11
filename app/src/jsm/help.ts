@@ -21,8 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return navigator.userAgent;
     }
 
-    const backButton: HTMLElement = document.querySelector("#backOption");
-    backButton.addEventListener("click", function () {
+    document.querySelector("#backOption")?.addEventListener("click", function () {
         SYSTEM_TOOLS.navigateBack();
     });
 

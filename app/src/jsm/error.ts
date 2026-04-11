@@ -4,8 +4,7 @@ import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltips } from "./common/tooltip.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-    const backButton: HTMLElement = document.querySelector("#backOption");
-    backButton.addEventListener("click", function () {
+    document.querySelector("#backOption")?.addEventListener("click", function () {
         SYSTEM_TOOLS.navigateBack();
     });
 
