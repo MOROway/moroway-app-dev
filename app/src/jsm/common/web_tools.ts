@@ -60,7 +60,7 @@ export function handleServerJSONValues(key: string, func: (response: any) => voi
         });
 }
 export function getServerNote(func: (response: any) => void): void {
-    function getServerNoteImage(id, background) {
+    function getServerNoteImage(id: number, background: boolean) {
         return getServerDataLink("/server-note/img/") + id + (background ? "-background-image" : "-image") + ".png";
     }
     const serverNoteLastQuery = window.localStorage.getItem("morowayAppLastServerNoteLastQuery");

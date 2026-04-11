@@ -1,5 +1,5 @@
 "use strict";
-import {APP_DATA} from "./app_data.js";
+import { APP_DATA } from "./app_data.js";
 
 //SAVED GAME
 export function getVersionCode() {
@@ -16,7 +16,7 @@ export function isGameSaved() {
     return false;
 }
 export function updateSavedGame() {
-    function updateSavedGameElem(regexOld, old, newItem) {
+    function updateSavedGameElem(regexOld: RegExp, old: string, newItem: string) {
         var elemKeys = savedGameKeys.filter(function (elem) {
             return elem.search(regexOld) === 0 || elem == old;
         });

@@ -125,12 +125,16 @@ document.addEventListener("DOMContentLoaded", function () {
         pics.style.display = "none";
         handleServerJSONValues("webpics", function (res) {
             if (typeof res.pics == "object") {
-                res.pics.forEach(function (pic) {
-                    var img = document.createElement("div");
+                res.pics.forEach(function (pic: any) {
+                    const img = document.createElement("div");
                     img.onclick = function () {
-                        followLink(pic.links.normal, "_blank", LinkStates.External);
+                        if (pic?.links?.normal) {
+                            followLink(pic.links.normal, "_blank", LinkStates.External);
+                        }
                     };
-                    img.style.backgroundImage = "url('" + pic.urls.thumb.url + "')";
+                    if (pic?.urls?.thumb?.url) {
+                        img.style.backgroundImage = "url('" + pic.urls.thumb.url + "')";
+                    }
                     pics.appendChild(img);
                 });
                 pics.style.display = "";

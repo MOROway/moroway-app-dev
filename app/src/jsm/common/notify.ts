@@ -20,7 +20,7 @@ export interface HTMLElementNotify extends HTMLElement {
 }
 
 //NOTIFICATIONS
-export function notify(selector: string, message: string, prio: NotificationPriority, timeout: number, actionHandler: () => void | null = null, actionText: string | null = null, minHeight: number = -1, channel: NotificationChannel = NotificationChannel.Default) {
+export function notify(selector: string, message: string, prio: NotificationPriority, timeout: number, actionHandler: (() => void) | null = null, actionText: string | null = null, minHeight: number = -1, channel: NotificationChannel = NotificationChannel.Default) {
     function sameChannelNo(elem: HTMLElementNotify, ch: NotificationChannel, pr: NotificationPriority): number | false {
         for (var i = elem.queue.length - 1; i >= 0; i--) {
             if (elem.queue[i].channel == ch && elem.queue[i].prio <= pr) {
@@ -29,8 +29,8 @@ export function notify(selector: string, message: string, prio: NotificationPrio
         }
         return false;
     }
-    const notificationContainer: HTMLElementNotify = document.querySelector(selector);
-    if (notificationContainer == undefined || notificationContainer == null) {
+    const notificationContainer: HTMLElementNotify | null = document.querySelector(selector);
+    if (!notificationContainer) {
         return false;
     }
     if (prio == undefined || prio == null) {
@@ -49,15 +49,21 @@ export function notify(selector: string, message: string, prio: NotificationPrio
         notificationContainer.show = function (elem) {
             elem.active = true;
             elem.style.visibility = "";
-            elem.querySelector("button").style.display = "none";
+            const button = elem.querySelector("button");
+            if (button) {
+                button.style.display = "none";
+            }
             if (elem.queue.length > 0) {
                 var obj = elem.queue[0];
-                elem.querySelector("span").textContent = obj.message;
+                const text = elem.querySelector("span");
+                if (text) {
+                    text.textContent = obj.message;
+                }
                 elem.style.visibility = "visible";
-                if (obj.actionHandler && obj.actionText) {
-                    elem.querySelector("button").textContent = obj.actionText;
-                    elem.querySelector("button").onclick = obj.actionHandler;
-                    elem.querySelector("button").style.display = "";
+                if (obj.actionHandler && obj.actionText && button) {
+                    button.textContent = obj.actionText;
+                    button.onclick = obj.actionHandler;
+                    button.style.display = "";
                 }
                 elem.queue.shift();
                 elem.showTimeout = window.setTimeout(function () {
@@ -83,7 +89,7 @@ export function notify(selector: string, message: string, prio: NotificationPrio
         };
     }
     if (prio > NotificationPriority.Low || (notificationContainer.queue.length == 0 && !notificationContainer.active)) {
-        var obj: NotificationObject = {message: message, timeout: timeout, prio: prio, channel: channel, actionHandler: actionHandler, actionText: actionText};
+        var obj: NotificationObject = actionHandler && actionText ? {message: message, timeout: timeout, prio: prio, channel: channel, actionHandler: actionHandler, actionText: actionText} : {message: message, timeout: timeout, prio: prio, channel: channel};
         if (prio === NotificationPriority.High || minHeight == -1 || (minHeight >= notificationContainer.offsetHeight - 15 && getSetting("showNotifications"))) {
             var chNo = sameChannelNo(notificationContainer, channel, prio);
             if (channel != NotificationChannel.Default && chNo !== false) {
