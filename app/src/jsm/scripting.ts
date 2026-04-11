@@ -10,7 +10,7 @@ import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "./common/app
 import { copy } from "./common/copy_paste.js";
 import { getGuiState, setGuiState, ThreeCameraModes } from "./common/gui_state.js";
 import { copyJSObject } from "./common/js_objects.js";
-import { NotificationChannel, NotificationPriority, notify } from "./common/notify.js";
+import { HTMLElementNotify, NotificationChannel, NotificationPriority, notify } from "./common/notify.js";
 import { getVersionCode, removeSavedGame, updateSavedGame } from "./common/saved_game.js";
 import { getSetting } from "./common/settings.js";
 import { formatJSString, getString, setHTMLStrings } from "./common/string_tools.js";
@@ -249,10 +249,6 @@ interface HTMLElementChatClear extends HTMLElement {
 }
 interface HTMLElementChatToBottom extends HTMLElement {
     toggleDisplay(): void;
-}
-
-interface HTMLElementNotify extends HTMLElement {
-    hide(elem: HTMLElement, stopFollowing: boolean): void;
 }
 
 interface Debug {

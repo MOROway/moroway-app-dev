@@ -2,7 +2,7 @@
 import { APP_DATA } from "./app_data.js";
 
 //COPY & PASTE
-export function copy(selector: string, successFunction: Function, failFunction: Function) {
+export function copy(selector: string, successFunction?: () => void, failFunction?: () => void) {
     const elem = document.querySelector(selector);
     if (elem) {
         var selection = window.getSelection();

@@ -2,9 +2,34 @@
 import { APP_DATA } from "./app_data.js";
 import { getSetting } from "./settings.js";
 
+interface NotificationObject {
+    message: string;
+    timeout: number;
+    prio: NotificationPriority;
+    channel: NotificationChannel;
+    actionHandler?(): void;
+    actionText?: string;
+}
+
+export interface HTMLElementNotify extends HTMLElement {
+    hide(elem: HTMLElementNotify, stopFollowing: boolean): void;
+    queue: NotificationObject[];
+    active: boolean;
+    show(elem: HTMLElementNotify): void;
+    showTimeout?: number;
+}
+
 //NOTIFICATIONS
-export function notify(elem, message, prio, timeout, actionHandler, actionText, minHeight = -1, channel = NotificationChannel.Default) {
-    var notificationContainer = document.querySelector(elem);
+export function notify(selector: string, message: string, prio: NotificationPriority, timeout: number, actionHandler: () => void | null = null, actionText: string | null = null, minHeight: number = -1, channel: NotificationChannel = NotificationChannel.Default) {
+    function sameChannelNo(elem: HTMLElementNotify, ch: NotificationChannel, pr: NotificationPriority): number | false {
+        for (var i = elem.queue.length - 1; i >= 0; i--) {
+            if (elem.queue[i].channel == ch && elem.queue[i].prio <= pr) {
+                return i;
+            }
+        }
+        return false;
+    }
+    const notificationContainer: HTMLElementNotify = document.querySelector(selector);
     if (notificationContainer == undefined || notificationContainer == null) {
         return false;
     }
@@ -29,17 +54,16 @@ export function notify(elem, message, prio, timeout, actionHandler, actionText, 
                 var obj = elem.queue[0];
                 elem.querySelector("span").textContent = obj.message;
                 elem.style.visibility = "visible";
-                if (obj.actionHandler != null && obj.actionText != null) {
+                if (obj.actionHandler && obj.actionText) {
                     elem.querySelector("button").textContent = obj.actionText;
                     elem.querySelector("button").onclick = obj.actionHandler;
                     elem.querySelector("button").style.display = "";
                 }
                 elem.queue.shift();
-                elem.showTimeoutFunction = function () {
+                elem.showTimeout = window.setTimeout(function () {
+                    delete elem.showTimeout;
                     elem.show(elem);
-                    elem.showTimeoutFunction = null;
-                };
-                elem.showTimeout = window.setTimeout(elem.showTimeoutFunction, obj.timeout);
+                }, obj.timeout);
             } else {
                 elem.active = false;
             }
@@ -49,28 +73,19 @@ export function notify(elem, message, prio, timeout, actionHandler, actionText, 
         notificationContainer.hide = function (elem, stopFollowing) {
             elem.active = false;
             elem.style.visibility = "";
-            if (elem.showTimeout !== undefined && elem.showTimeout !== null) {
+            if (elem.showTimeout !== undefined) {
                 window.clearTimeout(elem.showTimeout);
-            }
-            if (typeof elem.showTimeoutFunction == "function" && !stopFollowing) {
-                elem.showTimeoutFunction();
-            }
-        };
-    }
-    if (notificationContainer.sameChannelNo == undefined) {
-        notificationContainer.sameChannelNo = function (elem, ch, pr) {
-            for (var i = elem.queue.length - 1; i >= 0; i--) {
-                if (elem.queue[i].channel == ch && elem.queue[i].prio <= pr) {
-                    return i;
+                delete elem.showTimeout;
+                if (!stopFollowing) {
+                    elem.show(elem);
                 }
             }
-            return false;
         };
     }
     if (prio > NotificationPriority.Low || (notificationContainer.queue.length == 0 && !notificationContainer.active)) {
-        var obj = {message: message, timeout: timeout, prio: prio, channel: channel, actionHandler: actionHandler, actionText: actionText};
+        var obj: NotificationObject = {message: message, timeout: timeout, prio: prio, channel: channel, actionHandler: actionHandler, actionText: actionText};
         if (prio === NotificationPriority.High || minHeight == -1 || (minHeight >= notificationContainer.offsetHeight - 15 && getSetting("showNotifications"))) {
-            var chNo = notificationContainer.sameChannelNo(notificationContainer, channel, prio);
+            var chNo = sameChannelNo(notificationContainer, channel, prio);
             if (channel != NotificationChannel.Default && chNo !== false) {
                 notificationContainer.queue[chNo] = obj;
             } else {
@@ -96,5 +111,5 @@ export enum NotificationChannel {
     TrainSwitches,
     ClassicUiTrainSwitch,
     MultiplayerChat,
-    Camera3D,
+    Camera3D
 }
