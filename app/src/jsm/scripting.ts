@@ -6992,7 +6992,7 @@ window.addEventListener("load", function () {
                 window.addEventListener("resize", chat.resizeChat);
                 chat.openChat = function () {
                     if (typeof chatNotify.hide == "function") {
-                        chatNotify.hide(chatNotify, true);
+                        chatNotify.hide(true);
                     }
                     chat.style.display = "block";
                     gui.sidebarRight = true;
