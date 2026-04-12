@@ -24,10 +24,10 @@ import { RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_
  ******************************************/
 
 interface DemoMode {
-    leaveKeyUp(event: KeyboardEvent);
-    leaveTimeoutEnd();
-    leaveTimeoutStart();
-    reload();
+    leaveKeyUp(event: KeyboardEvent): void;
+    leaveTimeoutEnd(): void;
+    leaveTimeoutStart(): void;
+    reload(): void;
     leaveTimeMin?: 1500;
     leaveTimeout?: number;
     exitAppDelay?: number;
@@ -373,111 +373,115 @@ function showConfirmDialogLeaveMultiplayerMode() {
 
 function showConfirmDialogEnterDemoMode() {
     resetConfirmDialog();
-    const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
+    const confirmDialog: HTMLElement | null = document.querySelector("#confirm-dialog");
     if (confirmDialog) {
-        const confirmDialogTitle: HTMLElement = confirmDialog.querySelector("#confirm-dialog-title");
-        const confirmDialogText: HTMLElement = confirmDialog.querySelector("#confirm-dialog-text");
-        const confirmDialogParams: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params");
-        confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
-        confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
-        confirmDialogParams.style.display = "block";
-        const confirmDialogRandomId = "confirm-dialog-params-demo-random";
-        const confirmDialogRandomContainer = document.createElement("div");
-        const confirmDialogRandom = document.createElement("input");
-        confirmDialogRandom.id = confirmDialogRandomId;
-        confirmDialogRandom.type = "checkbox";
-        confirmDialogRandom.onchange = function () {
-            const param3DRotationSpeedElem: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container");
-            if (param3DRotationSpeedElem) {
-                param3DRotationSpeedElem.style.display = confirmDialogRandom.checked ? "none" : "";
-            }
-        };
-        confirmDialogRandom.checked = getGuiState("demo-random");
-        const confirmDialogRandomLabel = document.createElement("label");
-        confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
-        confirmDialogRandomLabel.textContent = getString("generalStartDemoModeRandom");
-        confirmDialogRandomContainer.appendChild(confirmDialogRandom);
-        confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
-        confirmDialogParams.appendChild(confirmDialogRandomContainer);
-        const confirmDialogExitTimeoutId = "confirm-dialog-params-exit-timeout";
-        const confirmDialogExitTimeoutContainer = document.createElement("div");
-        const confirmDialogExitTimeout = document.createElement("input");
-        confirmDialogExitTimeout.id = confirmDialogExitTimeoutId;
-        confirmDialogExitTimeout.type = "number";
-        confirmDialogExitTimeout.step = "1";
-        confirmDialogExitTimeout.pattern = "d+";
-        confirmDialogExitTimeout.min = "1";
-        confirmDialogExitTimeout.value = "";
-        const confirmDialogExitTimeoutLabel = document.createElement("label");
-        confirmDialogExitTimeoutLabel.htmlFor = confirmDialogExitTimeoutId;
-        confirmDialogExitTimeoutLabel.textContent = getString("generalStartDemoModeExitTimeout");
-        confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeout);
-        confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeoutLabel);
-        if (!SYSTEM_TOOLS.canExitApp()) {
-            confirmDialogExitTimeoutContainer.style.display = "none";
-        }
-        confirmDialogParams.appendChild(confirmDialogExitTimeoutContainer);
-        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
-            const elemDiv = document.createElement("div");
-            elemDiv.id = "confirm-dialog-params-3d-rotation-speed-container";
-            elemDiv.style.display = confirmDialogRandom.checked ? "none" : "";
-            const elementSpan = document.createElement("span");
-            elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
-            elemDiv.appendChild(elementSpan);
-            const elementBr = document.createElement("br");
-            elemDiv.appendChild(elementBr);
-            const elementInput = document.createElement("input");
-            elementInput.id = "confirm-dialog-params-3d-rotation-speed-input";
-            elementInput.type = "range";
-            elementInput.min = "0";
-            elementInput.max = "100";
-            elementInput.value = getGuiState("3d-rotation-speed");
-            elemDiv.appendChild(elementInput);
-            confirmDialogParams.appendChild(elemDiv);
-        }
-        const confirmDialogYes: HTMLElement = document.querySelector("#confirm-dialog #confirm-dialog-yes");
-        if (confirmDialogYes) {
-            confirmDialogYes.onclick = function () {
-                closeConfirmDialog();
-                const param3DRotationSpeedElem: HTMLInputElement = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
+        const confirmDialogTitle: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-title");
+        const confirmDialogText: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-text");
+        const confirmDialogParams: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-params");
+        if (confirmDialogTitle && confirmDialogText && confirmDialogParams) {
+            confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
+            confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
+            confirmDialogParams.style.display = "block";
+            const confirmDialogRandomId = "confirm-dialog-params-demo-random";
+            const confirmDialogRandomContainer = document.createElement("div");
+            const confirmDialogRandom = document.createElement("input");
+            confirmDialogRandom.id = confirmDialogRandomId;
+            confirmDialogRandom.type = "checkbox";
+            confirmDialogRandom.onchange = function () {
+                const param3DRotationSpeedElem: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container");
                 if (param3DRotationSpeedElem) {
-                    setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
+                    param3DRotationSpeedElem.style.display = confirmDialogRandom.checked ? "none" : "";
                 }
-                setGuiState("demo-random", confirmDialogRandom.checked);
-                const switchDemoModeAdditionalParams = {};
-                if (confirmDialogExitTimeout.value !== "") {
-                    switchDemoModeAdditionalParams["exit-timeout"] = confirmDialogExitTimeout.value;
-                }
-                switchMode(Modes.DEMO, switchDemoModeAdditionalParams);
             };
-        }
-        const confirmDialogNo: HTMLElement = document.querySelector("#confirm-dialog #confirm-dialog-no");
-        if (confirmDialogNo != null) {
-            confirmDialogNo.onclick = closeConfirmDialog;
-        }
-        if (currentMode != Modes.DEMO) {
-            confirmDialog.style.display = "block";
+            confirmDialogRandom.checked = getGuiState("demo-random");
+            const confirmDialogRandomLabel = document.createElement("label");
+            confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
+            confirmDialogRandomLabel.textContent = getString("generalStartDemoModeRandom");
+            confirmDialogRandomContainer.appendChild(confirmDialogRandom);
+            confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
+            confirmDialogParams.appendChild(confirmDialogRandomContainer);
+            const confirmDialogExitTimeoutId = "confirm-dialog-params-exit-timeout";
+            const confirmDialogExitTimeoutContainer = document.createElement("div");
+            const confirmDialogExitTimeout = document.createElement("input");
+            confirmDialogExitTimeout.id = confirmDialogExitTimeoutId;
+            confirmDialogExitTimeout.type = "number";
+            confirmDialogExitTimeout.step = "1";
+            confirmDialogExitTimeout.pattern = "d+";
+            confirmDialogExitTimeout.min = "1";
+            confirmDialogExitTimeout.value = "";
+            const confirmDialogExitTimeoutLabel = document.createElement("label");
+            confirmDialogExitTimeoutLabel.htmlFor = confirmDialogExitTimeoutId;
+            confirmDialogExitTimeoutLabel.textContent = getString("generalStartDemoModeExitTimeout");
+            confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeout);
+            confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeoutLabel);
+            if (!SYSTEM_TOOLS.canExitApp()) {
+                confirmDialogExitTimeoutContainer.style.display = "none";
+            }
+            confirmDialogParams.appendChild(confirmDialogExitTimeoutContainer);
+            if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
+                const elemDiv = document.createElement("div");
+                elemDiv.id = "confirm-dialog-params-3d-rotation-speed-container";
+                elemDiv.style.display = confirmDialogRandom.checked ? "none" : "";
+                const elementSpan = document.createElement("span");
+                elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
+                elemDiv.appendChild(elementSpan);
+                const elementBr = document.createElement("br");
+                elemDiv.appendChild(elementBr);
+                const elementInput = document.createElement("input");
+                elementInput.id = "confirm-dialog-params-3d-rotation-speed-input";
+                elementInput.type = "range";
+                elementInput.min = "0";
+                elementInput.max = "100";
+                elementInput.value = getGuiState("3d-rotation-speed");
+                elemDiv.appendChild(elementInput);
+                confirmDialogParams.appendChild(elemDiv);
+            }
+            const confirmDialogYes: HTMLElement | null = document.querySelector("#confirm-dialog #confirm-dialog-yes");
+            if (confirmDialogYes) {
+                confirmDialogYes.onclick = function () {
+                    closeConfirmDialog();
+                    const param3DRotationSpeedElem: HTMLInputElement | null = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
+                    if (param3DRotationSpeedElem) {
+                        setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
+                    }
+                    setGuiState("demo-random", confirmDialogRandom.checked);
+                    const switchDemoModeAdditionalParams = {};
+                    if (confirmDialogExitTimeout.value !== "") {
+                        switchDemoModeAdditionalParams["exit-timeout"] = confirmDialogExitTimeout.value;
+                    }
+                    switchMode(Modes.DEMO, switchDemoModeAdditionalParams);
+                };
+            }
+            const confirmDialogNo: HTMLElement | null = document.querySelector("#confirm-dialog #confirm-dialog-no");
+            if (confirmDialogNo) {
+                confirmDialogNo.onclick = closeConfirmDialog;
+            }
+            if (currentMode != Modes.DEMO) {
+                confirmDialog.style.display = "block";
+            }
         }
     }
 }
 
 function closeConfirmDialog() {
-    const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
+    const confirmDialog: HTMLElement | null = document.querySelector("#confirm-dialog");
     if (confirmDialog) {
         confirmDialog.style.display = "";
     }
 }
 function resetConfirmDialog() {
-    const confirmDialog: HTMLElement = document.querySelector("#confirm-dialog");
+    const confirmDialog: HTMLElement | null = document.querySelector("#confirm-dialog");
     if (confirmDialog) {
-        const confirmDialogTitle: HTMLElement = confirmDialog.querySelector("#confirm-dialog-title");
-        const confirmDialogText: HTMLElement = confirmDialog.querySelector("#confirm-dialog-text");
-        const confirmDialogParams: HTMLElement = confirmDialog.querySelector("#confirm-dialog-params");
-        confirmDialogTitle.textContent = "";
-        confirmDialogText.textContent = "";
-        confirmDialogText.style.display = "";
-        confirmDialogParams.innerHTML = "";
-        confirmDialogParams.style.display = "";
+        const confirmDialogTitle: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-title");
+        const confirmDialogText: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-text");
+        const confirmDialogParams: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-params");
+        if (confirmDialogTitle && confirmDialogText && confirmDialogParams) {
+            confirmDialogTitle.textContent = "";
+            confirmDialogText.textContent = "";
+            confirmDialogText.style.display = "";
+            confirmDialogParams.innerHTML = "";
+            confirmDialogParams.style.display = "";
+        }
     }
 }
 
@@ -912,7 +916,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     if (state == "load") {
         menus.outerContainer = {};
         menus.outerContainer.element = document.querySelector("#canvas-menus");
-        menus.outerContainer.element.onwheel = function (event) {
+        menus.outerContainer.element.onwheel = function (event: WheelEvent) {
             event.preventDefault();
         };
         menus.options.container = {};
@@ -1241,7 +1245,7 @@ function getGesture(gesture) {
     }
 }
 
-function onMouseMove(event) {
+function onMouseMove(event: MouseEvent) {
     client.chosenInputMethod = "mouse";
     hardware.mouse.isMoving = true;
     if (movingTimeOut !== undefined && movingTimeOut !== null) {
@@ -1276,7 +1280,7 @@ function onMouseDown(event) {
     hardware.mouse.moveX = hardware.mouse.downX = event.clientX * client.devicePixelRatio;
     hardware.mouse.moveY = hardware.mouse.downY = event.clientY * client.devicePixelRatio;
 }
-function onMouseUp(event) {
+function onMouseUp(event: MouseEvent) {
     event.preventDefault();
     resetGestures();
     client.chosenInputMethod = "mouse";
@@ -1285,18 +1289,18 @@ function onMouseUp(event) {
     hardware.mouse.upTime = Date.now();
     controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
 }
-function onMouseEnter(_event) {
+function onMouseEnter(_event: MouseEvent) {
     client.chosenInputMethod = "mouse";
     hardware.mouse.out = false;
 }
-function onMouseOut(event) {
+function onMouseOut(event: MouseEvent) {
     event.preventDefault();
     resetGestures();
     client.chosenInputMethod = null;
     hardware.mouse.out = true;
     hardware.keyboard.keysHold = [];
 }
-function onMouseWheel(event) {
+function onMouseWheel(event: WheelEvent) {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     if (event.ctrlKey && event.deltaY != 0) {
@@ -1329,7 +1333,7 @@ function onMouseWheel(event) {
         hardware.mouse.wheelScrollZ = event.deltaZ;
     }
 }
-function onMouseRight(event) {
+function onMouseRight(event: PointerEvent) {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
@@ -1347,11 +1351,11 @@ function onMouseRight(event) {
         drawMenu("items-change");
     }
 }
-function preventEvent(event) {
+function preventEvent(event: Event) {
     event.preventDefault();
 }
 
-function getTouchMove(event) {
+function getTouchMove(event: TouchEvent) {
     event.preventDefault();
     client.chosenInputMethod = "touch";
     if (event.touches.length == 1 && typeof client.zoomAndTilt.pinchHypot == "undefined" && !client.zoomAndTilt.pinchGestureIsTilt) {
@@ -1415,7 +1419,7 @@ function getTouchMove(event) {
         }
     }
 }
-function getTouchStart(event) {
+function getTouchStart(event: TouchEvent) {
     event.preventDefault();
     client.chosenInputMethod = "touch";
     var xTS = event.changedTouches[0].clientX * client.devicePixelRatio;
@@ -1450,7 +1454,7 @@ function getTouchStart(event) {
         controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
     }
 }
-function getTouchEnd(event) {
+function getTouchEnd(event: TouchEvent) {
     event.preventDefault();
     resetGestures();
     client.chosenInputMethod = "touch";
@@ -1481,13 +1485,13 @@ function getTouchEnd(event) {
         }
     }
 }
-function getTouchCancel(_event) {
+function getTouchCancel(_event: TouchEvent) {
     resetGestures();
     client.chosenInputMethod = "touch";
     hardware.keyboard.keysHold = [];
 }
 
-function onKeyDown(event) {
+function onKeyDown(event: KeyboardEvent) {
     if (!client.hidden && !hardware.mouse.out) {
         if (!hardware.keyboard.keysHold[event.key]) {
             hardware.keyboard.keysHold[event.key] = {};
@@ -1523,7 +1527,7 @@ function onKeyDown(event) {
                 getGesture({type: "pinch", scale: hypot / client.zoomAndTilt.pinchHypot, deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
             }
         }
-    } else if (event.target.tagName != "INPUT" && event.target.tagName != "TEXTAREA") {
+    } else if ((event.target as HTMLElement).tagName != "INPUT" && (event.target as HTMLElement).tagName != "TEXTAREA") {
         if (event.key == "/" && !gui.sidebarRight && !gui.textControl && !gui.konamiOverlay) {
             event.preventDefault();
             gui.textControl = true;
@@ -1577,7 +1581,7 @@ function onKeyDown(event) {
         }
     }
 }
-function onKeyUp(event) {
+function onKeyUp(event: KeyboardEvent) {
     if (event.key == "Control") {
         getGesture({type: "pinchend"});
         getGesture({type: "pinchreset"});
@@ -1588,7 +1592,7 @@ function onKeyUp(event) {
     hardware.keyboard.keysHold[event.key].active = false;
     hardware.keyboard.keysHold[event.key].ctrlKey = false;
 }
-function preventKeyZoomDuringLoad(event) {
+function preventKeyZoomDuringLoad(event: KeyboardEvent) {
     if (event.key == "Escape" || (event.ctrlKey && (event.key == "+" || event.key == "-" || event.key == "0"))) {
         event.preventDefault();
     }
@@ -5572,7 +5576,7 @@ var resized: boolean = false;
 
 //Modes
 var currentMode: Modes;
-var modeSwitchingTimeout;
+var modeSwitchingTimeout: number;
 var modeSwitchingReloadTimeout;
 var modeSwitching: boolean = true;
 
@@ -5606,7 +5610,7 @@ var classicUI;
 var gui: Gui;
 var menus: any = {};
 var konamiState = 0;
-var konamiTimeOut;
+var konamiTimeOut: number;
 
 //Multiplayer mode
 var multiplayerMode: MultiplayerMode = {
