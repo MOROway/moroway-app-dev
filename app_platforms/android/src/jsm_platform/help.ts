@@ -4,47 +4,54 @@ import { getString } from "{{jsm}}/common/string_tools.js";
 import { followLink, getServerHTMLLink, handleServerJSONValues, LinkStates } from "{{jsm}}/common/web_tools.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector("#legal-appandroid-licenses").classList.remove("hidden");
-    document.querySelector("#legal-appandroid-kotlin-license").addEventListener("click", function () {
+    const licenses = document.querySelector("#legal-appandroid-licenses");
+    if (licenses) {
+        licenses.classList.remove("hidden");
+    }
+    document.querySelector("#legal-appandroid-kotlin-license")?.addEventListener("click", function () {
         followLink("licenses_platform/org.jetbrains.kotlin.txt", "_self", LinkStates.InternalLicense);
     });
-    document.querySelector("#legal-appandroid-android-x-appcompat-license").addEventListener("click", function () {
+    document.querySelector("#legal-appandroid-android-x-appcompat-license")?.addEventListener("click", function () {
         followLink("licenses_platform/androidx.appcompat.txt", "_self", LinkStates.InternalLicense);
     });
-    document.querySelector("#legal-appandroid-android-x-activity-license").addEventListener("click", function () {
+    document.querySelector("#legal-appandroid-android-x-activity-license")?.addEventListener("click", function () {
         followLink("licenses_platform/androidx.activity.txt", "_self", LinkStates.InternalLicense);
     });
-    document.querySelector("#legal-appandroid-android-x-webkit-license").addEventListener("click", function () {
+    document.querySelector("#legal-appandroid-android-x-webkit-license")?.addEventListener("click", function () {
         followLink("licenses_platform/androidx.webkit.txt", "_self", LinkStates.InternalLicense);
     });
-    document.querySelector("#legal-appandroid-coil-license").addEventListener("click", function () {
+    document.querySelector("#legal-appandroid-coil-license")?.addEventListener("click", function () {
         followLink("licenses_platform/io.coil-kt.coil3.txt", "_self", LinkStates.InternalLicense);
     });
 
-    document.querySelector("#privacy-statement-link").addEventListener("click", function () {
+    document.querySelector("#privacy-statement-link")?.addEventListener("click", function () {
         notify("#help-notifier", getString("helpScreenPrivacyStatementBackupLinkNotification", "."), NotificationPriority.Default, 900, null, null, window.innerHeight);
         followLink(getServerHTMLLink("privacy"), "_blank", LinkStates.External);
     });
     handleServerJSONValues("privacy", function (res) {
-        var privacy = document.querySelector("#privacy-statement");
-        privacy.innerHTML = "";
-        Object.keys(res).forEach(function (key) {
-            var span = document.createElement("span");
-            span.textContent = res[key];
-            privacy.innerHTML += "<br>";
-            privacy.appendChild(span);
-        });
-    });
-
-    const about = document.querySelector("#website-about") as HTMLElement;
-    handleServerJSONValues("about", function (res) {
-        if (typeof res == "object" && Array.isArray(res)) {
-            res.forEach(function (aboutText) {
-                var p = document.createElement("p");
-                p.textContent = aboutText;
-                about.querySelector("#website-about-text").appendChild(p);
+        const privacy = document.querySelector("#privacy-statement");
+        if (privacy) {
+            privacy.innerHTML = "";
+            Object.keys(res).forEach(function (key) {
+                var span = document.createElement("span");
+                span.textContent = res[key];
+                privacy.innerHTML += "<br>";
+                privacy.appendChild(span);
             });
-            about.style.display = "block";
         }
     });
+
+    const about = document.querySelector<HTMLElement>("#website-about");
+    if (about) {
+        handleServerJSONValues("about", function (res) {
+            if (typeof res == "object" && Array.isArray(res)) {
+                res.forEach(function (aboutText) {
+                    var p = document.createElement("p");
+                    p.textContent = aboutText;
+                    about.querySelector("#website-about-text")?.appendChild(p);
+                });
+                about.style.display = "block";
+            }
+        });
+    }
 });

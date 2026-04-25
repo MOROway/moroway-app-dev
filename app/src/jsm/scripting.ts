@@ -348,21 +348,23 @@ function getFontSize(font: string, unit: string): number {
 
 function showConfirmDialogLeaveMultiplayerMode() {
     resetConfirmDialog();
-    const confirmDialog = document.querySelector("#confirm-dialog") as HTMLElement;
+    const confirmDialog = document.querySelector<HTMLElement>("#confirm-dialog");
     if (confirmDialog) {
-        const confirmDialogTitle = confirmDialog.querySelector("#confirm-dialog-title") as HTMLElement;
-        const confirmDialogText = confirmDialog.querySelector("#confirm-dialog-text") as HTMLElement;
-        confirmDialogTitle.textContent = getString("appScreenTeamplayLeaveDialogTitle");
-        confirmDialogText.style.display = "none";
-        const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes") as HTMLElement;
-        if (confirmDialogYes != null) {
+        const confirmDialogTitle = confirmDialog.querySelector<HTMLElement>("#confirm-dialog-title");
+        const confirmDialogText = confirmDialog.querySelector<HTMLElement>("#confirm-dialog-text");
+        if (confirmDialogTitle && confirmDialogText) {
+            confirmDialogTitle.textContent = getString("appScreenTeamplayLeaveDialogTitle");
+            confirmDialogText.style.display = "none";
+        }
+        const confirmDialogYes = document.querySelector<HTMLElement>("#confirm-dialog #confirm-dialog-yes");
+        if (confirmDialogYes) {
             confirmDialogYes.onclick = function () {
                 closeConfirmDialog();
                 switchMode(Modes.SINGLEPLAYER, {id: "", key: ""});
             };
         }
-        const confirmDialogNo = document.querySelector("#confirm-dialog #confirm-dialog-no") as HTMLElement;
-        if (confirmDialogNo != null) {
+        const confirmDialogNo = document.querySelector<HTMLElement>("#confirm-dialog #confirm-dialog-no");
+        if (confirmDialogNo) {
             confirmDialogNo.onclick = closeConfirmDialog;
         }
         if (currentMode == Modes.MULTIPLAYER) {
@@ -6972,10 +6974,10 @@ window.addEventListener("load", function () {
                 const chatInnerMessages = chatInner.querySelector("#chat-inner-messages") as HTMLElement;
                 const chatInnerScrollToBottom = chatInner.querySelector("#chat-scroll-to-bottom") as HTMLElementChatToBottom;
                 const chatControls = chat.querySelector("#chat-controls") as HTMLElement;
-                const chatControlsInner = chatControls.querySelectorAll("#chat-send > *") as NodeListOf<HTMLElement>;
+                const chatControlsInner = chatControls.querySelectorAll<HTMLElement>("#chat-send > *");
                 const chatControlsReactions = chatControls.querySelector("#chat-msg-reactions") as HTMLElement;
                 const chatControlsReactionsSmiley = chatControlsReactions.querySelector("#chat-msg-smileys-inner") as HTMLElement;
-                const chatControlsReactionsSmileyButtons = chatControlsReactionsSmiley.querySelectorAll("button") as NodeListOf<HTMLElement>;
+                const chatControlsReactionsSmileyButtons = chatControlsReactionsSmiley.querySelectorAll<HTMLElement>("button");
                 const chatControlsReactionsSticker = chatControlsReactions.querySelector("#chat-msg-stickers-inner") as HTMLElement;
                 const chatControlsSendMsg = chatControls.querySelector("#chat-msg-send-text") as HTMLInputElement;
                 const chatControlsSendButton = chatControls.querySelector("#chat-msg-send-button") as HTMLElement;

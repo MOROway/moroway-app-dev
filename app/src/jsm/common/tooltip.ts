@@ -40,7 +40,7 @@ export function initTooltip(elem: HTMLElement): void {
     }
 }
 export function initTooltips(): void {
-    const elementsTooltip = document.querySelectorAll("*[data-tooltip]") as NodeListOf<HTMLElement>;
+    const elementsTooltip = document.querySelectorAll<HTMLElement>("*[data-tooltip]");
     for (let i = 0; i < elementsTooltip.length; i++) {
         initTooltip(elementsTooltip[i]);
     }

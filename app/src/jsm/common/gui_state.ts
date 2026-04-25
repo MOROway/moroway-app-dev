@@ -7,7 +7,7 @@ export enum ThreeCameraModes {
     FOLLOW_CAR = "follow-car"
 }
 
-function validateGuiState(item, test) {
+function validateGuiState(item: string, test: any) {
     if (items.hasOwnProperty(item)) {
         return items[item].validate(test);
     }
@@ -24,8 +24,9 @@ function getGuiStates() {
     return guiState;
 }
 
-export function getGuiState(item, overrideValue: any = undefined) {
-    const value = getGuiStates()[item];
+export function getGuiState(item: string, overrideValue: any = undefined) {
+    const guiState = getGuiStates();
+    const value = guiState[item];
     if (overrideValue !== undefined && validateGuiState(item, overrideValue)) {
         return overrideValue;
     } else if (validateGuiState(item, value)) {
@@ -36,7 +37,7 @@ export function getGuiState(item, overrideValue: any = undefined) {
     return undefined;
 }
 
-export function setGuiState(item, value) {
+export function setGuiState(item: string, value: any) {
     const guiState = getGuiStates();
     if (validateGuiState(item, value)) {
         guiState[item] = value;

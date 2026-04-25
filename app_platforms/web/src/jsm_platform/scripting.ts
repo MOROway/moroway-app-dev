@@ -7,7 +7,7 @@ import { getMode, Modes } from "{{jsm}}/scripting.js";
 
 document.addEventListener("moroway-app-ready", function () {
     if (getMode() == Modes.SINGLEPLAYER) {
-        showServerNote(document.querySelector("#server-note") as HTMLElement);
+        showServerNote(document.querySelector("#server-note"));
     }
     setSettingsHTML(document.querySelector("#settings-inner"), false);
 });

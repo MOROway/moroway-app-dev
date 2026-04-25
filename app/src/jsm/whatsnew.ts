@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
             elemContent.className = "card-container card-container-highlightable";
             createCardForMinor(major, elemContent, index == 0);
             elem.appendChild(elemContent);
-            (document.querySelector("main") as HTMLElement).appendChild(elem);
+            document.querySelector("main")?.appendChild(elem);
         });
     }
 

@@ -10,14 +10,14 @@ function styleContent() {
     if (window.innerHeight < content.scrollHeight) {
         content.style.display = "block";
     }
-    var icons = document.querySelectorAll("#content .text-icon-big .material-icons") as NodeListOf<HTMLElement>;
+    var icons = document.querySelectorAll<HTMLElement>("#content .text-icon-big .material-icons");
     var iconSize;
     for (var iC = 0; iC < icons.length; iC++) {
         icons[iC].style.fontSize = "";
         iconSize = icons[iC].offsetWidth;
         icons[iC].style.fontSize = iconSize + "px";
     }
-    icons = document.querySelectorAll("#content .text-icon-small") as NodeListOf<HTMLElement>;
+    icons = document.querySelectorAll<HTMLElement>("#content .text-icon-small");
     for (var iC = 0; iC < icons.length; iC++) {
         var iconSizeSmall = (iconSize / 4) * parseFloat(window.getComputedStyle(icons[iC].parentElement.parentElement).getPropertyValue("flex-grow"));
         icons[iC].style.width = iconSizeSmall + "px";

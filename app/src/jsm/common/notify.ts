@@ -22,9 +22,11 @@ export interface HTMLElementNotify extends HTMLElement {
 //NOTIFICATIONS
 export function notify(selector: string, message: string, prio: NotificationPriority, timeout: number, actionHandler: (() => void) | null = null, actionText: string | null = null, minHeight: number = -1, channel: NotificationChannel = NotificationChannel.Default) {
     function sameChannelNo(ch: NotificationChannel, pr: NotificationPriority): number | false {
-        for (var i = notificationContainer.queue.length - 1; i >= 0; i--) {
-            if (notificationContainer.queue[i].channel == ch && notificationContainer.queue[i].prio <= pr) {
-                return i;
+        if (notificationContainer) {
+            for (var i = notificationContainer.queue.length - 1; i >= 0; i--) {
+                if (notificationContainer.queue[i].channel == ch && notificationContainer.queue[i].prio <= pr) {
+                    return i;
+                }
             }
         }
         return false;

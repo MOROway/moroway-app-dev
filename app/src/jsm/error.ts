@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
         SYSTEM_TOOLS.navigateBack();
     });
 
-    var elements = document.querySelectorAll(".content") as NodeListOf<HTMLElement>;
+    var elements = document.querySelectorAll<HTMLElement>(".content");
     for (var i = 0; i < elements.length; i++) {
         var elemString = elements[i].dataset.stringidContent;
         var j = 0;

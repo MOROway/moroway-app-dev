@@ -1,5 +1,5 @@
 "use strict";
-import {deepFreeze} from "./js_objects.js";
+import { deepFreeze } from "./js_objects.js";
 
 //HANDLE STRINGS
 export function getString(prop: [string, number] | string, punctuationMark: string = "", caseType: string = "", lang: string = CURRENT_LANG): string {
@@ -57,7 +57,7 @@ export function formatHTMLString(str: string): string {
 }
 
 export function setHTMLStrings() {
-    const elemsContent = document.querySelectorAll("*[data-stringid-content]") as NodeListOf<HTMLElement>;
+    const elemsContent = document.querySelectorAll<HTMLElement>("*[data-stringid-content]");
     for (let i = 0; i < elemsContent.length; i++) {
         var args: string[] = [];
         var stringIdContentArrayNo = elemsContent[i].dataset.stringidContentArrayno;
@@ -74,7 +74,7 @@ export function setHTMLStrings() {
         } while (argsNo > 1);
         elemsContent[i].textContent = formatJSString.apply(null, args);
     }
-    const elemsTitle = document.querySelectorAll("*[data-stringid-title]") as NodeListOf<HTMLElement>;
+    const elemsTitle = document.querySelectorAll<HTMLElement>("*[data-stringid-title]");
     for (let i = 0; i < elemsTitle.length; i++) {
         var args: string[] = [];
         var stringIdTitleArrayNo = elemsTitle[i].dataset.stringidTitleArrayno;
@@ -91,7 +91,7 @@ export function setHTMLStrings() {
         } while (argsNo > 1);
         elemsTitle[i].title = formatJSString.apply(null, args);
     }
-    const elemsTooltip = document.querySelectorAll("*[data-stringid-tooltip]") as NodeListOf<HTMLElement>;
+    const elemsTooltip = document.querySelectorAll<HTMLElement>("*[data-stringid-tooltip]");
     for (let i = 0; i < elemsTooltip.length; i++) {
         var args: string[] = [];
         var stringIdTooltipArrayNo = elemsTooltip[i].dataset.stringIdTooltipArrayNo;
@@ -108,7 +108,7 @@ export function setHTMLStrings() {
         } while (argsNo > 1);
         elemsTooltip[i].dataset.tooltip = formatJSString.apply(null, args);
     }
-    const elemsAlt = document.querySelectorAll("img[data-stringid-alt]") as NodeListOf<HTMLImageElement>;
+    const elemsAlt = document.querySelectorAll<HTMLImageElement>("img[data-stringid-alt]");
     for (let i = 0; i < elemsAlt.length; i++) {
         var args: string[] = [];
         var stringIdAltArrayNo = elemsAlt[i].dataset.stringidAltArrayno;

@@ -20,11 +20,11 @@ export function getSettings() {
 
     Object.keys(defaults).forEach(function (key) {
         if (typeof values[key] !== "boolean") {
-            values[key] = defaults[key];
+            values[key] = defaults[key as keyof typeof defaults];
         }
     });
     Object.keys(values).forEach(function (key) {
-        if (typeof defaults[key] !== "boolean") {
+        if (typeof defaults[key as keyof typeof defaults] !== "boolean") {
             delete values[key];
         }
     });
@@ -32,11 +32,11 @@ export function getSettings() {
     return {values: values, dependencies: dependencies, hardware: hardware, platforms: platforms};
 }
 
-function isSettingActive(a) {
+function isSettingActive(a: string) {
     const settingsComplete = getSettings();
     var isSettingActive = true;
-    if (settingsComplete.dependencies[a] != null) {
-        settingsComplete.dependencies[a].forEach(function (key) {
+    if (Object.hasOwn(settingsComplete.dependencies, a)) {
+        settingsComplete.dependencies[a as keyof typeof settingsComplete.dependencies].forEach(function (key) {
             if (!getSetting(key)) {
                 isSettingActive = false;
             }
@@ -45,11 +45,11 @@ function isSettingActive(a) {
     return isSettingActive;
 }
 
-function isHardwareAvailable(a) {
+function isHardwareAvailable(a: string) {
     const settingsComplete = getSettings();
     var isHardwareAvailable = true;
-    if (settingsComplete.hardware[a] != null) {
-        settingsComplete.hardware[a].forEach(function (current) {
+    if (Object.hasOwn(settingsComplete.hardware, a)) {
+        settingsComplete.hardware[a as keyof typeof settingsComplete.hardware].forEach(function (current) {
             Array(current).forEach(function (key) {
                 if (AVAILABLE_HARDWARE.indexOf(key) == -1) {
                     isHardwareAvailable = false;
@@ -60,29 +60,31 @@ function isHardwareAvailable(a) {
     return isHardwareAvailable;
 }
 
-function isInPlatformList(a) {
+function isInPlatformList(a: string) {
     const settingsComplete = getSettings();
     var isInPlatformList = true;
-    if (settingsComplete.platforms[a] != null) {
-        isInPlatformList = settingsComplete.platforms[a].indexOf(APP_DATA.platform) > -1;
+    if (Object.hasOwn(settingsComplete.platforms, a)) {
+        isInPlatformList = settingsComplete.platforms[a as keyof typeof settingsComplete.platforms].indexOf(APP_DATA.platform) > -1;
     }
     return isInPlatformList;
 }
 
-export function setSettingsHTML(elem, standalone) {
+export function setSettingsHTML(elem: HTMLElement | null, standalone: boolean = true) {
     function displaySettingsOpts() {
-        var settings = getSettings().values;
-        for (var i = 0; i < Object.keys(settings).length; i++) {
-            var settingId = Object.keys(settings)[i];
-            var settingElem = document.querySelector("li[data-settings-id='" + settingId + "']") as HTMLElement;
-            if (settingElem !== null) {
-                var leftButton = settingElem.querySelector(".settings-opts-left-button") as HTMLElement;
-                if (Object.values(settings)[i]) {
-                    leftButton.style.backgroundColor = "black";
-                    leftButton.style.transform = "rotate(360deg)";
-                } else {
-                    leftButton.style.backgroundColor = "";
-                    leftButton.style.transform = "rotate(0deg)";
+        const settings = getSettings().values;
+        for (let i = 0; i < Object.keys(settings).length; i++) {
+            const settingId = Object.keys(settings)[i];
+            const settingElem = document.querySelector<HTMLElement>("li[data-settings-id='" + settingId + "']");
+            if (settingElem) {
+                const leftButton = settingElem.querySelector<HTMLElement>(".settings-opts-left-button");
+                if (leftButton) {
+                    if (Object.values(settings)[i]) {
+                        leftButton.style.backgroundColor = "black";
+                        leftButton.style.transform = "rotate(360deg)";
+                    } else {
+                        leftButton.style.backgroundColor = "";
+                        leftButton.style.transform = "rotate(0deg)";
+                    }
                 }
                 if (isSettingActive(settingId) && isHardwareAvailable(settingId) && isInPlatformList(settingId)) {
                     settingElem.style.setProperty("max-height", "");
@@ -102,9 +104,9 @@ export function setSettingsHTML(elem, standalone) {
     }
 
     function displaySettingsButtons() {
-        var settings = getSettings().values;
-        var btnSaveGameDeleteGame = document.querySelector("#saveGameDeleteGame") as HTMLElement;
-        if (btnSaveGameDeleteGame == undefined || btnSaveGameDeleteGame == null) {
+        const settings = getSettings().values;
+        const btnSaveGameDeleteGame = document.querySelector<HTMLElement>("#saveGameDeleteGame");
+        if (!btnSaveGameDeleteGame) {
             return false;
         }
         if (settings.saveGame || !isGameSaved() || !standalone) {
@@ -112,7 +114,7 @@ export function setSettingsHTML(elem, standalone) {
         } else {
             btnSaveGameDeleteGame.style.display = "inline";
         }
-        var reduceOptMenuHideItems = document.querySelectorAll(".reduce-opt-menu-hide-item") as NodeListOf<HTMLElement>;
+        const reduceOptMenuHideItems = document.querySelectorAll<HTMLElement>(".reduce-opt-menu-hide-item");
         for (var i = 0; i < reduceOptMenuHideItems.length; i++) {
             if (!settings.reduceOptMenu) {
                 reduceOptMenuHideItems[i].style.display = "";
@@ -127,19 +129,34 @@ export function setSettingsHTML(elem, standalone) {
         }
     }
 
-    function changeSetting(event, idOnElement = false) {
-        var id = idOnElement ? event.target.dataset.settingsId : event.target.parentNode.parentNode.dataset.settingsId;
-        setSetting(id, !getSetting(id));
-        displaySettingsOpts();
-        displaySettingsButtons();
-        notify(".notify", getString("optApply", "."), NotificationPriority.Low, 900, null, null, window.innerHeight);
-    }
-
-    if (elem == undefined || elem == null) {
+    function changeSetting(event: Event, idOnElement = false) {
+        if (event.target) {
+            const target = event.target as HTMLElement;
+            var id: string;
+            if (idOnElement) {
+                if (target.dataset.settingsId) {
+                    id = target.dataset.settingsId;
+                } else {
+                    return false;
+                }
+            } else {
+                if (target.parentElement?.parentElement?.dataset?.settingsId) {
+                    id = target.parentElement.parentElement.dataset.settingsId;
+                } else {
+                    return false;
+                }
+            }
+            setSetting(id, !getSetting(id));
+            displaySettingsOpts();
+            displaySettingsButtons();
+            notify(".notify", getString("optApply", "."), NotificationPriority.Low, 900, null, null, window.innerHeight);
+            return true;
+        }
         return false;
     }
-    if (standalone == undefined || standalone == null) {
-        standalone = true;
+
+    if (!elem) {
+        return false;
     }
     elem.classList.add("settings");
     const root = document.createElement("ul");
@@ -265,13 +282,13 @@ export function setSettingsHTML(elem, standalone) {
     const event = new CustomEvent("moroway-app-after-set-settings-html", {detail: {elem: elem, standalone: standalone}});
     document.dispatchEvent(event);
 }
-export function getSetting(key) {
+export function getSetting(key: string) {
     if (!key) {
         return false;
     }
     return getSettings().values[key] && isSettingActive(key) && isHardwareAvailable(key) && isInPlatformList(key);
 }
-export function setSetting(key, value) {
+export function setSetting(key: string, value: boolean) {
     var settings = getSettings().values;
     if (isSettingActive(key) && isHardwareAvailable(key) && isInPlatformList(key)) {
         settings[key] = value;
