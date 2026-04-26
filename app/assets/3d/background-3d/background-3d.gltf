@@ -1421,7 +1421,7 @@
       "componentType": 5125
     },
     {
-      "count": 201,
+      "count": 210,
       "max": [
         -4.44228516902890779861e-01,
         1.72968797708924537648e-01,
@@ -1438,16 +1438,23 @@
       "componentType": 5126
     },
     {
-      "count": 201,
+      "count": 210,
       "type": "VEC3",
       "byteOffset": 12,
       "bufferView": 1,
       "componentType": 5126
     },
     {
-      "count": 201,
-      "type": "VEC4",
+      "count": 210,
+      "type": "VEC2",
       "byteOffset": 24,
+      "bufferView": 1,
+      "componentType": 5126
+    },
+    {
+      "count": 210,
+      "type": "VEC4",
+      "byteOffset": 32,
       "bufferView": 1,
       "componentType": 5126
     },
@@ -1459,7 +1466,7 @@
       "componentType": 5125
     },
     {
-      "count": 339,
+      "count": 349,
       "max": [
         3.78035978122167215520e-01,
         -4.15946980308133651416e-02,
@@ -1476,16 +1483,23 @@
       "componentType": 5126
     },
     {
-      "count": 339,
+      "count": 349,
       "type": "VEC3",
       "byteOffset": 12,
       "bufferView": 3,
       "componentType": 5126
     },
     {
-      "count": 339,
-      "type": "VEC4",
+      "count": 349,
+      "type": "VEC2",
       "byteOffset": 24,
+      "bufferView": 3,
+      "componentType": 5126
+    },
+    {
+      "count": 349,
+      "type": "VEC4",
+      "byteOffset": 32,
       "bufferView": 3,
       "componentType": 5126
     },
@@ -1497,7 +1511,7 @@
       "componentType": 5125
     },
     {
-      "count": 339,
+      "count": 349,
       "max": [
         3.78068082814067507602e-01,
         -3.31642064873826983296e-02,
@@ -1514,16 +1528,23 @@
       "componentType": 5126
     },
     {
-      "count": 339,
+      "count": 349,
       "type": "VEC3",
       "byteOffset": 12,
       "bufferView": 5,
       "componentType": 5126
     },
     {
-      "count": 339,
-      "type": "VEC4",
+      "count": 349,
+      "type": "VEC2",
       "byteOffset": 24,
+      "bufferView": 5,
+      "componentType": 5126
+    },
+    {
+      "count": 349,
+      "type": "VEC4",
+      "byteOffset": 32,
       "bufferView": 5,
       "componentType": 5126
     },
@@ -1615,7 +1636,7 @@
       "componentType": 5125
     },
     {
-      "count": 3042,
+      "count": 3040,
       "max": [
         -4.52742296790137221940e-01,
         1.89487253451810971905e-01,
@@ -1632,16 +1653,23 @@
       "componentType": 5126
     },
     {
-      "count": 3042,
+      "count": 3040,
       "type": "VEC3",
       "byteOffset": 12,
       "bufferView": 9,
       "componentType": 5126
     },
     {
-      "count": 3042,
-      "type": "VEC4",
+      "count": 3040,
+      "type": "VEC2",
       "byteOffset": 24,
+      "bufferView": 9,
+      "componentType": 5126
+    },
+    {
+      "count": 3040,
+      "type": "VEC4",
+      "byteOffset": 32,
       "bufferView": 9,
       "componentType": 5126
     },
@@ -1847,6 +1875,13 @@
       "componentType": 5126
     },
     {
+      "count": 144,
+      "type": "VEC2",
+      "byteOffset": 24,
+      "bufferView": 17,
+      "componentType": 5126
+    },
+    {
       "count": 492,
       "type": "SCALAR",
       "byteOffset": 0,
@@ -1899,7 +1934,7 @@
       "componentType": 5125
     },
     {
-      "count": 5636,
+      "count": 6303,
       "max": [
         -7.05212072054549193867e-02,
         1.04333108161827042143e-02,
@@ -1916,16 +1951,23 @@
       "componentType": 5126
     },
     {
-      "count": 5636,
+      "count": 6303,
       "type": "VEC3",
       "byteOffset": 12,
       "bufferView": 21,
       "componentType": 5126
     },
     {
-      "count": 5636,
-      "type": "VEC4",
+      "count": 6303,
+      "type": "VEC2",
       "byteOffset": 24,
+      "bufferView": 21,
+      "componentType": 5126
+    },
+    {
+      "count": 6303,
+      "type": "VEC4",
+      "byteOffset": 32,
       "bufferView": 21,
       "componentType": 5126
     },
@@ -2024,7 +2066,7 @@
       "componentType": 5125
     },
     {
-      "count": 12116,
+      "count": 12827,
       "max": [
         2.40352039395926642129e-01,
         1.21339011884608174996e-01,
@@ -2041,16 +2083,23 @@
       "componentType": 5126
     },
     {
-      "count": 12116,
+      "count": 12827,
       "type": "VEC3",
       "byteOffset": 12,
       "bufferView": 25,
       "componentType": 5126
     },
     {
-      "count": 12116,
-      "type": "VEC4",
+      "count": 12827,
+      "type": "VEC2",
       "byteOffset": 24,
+      "bufferView": 25,
+      "componentType": 5126
+    },
+    {
+      "count": 12827,
+      "type": "VEC4",
+      "byteOffset": 32,
       "bufferView": 25,
       "componentType": 5126
     },
@@ -3136,6 +3185,13 @@
       "count": 108,
       "type": "VEC3",
       "byteOffset": 12,
+      "bufferView": 67,
+      "componentType": 5126
+    },
+    {
+      "count": 108,
+      "type": "VEC2",
+      "byteOffset": 24,
       "bufferView": 67,
       "componentType": 5126
     },
@@ -4498,6 +4554,13 @@
       "componentType": 5126
     },
     {
+      "count": 540,
+      "type": "VEC2",
+      "byteOffset": 24,
+      "bufferView": 123,
+      "componentType": 5126
+    },
+    {
       "count": 375,
       "type": "SCALAR",
       "byteOffset": 11556,
@@ -4512,7 +4575,7 @@
       "componentType": 5125
     },
     {
-      "count": 837,
+      "count": 966,
       "max": [
         1.06991907534637303856e-01,
         8.05126410540747544653e-02,
@@ -4529,9 +4592,16 @@
       "componentType": 5126
     },
     {
-      "count": 837,
+      "count": 966,
       "type": "VEC3",
       "byteOffset": 12,
+      "bufferView": 125,
+      "componentType": 5126
+    },
+    {
+      "count": 966,
+      "type": "VEC2",
+      "byteOffset": 24,
       "bufferView": 125,
       "componentType": 5126
     },
@@ -4894,6 +4964,13 @@
       "byteOffset": 12,
       "bufferView": 141,
       "componentType": 5126
+    },
+    {
+      "count": 72,
+      "type": "VEC2",
+      "byteOffset": 24,
+      "bufferView": 141,
+      "componentType": 5126
     }
   ],
   "asset": {
@@ -4908,785 +4985,785 @@
     },
     {
       "buffer": 0,
-      "byteStride": 40,
-      "byteLength": 8040,
+      "byteStride": 48,
+      "byteLength": 10080,
       "byteOffset": 3288
     },
     {
       "buffer": 0,
       "byteLength": 3336,
-      "byteOffset": 11328
+      "byteOffset": 13368
     },
     {
       "buffer": 0,
-      "byteStride": 40,
-      "byteLength": 13560,
-      "byteOffset": 14664
+      "byteStride": 48,
+      "byteLength": 16752,
+      "byteOffset": 16704
     },
     {
       "buffer": 0,
       "byteLength": 3336,
-      "byteOffset": 28224
+      "byteOffset": 33456
     },
     {
       "buffer": 0,
-      "byteStride": 40,
-      "byteLength": 13560,
-      "byteOffset": 31560
+      "byteStride": 48,
+      "byteLength": 16752,
+      "byteOffset": 36792
     },
     {
       "buffer": 0,
       "byteLength": 816,
-      "byteOffset": 45120
+      "byteOffset": 53544
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 1680,
-      "byteOffset": 45936
+      "byteOffset": 54360
     },
     {
       "buffer": 0,
       "byteLength": 23460,
-      "byteOffset": 47616
+      "byteOffset": 56040
     },
     {
       "buffer": 0,
-      "byteStride": 40,
-      "byteLength": 121680,
-      "byteOffset": 71076
+      "byteStride": 48,
+      "byteLength": 145920,
+      "byteOffset": 79500
     },
     {
       "buffer": 0,
       "byteLength": 5844,
-      "byteOffset": 192756
+      "byteOffset": 225420
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 53160,
-      "byteOffset": 198600
+      "byteOffset": 231264
     },
     {
       "buffer": 0,
       "byteLength": 29328,
-      "byteOffset": 251760
+      "byteOffset": 284424
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 50640,
-      "byteOffset": 281088
+      "byteOffset": 313752
     },
     {
       "buffer": 0,
       "byteLength": 7560,
-      "byteOffset": 331728
+      "byteOffset": 364392
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 37360,
-      "byteOffset": 339288
+      "byteOffset": 371952
     },
     {
       "buffer": 0,
       "byteLength": 576,
-      "byteOffset": 376648
+      "byteOffset": 409312
     },
     {
       "buffer": 0,
-      "byteStride": 24,
-      "byteLength": 3456,
-      "byteOffset": 377224
+      "byteStride": 32,
+      "byteLength": 4608,
+      "byteOffset": 409888
     },
     {
       "buffer": 0,
       "byteLength": 1968,
-      "byteOffset": 380680
+      "byteOffset": 414496
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3600,
-      "byteOffset": 382648
+      "byteOffset": 416464
     },
     {
       "buffer": 0,
       "byteLength": 50580,
-      "byteOffset": 386248
+      "byteOffset": 420064
     },
     {
       "buffer": 0,
-      "byteStride": 40,
-      "byteLength": 225440,
-      "byteOffset": 436828
+      "byteStride": 48,
+      "byteLength": 302544,
+      "byteOffset": 470644
     },
     {
       "buffer": 0,
       "byteLength": 288,
-      "byteOffset": 662268
+      "byteOffset": 773188
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 640,
-      "byteOffset": 662556
+      "byteOffset": 773476
     },
     {
       "buffer": 0,
       "byteLength": 123264,
-      "byteOffset": 663196
+      "byteOffset": 774116
     },
     {
       "buffer": 0,
-      "byteStride": 40,
-      "byteLength": 484640,
-      "byteOffset": 786460
+      "byteStride": 48,
+      "byteLength": 615696,
+      "byteOffset": 897380
     },
     {
       "buffer": 0,
       "byteLength": 3960,
-      "byteOffset": 1271100
+      "byteOffset": 1513076
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 26560,
-      "byteOffset": 1275060
+      "byteOffset": 1517036
     },
     {
       "buffer": 0,
       "byteLength": 3024,
-      "byteOffset": 1301620
+      "byteOffset": 1543596
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 8320,
-      "byteOffset": 1304644
+      "byteOffset": 1546620
     },
     {
       "buffer": 0,
       "byteLength": 12900,
-      "byteOffset": 1312964
+      "byteOffset": 1554940
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 107520,
-      "byteOffset": 1325864
+      "byteOffset": 1567840
     },
     {
       "buffer": 0,
       "byteLength": 6264,
-      "byteOffset": 1433384
+      "byteOffset": 1675360
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 38600,
-      "byteOffset": 1439648
+      "byteOffset": 1681624
     },
     {
       "buffer": 0,
       "byteLength": 5040,
-      "byteOffset": 1478248
+      "byteOffset": 1720224
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 34040,
-      "byteOffset": 1483288
+      "byteOffset": 1725264
     },
     {
       "buffer": 0,
       "byteLength": 3300,
-      "byteOffset": 1517328
+      "byteOffset": 1759304
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 19360,
-      "byteOffset": 1520628
+      "byteOffset": 1762604
     },
     {
       "buffer": 0,
       "byteLength": 8256,
-      "byteOffset": 1539988
+      "byteOffset": 1781964
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 39160,
-      "byteOffset": 1548244
+      "byteOffset": 1790220
     },
     {
       "buffer": 0,
       "byteLength": 42672,
-      "byteOffset": 1587404
+      "byteOffset": 1829380
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 154040,
-      "byteOffset": 1630076
+      "byteOffset": 1872052
     },
     {
       "buffer": 0,
       "byteLength": 8100,
-      "byteOffset": 1784116
+      "byteOffset": 2026092
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 34240,
-      "byteOffset": 1792216
+      "byteOffset": 2034192
     },
     {
       "buffer": 0,
       "byteLength": 8244,
-      "byteOffset": 1826456
+      "byteOffset": 2068432
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 40160,
-      "byteOffset": 1834700
+      "byteOffset": 2076676
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 1874860
+      "byteOffset": 2116836
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 4120,
-      "byteOffset": 1876996
+      "byteOffset": 2118972
     },
     {
       "buffer": 0,
       "byteLength": 9432,
-      "byteOffset": 1881116
+      "byteOffset": 2123092
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 36600,
-      "byteOffset": 1890548
+      "byteOffset": 2132524
     },
     {
       "buffer": 0,
       "byteLength": 8304,
-      "byteOffset": 1927148
+      "byteOffset": 2169124
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 35240,
-      "byteOffset": 1935452
+      "byteOffset": 2177428
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 1970692
+      "byteOffset": 2212668
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3200,
-      "byteOffset": 1971964
+      "byteOffset": 2213940
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 1975164
+      "byteOffset": 2217140
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3200,
-      "byteOffset": 1976436
+      "byteOffset": 2218412
     },
     {
       "buffer": 0,
       "byteLength": 2280,
-      "byteOffset": 1979636
+      "byteOffset": 2221612
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 8880,
-      "byteOffset": 1981916
+      "byteOffset": 2223892
     },
     {
       "buffer": 0,
       "byteLength": 26088,
-      "byteOffset": 1990796
+      "byteOffset": 2232772
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 144520,
-      "byteOffset": 2016884
+      "byteOffset": 2258860
     },
     {
       "buffer": 0,
       "byteLength": 11976,
-      "byteOffset": 2161404
+      "byteOffset": 2403380
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 38160,
-      "byteOffset": 2173380
+      "byteOffset": 2415356
     },
     {
       "buffer": 0,
       "byteLength": 6324,
-      "byteOffset": 2211540
+      "byteOffset": 2453516
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 29400,
-      "byteOffset": 2217864
+      "byteOffset": 2459840
     },
     {
       "buffer": 0,
       "byteLength": 720,
-      "byteOffset": 2247264
+      "byteOffset": 2489240
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 1920,
-      "byteOffset": 2247984
+      "byteOffset": 2489960
     },
     {
       "buffer": 0,
       "byteLength": 432,
-      "byteOffset": 2249904
+      "byteOffset": 2491880
     },
     {
       "buffer": 0,
-      "byteStride": 24,
-      "byteLength": 2592,
-      "byteOffset": 2250336
+      "byteStride": 32,
+      "byteLength": 3456,
+      "byteOffset": 2492312
     },
     {
       "buffer": 0,
       "byteLength": 9384,
-      "byteOffset": 2252928
+      "byteOffset": 2495768
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 17760,
-      "byteOffset": 2262312
+      "byteOffset": 2505152
     },
     {
       "buffer": 0,
       "byteLength": 2424,
-      "byteOffset": 2280072
+      "byteOffset": 2522912
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 23440,
-      "byteOffset": 2282496
+      "byteOffset": 2525336
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2305936
+      "byteOffset": 2548776
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2308072
+      "byteOffset": 2550912
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2311792
+      "byteOffset": 2554632
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2313928
+      "byteOffset": 2556768
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2317648
+      "byteOffset": 2560488
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2319784
+      "byteOffset": 2562624
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2323504
+      "byteOffset": 2566344
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2325640
+      "byteOffset": 2568480
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2329360
+      "byteOffset": 2572200
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2331496
+      "byteOffset": 2574336
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2335216
+      "byteOffset": 2578056
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2337352
+      "byteOffset": 2580192
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2341072
+      "byteOffset": 2583912
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2343208
+      "byteOffset": 2586048
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2346928
+      "byteOffset": 2589768
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2349064
+      "byteOffset": 2591904
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2352784
+      "byteOffset": 2595624
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2354920
+      "byteOffset": 2597760
     },
     {
       "buffer": 0,
       "byteLength": 336,
-      "byteOffset": 2358640
+      "byteOffset": 2601480
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 640,
-      "byteOffset": 2358976
+      "byteOffset": 2601816
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2359616
+      "byteOffset": 2602456
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2361752
+      "byteOffset": 2604592
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2365472
+      "byteOffset": 2608312
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2367608
+      "byteOffset": 2610448
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2371328
+      "byteOffset": 2614168
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2373464
+      "byteOffset": 2616304
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2377184
+      "byteOffset": 2620024
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2379320
+      "byteOffset": 2622160
     },
     {
       "buffer": 0,
       "byteLength": 2136,
-      "byteOffset": 2383040
+      "byteOffset": 2625880
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3720,
-      "byteOffset": 2385176
+      "byteOffset": 2628016
     },
     {
       "buffer": 0,
       "byteLength": 672,
-      "byteOffset": 2388896
+      "byteOffset": 2631736
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 1280,
-      "byteOffset": 2389568
+      "byteOffset": 2632408
     },
     {
       "buffer": 0,
       "byteLength": 336,
-      "byteOffset": 2390848
+      "byteOffset": 2633688
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 640,
-      "byteOffset": 2391184
+      "byteOffset": 2634024
     },
     {
       "buffer": 0,
       "byteLength": 672,
-      "byteOffset": 2391824
+      "byteOffset": 2634664
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 1280,
-      "byteOffset": 2392496
+      "byteOffset": 2635336
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2393776
+      "byteOffset": 2636616
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 10480,
-      "byteOffset": 2395936
+      "byteOffset": 2638776
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2406416
+      "byteOffset": 2649256
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 10560,
-      "byteOffset": 2408576
+      "byteOffset": 2651416
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2419136
+      "byteOffset": 2661976
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 10400,
-      "byteOffset": 2421296
+      "byteOffset": 2664136
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2431696
+      "byteOffset": 2674536
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3840,
-      "byteOffset": 2433688
+      "byteOffset": 2676528
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2437528
+      "byteOffset": 2680368
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3840,
-      "byteOffset": 2439520
+      "byteOffset": 2682360
     },
     {
       "buffer": 0,
       "byteLength": 1992,
-      "byteOffset": 2443360
+      "byteOffset": 2686200
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 3840,
-      "byteOffset": 2445352
+      "byteOffset": 2688192
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2449192
+      "byteOffset": 2692032
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 2560,
-      "byteOffset": 2450464
+      "byteOffset": 2693304
     },
     {
       "buffer": 0,
       "byteLength": 2160,
-      "byteOffset": 2453024
+      "byteOffset": 2695864
     },
     {
       "buffer": 0,
-      "byteStride": 24,
-      "byteLength": 12960,
-      "byteOffset": 2455184
+      "byteStride": 32,
+      "byteLength": 17280,
+      "byteOffset": 2698024
     },
     {
       "buffer": 0,
       "byteLength": 13056,
-      "byteOffset": 2468144
+      "byteOffset": 2715304
     },
     {
       "buffer": 0,
-      "byteStride": 24,
-      "byteLength": 20088,
-      "byteOffset": 2481200
+      "byteStride": 32,
+      "byteLength": 30912,
+      "byteOffset": 2728360
     },
     {
       "buffer": 0,
       "byteLength": 11856,
-      "byteOffset": 2501288
+      "byteOffset": 2759272
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 20800,
-      "byteOffset": 2513144
+      "byteOffset": 2771128
     },
     {
       "buffer": 0,
       "byteLength": 11856,
-      "byteOffset": 2533944
+      "byteOffset": 2791928
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 20800,
-      "byteOffset": 2545800
+      "byteOffset": 2803784
     },
     {
       "buffer": 0,
       "byteLength": 19416,
-      "byteOffset": 2566600
+      "byteOffset": 2824584
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 114680,
-      "byteOffset": 2586016
+      "byteOffset": 2844000
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2700696
+      "byteOffset": 2958680
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 2560,
-      "byteOffset": 2701968
+      "byteOffset": 2959952
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2704528
+      "byteOffset": 2962512
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 2560,
-      "byteOffset": 2705800
+      "byteOffset": 2963784
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2708360
+      "byteOffset": 2966344
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 2560,
-      "byteOffset": 2709632
+      "byteOffset": 2967616
     },
     {
       "buffer": 0,
       "byteLength": 1272,
-      "byteOffset": 2712192
+      "byteOffset": 2970176
     },
     {
       "buffer": 0,
       "byteStride": 40,
       "byteLength": 2560,
-      "byteOffset": 2713464
+      "byteOffset": 2971448
     },
     {
       "buffer": 0,
       "byteLength": 288,
-      "byteOffset": 2716024
+      "byteOffset": 2974008
     },
     {
       "buffer": 0,
-      "byteStride": 24,
-      "byteLength": 1728,
-      "byteOffset": 2716312
+      "byteStride": 32,
+      "byteLength": 2304,
+      "byteOffset": 2974296
     }
   ],
   "buffers": [
     {
       "uri": "background-3d.bin",
-      "byteLength": 2718040
+      "byteLength": 2976600
     }
   ],
   "meshes": [
@@ -5697,7 +5774,8 @@
           "attributes": {
             "NORMAL": 3,
             "POSITION": 2,
-            "COLOR_0": 4
+            "COLOR_0": 5,
+            "TEXCOORD_0": 4
           },
           "material": 0,
           "indices": 1
@@ -5706,7 +5784,8 @@
           "attributes": {
             "NORMAL": 3,
             "POSITION": 2,
-            "COLOR_0": 4
+            "COLOR_0": 5,
+            "TEXCOORD_0": 4
           },
           "material": 1,
           "indices": 0
@@ -5718,12 +5797,13 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 7,
-            "POSITION": 6,
-            "COLOR_0": 8
+            "NORMAL": 8,
+            "POSITION": 7,
+            "COLOR_0": 10,
+            "TEXCOORD_0": 9
           },
           "material": 1,
-          "indices": 5
+          "indices": 6
         }
       ]
     },
@@ -5732,12 +5812,13 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 11,
-            "POSITION": 10,
-            "COLOR_0": 12
+            "NORMAL": 13,
+            "POSITION": 12,
+            "COLOR_0": 15,
+            "TEXCOORD_0": 14
           },
           "material": 1,
-          "indices": 9
+          "indices": 11
         }
       ]
     },
@@ -5746,30 +5827,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 17,
-            "POSITION": 16,
-            "COLOR_0": 18
+            "NORMAL": 20,
+            "POSITION": 19,
+            "COLOR_0": 21
           },
           "material": 2,
-          "indices": 15
+          "indices": 18
         },
         {
           "attributes": {
-            "NORMAL": 17,
-            "POSITION": 16,
-            "COLOR_0": 18
+            "NORMAL": 20,
+            "POSITION": 19,
+            "COLOR_0": 21
           },
           "material": 1,
-          "indices": 14
+          "indices": 17
         },
         {
           "attributes": {
-            "NORMAL": 17,
-            "POSITION": 16,
-            "COLOR_0": 18
+            "NORMAL": 20,
+            "POSITION": 19,
+            "COLOR_0": 21
           },
           "material": 3,
-          "indices": 13
+          "indices": 16
         }
       ]
     },
@@ -5778,48 +5859,53 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 25,
-            "POSITION": 24,
-            "COLOR_0": 26
+            "NORMAL": 28,
+            "POSITION": 27,
+            "COLOR_0": 30,
+            "TEXCOORD_0": 29
           },
           "material": 4,
+          "indices": 26
+        },
+        {
+          "attributes": {
+            "NORMAL": 28,
+            "POSITION": 27,
+            "COLOR_0": 30,
+            "TEXCOORD_0": 29
+          },
+          "material": 1,
+          "indices": 25
+        },
+        {
+          "attributes": {
+            "NORMAL": 28,
+            "POSITION": 27,
+            "COLOR_0": 30,
+            "TEXCOORD_0": 29
+          },
+          "material": 5,
+          "indices": 24
+        },
+        {
+          "attributes": {
+            "NORMAL": 28,
+            "POSITION": 27,
+            "COLOR_0": 30,
+            "TEXCOORD_0": 29
+          },
+          "material": 6,
           "indices": 23
         },
         {
           "attributes": {
-            "NORMAL": 25,
-            "POSITION": 24,
-            "COLOR_0": 26
-          },
-          "material": 1,
-          "indices": 22
-        },
-        {
-          "attributes": {
-            "NORMAL": 25,
-            "POSITION": 24,
-            "COLOR_0": 26
-          },
-          "material": 5,
-          "indices": 21
-        },
-        {
-          "attributes": {
-            "NORMAL": 25,
-            "POSITION": 24,
-            "COLOR_0": 26
-          },
-          "material": 6,
-          "indices": 20
-        },
-        {
-          "attributes": {
-            "NORMAL": 25,
-            "POSITION": 24,
-            "COLOR_0": 26
+            "NORMAL": 28,
+            "POSITION": 27,
+            "COLOR_0": 30,
+            "TEXCOORD_0": 29
           },
           "material": 7,
-          "indices": 19
+          "indices": 22
         }
       ]
     },
@@ -5828,12 +5914,12 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 29,
-            "POSITION": 28,
-            "COLOR_0": 30
+            "NORMAL": 33,
+            "POSITION": 32,
+            "COLOR_0": 34
           },
           "material": 1,
-          "indices": 27
+          "indices": 31
         }
       ]
     },
@@ -5842,39 +5928,39 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 36,
-            "POSITION": 35,
-            "COLOR_0": 37
+            "NORMAL": 40,
+            "POSITION": 39,
+            "COLOR_0": 41
           },
           "material": 8,
-          "indices": 34
+          "indices": 38
         },
         {
           "attributes": {
-            "NORMAL": 36,
-            "POSITION": 35,
-            "COLOR_0": 37
+            "NORMAL": 40,
+            "POSITION": 39,
+            "COLOR_0": 41
           },
           "material": 1,
-          "indices": 33
+          "indices": 37
         },
         {
           "attributes": {
-            "NORMAL": 36,
-            "POSITION": 35,
-            "COLOR_0": 37
+            "NORMAL": 40,
+            "POSITION": 39,
+            "COLOR_0": 41
           },
           "material": 9,
-          "indices": 32
+          "indices": 36
         },
         {
           "attributes": {
-            "NORMAL": 36,
-            "POSITION": 35,
-            "COLOR_0": 37
+            "NORMAL": 40,
+            "POSITION": 39,
+            "COLOR_0": 41
           },
           "material": 10,
-          "indices": 31
+          "indices": 35
         }
       ]
     },
@@ -5883,21 +5969,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 41,
-            "POSITION": 40,
-            "COLOR_0": 42
+            "NORMAL": 45,
+            "POSITION": 44,
+            "COLOR_0": 46
           },
           "material": 2,
-          "indices": 39
+          "indices": 43
         },
         {
           "attributes": {
-            "NORMAL": 41,
-            "POSITION": 40,
-            "COLOR_0": 42
+            "NORMAL": 45,
+            "POSITION": 44,
+            "COLOR_0": 46
           },
           "material": 1,
-          "indices": 38
+          "indices": 42
         }
       ]
     },
@@ -5906,62 +5992,53 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 49,
-            "POSITION": 48
+            "NORMAL": 53,
+            "POSITION": 52,
+            "TEXCOORD_0": 54
           },
           "material": 11,
-          "indices": 47
+          "indices": 51
         },
         {
           "attributes": {
-            "NORMAL": 49,
-            "POSITION": 48
+            "NORMAL": 53,
+            "POSITION": 52,
+            "TEXCOORD_0": 54
           },
           "material": 12,
-          "indices": 46
+          "indices": 50
         },
         {
           "attributes": {
-            "NORMAL": 49,
-            "POSITION": 48
+            "NORMAL": 53,
+            "POSITION": 52,
+            "TEXCOORD_0": 54
           },
           "material": 13,
-          "indices": 45
+          "indices": 49
         },
         {
           "attributes": {
-            "NORMAL": 49,
-            "POSITION": 48
+            "NORMAL": 53,
+            "POSITION": 52,
+            "TEXCOORD_0": 54
           },
           "material": 14,
-          "indices": 44
+          "indices": 48
         },
         {
           "attributes": {
-            "NORMAL": 49,
-            "POSITION": 48
+            "NORMAL": 53,
+            "POSITION": 52,
+            "TEXCOORD_0": 54
           },
           "material": 6,
-          "indices": 43
+          "indices": 47
         }
       ]
     },
     {
       "name": "Cylinder64",
-      "primitives": [
-        {
-          "attributes": {
-            "NORMAL": 52,
-            "POSITION": 51,
-            "COLOR_0": 53
-          },
-          "material": 1,
-          "indices": 50
-        }
-      ]
-    },
-    {
-      "name": "Jumbo-Car001_jumbo-car_0",
       "primitives": [
         {
           "attributes": {
@@ -5971,15 +6048,31 @@
           },
           "material": 1,
           "indices": 55
+        }
+      ]
+    },
+    {
+      "name": "Jumbo-Car001_jumbo-car_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 62,
+            "POSITION": 61,
+            "COLOR_0": 64,
+            "TEXCOORD_0": 63
+          },
+          "material": 1,
+          "indices": 60
         },
         {
           "attributes": {
-            "NORMAL": 57,
-            "POSITION": 56,
-            "COLOR_0": 58
+            "NORMAL": 62,
+            "POSITION": 61,
+            "COLOR_0": 64,
+            "TEXCOORD_0": 63
           },
           "material": 15,
-          "indices": 54
+          "indices": 59
         }
       ]
     },
@@ -5988,12 +6081,12 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 61,
-            "POSITION": 60,
-            "COLOR_0": 62
+            "NORMAL": 67,
+            "POSITION": 66,
+            "COLOR_0": 68
           },
           "material": 1,
-          "indices": 59
+          "indices": 65
         }
       ]
     },
@@ -6002,75 +6095,83 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
           },
           "material": 16,
+          "indices": 76
+        },
+        {
+          "attributes": {
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
+          },
+          "material": 2,
+          "indices": 75
+        },
+        {
+          "attributes": {
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
+          },
+          "material": 17,
+          "indices": 74
+        },
+        {
+          "attributes": {
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
+          },
+          "material": 1,
+          "indices": 73
+        },
+        {
+          "attributes": {
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
+          },
+          "material": 18,
+          "indices": 72
+        },
+        {
+          "attributes": {
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
+          },
+          "material": 19,
+          "indices": 71
+        },
+        {
+          "attributes": {
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
+          },
+          "material": 20,
           "indices": 70
         },
         {
           "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
-          },
-          "material": 2,
-          "indices": 69
-        },
-        {
-          "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
-          },
-          "material": 17,
-          "indices": 68
-        },
-        {
-          "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
-          },
-          "material": 1,
-          "indices": 67
-        },
-        {
-          "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
-          },
-          "material": 18,
-          "indices": 66
-        },
-        {
-          "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
-          },
-          "material": 19,
-          "indices": 65
-        },
-        {
-          "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
-          },
-          "material": 20,
-          "indices": 64
-        },
-        {
-          "attributes": {
-            "NORMAL": 72,
-            "POSITION": 71,
-            "COLOR_0": 73
+            "NORMAL": 78,
+            "POSITION": 77,
+            "COLOR_0": 80,
+            "TEXCOORD_0": 79
           },
           "material": 21,
-          "indices": 63
+          "indices": 69
         }
       ]
     },
@@ -6079,21 +6180,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 77,
-            "POSITION": 76,
-            "COLOR_0": 78
+            "NORMAL": 84,
+            "POSITION": 83,
+            "COLOR_0": 85
           },
           "material": 1,
-          "indices": 75
+          "indices": 82
         },
         {
           "attributes": {
-            "NORMAL": 77,
-            "POSITION": 76,
-            "COLOR_0": 78
+            "NORMAL": 84,
+            "POSITION": 83,
+            "COLOR_0": 85
           },
           "material": 22,
-          "indices": 74
+          "indices": 81
         }
       ]
     },
@@ -6102,12 +6203,12 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 81,
-            "POSITION": 80,
-            "COLOR_0": 82
+            "NORMAL": 88,
+            "POSITION": 87,
+            "COLOR_0": 89
           },
           "material": 1,
-          "indices": 79
+          "indices": 86
         }
       ]
     },
@@ -6116,21 +6217,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 86,
-            "POSITION": 85,
-            "COLOR_0": 87
+            "NORMAL": 93,
+            "POSITION": 92,
+            "COLOR_0": 94
           },
           "material": 1,
-          "indices": 84
+          "indices": 91
         },
         {
           "attributes": {
-            "NORMAL": 86,
-            "POSITION": 85,
-            "COLOR_0": 87
+            "NORMAL": 93,
+            "POSITION": 92,
+            "COLOR_0": 94
           },
           "material": 23,
-          "indices": 83
+          "indices": 90
         }
       ]
     },
@@ -6139,21 +6240,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 91,
-            "POSITION": 90,
-            "COLOR_0": 92
+            "NORMAL": 98,
+            "POSITION": 97,
+            "COLOR_0": 99
           },
           "material": 1,
-          "indices": 89
+          "indices": 96
         },
         {
           "attributes": {
-            "NORMAL": 91,
-            "POSITION": 90,
-            "COLOR_0": 92
+            "NORMAL": 98,
+            "POSITION": 97,
+            "COLOR_0": 99
           },
           "material": 15,
-          "indices": 88
+          "indices": 95
         }
       ]
     },
@@ -6162,30 +6263,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 97,
-            "POSITION": 96,
-            "COLOR_0": 98
+            "NORMAL": 104,
+            "POSITION": 103,
+            "COLOR_0": 105
           },
           "material": 1,
-          "indices": 95
+          "indices": 102
         },
         {
           "attributes": {
-            "NORMAL": 97,
-            "POSITION": 96,
-            "COLOR_0": 98
+            "NORMAL": 104,
+            "POSITION": 103,
+            "COLOR_0": 105
           },
           "material": 24,
-          "indices": 94
+          "indices": 101
         },
         {
           "attributes": {
-            "NORMAL": 97,
-            "POSITION": 96,
-            "COLOR_0": 98
+            "NORMAL": 104,
+            "POSITION": 103,
+            "COLOR_0": 105
           },
           "material": 15,
-          "indices": 93
+          "indices": 100
         }
       ]
     },
@@ -6194,30 +6295,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 103,
-            "POSITION": 102,
-            "COLOR_0": 104
+            "NORMAL": 110,
+            "POSITION": 109,
+            "COLOR_0": 111
           },
           "material": 2,
-          "indices": 101
+          "indices": 108
         },
         {
           "attributes": {
-            "NORMAL": 103,
-            "POSITION": 102,
-            "COLOR_0": 104
+            "NORMAL": 110,
+            "POSITION": 109,
+            "COLOR_0": 111
           },
           "material": 1,
-          "indices": 100
+          "indices": 107
         },
         {
           "attributes": {
-            "NORMAL": 103,
-            "POSITION": 102,
-            "COLOR_0": 104
+            "NORMAL": 110,
+            "POSITION": 109,
+            "COLOR_0": 111
           },
           "material": 15,
-          "indices": 99
+          "indices": 106
         }
       ]
     },
@@ -6226,43 +6327,11 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 109,
-            "POSITION": 108,
-            "COLOR_0": 110
-          },
-          "material": 25,
-          "indices": 107
-        },
-        {
-          "attributes": {
-            "NORMAL": 109,
-            "POSITION": 108,
-            "COLOR_0": 110
-          },
-          "material": 1,
-          "indices": 106
-        },
-        {
-          "attributes": {
-            "NORMAL": 109,
-            "POSITION": 108,
-            "COLOR_0": 110
-          },
-          "material": 15,
-          "indices": 105
-        }
-      ]
-    },
-    {
-      "name": "Cube52_sep53",
-      "primitives": [
-        {
-          "attributes": {
             "NORMAL": 116,
             "POSITION": 115,
             "COLOR_0": 117
           },
-          "material": 1,
+          "material": 25,
           "indices": 114
         },
         {
@@ -6271,7 +6340,7 @@
             "POSITION": 115,
             "COLOR_0": 117
           },
-          "material": 26,
+          "material": 1,
           "indices": 113
         },
         {
@@ -6280,17 +6349,49 @@
             "POSITION": 115,
             "COLOR_0": 117
           },
-          "material": 27,
+          "material": 15,
           "indices": 112
+        }
+      ]
+    },
+    {
+      "name": "Cube52_sep53",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 123,
+            "POSITION": 122,
+            "COLOR_0": 124
+          },
+          "material": 1,
+          "indices": 121
         },
         {
           "attributes": {
-            "NORMAL": 116,
-            "POSITION": 115,
-            "COLOR_0": 117
+            "NORMAL": 123,
+            "POSITION": 122,
+            "COLOR_0": 124
+          },
+          "material": 26,
+          "indices": 120
+        },
+        {
+          "attributes": {
+            "NORMAL": 123,
+            "POSITION": 122,
+            "COLOR_0": 124
+          },
+          "material": 27,
+          "indices": 119
+        },
+        {
+          "attributes": {
+            "NORMAL": 123,
+            "POSITION": 122,
+            "COLOR_0": 124
           },
           "material": 15,
-          "indices": 111
+          "indices": 118
         }
       ]
     },
@@ -6299,34 +6400,11 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 121,
-            "POSITION": 120,
-            "COLOR_0": 122
-          },
-          "material": 1,
-          "indices": 119
-        },
-        {
-          "attributes": {
-            "NORMAL": 121,
-            "POSITION": 120,
-            "COLOR_0": 122
-          },
-          "material": 15,
-          "indices": 118
-        }
-      ]
-    },
-    {
-      "name": "Cube50",
-      "primitives": [
-        {
-          "attributes": {
             "NORMAL": 128,
             "POSITION": 127,
             "COLOR_0": 129
           },
-          "material": 2,
+          "material": 1,
           "indices": 126
         },
         {
@@ -6335,26 +6413,49 @@
             "POSITION": 127,
             "COLOR_0": 129
           },
-          "material": 25,
+          "material": 15,
           "indices": 125
+        }
+      ]
+    },
+    {
+      "name": "Cube50",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 135,
+            "POSITION": 134,
+            "COLOR_0": 136
+          },
+          "material": 2,
+          "indices": 133
         },
         {
           "attributes": {
-            "NORMAL": 128,
-            "POSITION": 127,
-            "COLOR_0": 129
+            "NORMAL": 135,
+            "POSITION": 134,
+            "COLOR_0": 136
+          },
+          "material": 25,
+          "indices": 132
+        },
+        {
+          "attributes": {
+            "NORMAL": 135,
+            "POSITION": 134,
+            "COLOR_0": 136
           },
           "material": 1,
-          "indices": 124
+          "indices": 131
         },
         {
           "attributes": {
-            "NORMAL": 128,
-            "POSITION": 127,
-            "COLOR_0": 129
+            "NORMAL": 135,
+            "POSITION": 134,
+            "COLOR_0": 136
           },
           "material": 15,
-          "indices": 123
+          "indices": 130
         }
       ]
     },
@@ -6363,21 +6464,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 133,
-            "POSITION": 132,
-            "COLOR_0": 134
+            "NORMAL": 140,
+            "POSITION": 139,
+            "COLOR_0": 141
           },
           "material": 2,
-          "indices": 131
+          "indices": 138
         },
         {
           "attributes": {
-            "NORMAL": 133,
-            "POSITION": 132,
-            "COLOR_0": 134
+            "NORMAL": 140,
+            "POSITION": 139,
+            "COLOR_0": 141
           },
           "material": 1,
-          "indices": 130
+          "indices": 137
         }
       ]
     },
@@ -6386,48 +6487,48 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 141,
-            "POSITION": 140,
-            "COLOR_0": 142
+            "NORMAL": 148,
+            "POSITION": 147,
+            "COLOR_0": 149
           },
           "material": 2,
-          "indices": 139
+          "indices": 146
         },
         {
           "attributes": {
-            "NORMAL": 141,
-            "POSITION": 140,
-            "COLOR_0": 142
+            "NORMAL": 148,
+            "POSITION": 147,
+            "COLOR_0": 149
           },
           "material": 1,
-          "indices": 138
+          "indices": 145
         },
         {
           "attributes": {
-            "NORMAL": 141,
-            "POSITION": 140,
-            "COLOR_0": 142
+            "NORMAL": 148,
+            "POSITION": 147,
+            "COLOR_0": 149
           },
           "material": 27,
-          "indices": 137
+          "indices": 144
         },
         {
           "attributes": {
-            "NORMAL": 141,
-            "POSITION": 140,
-            "COLOR_0": 142
+            "NORMAL": 148,
+            "POSITION": 147,
+            "COLOR_0": 149
           },
           "material": 6,
-          "indices": 136
+          "indices": 143
         },
         {
           "attributes": {
-            "NORMAL": 141,
-            "POSITION": 140,
-            "COLOR_0": 142
+            "NORMAL": 148,
+            "POSITION": 147,
+            "COLOR_0": 149
           },
           "material": 15,
-          "indices": 135
+          "indices": 142
         }
       ]
     },
@@ -6436,21 +6537,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 146,
-            "POSITION": 145,
-            "COLOR_0": 147
+            "NORMAL": 153,
+            "POSITION": 152,
+            "COLOR_0": 154
           },
           "material": 1,
-          "indices": 144
+          "indices": 151
         },
         {
           "attributes": {
-            "NORMAL": 146,
-            "POSITION": 145,
-            "COLOR_0": 147
+            "NORMAL": 153,
+            "POSITION": 152,
+            "COLOR_0": 154
           },
           "material": 15,
-          "indices": 143
+          "indices": 150
         }
       ]
     },
@@ -6459,30 +6560,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 152,
-            "POSITION": 151,
-            "COLOR_0": 153
+            "NORMAL": 159,
+            "POSITION": 158,
+            "COLOR_0": 160
           },
           "material": 2,
-          "indices": 150
+          "indices": 157
         },
         {
           "attributes": {
-            "NORMAL": 152,
-            "POSITION": 151,
-            "COLOR_0": 153
+            "NORMAL": 159,
+            "POSITION": 158,
+            "COLOR_0": 160
           },
           "material": 1,
-          "indices": 149
+          "indices": 156
         },
         {
           "attributes": {
-            "NORMAL": 152,
-            "POSITION": 151,
-            "COLOR_0": 153
+            "NORMAL": 159,
+            "POSITION": 158,
+            "COLOR_0": 160
           },
           "material": 22,
-          "indices": 148
+          "indices": 155
         }
       ]
     },
@@ -6491,30 +6592,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 158,
-            "POSITION": 157,
-            "COLOR_0": 159
+            "NORMAL": 165,
+            "POSITION": 164,
+            "COLOR_0": 166
           },
           "material": 2,
-          "indices": 156
+          "indices": 163
         },
         {
           "attributes": {
-            "NORMAL": 158,
-            "POSITION": 157,
-            "COLOR_0": 159
+            "NORMAL": 165,
+            "POSITION": 164,
+            "COLOR_0": 166
           },
           "material": 1,
-          "indices": 155
+          "indices": 162
         },
         {
           "attributes": {
-            "NORMAL": 158,
-            "POSITION": 157,
-            "COLOR_0": 159
+            "NORMAL": 165,
+            "POSITION": 164,
+            "COLOR_0": 166
           },
           "material": 22,
-          "indices": 154
+          "indices": 161
         }
       ]
     },
@@ -6523,57 +6624,57 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 167,
-            "POSITION": 166,
-            "COLOR_0": 168
+            "NORMAL": 174,
+            "POSITION": 173,
+            "COLOR_0": 175
           },
           "material": 2,
-          "indices": 165
+          "indices": 172
         },
         {
           "attributes": {
-            "NORMAL": 167,
-            "POSITION": 166,
-            "COLOR_0": 168
+            "NORMAL": 174,
+            "POSITION": 173,
+            "COLOR_0": 175
           },
           "material": 25,
-          "indices": 164
+          "indices": 171
         },
         {
           "attributes": {
-            "NORMAL": 167,
-            "POSITION": 166,
-            "COLOR_0": 168
+            "NORMAL": 174,
+            "POSITION": 173,
+            "COLOR_0": 175
           },
           "material": 1,
-          "indices": 163
+          "indices": 170
         },
         {
           "attributes": {
-            "NORMAL": 167,
-            "POSITION": 166,
-            "COLOR_0": 168
+            "NORMAL": 174,
+            "POSITION": 173,
+            "COLOR_0": 175
           },
           "material": 27,
-          "indices": 162
+          "indices": 169
         },
         {
           "attributes": {
-            "NORMAL": 167,
-            "POSITION": 166,
-            "COLOR_0": 168
+            "NORMAL": 174,
+            "POSITION": 173,
+            "COLOR_0": 175
           },
           "material": 6,
-          "indices": 161
+          "indices": 168
         },
         {
           "attributes": {
-            "NORMAL": 167,
-            "POSITION": 166,
-            "COLOR_0": 168
+            "NORMAL": 174,
+            "POSITION": 173,
+            "COLOR_0": 175
           },
           "material": 15,
-          "indices": 160
+          "indices": 167
         }
       ]
     },
@@ -6582,34 +6683,11 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 172,
-            "POSITION": 171,
-            "COLOR_0": 173
-          },
-          "material": 28,
-          "indices": 170
-        },
-        {
-          "attributes": {
-            "NORMAL": 172,
-            "POSITION": 171,
-            "COLOR_0": 173
-          },
-          "material": 1,
-          "indices": 169
-        }
-      ]
-    },
-    {
-      "name": "Cube41_sep44",
-      "primitives": [
-        {
-          "attributes": {
             "NORMAL": 179,
             "POSITION": 178,
             "COLOR_0": 180
           },
-          "material": 2,
+          "material": 28,
           "indices": 177
         },
         {
@@ -6618,31 +6696,13 @@
             "POSITION": 178,
             "COLOR_0": 180
           },
-          "material": 25,
-          "indices": 176
-        },
-        {
-          "attributes": {
-            "NORMAL": 179,
-            "POSITION": 178,
-            "COLOR_0": 180
-          },
           "material": 1,
-          "indices": 175
-        },
-        {
-          "attributes": {
-            "NORMAL": 179,
-            "POSITION": 178,
-            "COLOR_0": 180
-          },
-          "material": 23,
-          "indices": 174
+          "indices": 176
         }
       ]
     },
     {
-      "name": "Cube40",
+      "name": "Cube41_sep44",
       "primitives": [
         {
           "attributes": {
@@ -6659,7 +6719,7 @@
             "POSITION": 185,
             "COLOR_0": 187
           },
-          "material": 1,
+          "material": 25,
           "indices": 183
         },
         {
@@ -6668,7 +6728,7 @@
             "POSITION": 185,
             "COLOR_0": 187
           },
-          "material": 23,
+          "material": 1,
           "indices": 182
         },
         {
@@ -6677,8 +6737,49 @@
             "POSITION": 185,
             "COLOR_0": 187
           },
-          "material": 27,
+          "material": 23,
           "indices": 181
+        }
+      ]
+    },
+    {
+      "name": "Cube40",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 193,
+            "POSITION": 192,
+            "COLOR_0": 194
+          },
+          "material": 2,
+          "indices": 191
+        },
+        {
+          "attributes": {
+            "NORMAL": 193,
+            "POSITION": 192,
+            "COLOR_0": 194
+          },
+          "material": 1,
+          "indices": 190
+        },
+        {
+          "attributes": {
+            "NORMAL": 193,
+            "POSITION": 192,
+            "COLOR_0": 194
+          },
+          "material": 23,
+          "indices": 189
+        },
+        {
+          "attributes": {
+            "NORMAL": 193,
+            "POSITION": 192,
+            "COLOR_0": 194
+          },
+          "material": 27,
+          "indices": 188
         }
       ]
     },
@@ -6687,12 +6788,12 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 190,
-            "POSITION": 189,
-            "COLOR_0": 191
+            "NORMAL": 197,
+            "POSITION": 196,
+            "COLOR_0": 198
           },
           "material": 2,
-          "indices": 188
+          "indices": 195
         }
       ]
     },
@@ -6701,43 +6802,48 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 198,
-            "POSITION": 197
+            "NORMAL": 205,
+            "POSITION": 204,
+            "TEXCOORD_0": 206
           },
           "material": 1,
-          "indices": 196
+          "indices": 203
         },
         {
           "attributes": {
-            "NORMAL": 198,
-            "POSITION": 197
+            "NORMAL": 205,
+            "POSITION": 204,
+            "TEXCOORD_0": 206
           },
           "material": 29,
-          "indices": 195
+          "indices": 202
         },
         {
           "attributes": {
-            "NORMAL": 198,
-            "POSITION": 197
+            "NORMAL": 205,
+            "POSITION": 204,
+            "TEXCOORD_0": 206
           },
           "material": 30,
-          "indices": 194
+          "indices": 201
         },
         {
           "attributes": {
-            "NORMAL": 198,
-            "POSITION": 197
+            "NORMAL": 205,
+            "POSITION": 204,
+            "TEXCOORD_0": 206
           },
           "material": 31,
-          "indices": 193
+          "indices": 200
         },
         {
           "attributes": {
-            "NORMAL": 198,
-            "POSITION": 197
+            "NORMAL": 205,
+            "POSITION": 204,
+            "TEXCOORD_0": 206
           },
           "material": 6,
-          "indices": 192
+          "indices": 199
         }
       ]
     },
@@ -6746,30 +6852,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 203,
-            "POSITION": 202,
-            "COLOR_0": 204
+            "NORMAL": 211,
+            "POSITION": 210,
+            "COLOR_0": 212
           },
           "material": 2,
-          "indices": 201
+          "indices": 209
         },
         {
           "attributes": {
-            "NORMAL": 203,
-            "POSITION": 202,
-            "COLOR_0": 204
+            "NORMAL": 211,
+            "POSITION": 210,
+            "COLOR_0": 212
           },
           "material": 1,
-          "indices": 200
+          "indices": 208
         },
         {
           "attributes": {
-            "NORMAL": 203,
-            "POSITION": 202,
-            "COLOR_0": 204
+            "NORMAL": 211,
+            "POSITION": 210,
+            "COLOR_0": 212
           },
           "material": 22,
-          "indices": 199
+          "indices": 207
         }
       ]
     },
@@ -6778,30 +6884,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 209,
-            "POSITION": 208,
-            "COLOR_0": 210
+            "NORMAL": 217,
+            "POSITION": 216,
+            "COLOR_0": 218
           },
           "material": 2,
-          "indices": 207
+          "indices": 215
         },
         {
           "attributes": {
-            "NORMAL": 209,
-            "POSITION": 208,
-            "COLOR_0": 210
+            "NORMAL": 217,
+            "POSITION": 216,
+            "COLOR_0": 218
           },
           "material": 1,
-          "indices": 206
+          "indices": 214
         },
         {
           "attributes": {
-            "NORMAL": 209,
-            "POSITION": 208,
-            "COLOR_0": 210
+            "NORMAL": 217,
+            "POSITION": 216,
+            "COLOR_0": 218
           },
           "material": 24,
-          "indices": 205
+          "indices": 213
         }
       ]
     },
@@ -6810,21 +6916,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 214,
-            "POSITION": 213,
-            "COLOR_0": 215
+            "NORMAL": 222,
+            "POSITION": 221,
+            "COLOR_0": 223
           },
           "material": 2,
-          "indices": 212
+          "indices": 220
         },
         {
           "attributes": {
-            "NORMAL": 214,
-            "POSITION": 213,
-            "COLOR_0": 215
+            "NORMAL": 222,
+            "POSITION": 221,
+            "COLOR_0": 223
           },
           "material": 1,
-          "indices": 211
+          "indices": 219
         }
       ]
     },
@@ -6833,21 +6939,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 219,
-            "POSITION": 218,
-            "COLOR_0": 220
+            "NORMAL": 227,
+            "POSITION": 226,
+            "COLOR_0": 228
           },
           "material": 2,
-          "indices": 217
+          "indices": 225
         },
         {
           "attributes": {
-            "NORMAL": 219,
-            "POSITION": 218,
-            "COLOR_0": 220
+            "NORMAL": 227,
+            "POSITION": 226,
+            "COLOR_0": 228
           },
           "material": 1,
-          "indices": 216
+          "indices": 224
         }
       ]
     },
@@ -6856,21 +6962,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 224,
-            "POSITION": 223,
-            "COLOR_0": 225
+            "NORMAL": 232,
+            "POSITION": 231,
+            "COLOR_0": 233
           },
           "material": 2,
-          "indices": 222
+          "indices": 230
         },
         {
           "attributes": {
-            "NORMAL": 224,
-            "POSITION": 223,
-            "COLOR_0": 225
+            "NORMAL": 232,
+            "POSITION": 231,
+            "COLOR_0": 233
           },
           "material": 1,
-          "indices": 221
+          "indices": 229
         }
       ]
     },
@@ -6879,21 +6985,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 229,
-            "POSITION": 228,
-            "COLOR_0": 230
+            "NORMAL": 237,
+            "POSITION": 236,
+            "COLOR_0": 238
           },
           "material": 2,
-          "indices": 227
+          "indices": 235
         },
         {
           "attributes": {
-            "NORMAL": 229,
-            "POSITION": 228,
-            "COLOR_0": 230
+            "NORMAL": 237,
+            "POSITION": 236,
+            "COLOR_0": 238
           },
           "material": 1,
-          "indices": 226
+          "indices": 234
         }
       ]
     },
@@ -6902,21 +7008,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 234,
-            "POSITION": 233,
-            "COLOR_0": 235
+            "NORMAL": 242,
+            "POSITION": 241,
+            "COLOR_0": 243
           },
           "material": 2,
-          "indices": 232
+          "indices": 240
         },
         {
           "attributes": {
-            "NORMAL": 234,
-            "POSITION": 233,
-            "COLOR_0": 235
+            "NORMAL": 242,
+            "POSITION": 241,
+            "COLOR_0": 243
           },
           "material": 1,
-          "indices": 231
+          "indices": 239
         }
       ]
     },
@@ -6925,21 +7031,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 239,
-            "POSITION": 238,
-            "COLOR_0": 240
+            "NORMAL": 247,
+            "POSITION": 246,
+            "COLOR_0": 248
           },
           "material": 2,
-          "indices": 237
+          "indices": 245
         },
         {
           "attributes": {
-            "NORMAL": 239,
-            "POSITION": 238,
-            "COLOR_0": 240
+            "NORMAL": 247,
+            "POSITION": 246,
+            "COLOR_0": 248
           },
           "material": 1,
-          "indices": 236
+          "indices": 244
         }
       ]
     },
@@ -6948,21 +7054,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 244,
-            "POSITION": 243,
-            "COLOR_0": 245
+            "NORMAL": 252,
+            "POSITION": 251,
+            "COLOR_0": 253
           },
           "material": 2,
-          "indices": 242
+          "indices": 250
         },
         {
           "attributes": {
-            "NORMAL": 244,
-            "POSITION": 243,
-            "COLOR_0": 245
+            "NORMAL": 252,
+            "POSITION": 251,
+            "COLOR_0": 253
           },
           "material": 1,
-          "indices": 241
+          "indices": 249
         }
       ]
     },
@@ -6971,21 +7077,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 249,
-            "POSITION": 248,
-            "COLOR_0": 250
+            "NORMAL": 257,
+            "POSITION": 256,
+            "COLOR_0": 258
           },
           "material": 2,
-          "indices": 247
+          "indices": 255
         },
         {
           "attributes": {
-            "NORMAL": 249,
-            "POSITION": 248,
-            "COLOR_0": 250
+            "NORMAL": 257,
+            "POSITION": 256,
+            "COLOR_0": 258
           },
           "material": 1,
-          "indices": 246
+          "indices": 254
         }
       ]
     },
@@ -6994,21 +7100,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 254,
-            "POSITION": 253,
-            "COLOR_0": 255
+            "NORMAL": 262,
+            "POSITION": 261,
+            "COLOR_0": 263
           },
           "material": 2,
-          "indices": 252
+          "indices": 260
         },
         {
           "attributes": {
-            "NORMAL": 254,
-            "POSITION": 253,
-            "COLOR_0": 255
+            "NORMAL": 262,
+            "POSITION": 261,
+            "COLOR_0": 263
           },
           "material": 1,
-          "indices": 251
+          "indices": 259
         }
       ]
     },
@@ -7017,12 +7123,12 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 258,
-            "POSITION": 257,
-            "COLOR_0": 259
+            "NORMAL": 266,
+            "POSITION": 265,
+            "COLOR_0": 267
           },
           "material": 2,
-          "indices": 256
+          "indices": 264
         }
       ]
     },
@@ -7031,21 +7137,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 263,
-            "POSITION": 262,
-            "COLOR_0": 264
+            "NORMAL": 271,
+            "POSITION": 270,
+            "COLOR_0": 272
           },
           "material": 2,
-          "indices": 261
+          "indices": 269
         },
         {
           "attributes": {
-            "NORMAL": 263,
-            "POSITION": 262,
-            "COLOR_0": 264
+            "NORMAL": 271,
+            "POSITION": 270,
+            "COLOR_0": 272
           },
           "material": 1,
-          "indices": 260
+          "indices": 268
         }
       ]
     },
@@ -7054,21 +7160,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 268,
-            "POSITION": 267,
-            "COLOR_0": 269
+            "NORMAL": 276,
+            "POSITION": 275,
+            "COLOR_0": 277
           },
           "material": 2,
-          "indices": 266
+          "indices": 274
         },
         {
           "attributes": {
-            "NORMAL": 268,
-            "POSITION": 267,
-            "COLOR_0": 269
+            "NORMAL": 276,
+            "POSITION": 275,
+            "COLOR_0": 277
           },
           "material": 1,
-          "indices": 265
+          "indices": 273
         }
       ]
     },
@@ -7077,21 +7183,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 273,
-            "POSITION": 272,
-            "COLOR_0": 274
+            "NORMAL": 281,
+            "POSITION": 280,
+            "COLOR_0": 282
           },
           "material": 2,
-          "indices": 271
+          "indices": 279
         },
         {
           "attributes": {
-            "NORMAL": 273,
-            "POSITION": 272,
-            "COLOR_0": 274
+            "NORMAL": 281,
+            "POSITION": 280,
+            "COLOR_0": 282
           },
           "material": 1,
-          "indices": 270
+          "indices": 278
         }
       ]
     },
@@ -7100,63 +7206,26 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 278,
-            "POSITION": 277,
-            "COLOR_0": 279
+            "NORMAL": 286,
+            "POSITION": 285,
+            "COLOR_0": 287
           },
           "material": 2,
-          "indices": 276
+          "indices": 284
         },
         {
           "attributes": {
-            "NORMAL": 278,
-            "POSITION": 277,
-            "COLOR_0": 279
+            "NORMAL": 286,
+            "POSITION": 285,
+            "COLOR_0": 287
           },
           "material": 1,
-          "indices": 275
+          "indices": 283
         }
       ]
     },
     {
       "name": "sphere24",
-      "primitives": [
-        {
-          "attributes": {
-            "NORMAL": 283,
-            "POSITION": 282,
-            "COLOR_0": 284
-          },
-          "material": 2,
-          "indices": 281
-        },
-        {
-          "attributes": {
-            "NORMAL": 283,
-            "POSITION": 282,
-            "COLOR_0": 284
-          },
-          "material": 1,
-          "indices": 280
-        }
-      ]
-    },
-    {
-      "name": "Cylinder19_copy21",
-      "primitives": [
-        {
-          "attributes": {
-            "NORMAL": 287,
-            "POSITION": 286,
-            "COLOR_0": 288
-          },
-          "material": 2,
-          "indices": 285
-        }
-      ]
-    },
-    {
-      "name": "Cylinder19_copy20",
       "primitives": [
         {
           "attributes": {
@@ -7166,11 +7235,20 @@
           },
           "material": 2,
           "indices": 289
+        },
+        {
+          "attributes": {
+            "NORMAL": 291,
+            "POSITION": 290,
+            "COLOR_0": 292
+          },
+          "material": 1,
+          "indices": 288
         }
       ]
     },
     {
-      "name": "Cylinder19",
+      "name": "Cylinder19_copy21",
       "primitives": [
         {
           "attributes": {
@@ -7184,25 +7262,53 @@
       ]
     },
     {
+      "name": "Cylinder19_copy20",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 299,
+            "POSITION": 298,
+            "COLOR_0": 300
+          },
+          "material": 2,
+          "indices": 297
+        }
+      ]
+    },
+    {
+      "name": "Cylinder19",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 303,
+            "POSITION": 302,
+            "COLOR_0": 304
+          },
+          "material": 2,
+          "indices": 301
+        }
+      ]
+    },
+    {
       "name": "Cylinder20_copy26",
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 300,
-            "POSITION": 299,
-            "COLOR_0": 301
+            "NORMAL": 308,
+            "POSITION": 307,
+            "COLOR_0": 309
           },
           "material": 2,
-          "indices": 298
+          "indices": 306
         },
         {
           "attributes": {
-            "NORMAL": 300,
-            "POSITION": 299,
-            "COLOR_0": 301
+            "NORMAL": 308,
+            "POSITION": 307,
+            "COLOR_0": 309
           },
           "material": 22,
-          "indices": 297
+          "indices": 305
         }
       ]
     },
@@ -7211,21 +7317,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 305,
-            "POSITION": 304,
-            "COLOR_0": 306
+            "NORMAL": 313,
+            "POSITION": 312,
+            "COLOR_0": 314
           },
           "material": 2,
-          "indices": 303
+          "indices": 311
         },
         {
           "attributes": {
-            "NORMAL": 305,
-            "POSITION": 304,
-            "COLOR_0": 306
+            "NORMAL": 313,
+            "POSITION": 312,
+            "COLOR_0": 314
           },
           "material": 22,
-          "indices": 302
+          "indices": 310
         }
       ]
     },
@@ -7234,21 +7340,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 310,
-            "POSITION": 309,
-            "COLOR_0": 311
+            "NORMAL": 318,
+            "POSITION": 317,
+            "COLOR_0": 319
           },
           "material": 2,
-          "indices": 308
+          "indices": 316
         },
         {
           "attributes": {
-            "NORMAL": 310,
-            "POSITION": 309,
-            "COLOR_0": 311
+            "NORMAL": 318,
+            "POSITION": 317,
+            "COLOR_0": 319
           },
           "material": 22,
-          "indices": 307
+          "indices": 315
         }
       ]
     },
@@ -7257,30 +7363,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "COLOR_0": 317
+            "NORMAL": 324,
+            "POSITION": 323,
+            "COLOR_0": 325
           },
           "material": 2,
-          "indices": 314
+          "indices": 322
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "COLOR_0": 317
+            "NORMAL": 324,
+            "POSITION": 323,
+            "COLOR_0": 325
           },
           "material": 1,
-          "indices": 313
+          "indices": 321
         },
         {
           "attributes": {
-            "NORMAL": 316,
-            "POSITION": 315,
-            "COLOR_0": 317
+            "NORMAL": 324,
+            "POSITION": 323,
+            "COLOR_0": 325
           },
           "material": 22,
-          "indices": 312
+          "indices": 320
         }
       ]
     },
@@ -7289,30 +7395,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 322,
-            "POSITION": 321,
-            "COLOR_0": 323
+            "NORMAL": 330,
+            "POSITION": 329,
+            "COLOR_0": 331
           },
           "material": 2,
-          "indices": 320
+          "indices": 328
         },
         {
           "attributes": {
-            "NORMAL": 322,
-            "POSITION": 321,
-            "COLOR_0": 323
+            "NORMAL": 330,
+            "POSITION": 329,
+            "COLOR_0": 331
           },
           "material": 1,
-          "indices": 319
+          "indices": 327
         },
         {
           "attributes": {
-            "NORMAL": 322,
-            "POSITION": 321,
-            "COLOR_0": 323
+            "NORMAL": 330,
+            "POSITION": 329,
+            "COLOR_0": 331
           },
           "material": 22,
-          "indices": 318
+          "indices": 326
         }
       ]
     },
@@ -7321,30 +7427,30 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 328,
-            "POSITION": 327,
-            "COLOR_0": 329
+            "NORMAL": 336,
+            "POSITION": 335,
+            "COLOR_0": 337
           },
           "material": 2,
-          "indices": 326
+          "indices": 334
         },
         {
           "attributes": {
-            "NORMAL": 328,
-            "POSITION": 327,
-            "COLOR_0": 329
+            "NORMAL": 336,
+            "POSITION": 335,
+            "COLOR_0": 337
           },
           "material": 1,
-          "indices": 325
+          "indices": 333
         },
         {
           "attributes": {
-            "NORMAL": 328,
-            "POSITION": 327,
-            "COLOR_0": 329
+            "NORMAL": 336,
+            "POSITION": 335,
+            "COLOR_0": 337
           },
           "material": 22,
-          "indices": 324
+          "indices": 332
         }
       ]
     },
@@ -7353,21 +7459,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 333,
-            "POSITION": 332,
-            "COLOR_0": 334
+            "NORMAL": 341,
+            "POSITION": 340,
+            "COLOR_0": 342
           },
           "material": 1,
-          "indices": 331
+          "indices": 339
         },
         {
           "attributes": {
-            "NORMAL": 333,
-            "POSITION": 332,
-            "COLOR_0": 334
+            "NORMAL": 341,
+            "POSITION": 340,
+            "COLOR_0": 342
           },
           "material": 22,
-          "indices": 330
+          "indices": 338
         }
       ]
     },
@@ -7376,163 +7482,9 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 1,
-          "indices": 350
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 32,
-          "indices": 349
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 33,
-          "indices": 348
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 34,
-          "indices": 347
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 35,
-          "indices": 346
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 36,
-          "indices": 345
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 37,
-          "indices": 344
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 38,
-          "indices": 343
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 39,
-          "indices": 342
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 40,
-          "indices": 341
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 41,
-          "indices": 340
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 42,
-          "indices": 339
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 43,
-          "indices": 338
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 44,
-          "indices": 337
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 45,
-          "indices": 336
-        },
-        {
-          "attributes": {
-            "NORMAL": 352,
-            "POSITION": 351
-          },
-          "material": 46,
-          "indices": 335
-        }
-      ]
-    },
-    {
-      "name": "Cylinder9",
-      "primitives": [
-        {
-          "attributes": {
-            "NORMAL": 356,
-            "POSITION": 355
-          },
-          "material": 47,
-          "indices": 354
-        },
-        {
-          "attributes": {
-            "NORMAL": 356,
-            "POSITION": 355
-          },
-          "material": 48,
-          "indices": 353
-        }
-      ]
-    },
-    {
-      "name": "sphere11_copy23",
-      "primitives": [
-        {
-          "attributes": {
             "NORMAL": 360,
             "POSITION": 359,
-            "COLOR_0": 361
+            "TEXCOORD_0": 361
           },
           "material": 1,
           "indices": 358
@@ -7541,10 +7493,182 @@
           "attributes": {
             "NORMAL": 360,
             "POSITION": 359,
-            "COLOR_0": 361
+            "TEXCOORD_0": 361
+          },
+          "material": 32,
+          "indices": 357
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 33,
+          "indices": 356
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 34,
+          "indices": 355
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 35,
+          "indices": 354
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 36,
+          "indices": 353
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 37,
+          "indices": 352
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 38,
+          "indices": 351
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 39,
+          "indices": 350
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 40,
+          "indices": 349
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 41,
+          "indices": 348
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 42,
+          "indices": 347
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 43,
+          "indices": 346
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 44,
+          "indices": 345
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 45,
+          "indices": 344
+        },
+        {
+          "attributes": {
+            "NORMAL": 360,
+            "POSITION": 359,
+            "TEXCOORD_0": 361
+          },
+          "material": 46,
+          "indices": 343
+        }
+      ]
+    },
+    {
+      "name": "Cylinder9",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 365,
+            "POSITION": 364,
+            "TEXCOORD_0": 366
+          },
+          "material": 47,
+          "indices": 363
+        },
+        {
+          "attributes": {
+            "NORMAL": 365,
+            "POSITION": 364,
+            "TEXCOORD_0": 366
+          },
+          "material": 48,
+          "indices": 362
+        }
+      ]
+    },
+    {
+      "name": "sphere11_copy23",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 370,
+            "POSITION": 369,
+            "COLOR_0": 371
+          },
+          "material": 1,
+          "indices": 368
+        },
+        {
+          "attributes": {
+            "NORMAL": 370,
+            "POSITION": 369,
+            "COLOR_0": 371
           },
           "material": 22,
-          "indices": 357
+          "indices": 367
         }
       ]
     },
@@ -7553,21 +7677,21 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 365,
-            "POSITION": 364,
-            "COLOR_0": 366
+            "NORMAL": 375,
+            "POSITION": 374,
+            "COLOR_0": 376
           },
           "material": 1,
-          "indices": 363
+          "indices": 373
         },
         {
           "attributes": {
-            "NORMAL": 365,
-            "POSITION": 364,
-            "COLOR_0": 366
+            "NORMAL": 375,
+            "POSITION": 374,
+            "COLOR_0": 376
           },
           "material": 22,
-          "indices": 362
+          "indices": 372
         }
       ]
     },
@@ -7576,75 +7700,11 @@
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 372,
-            "POSITION": 371,
-            "COLOR_0": 373
-          },
-          "material": 2,
-          "indices": 370
-        },
-        {
-          "attributes": {
-            "NORMAL": 372,
-            "POSITION": 371,
-            "COLOR_0": 373
-          },
-          "material": 1,
-          "indices": 369
-        },
-        {
-          "attributes": {
-            "NORMAL": 372,
-            "POSITION": 371,
-            "COLOR_0": 373
-          },
-          "material": 26,
-          "indices": 368
-        },
-        {
-          "attributes": {
-            "NORMAL": 372,
-            "POSITION": 371,
-            "COLOR_0": 373
-          },
-          "material": 22,
-          "indices": 367
-        }
-      ]
-    },
-    {
-      "name": "Cylinder4_copy10",
-      "primitives": [
-        {
-          "attributes": {
-            "NORMAL": 377,
-            "POSITION": 376,
-            "COLOR_0": 378
-          },
-          "material": 1,
-          "indices": 375
-        },
-        {
-          "attributes": {
-            "NORMAL": 377,
-            "POSITION": 376,
-            "COLOR_0": 378
-          },
-          "material": 22,
-          "indices": 374
-        }
-      ]
-    },
-    {
-      "name": "Cylinder4_copy8",
-      "primitives": [
-        {
-          "attributes": {
             "NORMAL": 382,
             "POSITION": 381,
             "COLOR_0": 383
           },
-          "material": 1,
+          "material": 2,
           "indices": 380
         },
         {
@@ -7653,13 +7713,31 @@
             "POSITION": 381,
             "COLOR_0": 383
           },
-          "material": 22,
+          "material": 1,
           "indices": 379
+        },
+        {
+          "attributes": {
+            "NORMAL": 382,
+            "POSITION": 381,
+            "COLOR_0": 383
+          },
+          "material": 26,
+          "indices": 378
+        },
+        {
+          "attributes": {
+            "NORMAL": 382,
+            "POSITION": 381,
+            "COLOR_0": 383
+          },
+          "material": 22,
+          "indices": 377
         }
       ]
     },
     {
-      "name": "Cylinder4_copy6",
+      "name": "Cylinder4_copy10",
       "primitives": [
         {
           "attributes": {
@@ -7682,7 +7760,7 @@
       ]
     },
     {
-      "name": "Cylinder4",
+      "name": "Cylinder4_copy8",
       "primitives": [
         {
           "attributes": {
@@ -7705,15 +7783,62 @@
       ]
     },
     {
+      "name": "Cylinder4_copy6",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 397,
+            "POSITION": 396,
+            "COLOR_0": 398
+          },
+          "material": 1,
+          "indices": 395
+        },
+        {
+          "attributes": {
+            "NORMAL": 397,
+            "POSITION": 396,
+            "COLOR_0": 398
+          },
+          "material": 22,
+          "indices": 394
+        }
+      ]
+    },
+    {
+      "name": "Cylinder4",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 402,
+            "POSITION": 401,
+            "COLOR_0": 403
+          },
+          "material": 1,
+          "indices": 400
+        },
+        {
+          "attributes": {
+            "NORMAL": 402,
+            "POSITION": 401,
+            "COLOR_0": 403
+          },
+          "material": 22,
+          "indices": 399
+        }
+      ]
+    },
+    {
       "name": "asset9",
       "primitives": [
         {
           "attributes": {
-            "NORMAL": 396,
-            "POSITION": 395
+            "NORMAL": 406,
+            "POSITION": 405,
+            "TEXCOORD_0": 407
           },
           "material": 49,
-          "indices": 394
+          "indices": 404
         }
       ]
     }

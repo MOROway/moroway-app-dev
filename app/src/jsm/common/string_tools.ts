@@ -28,7 +28,7 @@ export function getString(prop: [string, number] | string, punctuationMark: stri
 }
 
 export function searchStringKeys(pattern: RegExp, lang: string = DEFAULT_LANG): string[] {
-    const keyList = [];
+    const keyList: string[] = [];
     if (!STRINGS[lang]) {
         return keyList;
     }
@@ -145,7 +145,7 @@ export function getLanguageList(): string[] {
     return langCodes;
 }
 
-export function setCurrentLang(lang) {
+export function setCurrentLang(lang: string) {
     window.localStorage.setItem("morowayAppLang", lang);
 }
 
@@ -172,7 +172,7 @@ function getCurrentLang(): string {
     return DEFAULT_LANG;
 }
 
-const STRINGS = "{{strings}}";
+const STRINGS: any = "{{strings}}";
 deepFreeze(STRINGS);
 const DEFAULT_LANG = "en";
 export const CURRENT_LANG = getCurrentLang();
