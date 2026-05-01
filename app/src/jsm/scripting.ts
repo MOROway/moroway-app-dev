@@ -3029,7 +3029,7 @@ function drawObjects() {
                 contextForeground.fillText("speed", three.followCamControls.x, three.followCamControls.y + three.followCamControls.textSize);
                 if (trains[three.followObject].accelerationSpeed > 0) {
                     contextForeground.save();
-                    const controlSpeedText = trains[three.followObject].speedInPercent + "%";
+                    const controlSpeedText = Math.round(trains[three.followObject].speedInPercent) + "%";
                     contextForeground.font = measureFontSize(controlSpeedText, defaultFont, 20, three.followCamControls.width * 0.7, 5, 1.2);
                     const controlSpeedTextMetrics = contextForeground.measureText(controlSpeedText);
                     if (three.followCamControls.draggingAreaHeight - three.followCamControls.padding - three.followCamControls.textSize > parseInt(contextForeground.font.replace(/^([0-9.]+)px.*$/, "$1"), 10)) {
