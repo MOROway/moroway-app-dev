@@ -98,6 +98,7 @@
 	"appScreenTeamplayJoinError": "Couldn't join. Game is full or obsolete",
 	"appScreenTeamplayJoinTeammateError": "Teammate couldn't join game",
 	"appScreenTeamplayLeaveDialogTitle": "Leave multiplayer mode?",
+    "appScreenTeamplayMsgError": "Server message couldn't be handeled!",
 	"appScreenTeamplayNoWebsocket": "Can't load multiplayer functions - please update your browser",
 	"appScreenTeamplaySetupCreateLink": "Create a new game",
 	"appScreenTeamplaySetupInit": "Enter name",
