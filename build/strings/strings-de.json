@@ -73,6 +73,7 @@
 	"appScreenTeamplayJoinError": "Beitritt zum Spiel nicht möglich (voll oder obsolet)",
 	"appScreenTeamplayJoinTeammateError": "Ihr Mitspieler konnte dem Spiel nicht beitreten",
 	"appScreenTeamplayLeaveDialogTitle": "Mehrspielermodus verlassen?",
+	"appScreenTeamplayMsgError": "Servernachricht konnte nicht verarbeitet werden!",
 	"appScreenTeamplayNoWebsocket": "Mehrspieler-Funktionen können nicht geladen werden – bitte aktualisieren Sie Ihren Browser",
 	"appScreenTeamplaySetupCreateLink": "Neues Spiel erstellen",
 	"appScreenTeamplaySetupInit": "Namen eingeben",
