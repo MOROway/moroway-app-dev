@@ -281,3 +281,4 @@
   year: 2026
   general:
     dependencies: true
+    translations: true
