@@ -85,6 +85,7 @@ MOROway App uses Weblate for translations.
         - `[platform]`: Configuration only used for specific platform
         - Hierachy (if both prefixes apply): prefixed both, prefixed `debug`, prefixed `[platform]`, not prefixed
     - `tsconfig.json`: Typescript conf
+- `i18n`
   - `changelogs`, `metadata`,`strings`
     - Localization files (see above: [Weblate](#weblate))
     - Exception: `changelogs/meta.yml`: Changelog metadata
