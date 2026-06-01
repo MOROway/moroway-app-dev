@@ -87,6 +87,9 @@ export function getServerNote(func) {
     }
 }
 export function showServerNote(serverNoteElementRoot) {
+    if (!serverNoteElementRoot) {
+        return;
+    }
     getServerNote(function (serverMsg) {
         function styleShowAgain() {
             window.localStorage.setItem("morowayAppLastServerNoteShowAgain", showAgain ? "1" : "0");

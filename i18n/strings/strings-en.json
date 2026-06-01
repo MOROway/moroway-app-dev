@@ -183,6 +183,7 @@
 	"generalIsFail": "An error occurred",
 	"generalLeaveAndDestroyGame": "Leave and destroy game?",
 	"generalLeaveAndDestroyGameNo": "Continue game",
+	"generalLeaveAndDestroyGameOnline": "Using the “Back”-Button will terminate this online game! To navigate your phone e.g. to share the game link use the “Home”-Button. The online game will now stay active for some time.",
 	"generalLeaveAndDestroyGameTitle": "Are you sure?",
 	"generalLeaveAndDestroyGameYes": "Leave game",
 	"generalLicense": "License",

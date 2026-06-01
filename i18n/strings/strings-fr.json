@@ -145,6 +145,7 @@
 	"generalIsFail": "Une erreur est survenue",
 	"generalLeaveAndDestroyGame": "Quitter et détruire le jeu ?",
 	"generalLeaveAndDestroyGameNo": "Continuer jeu",
+	"generalLeaveAndDestroyGameOnline": "Utiliser le bouton de retour mettra fin à ce jeu en ligne ! Pour naviguer sur votre téléphone, par exemple pour partager le lien du jeu, utilisez le bouton d’accueil. Le jeu en ligne restera actif pendant un certain temps.",
 	"generalLeaveAndDestroyGameTitle": "Êtes-vous sur(e) ?",
 	"generalLeaveAndDestroyGameYes": "Quitter jeu",
 	"generalLicense": "Licence",

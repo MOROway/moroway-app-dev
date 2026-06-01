@@ -6,6 +6,7 @@
   <string name="generalIsFail">Ein Fehler ist aufgetreten</string>
   <string name="generalLeaveAndDestroyGame">Verlassen und Spiel zerstören?</string>
   <string name="generalLeaveAndDestroyGameNo">Spiel fortführen</string>
+  <string name="generalLeaveAndDestroyGameOnline">Dieses Onlinespiel wird durch Benutzen der Zurück-Taste beendet! Wenn Sie weiternavigieren wollen, beispielsweise, um den Onlinespiel-Link zu teilen, benutzen Sie bitte den Home-Button. Dann bleibt das Onlinespiel einige Zeit erhalten.</string>
   <string name="generalLeaveAndDestroyGameTitle">Sind Sie sich sicher?</string>
   <string name="generalLeaveAndDestroyGameYes">Spiel verlassen</string>
   <string name="generalLicense">Lizenz</string>

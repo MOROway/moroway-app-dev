@@ -6,6 +6,7 @@
   <string name="generalIsFail">Une erreur est survenue</string>
   <string name="generalLeaveAndDestroyGame">Quitter et détruire le jeu ?</string>
   <string name="generalLeaveAndDestroyGameNo">Continuer jeu</string>
+  <string name="generalLeaveAndDestroyGameOnline">Utiliser le bouton de retour mettra fin à ce jeu en ligne ! Pour naviguer sur votre téléphone, par exemple pour partager le lien du jeu, utilisez le bouton d’accueil. Le jeu en ligne restera actif pendant un certain temps.</string>
   <string name="generalLeaveAndDestroyGameTitle">Êtes-vous sur(e) ?</string>
   <string name="generalLeaveAndDestroyGameYes">Quitter jeu</string>
   <string name="generalLicense">Licence</string>

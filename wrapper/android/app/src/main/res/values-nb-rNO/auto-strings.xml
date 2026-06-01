@@ -4,6 +4,7 @@
   <string name="generalBack">Tilbake</string>
   <string name="generalClose">lukk</string>
   <string name="generalLeaveAndDestroyGameNo">Fortsett</string>
+  <string name="generalLeaveAndDestroyGameOnline">Bruk «Tilbake»-knappen for å terminere dette nettbaserte spillet. Bruk «Hjem»-knappen for å gå til f.eks. deling av lenke til spillet. Nettbasert spill vil nå forbli aktivt en stund.</string>
   <string name="generalLeaveAndDestroyGameYes">Avslutt</string>
   <string name="generalNewVersion">Ny versjon</string>
   <string name="generalNo">nei</string>

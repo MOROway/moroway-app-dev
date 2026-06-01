@@ -107,7 +107,7 @@ class WebGameActivity : WebActivity() {
                         WindowManager.LayoutParams.MATCH_PARENT
                     )
                 if (onlineGame) {
-                    backConfirmBinding.backDialogText.setText(R.string.d_confirmback_text_online)
+                    backConfirmBinding.backDialogText.setText(R.string.generalLeaveAndDestroyGameOnline)
                 } else {
                     backConfirmBinding.backDialogText.setText(R.string.generalLeaveAndDestroyGame)
                 }

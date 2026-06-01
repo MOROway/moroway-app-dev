@@ -74,6 +74,7 @@
 	"generalBack": "Tilbake",
 	"generalClose": "lukk",
 	"generalLeaveAndDestroyGameNo": "Fortsett",
+	"generalLeaveAndDestroyGameOnline": "Bruk «Tilbake»-knappen for å terminere dette nettbaserte spillet. Bruk «Hjem»-knappen for å gå til f.eks. deling av lenke til spillet. Nettbasert spill vil nå forbli aktivt en stund.",
 	"generalLeaveAndDestroyGameYes": "Avslutt",
 	"generalNewVersion": "Ny versjon",
 	"generalNo": "nei",

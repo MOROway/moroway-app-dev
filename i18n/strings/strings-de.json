@@ -148,6 +148,7 @@
 	"generalIsFail": "Ein Fehler ist aufgetreten",
 	"generalLeaveAndDestroyGame": "Verlassen und Spiel zerstören?",
 	"generalLeaveAndDestroyGameNo": "Spiel fortführen",
+	"generalLeaveAndDestroyGameOnline": "Dieses Onlinespiel wird durch Benutzen der Zurück-Taste beendet! Wenn Sie weiternavigieren wollen, beispielsweise, um den Onlinespiel-Link zu teilen, benutzen Sie bitte den Home-Button. Dann bleibt das Onlinespiel einige Zeit erhalten.",
 	"generalLeaveAndDestroyGameTitle": "Sind Sie sich sicher?",
 	"generalLeaveAndDestroyGameYes": "Spiel verlassen",
 	"generalLicense": "Lizenz",

@@ -10,5 +10,4 @@
     <string name="a_jserror_text2">Wenn das Update nicht weitergeholfen hat, senden Sie uns bitte ein Feedback inklusive der unten angezeigten Informationen (welche sie hier kopieren und im Feedbackformular einfügen können)</string>
     <string name="a_g1_again">Nochmal spielen…</string>
     <string name="d_update_text">Neue Funktionen:\n\n%1$s\n\nWeiterhin viel Fahrspaß zu haben wünscht MOROway!</string>
-    <string name="d_confirmback_text_online">Dieses Onlinespiel wird durch Benutzen der Zurück-Taste beendet! Wenn Sie weiternavigieren wollen, beispielsweise, um den Onlinespiel-Link zu teilen, benutzen Sie bitte den Home-Button. Dann bleibt das Onlinespiel einige Zeit erhalten.</string>
 </resources>

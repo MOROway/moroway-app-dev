@@ -21,7 +21,7 @@ document.addEventListener("deviceready", function () {
                 // Cordova wrapper contains this function
                 // @ts-ignore
                 navigator.notification.confirm(
-                    getString("generalLeaveAndDestroyGame"),
+                    getString(getMode() == Modes.MULTIPLAYER ? "generalLeaveAndDestroyGameOnline" : "generalLeaveAndDestroyGame"),
                     function (button) {
                         if (button == 1) {
                             followLink("html_platform/start.html", "_self", LinkStates.InternalHtml);

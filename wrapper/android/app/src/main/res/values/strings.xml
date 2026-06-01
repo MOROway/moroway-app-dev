@@ -22,6 +22,4 @@
     <!-- Dialog: Update -->
     <string name="d_update_text">New features:\n\n%1$s</string>
     <string name="d_update_title" translatable="false">%1$s (%2$s)</string>
-    <!-- Dialog: Confirm Back -->
-    <string name="d_confirmback_text_online">Using the "Back"-Button will terminate this online game! To navigate your phone e.g. to share the game link use the "Home"-Button. The online game will now stay active for some time.</string>
 </resources>

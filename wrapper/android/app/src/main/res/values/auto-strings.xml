@@ -6,6 +6,7 @@
   <string name="generalIsFail">An error occurred</string>
   <string name="generalLeaveAndDestroyGame">Leave and destroy game?</string>
   <string name="generalLeaveAndDestroyGameNo">Continue game</string>
+  <string name="generalLeaveAndDestroyGameOnline">Using the “Back”-Button will terminate this online game! To navigate your phone e.g. to share the game link use the “Home”-Button. The online game will now stay active for some time.</string>
   <string name="generalLeaveAndDestroyGameTitle">Are you sure?</string>
   <string name="generalLeaveAndDestroyGameYes">Leave game</string>
   <string name="generalLicense">License</string>

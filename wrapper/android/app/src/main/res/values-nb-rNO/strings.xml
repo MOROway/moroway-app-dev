@@ -11,5 +11,4 @@
     <string name="d_update_text">Nye funksjoner:
 \n
 \n%1$s</string>
-    <string name="d_confirmback_text_online">Bruk «Tilbake»-knappen for å terminere dette nettbaserte spillet. Bruk «Hjem»-knappen for å gå til f.eks. deling av lenke til spillet. Nettbasert spill vil nå forbli aktivt en stund.</string>
 </resources>

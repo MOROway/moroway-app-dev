@@ -6,6 +6,7 @@
   <string name="generalIsFail">பிழை ஏற்பட்டது</string>
   <string name="generalLeaveAndDestroyGame">விளையாட்டை விட்டுவிட்டு அழிக்கவா?</string>
   <string name="generalLeaveAndDestroyGameNo">விளையாட்டைத் தொடரவும்</string>
+  <string name="generalLeaveAndDestroyGameOnline">பின்-பொத்தானைப் பயன்படுத்துவது இந்த நிகழ்நிலை விளையாட்டை நிறுத்திவிடும்! உங்கள் தொலைபேசியில் செல்ல எ.கா. விளையாட்டு இணைப்பைப் பகிர ஓம்-பொத்தான் பயன்படுத்தவும். நிகழ்நிலை விளையாட்டு இப்போது சிறிது நேரம் செயலில் இருக்கும்.</string>
   <string name="generalLeaveAndDestroyGameTitle">நீங்கள் உறுதியாக இருக்கிறீர்களா?</string>
   <string name="generalLeaveAndDestroyGameYes">விளையாட்டை விடுங்கள்</string>
   <string name="generalLicense">உரிமம்</string>

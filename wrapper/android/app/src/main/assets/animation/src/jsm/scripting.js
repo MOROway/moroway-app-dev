@@ -92,7 +92,7 @@ function measureFontSize(text, fontFamily, fontSize, wantedTextWidth, approximat
     }
 }
 function getFontSize(font, unit) {
-    return parseInt(font.substr(0, font.length - (font.length - font.indexOf(unit))), 10);
+    return parseInt(font.replace(unit, ""), 10);
 }
 /*******************************************
  *             Mode functions              *
@@ -103,17 +103,19 @@ function showConfirmDialogLeaveMultiplayerMode() {
     if (confirmDialog) {
         const confirmDialogTitle = confirmDialog.querySelector("#confirm-dialog-title");
         const confirmDialogText = confirmDialog.querySelector("#confirm-dialog-text");
-        confirmDialogTitle.textContent = getString("appScreenTeamplayLeaveDialogTitle");
-        confirmDialogText.style.display = "none";
+        if (confirmDialogTitle && confirmDialogText) {
+            confirmDialogTitle.textContent = getString("appScreenTeamplayLeaveDialogTitle");
+            confirmDialogText.style.display = "none";
+        }
         const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes");
-        if (confirmDialogYes != null) {
+        if (confirmDialogYes) {
             confirmDialogYes.onclick = function () {
                 closeConfirmDialog();
                 switchMode(Modes.SINGLEPLAYER, { id: "", key: "" });
             };
         }
         const confirmDialogNo = document.querySelector("#confirm-dialog #confirm-dialog-no");
-        if (confirmDialogNo != null) {
+        if (confirmDialogNo) {
             confirmDialogNo.onclick = closeConfirmDialog;
         }
         if (currentMode == Modes.MULTIPLAYER) {
@@ -128,85 +130,87 @@ function showConfirmDialogEnterDemoMode() {
         const confirmDialogTitle = confirmDialog.querySelector("#confirm-dialog-title");
         const confirmDialogText = confirmDialog.querySelector("#confirm-dialog-text");
         const confirmDialogParams = confirmDialog.querySelector("#confirm-dialog-params");
-        confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
-        confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
-        confirmDialogParams.style.display = "block";
-        const confirmDialogRandomId = "confirm-dialog-params-demo-random";
-        const confirmDialogRandomContainer = document.createElement("div");
-        const confirmDialogRandom = document.createElement("input");
-        confirmDialogRandom.id = confirmDialogRandomId;
-        confirmDialogRandom.type = "checkbox";
-        confirmDialogRandom.onchange = function () {
-            const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container");
-            if (param3DRotationSpeedElem) {
-                param3DRotationSpeedElem.style.display = confirmDialogRandom.checked ? "none" : "";
-            }
-        };
-        confirmDialogRandom.checked = getGuiState("demo-random");
-        const confirmDialogRandomLabel = document.createElement("label");
-        confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
-        confirmDialogRandomLabel.textContent = getString("generalStartDemoModeRandom");
-        confirmDialogRandomContainer.appendChild(confirmDialogRandom);
-        confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
-        confirmDialogParams.appendChild(confirmDialogRandomContainer);
-        const confirmDialogExitTimeoutId = "confirm-dialog-params-exit-timeout";
-        const confirmDialogExitTimeoutContainer = document.createElement("div");
-        const confirmDialogExitTimeout = document.createElement("input");
-        confirmDialogExitTimeout.id = confirmDialogExitTimeoutId;
-        confirmDialogExitTimeout.type = "number";
-        confirmDialogExitTimeout.step = "1";
-        confirmDialogExitTimeout.pattern = "d+";
-        confirmDialogExitTimeout.min = "1";
-        confirmDialogExitTimeout.value = "";
-        const confirmDialogExitTimeoutLabel = document.createElement("label");
-        confirmDialogExitTimeoutLabel.htmlFor = confirmDialogExitTimeoutId;
-        confirmDialogExitTimeoutLabel.textContent = getString("generalStartDemoModeExitTimeout");
-        confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeout);
-        confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeoutLabel);
-        if (!SYSTEM_TOOLS.canExitApp()) {
-            confirmDialogExitTimeoutContainer.style.display = "none";
-        }
-        confirmDialogParams.appendChild(confirmDialogExitTimeoutContainer);
-        if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
-            const elemDiv = document.createElement("div");
-            elemDiv.id = "confirm-dialog-params-3d-rotation-speed-container";
-            elemDiv.style.display = confirmDialogRandom.checked ? "none" : "";
-            const elementSpan = document.createElement("span");
-            elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
-            elemDiv.appendChild(elementSpan);
-            const elementBr = document.createElement("br");
-            elemDiv.appendChild(elementBr);
-            const elementInput = document.createElement("input");
-            elementInput.id = "confirm-dialog-params-3d-rotation-speed-input";
-            elementInput.type = "range";
-            elementInput.min = "0";
-            elementInput.max = "100";
-            elementInput.value = getGuiState("3d-rotation-speed");
-            elemDiv.appendChild(elementInput);
-            confirmDialogParams.appendChild(elemDiv);
-        }
-        const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes");
-        if (confirmDialogYes) {
-            confirmDialogYes.onclick = function () {
-                closeConfirmDialog();
-                const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
+        if (confirmDialogTitle && confirmDialogText && confirmDialogParams) {
+            confirmDialogTitle.textContent = getString("generalStartGameDemoMode", "?");
+            confirmDialogText.textContent = getString("appScreenDemoModeEnterDialogText");
+            confirmDialogParams.style.display = "block";
+            const confirmDialogRandomId = "confirm-dialog-params-demo-random";
+            const confirmDialogRandomContainer = document.createElement("div");
+            const confirmDialogRandom = document.createElement("input");
+            confirmDialogRandom.id = confirmDialogRandomId;
+            confirmDialogRandom.type = "checkbox";
+            confirmDialogRandom.onchange = function () {
+                const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-container");
                 if (param3DRotationSpeedElem) {
-                    setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
+                    param3DRotationSpeedElem.style.display = confirmDialogRandom.checked ? "none" : "";
                 }
-                setGuiState("demo-random", confirmDialogRandom.checked);
-                const switchDemoModeAdditionalParams = {};
-                if (confirmDialogExitTimeout.value !== "") {
-                    switchDemoModeAdditionalParams["exit-timeout"] = confirmDialogExitTimeout.value;
-                }
-                switchMode(Modes.DEMO, switchDemoModeAdditionalParams);
             };
-        }
-        const confirmDialogNo = document.querySelector("#confirm-dialog #confirm-dialog-no");
-        if (confirmDialogNo != null) {
-            confirmDialogNo.onclick = closeConfirmDialog;
-        }
-        if (currentMode != Modes.DEMO) {
-            confirmDialog.style.display = "block";
+            confirmDialogRandom.checked = getGuiState("demo-random");
+            const confirmDialogRandomLabel = document.createElement("label");
+            confirmDialogRandomLabel.htmlFor = confirmDialogRandomId;
+            confirmDialogRandomLabel.textContent = getString("generalStartDemoModeRandom");
+            confirmDialogRandomContainer.appendChild(confirmDialogRandom);
+            confirmDialogRandomContainer.appendChild(confirmDialogRandomLabel);
+            confirmDialogParams.appendChild(confirmDialogRandomContainer);
+            const confirmDialogExitTimeoutId = "confirm-dialog-params-exit-timeout";
+            const confirmDialogExitTimeoutContainer = document.createElement("div");
+            const confirmDialogExitTimeout = document.createElement("input");
+            confirmDialogExitTimeout.id = confirmDialogExitTimeoutId;
+            confirmDialogExitTimeout.type = "number";
+            confirmDialogExitTimeout.step = "1";
+            confirmDialogExitTimeout.pattern = "d+";
+            confirmDialogExitTimeout.min = "1";
+            confirmDialogExitTimeout.value = "";
+            const confirmDialogExitTimeoutLabel = document.createElement("label");
+            confirmDialogExitTimeoutLabel.htmlFor = confirmDialogExitTimeoutId;
+            confirmDialogExitTimeoutLabel.textContent = getString("generalStartDemoModeExitTimeout");
+            confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeout);
+            confirmDialogExitTimeoutContainer.appendChild(confirmDialogExitTimeoutLabel);
+            if (!SYSTEM_TOOLS.canExitApp()) {
+                confirmDialogExitTimeoutContainer.style.display = "none";
+            }
+            confirmDialogParams.appendChild(confirmDialogExitTimeoutContainer);
+            if (gui.three && (three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
+                const elemDiv = document.createElement("div");
+                elemDiv.id = "confirm-dialog-params-3d-rotation-speed-container";
+                elemDiv.style.display = confirmDialogRandom.checked ? "none" : "";
+                const elementSpan = document.createElement("span");
+                elementSpan.textContent = getString("generalStartDemoMode3DRotationSpeed");
+                elemDiv.appendChild(elementSpan);
+                const elementBr = document.createElement("br");
+                elemDiv.appendChild(elementBr);
+                const elementInput = document.createElement("input");
+                elementInput.id = "confirm-dialog-params-3d-rotation-speed-input";
+                elementInput.type = "range";
+                elementInput.min = "0";
+                elementInput.max = "100";
+                elementInput.value = getGuiState("3d-rotation-speed");
+                elemDiv.appendChild(elementInput);
+                confirmDialogParams.appendChild(elemDiv);
+            }
+            const confirmDialogYes = document.querySelector("#confirm-dialog #confirm-dialog-yes");
+            if (confirmDialogYes) {
+                confirmDialogYes.onclick = function () {
+                    closeConfirmDialog();
+                    const param3DRotationSpeedElem = confirmDialog.querySelector("#confirm-dialog-params-3d-rotation-speed-input");
+                    if (param3DRotationSpeedElem) {
+                        setGuiState("3d-rotation-speed", parseInt(param3DRotationSpeedElem.value, 10));
+                    }
+                    setGuiState("demo-random", confirmDialogRandom.checked);
+                    const switchDemoModeAdditionalParams = {};
+                    if (confirmDialogExitTimeout.value !== "") {
+                        switchDemoModeAdditionalParams["exit-timeout"] = confirmDialogExitTimeout.value;
+                    }
+                    switchMode(Modes.DEMO, switchDemoModeAdditionalParams);
+                };
+            }
+            const confirmDialogNo = document.querySelector("#confirm-dialog #confirm-dialog-no");
+            if (confirmDialogNo) {
+                confirmDialogNo.onclick = closeConfirmDialog;
+            }
+            if (currentMode != Modes.DEMO) {
+                confirmDialog.style.display = "block";
+            }
         }
     }
 }
@@ -222,11 +226,13 @@ function resetConfirmDialog() {
         const confirmDialogTitle = confirmDialog.querySelector("#confirm-dialog-title");
         const confirmDialogText = confirmDialog.querySelector("#confirm-dialog-text");
         const confirmDialogParams = confirmDialog.querySelector("#confirm-dialog-params");
-        confirmDialogTitle.textContent = "";
-        confirmDialogText.textContent = "";
-        confirmDialogText.style.display = "";
-        confirmDialogParams.innerHTML = "";
-        confirmDialogParams.style.display = "";
+        if (confirmDialogTitle && confirmDialogText && confirmDialogParams) {
+            confirmDialogTitle.textContent = "";
+            confirmDialogText.textContent = "";
+            confirmDialogText.style.display = "";
+            confirmDialogParams.innerHTML = "";
+            confirmDialogParams.style.display = "";
+        }
     }
 }
 function switchMode(mode = Modes.SINGLEPLAYER, additionalParameters = {}) {
@@ -2815,7 +2821,7 @@ function drawObjects() {
                 contextForeground.fillText("speed", three.followCamControls.x, three.followCamControls.y + three.followCamControls.textSize);
                 if (trains[three.followObject].accelerationSpeed > 0) {
                     contextForeground.save();
-                    const controlSpeedText = trains[three.followObject].speedInPercent + "%";
+                    const controlSpeedText = Math.round(trains[three.followObject].speedInPercent) + "%";
                     contextForeground.font = measureFontSize(controlSpeedText, defaultFont, 20, three.followCamControls.width * 0.7, 5, 1.2);
                     const controlSpeedTextMetrics = contextForeground.measureText(controlSpeedText);
                     if (three.followCamControls.draggingAreaHeight - three.followCamControls.padding - three.followCamControls.textSize > parseInt(contextForeground.font.replace(/^([0-9.]+)px.*$/, "$1"), 10)) {
@@ -6808,7 +6814,7 @@ window.addEventListener("load", function () {
                 window.addEventListener("resize", chat.resizeChat);
                 chat.openChat = function () {
                     if (typeof chatNotify.hide == "function") {
-                        chatNotify.hide(chatNotify, true);
+                        chatNotify.hide(true);
                     }
                     chat.style.display = "block";
                     gui.sidebarRight = true;
@@ -6903,7 +6909,7 @@ window.addEventListener("load", function () {
                         function resetForElement(parent, elem, to = "") {
                             var elements = parent.childNodes;
                             for (var i = 0; i < elements.length; i++) {
-                                if (elements[i].nodeName.substr(0, 1) != "#") {
+                                if (!elements[i].nodeName.startsWith("#")) {
                                     elements[i].style.display = elements[i] == elem ? to : "none";
                                 }
                             }
@@ -7094,363 +7100,371 @@ window.addEventListener("load", function () {
                             const ERROR_LEVEL_OKAY = 0;
                             const ERROR_LEVEL_WARNING = 1;
                             const ERROR_LEVEL_ERROR = 2;
-                            const json = JSON.parse(message.data);
-                            if (APP_DATA.debug) {
-                                if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                    console.error(json);
-                                }
-                                else if (json.errorLevel === ERROR_LEVEL_WARNING) {
-                                    console.warn(json);
-                                }
-                                else {
-                                    console.debug(json);
-                                }
-                            }
-                            switch (json.mode) {
-                                case "hello":
+                            try {
+                                const json = JSON.parse(message.data);
+                                if (APP_DATA.debug) {
                                     if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                        document.querySelector("#content").style.display = "none";
-                                        setTimeout(function () {
-                                            followLink("error#tp-update", "_self", LinkStates.InternalHtml);
-                                        }, 1000);
-                                        notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NotificationPriority.High, 6000, null, null, client.height);
+                                        console.error(json);
+                                    }
+                                    else if (json.errorLevel === ERROR_LEVEL_WARNING) {
+                                        console.warn(json);
                                     }
                                     else {
-                                        if (json.errorLevel === ERROR_LEVEL_WARNING) {
-                                            notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NotificationPriority.Default, 900, null, null, client.height);
-                                        }
-                                        var parent = document.querySelector("#content");
-                                        var elem = parent.querySelector("#setup");
-                                        resetForElement(parent, elem, "block");
-                                        if (sessionStorage.getItem("playername") != null) {
-                                            sendPlayerName(sessionStorage.getItem("playername"));
+                                        console.debug(json);
+                                    }
+                                }
+                                switch (json.mode) {
+                                    case "hello":
+                                        if (json.errorLevel === ERROR_LEVEL_ERROR) {
+                                            document.querySelector("#content").style.display = "none";
+                                            setTimeout(function () {
+                                                followLink("error#tp-update", "_self", LinkStates.InternalHtml);
+                                            }, 1000);
+                                            notify("#canvas-notifier", getString("appScreenTeamplayUpdateError", "!"), NotificationPriority.High, 6000, null, null, client.height);
                                         }
                                         else {
-                                            endLoading();
-                                            parent = document.querySelector("#setup-inner-content");
-                                            elem = parent.querySelector("#setup-init");
-                                            resetForElement(parent, elem);
-                                            elem.querySelector("#setup-init-button").onclick = function (_event) {
-                                                var name = getPlayerNameFromInput();
-                                                if (name !== false) {
-                                                    sendPlayerName(name);
-                                                }
-                                            };
-                                            elem.querySelector("#setup-init-name").onkeyup = function (event) {
-                                                if (event.key === "Enter") {
+                                            if (json.errorLevel === ERROR_LEVEL_WARNING) {
+                                                notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NotificationPriority.Default, 900, null, null, client.height);
+                                            }
+                                            var parent = document.querySelector("#content");
+                                            var elem = parent.querySelector("#setup");
+                                            resetForElement(parent, elem, "block");
+                                            if (sessionStorage.getItem("playername") != null) {
+                                                sendPlayerName(sessionStorage.getItem("playername"));
+                                            }
+                                            else {
+                                                endLoading();
+                                                parent = document.querySelector("#setup-inner-content");
+                                                elem = parent.querySelector("#setup-init");
+                                                resetForElement(parent, elem);
+                                                elem.querySelector("#setup-init-button").onclick = function (_event) {
                                                     var name = getPlayerNameFromInput();
                                                     if (name !== false) {
                                                         sendPlayerName(name);
                                                     }
-                                                }
-                                            };
-                                            elem.querySelector("#setup-init-name").focus();
+                                                };
+                                                elem.querySelector("#setup-init-name").onkeyup = function (event) {
+                                                    if (event.key === "Enter") {
+                                                        var name = getPlayerNameFromInput();
+                                                        if (name !== false) {
+                                                            sendPlayerName(name);
+                                                        }
+                                                    }
+                                                };
+                                                elem.querySelector("#setup-init-name").focus();
+                                            }
                                         }
-                                    }
-                                    break;
-                                case "init":
-                                    if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                        onlineConnection.sessionId = json.sessionId;
-                                        if (onlineConnection.gameId == "" || onlineConnection.gameKey == "") {
-                                            onlineConnection.send("connect");
-                                        }
-                                        else {
-                                            onlineConnection.send("join", JSON.stringify({ key: onlineConnection.gameKey, id: onlineConnection.gameId }));
-                                        }
-                                    }
-                                    else {
-                                        showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NotificationPriority.High, 6000, function () {
-                                            followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                                        }, getString("appScreenFurtherInformation"), client.height);
-                                    }
-                                    break;
-                                case "connect":
-                                    if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                        onlineConnection.locomotive = true;
-                                        const connectData = JSON.parse(json.data);
-                                        onlineConnection.gameId = connectData.id;
-                                        onlineConnection.gameKey = connectData.key;
-                                        endLoading();
-                                        var parent = document.querySelector("#setup-inner-content");
-                                        var elem = parent.querySelector("#setup-start");
-                                        resetForElement(parent, elem);
-                                        elem.querySelector("#setup-start-gamelink").textContent = getShareLink(onlineConnection.gameId, onlineConnection.gameKey);
-                                        elem.querySelector("#setup-start-button").onclick = function () {
-                                            copy("#setup #setup-start #setup-start-gamelink", null, function () {
-                                                notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NotificationPriority.High, 6000, null, null, client.height);
-                                            });
-                                        };
-                                    }
-                                    else {
-                                        showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayCreateError", "!"), NotificationPriority.High, 6000, function () {
-                                            followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                                        }, getString("appScreenFurtherInformation"), client.height);
-                                    }
-                                    break;
-                                case "join":
-                                    if (json.sessionId == onlineConnection.sessionId) {
+                                        break;
+                                    case "init":
                                         if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                            onlineConnection.locomotive = false;
-                                            showStartGame(json.data);
+                                            onlineConnection.sessionId = json.sessionId;
+                                            if (onlineConnection.gameId == "" || onlineConnection.gameKey == "") {
+                                                onlineConnection.send("connect");
+                                            }
+                                            else {
+                                                onlineConnection.send("join", JSON.stringify({ key: onlineConnection.gameKey, id: onlineConnection.gameId }));
+                                            }
                                         }
                                         else {
                                             showNewGameLink();
-                                            notify("#canvas-notifier", getString("appScreenTeamplayJoinError", "!"), NotificationPriority.High, 6000, function () {
-                                                followLink("error#tp-join", "_self", LinkStates.InternalHtml);
-                                            }, getString("appScreenFurtherInformation"), client.height);
-                                        }
-                                    }
-                                    else {
-                                        if (json.errorLevel === ERROR_LEVEL_OKAY) {
-                                            showStartGame(json.data);
-                                        }
-                                        else {
-                                            showNewGameLink();
-                                            notify("#canvas-notifier", getString("appScreenTeamplayJoinTeammateError", "!"), NotificationPriority.High, 6000, function () {
+                                            notify("#canvas-notifier", getString("appScreenTeamplayConnectionError", "."), NotificationPriority.High, 6000, function () {
                                                 followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
                                             }, getString("appScreenFurtherInformation"), client.height);
                                         }
-                                    }
-                                    break;
-                                case "start":
-                                    if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                        showNewGameLink();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayStartError", "!"), NotificationPriority.High, 6000, function () {
-                                            followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
-                                        }, getString("appScreenFurtherInformation"), client.height);
-                                    }
-                                    else {
-                                        switch (json.data) {
-                                            case "wait":
-                                                if (json.sessionId == onlineConnection.sessionId) {
+                                        break;
+                                    case "connect":
+                                        if (json.errorLevel === ERROR_LEVEL_OKAY) {
+                                            onlineConnection.locomotive = true;
+                                            const connectData = JSON.parse(json.data);
+                                            onlineConnection.gameId = connectData.id;
+                                            onlineConnection.gameKey = connectData.key;
+                                            endLoading();
+                                            var parent = document.querySelector("#setup-inner-content");
+                                            var elem = parent.querySelector("#setup-start");
+                                            resetForElement(parent, elem);
+                                            elem.querySelector("#setup-start-gamelink").textContent = getShareLink(onlineConnection.gameId, onlineConnection.gameKey);
+                                            elem.querySelector("#setup-start-button").onclick = function () {
+                                                copy("#setup #setup-start #setup-start-gamelink", null, function () {
+                                                    notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NotificationPriority.High, 6000, null, null, client.height);
+                                                });
+                                            };
+                                        }
+                                        else {
+                                            showNewGameLink();
+                                            notify("#canvas-notifier", getString("appScreenTeamplayCreateError", "!"), NotificationPriority.High, 6000, function () {
+                                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                            }, getString("appScreenFurtherInformation"), client.height);
+                                        }
+                                        break;
+                                    case "join":
+                                        if (json.sessionId == onlineConnection.sessionId) {
+                                            if (json.errorLevel === ERROR_LEVEL_OKAY) {
+                                                onlineConnection.locomotive = false;
+                                                showStartGame(json.data);
+                                            }
+                                            else {
+                                                showNewGameLink();
+                                                notify("#canvas-notifier", getString("appScreenTeamplayJoinError", "!"), NotificationPriority.High, 6000, function () {
+                                                    followLink("error#tp-join", "_self", LinkStates.InternalHtml);
+                                                }, getString("appScreenFurtherInformation"), client.height);
+                                            }
+                                        }
+                                        else {
+                                            if (json.errorLevel === ERROR_LEVEL_OKAY) {
+                                                showStartGame(json.data);
+                                            }
+                                            else {
+                                                showNewGameLink();
+                                                notify("#canvas-notifier", getString("appScreenTeamplayJoinTeammateError", "!"), NotificationPriority.High, 6000, function () {
+                                                    followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                                }, getString("appScreenFurtherInformation"), client.height);
+                                            }
+                                        }
+                                        break;
+                                    case "start":
+                                        if (json.errorLevel === ERROR_LEVEL_ERROR) {
+                                            showNewGameLink();
+                                            notify("#canvas-notifier", getString("appScreenTeamplayStartError", "!"), NotificationPriority.High, 6000, function () {
+                                                followLink("error#tp-connection", "_self", LinkStates.InternalHtml);
+                                            }, getString("appScreenFurtherInformation"), client.height);
+                                        }
+                                        else {
+                                            switch (json.data) {
+                                                case "wait":
+                                                    if (json.sessionId == onlineConnection.sessionId) {
+                                                        var parent = document.querySelector("#game");
+                                                        var elem = parent.querySelector("#game-wait");
+                                                        resetForElement(parent, elem);
+                                                    }
+                                                    else {
+                                                        notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NotificationPriority.Default, 1000, null, null, client.height);
+                                                    }
+                                                    break;
+                                                case "run":
+                                                    onlineConnection.run = true;
+                                                    onlineConnection.stop = false;
+                                                    onlineConnection.paused = false;
+                                                    onlineConnection.syncing = false;
+                                                    multiplayerMode.waitingClock.visible = false;
+                                                    if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                                        clearTimeout(multiplayerMode.syncRequestTimeout);
+                                                    }
+                                                    if (onlineConnection.locomotive) {
+                                                        multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
+                                                    }
                                                     var parent = document.querySelector("#game");
-                                                    var elem = parent.querySelector("#game-wait");
+                                                    var elem = parent.querySelector("#game-gameplay");
                                                     resetForElement(parent, elem);
+                                                    calcMenusAndBackground("resize");
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                    case "action":
+                                        const input = JSON.parse(json.data);
+                                        var notifyArr = [];
+                                        if (typeof input.notification == "object" && Array.isArray(input.notification)) {
+                                            input.notification.forEach(function (elem) {
+                                                if (typeof elem == "object" && Array.isArray(elem.getString)) {
+                                                    notifyArr.push(getString.apply(null, elem.getString));
                                                 }
-                                                else {
-                                                    notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NotificationPriority.Default, 1000, null, null, client.height);
+                                                else if (typeof elem == "string") {
+                                                    notifyArr.push(elem);
                                                 }
+                                            });
+                                            var notifyStr = formatJSString.apply(null, notifyArr);
+                                            if (onlineConnection.sessionId != json.sessionId) {
+                                                notifyStr = json.sessionName + ": " + notifyStr;
+                                            }
+                                            if (onlineConnection.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
+                                                notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
+                                            }
+                                        }
+                                        switch (input.objectName) {
+                                            case "trains":
+                                                if (onlineConnection.sessionId != json.sessionId) {
+                                                    multiplayerMode.excludeFromSync["t"].forEach(function (key) {
+                                                        input.params.forEach(function (param, paramNo) {
+                                                            if (Object.keys(param)[0] == key) {
+                                                                delete input.params[paramNo];
+                                                            }
+                                                        });
+                                                    });
+                                                }
+                                                animateWorker.postMessage({ k: "train", i: input.index, params: input.params });
                                                 break;
-                                            case "run":
-                                                onlineConnection.run = true;
-                                                onlineConnection.stop = false;
-                                                onlineConnection.paused = false;
-                                                onlineConnection.syncing = false;
-                                                multiplayerMode.waitingClock.visible = false;
+                                            case "train-crash":
                                                 if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
                                                     clearTimeout(multiplayerMode.syncRequestTimeout);
                                                 }
                                                 if (onlineConnection.locomotive) {
-                                                    multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
+                                                    multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, 200);
                                                 }
-                                                var parent = document.querySelector("#game");
-                                                var elem = parent.querySelector("#game-gameplay");
-                                                resetForElement(parent, elem);
-                                                calcMenusAndBackground("resize");
                                                 break;
-                                        }
-                                    }
-                                    break;
-                                case "action":
-                                    const input = JSON.parse(json.data);
-                                    var notifyArr = [];
-                                    if (typeof input.notification == "object" && Array.isArray(input.notification)) {
-                                        input.notification.forEach(function (elem) {
-                                            if (typeof elem == "object" && Array.isArray(elem.getString)) {
-                                                notifyArr.push(getString.apply(null, elem.getString));
-                                            }
-                                            else if (typeof elem == "string") {
-                                                notifyArr.push(elem);
-                                            }
-                                        });
-                                        var notifyStr = formatJSString.apply(null, notifyArr);
-                                        if (onlineConnection.sessionId != json.sessionId) {
-                                            notifyStr = json.sessionName + ": " + notifyStr;
-                                        }
-                                        if (onlineConnection.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
-                                            notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
-                                        }
-                                    }
-                                    switch (input.objectName) {
-                                        case "trains":
-                                            if (onlineConnection.sessionId != json.sessionId) {
-                                                multiplayerMode.excludeFromSync["t"].forEach(function (key) {
-                                                    input.params.forEach(function (param, paramNo) {
-                                                        if (Object.keys(param)[0] == key) {
-                                                            delete input.params[paramNo];
+                                            case "switches":
+                                                if (Object.hasOwn(switches, input.index[0]) && Object.hasOwn(switches[input.index[0]], input.index[1])) {
+                                                    const obj = switches[input.index[0]][input.index[1]];
+                                                    input.params.forEach(function (param) {
+                                                        const key = Object.keys(param)[0];
+                                                        if (Object.hasOwn(obj, key)) {
+                                                            obj[key] = Object.values(param)[0];
                                                         }
                                                     });
-                                                });
+                                                    obj.lastStateChange = frameNo;
+                                                    animateWorker.postMessage({ k: "switches", switches: switches });
+                                                }
+                                                break;
+                                        }
+                                        break;
+                                    case "sync-request":
+                                        onlineConnection.syncingCounter = 0;
+                                        onlineConnection.syncingCounterFinal = parseInt(json.data, 10);
+                                        if (!onlineConnection.stop) {
+                                            multiplayerMode.waitingClock.init();
+                                            onlineConnection.stop = true;
+                                        }
+                                        onlineConnection.syncing = true;
+                                        animateWorker.postMessage({ k: "sync-request" });
+                                        break;
+                                    case "sync-ready":
+                                        if (onlineConnection.locomotive) {
+                                            sendSyncData();
+                                        }
+                                        break;
+                                    case "sync-task":
+                                        if (onlineConnection.syncing) {
+                                            onlineConnection.syncingCounter++;
+                                            const task = JSON.parse(json.data);
+                                            switch (task.o) {
+                                                case "t":
+                                                    animateWorker.postMessage({ k: "sync-t", i: task.i, d: task.d });
+                                                    break;
+                                                case "tc":
+                                                    animateWorker.postMessage({ k: "sync-tc", i: task.i, d: task.d });
+                                                    break;
+                                                case "s":
+                                                    Object.keys(task.d).forEach(function (key) {
+                                                        Object.keys(switches[key]).forEach(function (currentKey) {
+                                                            switches[key][currentKey].turned = task["d"][key][currentKey].turned;
+                                                        });
+                                                    });
+                                                    animateWorker.postMessage({ k: "switches", switches: switches });
+                                                    break;
                                             }
-                                            animateWorker.postMessage({ k: "train", i: input.index, params: input.params });
-                                            break;
-                                        case "train-crash":
+                                            if (onlineConnection.syncingCounter == onlineConnection.syncingCounterFinal) {
+                                                onlineConnection.send("sync-done");
+                                            }
+                                        }
+                                        break;
+                                    case "sync-done":
+                                        onlineConnection.stop = onlineConnection.paused;
+                                        onlineConnection.syncing = false;
+                                        if (!onlineConnection.stop) {
+                                            multiplayerMode.waitingClock.visible = false;
+                                        }
+                                        if (json.errorLevel !== ERROR_LEVEL_OKAY) {
+                                            notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                        }
+                                        if (!onlineConnection.paused) {
                                             if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
                                                 clearTimeout(multiplayerMode.syncRequestTimeout);
                                             }
                                             if (onlineConnection.locomotive) {
-                                                multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, 200);
+                                                multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
                                             }
-                                            break;
-                                        case "switches":
-                                            if (Object.hasOwn(switches, input.index[0]) && Object.hasOwn(switches[input.index[0]], input.index[1])) {
-                                                const obj = switches[input.index[0]][input.index[1]];
-                                                input.params.forEach(function (param) {
-                                                    const key = Object.keys(param)[0];
-                                                    if (Object.hasOwn(obj, key)) {
-                                                        obj[key] = Object.values(param)[0];
-                                                    }
-                                                });
-                                                obj.lastStateChange = frameNo;
-                                                animateWorker.postMessage({ k: "switches", switches: switches });
-                                            }
-                                            break;
-                                    }
-                                    break;
-                                case "sync-request":
-                                    onlineConnection.syncingCounter = 0;
-                                    onlineConnection.syncingCounterFinal = parseInt(json.data, 10);
-                                    if (!onlineConnection.stop) {
-                                        multiplayerMode.waitingClock.init();
-                                        onlineConnection.stop = true;
-                                    }
-                                    onlineConnection.syncing = true;
-                                    animateWorker.postMessage({ k: "sync-request" });
-                                    break;
-                                case "sync-ready":
-                                    if (onlineConnection.locomotive) {
-                                        sendSyncData();
-                                    }
-                                    break;
-                                case "sync-task":
-                                    if (onlineConnection.syncing) {
-                                        onlineConnection.syncingCounter++;
-                                        const task = JSON.parse(json.data);
-                                        switch (task.o) {
-                                            case "t":
-                                                animateWorker.postMessage({ k: "sync-t", i: task.i, d: task.d });
-                                                break;
-                                            case "tc":
-                                                animateWorker.postMessage({ k: "sync-tc", i: task.i, d: task.d });
-                                                break;
-                                            case "s":
-                                                Object.keys(task.d).forEach(function (key) {
-                                                    Object.keys(switches[key]).forEach(function (currentKey) {
-                                                        switches[key][currentKey].turned = task["d"][key][currentKey].turned;
-                                                    });
-                                                });
-                                                animateWorker.postMessage({ k: "switches", switches: switches });
-                                                break;
+                                            animateWorker.postMessage({ k: "resume" });
                                         }
-                                        if (onlineConnection.syncingCounter == onlineConnection.syncingCounterFinal) {
-                                            onlineConnection.send("sync-done");
-                                        }
-                                    }
-                                    break;
-                                case "sync-done":
-                                    onlineConnection.stop = onlineConnection.paused;
-                                    onlineConnection.syncing = false;
-                                    if (!onlineConnection.stop) {
-                                        multiplayerMode.waitingClock.visible = false;
-                                    }
-                                    if (json.errorLevel !== ERROR_LEVEL_OKAY) {
-                                        notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                    }
-                                    if (!onlineConnection.paused) {
+                                        break;
+                                    case "pause":
                                         if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
                                             clearTimeout(multiplayerMode.syncRequestTimeout);
                                         }
-                                        if (onlineConnection.locomotive) {
-                                            multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
-                                        }
-                                        animateWorker.postMessage({ k: "resume" });
-                                    }
-                                    break;
-                                case "pause":
-                                    if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
-                                        clearTimeout(multiplayerMode.syncRequestTimeout);
-                                    }
-                                    if (!onlineConnection.stop) {
-                                        multiplayerMode.waitingClock.init();
-                                        onlineConnection.stop = true;
-                                    }
-                                    onlineConnection.paused = true;
-                                    audioControl.playAndPauseAll();
-                                    animateWorker.postMessage({ k: "pause" });
-                                    notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                    break;
-                                case "resume":
-                                    if (onlineConnection.paused) {
-                                        if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
-                                            clearTimeout(multiplayerMode.syncRequestTimeout);
-                                        }
-                                        if (onlineConnection.locomotive) {
-                                            multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
-                                        }
-                                        onlineConnection.stop = onlineConnection.syncing;
-                                        onlineConnection.paused = false;
                                         if (!onlineConnection.stop) {
-                                            multiplayerMode.waitingClock.visible = false;
+                                            multiplayerMode.waitingClock.init();
+                                            onlineConnection.stop = true;
                                         }
+                                        onlineConnection.paused = true;
                                         audioControl.playAndPauseAll();
-                                        notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                        animateWorker.postMessage({ k: "resume" });
-                                    }
-                                    break;
-                                case "leave":
-                                    notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
-                                    break;
-                                case "chat-msg":
-                                    chatInnerNone.style.display = "none";
-                                    chatControlsReactions.style.display = "";
-                                    const chatInnerContainerMsg = document.createElement("div");
-                                    const chatInnerPlayerName = document.createElement(onlineConnection.sessionId != json.sessionId ? "i" : "b");
-                                    const chatInnerMessageImg = document.createElement("img");
-                                    const chatInnerMessage = document.createElement("p");
-                                    const chatInnerSeparator = document.createElement("br");
-                                    chatInnerContainerMsg.className = "chat-inner-container";
-                                    chatInnerPlayerName.textContent = (onlineConnection.sessionId != json.sessionId ? json.sessionName : json.sessionName + " (" + getString("appScreenTeamplayChatMe") + ")") + " - " + new Date().toLocaleTimeString();
-                                    var isSticker = json.data.match(/^\{\{sticker=[0-9]+\}\}$/);
-                                    var isTrainSticker = json.data.match(/^\{\{stickerTrain=[0-9]+\}\}$/);
-                                    if (isSticker || isTrainSticker) {
-                                        var stickerNumber = json.data.replace(/[^0-9]/g, "");
-                                        if ((isSticker && stickerNumber < multiplayerMode.chatSticker) || (isTrainSticker && stickerNumber < trains.length)) {
-                                            chatInnerMessageImg.src = "./assets/chat_" + (isTrainSticker ? "train_" : "sticker_") + stickerNumber + ".png";
-                                            chatInnerMessageImg.className = isTrainSticker ? "train-sticker" : "sticker";
-                                            json.data = isTrainSticker ? getString(["appScreenTrainIcons", parseInt(stickerNumber, 10)]) + " " + getString(["appScreenTrainNames", parseInt(stickerNumber, 10)]) : formatJSString(getString("appScreenTeamplayChatStickerNote"), getString(["appScreenTeamplayChatStickerEmojis", parseInt(stickerNumber, 10)]));
+                                        animateWorker.postMessage({ k: "pause" });
+                                        notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                        break;
+                                    case "resume":
+                                        if (onlineConnection.paused) {
+                                            if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
+                                                clearTimeout(multiplayerMode.syncRequestTimeout);
+                                            }
+                                            if (onlineConnection.locomotive) {
+                                                multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
+                                            }
+                                            onlineConnection.stop = onlineConnection.syncing;
+                                            onlineConnection.paused = false;
+                                            if (!onlineConnection.stop) {
+                                                multiplayerMode.waitingClock.visible = false;
+                                            }
+                                            audioControl.playAndPauseAll();
+                                            notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                            animateWorker.postMessage({ k: "resume" });
+                                        }
+                                        break;
+                                    case "leave":
+                                        notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
+                                        break;
+                                    case "chat-msg":
+                                        chatInnerNone.style.display = "none";
+                                        chatControlsReactions.style.display = "";
+                                        const chatInnerContainerMsg = document.createElement("div");
+                                        const chatInnerPlayerName = document.createElement(onlineConnection.sessionId != json.sessionId ? "i" : "b");
+                                        const chatInnerMessageImg = document.createElement("img");
+                                        const chatInnerMessage = document.createElement("p");
+                                        const chatInnerSeparator = document.createElement("br");
+                                        chatInnerContainerMsg.className = "chat-inner-container";
+                                        chatInnerPlayerName.textContent = (onlineConnection.sessionId != json.sessionId ? json.sessionName : json.sessionName + " (" + getString("appScreenTeamplayChatMe") + ")") + " - " + new Date().toLocaleTimeString();
+                                        var isSticker = json.data.match(/^\{\{sticker=[0-9]+\}\}$/);
+                                        var isTrainSticker = json.data.match(/^\{\{stickerTrain=[0-9]+\}\}$/);
+                                        if (isSticker || isTrainSticker) {
+                                            var stickerNumber = json.data.replace(/[^0-9]/g, "");
+                                            if ((isSticker && stickerNumber < multiplayerMode.chatSticker) || (isTrainSticker && stickerNumber < trains.length)) {
+                                                chatInnerMessageImg.src = "./assets/chat_" + (isTrainSticker ? "train_" : "sticker_") + stickerNumber + ".png";
+                                                chatInnerMessageImg.className = isTrainSticker ? "train-sticker" : "sticker";
+                                                json.data = isTrainSticker ? getString(["appScreenTrainIcons", parseInt(stickerNumber, 10)]) + " " + getString(["appScreenTrainNames", parseInt(stickerNumber, 10)]) : formatJSString(getString("appScreenTeamplayChatStickerNote"), getString(["appScreenTeamplayChatStickerEmojis", parseInt(stickerNumber, 10)]));
+                                            }
+                                            else {
+                                                isSticker = isTrainSticker = false;
+                                            }
+                                        }
+                                        chatInnerMessage.textContent = json.data;
+                                        chatInnerContainerMsg.appendChild(chatInnerPlayerName);
+                                        chatInnerContainerMsg.appendChild(chatInnerSeparator);
+                                        if (isSticker || isTrainSticker) {
+                                            chatInnerContainerMsg.appendChild(chatInnerMessageImg);
+                                        }
+                                        if (!isSticker) {
+                                            chatInnerContainerMsg.appendChild(chatInnerMessage);
+                                        }
+                                        chatInnerMessages.appendChild(chatInnerContainerMsg);
+                                        if (onlineConnection.sessionId != json.sessionId && chat.style.display == "") {
+                                            notify("#tp-chat-notifier", json.sessionName + ": " + json.data, NotificationPriority.Default, 4000, null, null, client.height, NotificationChannel.MultiplayerChat + json.sessionId);
+                                        }
+                                        chat.resizeChat();
+                                        break;
+                                    case "rejoin":
+                                        if (json.errorLevel === ERROR_LEVEL_ERROR) {
+                                            reconnect = maxReconnect + 1;
                                         }
                                         else {
-                                            isSticker = isTrainSticker = false;
+                                            reconnect = 0;
                                         }
-                                    }
-                                    chatInnerMessage.textContent = json.data;
-                                    chatInnerContainerMsg.appendChild(chatInnerPlayerName);
-                                    chatInnerContainerMsg.appendChild(chatInnerSeparator);
-                                    if (isSticker || isTrainSticker) {
-                                        chatInnerContainerMsg.appendChild(chatInnerMessageImg);
-                                    }
-                                    if (!isSticker) {
-                                        chatInnerContainerMsg.appendChild(chatInnerMessage);
-                                    }
-                                    chatInnerMessages.appendChild(chatInnerContainerMsg);
-                                    if (onlineConnection.sessionId != json.sessionId && chat.style.display == "") {
-                                        notify("#tp-chat-notifier", json.sessionName + ": " + json.data, NotificationPriority.Default, 4000, null, null, client.height, NotificationChannel.MultiplayerChat + json.sessionId);
-                                    }
-                                    chat.resizeChat();
-                                    break;
-                                case "rejoin":
-                                    if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                        reconnect = maxReconnect + 1;
-                                    }
-                                    else {
-                                        reconnect = 0;
-                                    }
-                                    break;
-                                case "unknown":
-                                    notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y + menus.outerContainer.height);
-                                    break;
+                                        break;
+                                    case "unknown":
+                                        notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y + menus.outerContainer.height);
+                                        break;
+                                }
+                            }
+                            catch (error) {
+                                if (APP_DATA.debug) {
+                                    console.error(error);
+                                }
+                                notify("#canvas-notifier", getString("appScreenTeamplayMsgError", "."), NotificationPriority.High, 900, null, null, client.y + menus.outerContainer.height);
                             }
                         };
                         onlineConnection.socket.onerror = function () {
