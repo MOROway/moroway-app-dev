@@ -71,6 +71,7 @@
 	"appScreenTeamplayJoinError": "Impossible de rejoindre. Le jeu est complet ou obsolète",
 	"appScreenTeamplayJoinTeammateError": "Un coéquipier n’a pas pu se joindre au jeu",
 	"appScreenTeamplayLeaveDialogTitle": "Quitter mode multijoueur ?",
+	"appScreenTeamplayMsgError": "Le message du serveur n'a pas pu être traité !",
 	"appScreenTeamplayNoWebsocket": "Impossible de charger les fonctions multijoueurs - veuillez mettre à jour votre navigateur",
 	"appScreenTeamplaySetupCreateLink": "Créer une nouvelle partie",
 	"appScreenTeamplaySetupInit": "Entrez nom",
