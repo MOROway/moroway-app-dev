@@ -4,6 +4,7 @@
     "version": "10.3.13",
     "description": "Play with the MORO model railroad…",
     "author": "Jonathan Herrmann-Engel",
+    "desktopName": "de.moroway.snap",
     "build": {
         "appId": "moroway-app",
         "productName": "MOROway App",
@@ -22,15 +23,18 @@
                 }
             ]
         },
-        "snap": {
-            "plugs": [
-                "default",
-                "screen-inhibit-control"
-            ],
-            "executableArgs": [
-                "--ozone-platform=x11"
-            ],
-            "allowNativeWayland": false
+        "snapcraft": {
+            "base": "core24",
+            "core24": {
+                "useMultipass": true,
+                "plugs": [
+                    "default",
+                    "screen-inhibit-control"
+                ],
+                "executableArgs": [
+                    "--disable-dev-shm-usage"
+                ]
+            }
         }
     },
     "scripts": {
@@ -38,7 +42,7 @@
     },
     "devDependencies": {
         "electron": "^42.0.0",
-        "electron-builder": "26.8.1"
+        "electron-builder": "27.0.0-alpha.5"
     },
     "main": "www/app.js"
 }
