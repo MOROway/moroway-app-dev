@@ -42,11 +42,11 @@ android {
 dependencies {
     val kotlinVersion = rootProject.extra.get("kotlinVersion") as String
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("androidx.activity:activity-ktx:1.13.0")
-    implementation("androidx.webkit:webkit:1.16.0")
-    implementation("io.coil-kt.coil3:coil:3.5.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.5.0")
+    implementation("androidx.webkit:webkit:1.17.0")
+    implementation("io.coil-kt.coil3:coil:3.6.2")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.6.2")
 }
 
 repositories {
