@@ -5,7 +5,7 @@
  ******************************************/
 
 import { GLTFLoader } from "../lib/open_code/jsm/three.js/GLTFLoader.js";
-import * as THREE from "../lib/open_code/jsm/three.js/three.module.min.js";
+import * as THREE from "../lib/open_code/jsm/three.js/three.module.js";
 import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "./common/app_data.js";
 import { copy } from "./common/copy_paste.js";
 import { getGuiState, setGuiState, ThreeCameraModes } from "./common/gui_state.js";

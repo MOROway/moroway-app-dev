@@ -1,5 +1,10 @@
 # App build dependencies
 
+## minify
+
+* Link: <https://github.com/tdewolff/minify/>
+* License: [MIT](./minify-LICENSE)
+
 ## yq
 
 * Link: <https://github.com/mikefarah/yq>
