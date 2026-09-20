@@ -237,8 +237,8 @@ for platform in ${platforms[@]}; do
 		done
 		rm "$to/tsconfig.json"
 		# Three.js
-		./build-libs/minify -i "$to/src/lib/open_code/jsm/three.js/three.core.js"
-		./build-libs/minify -i "$to/src/lib/open_code/jsm/three.js/three.module.js"
+		./build-libs/minify -q -i "$to/src/lib/open_code/jsm/three.js/three.core.js"
+		./build-libs/minify -q -i "$to/src/lib/open_code/jsm/three.js/three.module.js"
 		file="$to/src/lib/open_code/jsm/three.js/BufferGeometryUtils.js"
 		perl -0pi -e 's/(import\s*[{][^}]+[}]\s*from\s*).three.;/\1".\/three.module.js"; \/\/Import statement modified by MOROway build script/' "$file"
 		file="$to/src/lib/open_code/jsm/three.js/SkeletonUtils.js"
