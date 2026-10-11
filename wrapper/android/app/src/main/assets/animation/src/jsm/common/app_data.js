@@ -14,14 +14,14 @@ const APP_DATA = {
         // @ts-ignore
         patch: 14,
         // @ts-ignore
-        beta: 2,
+        beta: 0,
         date: {
             // @ts-ignore
             year: 2026,
             // @ts-ignore
-            month: 6,
+            month: 10,
             // @ts-ignore
-            day: 1
+            day: 11
         }
     },
     platform: "android",

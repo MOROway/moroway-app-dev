@@ -7,7 +7,7 @@
  *                 Imports                 *
  ******************************************/
 import { GLTFLoader } from "../lib/open_code/jsm/three.js/GLTFLoader.js";
-import * as THREE from "../lib/open_code/jsm/three.js/three.module.min.js";
+import * as THREE from "../lib/open_code/jsm/three.js/three.module.js";
 import { APP_DATA, getLocalAppDataCopy, setLocalAppDataCopy } from "./common/app_data.js";
 import { copy } from "./common/copy_paste.js";
 import { getGuiState, setGuiState, ThreeCameraModes } from "./common/gui_state.js";
@@ -38,6 +38,14 @@ function measureViewSpace() {
     canvasForeground.style.height = canvasSemiForeground.style.height = canvasBackground.style.height = canvasGesture.style.height = canvas.style.height = client.height + "px";
     canvasForeground.width = canvasSemiForeground.width = canvasBackground.width = canvasGesture.width = canvas.width = client.width * client.devicePixelRatio;
     canvasForeground.height = canvasSemiForeground.height = canvasBackground.height = canvasGesture.height = canvas.height = client.height * client.devicePixelRatio;
+    canvasAquarium.style.width = 606 + "px";
+    canvasAquarium.style.height = 90 + "px";
+    canvasAquarium.width = 606;
+    canvasAquarium.height = 90;
+    canvasBurningBuildung.style.width = 300 + "px";
+    canvasBurningBuildung.style.height = 300 + "px";
+    canvasBurningBuildung.width = 300;
+    canvasBurningBuildung.height = 300;
 }
 function drawImage(pic, x, y, width, height, cxt = context, sx = undefined, sy = undefined, sWidth = undefined, sHeight = undefined) {
     function floorIfBigEnough(num) {
@@ -1644,10 +1652,14 @@ function requestResize() {
         calcClassicUIElements();
         calcControlCenter();
         three.followCamControls.recalc();
-        if (background3D.flat && background3D.flat.resize)
+        if (background3D.flat?.resize)
             background3D.flat.resize();
-        if (background3D.three && background3D.three.resize)
+        if (background3D.three?.resize)
             background3D.three.resize();
+        if (background3D.aquarium?.resize)
+            background3D.aquarium.resize();
+        if (background3D.burningBuilding?.resize)
+            background3D.burningBuilding.resize();
         cars3D.forEach(function (car) {
             if (car.resize) {
                 car.resize();
@@ -2424,6 +2436,80 @@ function drawObjects() {
         contextForeground.stroke();
         contextForeground.restore();
     }
+    function drawAquarium3D() {
+        function avoidFishCollision() {
+            var collision = true;
+            while (collision) {
+                collision = false;
+                aquarium3D.fish.forEach((tFish) => {
+                    aquarium3D.fish.forEach((oFish) => {
+                        if ((tFish.x > oFish.x && tFish.x < oFish.x + oFish.width && tFish.y > oFish.y && tFish.y < oFish.y + oFish.height) || (tFish.x + tFish.width > oFish.x && tFish.x + tFish.width < oFish.x + oFish.width && tFish.y > oFish.y && tFish.y < oFish.y + oFish.height) || (tFish.x > oFish.x && tFish.x < oFish.x + oFish.width && tFish.y + tFish.height > oFish.y && tFish.y + tFish.height < oFish.y + oFish.height) || (tFish.x + tFish.width > oFish.x && tFish.x + tFish.width < oFish.x + oFish.width && tFish.y + tFish.height > oFish.y && tFish.y + tFish.height < oFish.y + oFish.height)) {
+                            collision = true;
+                            var newMove;
+                            if (tFish.x > oFish.x) {
+                                newMove = oFish.width + (Math.random() * tFish.width) / 200;
+                                tFish.x += newMove;
+                                tFish.moveX += newMove;
+                                tFish.speed += (newMove - tFish.speed) / 16;
+                            }
+                            else {
+                                newMove = tFish.width + (Math.random() * oFish.width) / 200;
+                                oFish.x += newMove;
+                                oFish.moveX += newMove;
+                                oFish.speed += (newMove - oFish.speed) / 16;
+                            }
+                        }
+                    });
+                });
+            }
+        }
+        contextAquarium.clearRect(0, 0, canvasAquarium.width, canvasAquarium.height);
+        contextAquarium.setTransform(1, 0, 0, 1, 0, 0);
+        if (pics[aquarium3D.backSrc].height / pics[aquarium3D.backSrc].width > canvasAquarium.height / canvasAquarium.width) {
+            drawImage(pics[aquarium3D.backSrc], 0, (canvasAquarium.height - canvasAquarium.width * (pics[aquarium3D.backSrc].height / pics[aquarium3D.backSrc].width)) / 2, canvasAquarium.width, canvasAquarium.width * (pics[aquarium3D.backSrc].height / pics[aquarium3D.backSrc].width), contextAquarium);
+        }
+        else {
+            drawImage(pics[aquarium3D.backSrc], (canvasAquarium.width - canvasAquarium.height * (pics[aquarium3D.backSrc].width / pics[aquarium3D.backSrc].height)) / 2, 0, canvasAquarium.height * (pics[aquarium3D.backSrc].width / pics[aquarium3D.backSrc].height), canvasAquarium.height, contextAquarium);
+        }
+        for (var i = 0; i < aquarium3D.fish.length; i++) {
+            if (!aquarium3D.fish[i].width) {
+                aquarium3D.fish[i].speed = canvasAquarium.width / 400 + (canvasAquarium.width * Math.random()) / 200;
+                aquarium3D.fish[i].width = canvasAquarium.width * 0.06 + canvasAquarium.width * 0.02 * Math.random();
+                aquarium3D.fish[i].height = aquarium3D.fish[i].width * (pics[aquarium3D.fish[i].src].height / pics[aquarium3D.fish[i].src].width);
+                aquarium3D.fish[i].x = -aquarium3D.fish[i].width;
+                aquarium3D.fish[i].y = (canvasAquarium.height - aquarium3D.fish[i].height) * Math.random();
+            }
+            else if (aquarium3D.fish[i].x >= canvasAquarium.width) {
+                delete aquarium3D.fish[i].width;
+            }
+            else {
+                aquarium3D.fish[i].x += aquarium3D.fish[i].speed + (canvasAquarium.width * Math.random()) / 400;
+            }
+        }
+        avoidFishCollision();
+        for (var i = 0; i < aquarium3D.fish.length; i++) {
+            drawImage(pics[aquarium3D.fish[i].src], aquarium3D.fish[i].x, aquarium3D.fish[i].y, aquarium3D.fish[i].width, aquarium3D.fish[i].height, contextAquarium);
+        }
+        return true;
+    }
+    function drawBurningBuilding3D() {
+        var update = false;
+        contextBurningBuildung.clearRect(0, 0, canvasBurningBuildung.width, canvasBurningBuildung.height);
+        contextBurningBuildung.save();
+        if (!burningBuilding3D.colorRedPosition || frameNo % 10 === 0) {
+            update = true;
+            burningBuilding3D.colorRedPosition = Math.random();
+            contextBurningBuildung.rotate(Math.random() * Math.PI);
+        }
+        const gradient = contextBurningBuildung.createLinearGradient(0, 0, canvasBurningBuildung.width, canvasBurningBuildung.height);
+        gradient.addColorStop(0, "black");
+        gradient.addColorStop(burningBuilding3D.colorRedPosition, "darkRed");
+        gradient.addColorStop(1, "black");
+        contextBurningBuildung.fillStyle = gradient;
+        contextBurningBuildung.fillRect(0, 0, canvasBurningBuildung.width, canvasBurningBuildung.height);
+        contextBurningBuildung.restore();
+        return update;
+    }
     function adjustScaleX(x) {
         return ((canvas.width * client.zoomAndTilt.realScale) / 2 - canvas.width / 2) / client.zoomAndTilt.realScale + x / client.zoomAndTilt.realScale - client.zoomAndTilt.offsetX / client.zoomAndTilt.realScale;
     }
@@ -2455,6 +2541,8 @@ function drawObjects() {
         }
     }
     hardware.mouse.cursor = hardware.mouse.isDrag ? "move" : "default";
+    canvasAquarium.style.display = "none";
+    canvasBurningBuildung.style.display = "none";
     if (gui.three) {
         /////THREE.JS/////
         canvasGesture.style.display = "none";
@@ -2471,6 +2559,22 @@ function drawObjects() {
         /////THREE.JS/Background/////
         if (three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
             background3D.animateBehind();
+        }
+        if (getSetting("burnTheTaxOffice")) {
+            if (background3D.aquarium?.canvas)
+                background3D.aquarium.canvas.needsUpdate = drawAquarium3D();
+            if (background3D.aquarium?.mesh)
+                background3D.aquarium.mesh.visible = true;
+            if (background3D.burningBuilding?.canvas)
+                background3D.burningBuilding.canvas.needsUpdate = drawBurningBuilding3D();
+            if (background3D.burningBuilding?.mesh)
+                background3D.burningBuilding.mesh.visible = true;
+        }
+        else {
+            if (background3D.aquarium?.mesh)
+                background3D.aquarium.mesh.visible = false;
+            if (background3D.burningBuilding?.mesh)
+                background3D.burningBuilding.mesh.visible = false;
         }
     }
     else {
@@ -4471,7 +4575,9 @@ const doubleClickTime = 200;
 const doubleClickWaitTime = doubleClickTime + 50;
 //Background
 const background = { src: 9, secondLayer: 10 };
-const background3D = { flat: { src: "background-flat" }, three: { src: "background-3d" } };
+const background3D = { flat: { src: "background-flat" }, three: { src: "background-3d" }, aquarium: {}, burningBuilding: {} };
+const aquarium3D = { backSrc: 40, fish: [{ src: 41 }, { src: 41 }, { src: 41 }, { src: 42 }, { src: 42 }, { src: 43 }] };
+const burningBuilding3D = {};
 //Loading animation
 const loadingAnimation = {
     updateProgress(progress) {
@@ -5398,11 +5504,15 @@ const carActions = {
 //Canvas and drawing
 var canvas;
 var canvasGesture;
+var canvasAquarium;
+var canvasBurningBuildung;
 var canvasBackground;
 var canvasSemiForeground;
 var canvasForeground;
 var context;
 var contextGesture;
+var contextAquarium;
+var contextBurningBuildung;
 var contextBackground;
 var contextSemiForeground;
 var contextForeground;
@@ -6145,6 +6255,9 @@ function init(state = "reload") {
     }
     //Default multiplayer mode
     onlineConnection = {
+        escapePlayername(name) {
+            return name.replace(/[^a-zA-Z0-9]/g, "");
+        },
         send(mode, message) {
             if (onlineConnection.socket && onlineConnection.socket.readyState == WebSocket.OPEN) {
                 onlineConnection.socket.send(JSON.stringify({
@@ -6611,6 +6724,30 @@ function init(state = "reload") {
         background3D.three.resize();
         three.mainGroup.add(background3D.three.mesh);
     }
+    background3D.aquarium.canvas = new THREE.CanvasTexture(canvasAquarium);
+    background3D.aquarium.mesh = new THREE.Mesh(new THREE.PlaneGeometry(6.06, 0.9), new THREE.MeshPhysicalMaterial({ map: background3D.aquarium.canvas }));
+    background3D.aquarium.resize = function () {
+        const scale = three.calcScale();
+        background3D.aquarium.mesh.scale.x = scale / 40;
+        background3D.aquarium.mesh.scale.y = scale / 40;
+        background3D.aquarium.mesh.scale.z = scale / 40;
+        background3D.aquarium.mesh.rotation.x = Math.PI / 2;
+        background3D.aquarium.mesh.position.set(-scale * 0.067, three.calcPositionY() + scale * 0.093, new THREE.Box3().setFromObject(background3D.aquarium.mesh).getSize(new THREE.Vector3()).z / 2);
+    };
+    background3D.aquarium.resize();
+    three.mainGroup.add(background3D.aquarium.mesh);
+    background3D.burningBuilding.canvas = new THREE.CanvasTexture(canvasBurningBuildung);
+    background3D.burningBuilding.mesh = new THREE.Mesh(new THREE.BoxGeometry(1.53, 0.8, 0.55), new THREE.MeshPhysicalMaterial({ map: background3D.burningBuilding.canvas }));
+    background3D.burningBuilding.resize = function () {
+        const scale = three.calcScale();
+        background3D.burningBuilding.mesh.scale.x = scale / 18;
+        background3D.burningBuilding.mesh.scale.y = scale / 18;
+        background3D.burningBuilding.mesh.scale.z = scale / 18;
+        background3D.burningBuilding.mesh.rotation.x = Math.PI / 2;
+        background3D.burningBuilding.mesh.position.set(-scale * 0.383, three.calcPositionY() + scale * 0.07, new THREE.Box3().setFromObject(background3D.burningBuilding.mesh).getSize(new THREE.Vector3()).z / 2);
+    };
+    background3D.burningBuilding.resize();
+    three.mainGroup.add(background3D.burningBuilding.mesh);
     if (state == "load") {
         background3D.behind = document.getElementById("game-gameplay-three-bg");
         background3D.animateBehind = function (reset = false, forceFac = undefined) {
@@ -6929,6 +7066,7 @@ window.addEventListener("load", function () {
                             elem.querySelector("#game-start-text").textContent = formatJSString(getString("appScreenTeamplayGameStart"), teamNum);
                             resetForElement(parent, elem);
                             elem.querySelector("#game-start-button").onclick = function () {
+                                onlineConnection.autoJoin = false;
                                 onlineConnection.send("start");
                             };
                         }
@@ -6953,15 +7091,17 @@ window.addEventListener("load", function () {
                             };
                         }
                         function getPlayerNameFromInput() {
-                            var elem = document.querySelector("#setup-init-name");
-                            var name = elem.value;
-                            var nameCheck = name.replace(/[^a-zA-Z0-9]/g, "");
-                            if (name.length > 0 && name == nameCheck) {
-                                sessionStorage.setItem("playername", name);
-                                return name;
-                            }
-                            else {
-                                elem.value = nameCheck;
+                            const elem = document.querySelector("#setup-init-name");
+                            if (elem) {
+                                const name = elem.value;
+                                const nameCheck = onlineConnection.escapePlayername(name);
+                                if (name.length > 0 && name == nameCheck) {
+                                    sessionStorage.setItem("playername", name);
+                                    return name;
+                                }
+                                else {
+                                    elem.value = nameCheck;
+                                }
                             }
                             return false;
                         }
@@ -7237,6 +7377,10 @@ window.addEventListener("load", function () {
                                                         resetForElement(parent, elem);
                                                     }
                                                     else {
+                                                        if (onlineConnection.autoJoin) {
+                                                            onlineConnection.autoJoin = false;
+                                                            onlineConnection.send("start");
+                                                        }
                                                         notify("#canvas-notifier", getString("appScreenTeamplayTeammateReady", "?"), NotificationPriority.Default, 1000, null, null, client.height);
                                                     }
                                                     break;
@@ -7488,6 +7632,14 @@ window.addEventListener("load", function () {
                     };
                     onlineConnection.gameId = getQueryStringValue("id");
                     onlineConnection.gameKey = getQueryStringValue("key");
+                    const playername = getQueryStringValue("playername");
+                    if (playername) {
+                        onlineConnection.autoJoin = true;
+                        sessionStorage.setItem("playername", onlineConnection.escapePlayername(playername));
+                    }
+                    else {
+                        onlineConnection.autoJoin = false;
+                    }
                     document.getElementById("setup").onmousemove = function (event) {
                         document.getElementById("setup-ball").style.left = event.pageX + "px";
                         document.getElementById("setup-ball").style.top = event.pageY + "px";
@@ -8147,11 +8299,15 @@ window.addEventListener("load", function () {
     //Initialize canvases and contexts
     canvas = document.querySelector("canvas#game-gameplay-main");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
+    canvasAquarium = document.querySelector("canvas#game-gameplay-aquarium");
+    canvasBurningBuildung = document.querySelector("canvas#game-gameplay-burning-building");
     canvasBackground = document.querySelector("canvas#game-gameplay-bg");
     canvasSemiForeground = document.querySelector("canvas#game-gameplay-sfg");
     canvasForeground = document.querySelector("canvas#game-gameplay-fg");
     context = canvas.getContext("2d");
     contextGesture = canvasGesture.getContext("2d");
+    contextAquarium = canvasAquarium.getContext("2d");
+    contextBurningBuildung = canvasBurningBuildung.getContext("2d");
     contextBackground = canvasBackground.getContext("2d");
     contextSemiForeground = canvasSemiForeground.getContext("2d");
     contextForeground = canvasForeground.getContext("2d");
@@ -8305,7 +8461,11 @@ window.addEventListener("load", function () {
         { id: 36, extension: "png" },
         { id: 37, extension: "png" },
         { id: 38, extension: "png" },
-        { id: 39, extension: "png" }
+        { id: 39, extension: "png" },
+        { id: 40, extension: "jpg" },
+        { id: 41, extension: "png" },
+        { id: 42, extension: "png" },
+        { id: 43, extension: "png" }
     ];
     pics = [];
     defaultObjects3D.length;

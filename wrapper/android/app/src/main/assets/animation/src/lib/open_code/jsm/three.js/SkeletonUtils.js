@@ -7,7 +7,7 @@ import {
 	SkeletonHelper,
 	Vector3,
 	VectorKeyframeTrack
-} from "./three.module.min.js"; //Import statement modified by MOROway build script
+} from "./three.module.js"; //Import statement modified by MOROway build script
 
 /**
  * @module SkeletonUtils
