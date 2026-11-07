@@ -1875,7 +1875,7 @@ function defineTrainParams() {
     var sCurveAngle = Math.acos(1 - (0.329 * background.height) / (sCurveRadius0 + sCurveRadius1));
     var sCurveControl0 = (4 / 3) * Math.tan(sCurveAngle / 4) * sCurveRadius0;
     var sCurveControl1 = (4 / 3) * Math.tan(sCurveAngle / 4) * sCurveRadius1;
-    rotationPoints.outerUpper.sCurve0.x[0] = 0.585 * background.width;
+    rotationPoints.outerUpper.sCurve0.x[0] = 0.577 * background.width;
     rotationPoints.outerUpper.sCurve0.y[0] = rotationPoints.outer.narrow.y[0] + (rotationPoints.outerUpper.sCurve0.x[0] - rotationPoints.outer.narrow.x[0]) * Math.tan(outerTopAngle);
     rotationPoints.outerUpper.sCurve0.x[3] = rotationPoints.outerUpper.sCurve0.x[0] + sCurveRadius0 * (Math.sin(outerTopAngle) - Math.sin(outerTopAngle - sCurveAngle));
     rotationPoints.outerUpper.sCurve0.y[3] = rotationPoints.outerUpper.sCurve0.y[0] + sCurveRadius0 * (Math.cos(outerTopAngle - sCurveAngle) - Math.cos(outerTopAngle));
