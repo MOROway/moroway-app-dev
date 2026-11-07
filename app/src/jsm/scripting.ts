@@ -4025,6 +4025,18 @@ function drawObjects() {
             context.moveTo(rotationPoints.outer.rightSiding.rejoin.x[0] + background.x, rotationPoints.outer.rightSiding.rejoin.y[0] + background.y);
             context.lineTo(rotationPoints.outer.rightSiding.rejoin.x[1] + background.x, rotationPoints.outer.rightSiding.rejoin.y[1] + background.y);
             context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.sCurve.x[0] + background.x, rotationPoints.outerUpper.sCurve.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.sCurve.x[3] + background.x, rotationPoints.outerUpper.sCurve.y[3] + background.y, rotationPoints.outerUpper.sCurve.x[3] + background.x, rotationPoints.outerUpper.sCurve.y[3] + background.y, rotationPoints.outerUpper.sCurve.x[2] + background.x, rotationPoints.outerUpper.sCurve.y[2] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.sCurve.x[2] + background.x, rotationPoints.outerUpper.sCurve.y[2] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.sCurve.x[4] + background.x, rotationPoints.outerUpper.sCurve.y[4] + background.y, rotationPoints.outerUpper.sCurve.x[4] + background.x, rotationPoints.outerUpper.sCurve.y[4] + background.y, rotationPoints.outerUpper.sCurve.x[1] + background.x, rotationPoints.outerUpper.sCurve.y[1] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.parallel.x[0] + background.x, rotationPoints.outerUpper.parallel.y[0] + background.y);
+            context.lineTo(rotationPoints.outerUpper.parallel.x[1] + background.x, rotationPoints.outerUpper.parallel.y[1] + background.y);
+            context.stroke();
             context.strokeStyle = "rgba(175,0,0," + (switches.sidings1.left.turned && switches.sidings2.left.turned ? "1" : "0.3") + ")";
             context.beginPath();
             context.moveTo(rotationPoints.inner.sidings.first.x[0] + background.x, rotationPoints.inner.sidings.first.y[0] + background.y);
@@ -6464,7 +6476,7 @@ function init(state: "load" | "reload" = "reload") {
         sidings3: {left: {turned: false, angles: {normal: 1.65 * Math.PI, turned: 1.73 * Math.PI}}},
         outerRightSiding: {left: {turned: false, angles: {normal: 1.71 * Math.PI, turned: 1.76 * Math.PI}}},
         outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.7 * Math.PI, turned: 1.75 * Math.PI}}},
-        outerUpperSiding: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.71 * Math.PI}}}
+        outerUpperSiding: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.727 * Math.PI}}}
     };
     switches = switchesDefault;
     switches3D = {};
