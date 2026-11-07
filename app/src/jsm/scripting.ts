@@ -2221,16 +2221,16 @@ function drawObjects() {
     }
     function drawContinueTrackLine(group, line, corrFac = 1) {
         const points = [];
-        points.push(new THREE.Vector3(three.calcScale() * ((line.x[0] - background.width / 2) / background.width), three.calcScale() * (-(line.y[0] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[0]) / background.width : -0));
-        points.push(new THREE.Vector3(three.calcScale() * ((line.x[1] - background.width / 2) / background.width), three.calcScale() * (-(line.y[1] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[1]) / background.width : -0));
+        points.push(new THREE.Vector3(three.calcScale() * ((line.x[0] - background.width / 2) / background.width), three.calcScale() * (-(line.y[0] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[0]) / background.width : 0));
+        points.push(new THREE.Vector3(three.calcScale() * ((line.x[1] - background.width / 2) / background.width), three.calcScale() * (-(line.y[1] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[1]) / background.width : 0));
         drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
     }
     function drawContinueTrackCurve(group, curve, corrFac = 1) {
         const curve3D = new THREE.CubicBezierCurve3(
-            new THREE.Vector3(three.calcScale() * ((curve.x[0] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[0] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[0]) / background.width : -0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[1] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[1] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[1]) / background.width : -0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[2] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[2] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[2]) / background.width : -0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[3] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[3] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[3]) / background.width : -0)
+            new THREE.Vector3(three.calcScale() * ((curve.x[0] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[0] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[0]) / background.width : 0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[1] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[1] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[1]) / background.width : 0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[2] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[2] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[2]) / background.width : 0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[3] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[3] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[3]) / background.width : 0)
         );
         const points = curve3D.getPoints(30);
         drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
