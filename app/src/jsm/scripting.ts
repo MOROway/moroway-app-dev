@@ -2221,16 +2221,16 @@ function drawObjects() {
     }
     function drawContinueTrackLine(group, line, corrFac = 1) {
         const points = [];
-        points.push(new THREE.Vector3(three.calcScale() * ((line.x[0] - background.width / 2) / background.width), three.calcScale() * (-(line.y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0));
-        points.push(new THREE.Vector3(three.calcScale() * ((line.x[1] - background.width / 2) / background.width), three.calcScale() * (-(line.y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        points.push(new THREE.Vector3(three.calcScale() * ((line.x[0] - background.width / 2) / background.width), three.calcScale() * (-(line.y[0] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[0]) / background.width : -0));
+        points.push(new THREE.Vector3(three.calcScale() * ((line.x[1] - background.width / 2) / background.width), three.calcScale() * (-(line.y[1] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[1]) / background.width : -0));
         drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
     }
     function drawContinueTrackCurve(group, curve, corrFac = 1) {
         const curve3D = new THREE.CubicBezierCurve3(
-            new THREE.Vector3(three.calcScale() * ((curve.x[0] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[1] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[2] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[2] - background.height / 2) / background.width) + three.calcPositionY(), -0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[3] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[3] - background.height / 2) / background.width) + three.calcPositionY(), -0)
+            new THREE.Vector3(three.calcScale() * ((curve.x[0] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[0] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[0]) / background.width : -0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[1] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[1] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[1]) / background.width : -0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[2] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[2] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[2]) / background.width : -0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[3] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[3] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[3]) / background.width : -0)
         );
         const points = curve3D.getPoints(30);
         drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
@@ -2850,14 +2850,16 @@ function drawObjects() {
         trains.forEach(function (train, i) {
             const flickerDuration = 3;
             if (trains3D[i] && trains3D[i].mesh) {
-                trains3D[i].mesh.position.set((three.calcScale() * (train.x - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                const trainFrontHeight = (three.calcScale() * (train.front.z ?? 0)) / background.width;
+                const trainBackHeight = (three.calcScale() * (train.back.z ?? 0)) / background.width;
+                trains3D[i].mesh.position.set((three.calcScale() * (train.x - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + (trainFrontHeight + trainBackHeight) / 2);
                 if (trains3D[i].meshFront) {
-                    trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
-                    trains3D[i].meshFront.right.position.set((three.calcScale() * (train.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainFrontHeight);
+                    trains3D[i].meshFront.right.position.set((three.calcScale() * (train.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainFrontHeight);
                 }
                 if (trains3D[i].meshBack) {
-                    trains3D[i].meshBack.left.position.set((three.calcScale() * (train.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
-                    trains3D[i].meshBack.right.position.set((three.calcScale() * (train.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ);
+                    trains3D[i].meshBack.left.position.set((three.calcScale() * (train.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainBackHeight);
+                    trains3D[i].meshBack.right.position.set((three.calcScale() * (train.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainBackHeight);
                 }
                 if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
                     const flickerRandom = (trains3D[i].positionZ / 5) * Math.random();
@@ -2888,6 +2890,9 @@ function drawObjects() {
                 /* END UPDATE: v9.1.5 */
                 setMaterialTransparent(trains3D[i].mesh, train.opacity);
                 trains3D[i].mesh.rotation.z = -train.displayAngle;
+                // Tilt on gradients: rotate about the object's transverse axis after its direction
+                trains3D[i].mesh.rotation.order = "ZYX";
+                trains3D[i].mesh.rotation.y = -Math.atan2(((train.front.z ?? 0) - (train.back.z ?? 0)) / background.width, Math.hypot(train.front.x - train.back.x, train.front.y - train.back.y) / background.width);
                 if (trains3D[i].meshFront) {
                     setMaterialTransparent(trains3D[i].meshFront.left, train.opacity);
                     setMaterialTransparent(trains3D[i].meshFront.right, train.opacity);
@@ -2903,17 +2908,19 @@ function drawObjects() {
             }
             train.cars.forEach(function (car, j) {
                 if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
-                    trains3D[i].cars[j].mesh.position.set(three.calcScale() * ((car.x - background.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                    const carFrontHeight = (three.calcScale() * (car.front.z ?? 0)) / background.width;
+                    const carBackHeight = (three.calcScale() * (car.back.z ?? 0)) / background.width;
+                    trains3D[i].cars[j].mesh.position.set(three.calcScale() * ((car.x - background.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + (carFrontHeight + carBackHeight) / 2);
                     if (trains3D[i].cars[j].meshFront) {
-                        trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
-                        trains3D[i].cars[j].meshFront.right.position.set((three.calcScale() * (car.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carFrontHeight);
+                        trains3D[i].cars[j].meshFront.right.position.set((three.calcScale() * (car.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carFrontHeight);
                     }
                     if (trains3D[i].cars[j].meshBack) {
-                        trains3D[i].cars[j].meshBack.left.position.set((three.calcScale() * (car.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
-                        trains3D[i].cars[j].meshBack.right.position.set((three.calcScale() * (car.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ);
+                        trains3D[i].cars[j].meshBack.left.position.set((three.calcScale() * (car.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carBackHeight);
+                        trains3D[i].cars[j].meshBack.right.position.set((three.calcScale() * (car.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carBackHeight);
                     }
                     if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
-                        const flickerRandom = (trains3D[i].cars[j].mesh.position.z / 5) * Math.random();
+                        const flickerRandom = (trains3D[i].cars[j].positionZ / 5) * Math.random();
                         if (frameNo <= train.lastDirectionChange + flickerDuration || frameNo > train.lastDirectionChange + flickerDuration * 2) {
                             trains3D[i].cars[j].mesh.position.z += flickerRandom;
                             if (trains3D[i].cars[j].meshFront) {
@@ -2941,6 +2948,8 @@ function drawObjects() {
                     /* END UPDATE: v9.1.5 */
                     setMaterialTransparent(trains3D[i].cars[j].mesh, car.opacity);
                     trains3D[i].cars[j].mesh.rotation.z = -car.displayAngle;
+                    trains3D[i].cars[j].mesh.rotation.order = "ZYX";
+                    trains3D[i].cars[j].mesh.rotation.y = -Math.atan2(((car.front.z ?? 0) - (car.back.z ?? 0)) / background.width, Math.hypot(car.front.x - car.back.x, car.front.y - car.back.y) / background.width);
                     if (trains3D[i].cars[j].meshFront) {
                         setMaterialTransparent(trains3D[i].cars[j].meshFront.left, car.opacity);
                         setMaterialTransparent(trains3D[i].cars[j].meshFront.right, car.opacity);
@@ -3077,7 +3086,7 @@ function drawObjects() {
             const object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
             const object3D = trains[three.followObject].standardDirection || trains3D[three.followObject].cars.length == 0 ? trains3D[three.followObject] : trains3D[three.followObject].cars[trains3D[three.followObject].cars.length - 1];
             background3D.animateBehind(false, (trains[three.followObject].standardDirection ? object.displayAngle : object.displayAngle - Math.PI) / (2 * Math.PI));
-            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), object3D.positionZ == undefined ? 0 : object3D.positionZ);
+            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), (object3D.positionZ == undefined ? 0 : object3D.positionZ) + (three.calcScale() * ((object.front.z ?? 0) + (object.back.z ?? 0))) / 2 / background.width);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -object.displayAngle;
             if (!trains[three.followObject].standardDirection) {
@@ -3088,6 +3097,10 @@ function drawObjects() {
             three.followCamera.rotateOnAxis(axis, rad);
             var axis = new THREE.Vector3(1, 0, 0);
             var rad = Math.PI / 2;
+            three.followCamera.rotateOnAxis(axis, rad);
+            // Tilt with the train on gradients, looking up when the viewing direction climbs
+            var axis = new THREE.Vector3(1, 0, 0);
+            var rad = (trains[three.followObject].standardDirection ? 1 : -1) * Math.atan2(((object.front.z ?? 0) - (object.back.z ?? 0)) / background.width, Math.hypot(object.front.x - object.back.x, object.front.y - object.back.y) / background.width);
             three.followCamera.rotateOnAxis(axis, rad);
 
             if (currentMode != Modes.DEMO && !gui.controlCenter && !gui.konamiOverlay && !multiplayerMode.waitingClock.visible) {
@@ -8388,9 +8401,11 @@ window.addEventListener("load", function () {
                     trains[i].back.state = train.back.state;
                     trains[i].front.x = train.front.x;
                     trains[i].front.y = train.front.y;
+                    trains[i].front.z = train.front.z;
                     trains[i].front.angle = train.front.angle;
                     trains[i].back.x = train.back.x;
                     trains[i].back.y = train.back.y;
+                    trains[i].back.z = train.back.z;
                     trains[i].back.angle = train.back.angle;
                     trains[i].width = train.width;
                     trains[i].height = train.height;
@@ -8426,9 +8441,11 @@ window.addEventListener("load", function () {
                         trains[i].cars[j].back.state = car.back.state;
                         trains[i].cars[j].front.x = car.front.x;
                         trains[i].cars[j].front.y = car.front.y;
+                        trains[i].cars[j].front.z = car.front.z;
                         trains[i].cars[j].front.angle = car.front.angle;
                         trains[i].cars[j].back.x = car.back.x;
                         trains[i].cars[j].back.y = car.back.y;
+                        trains[i].cars[j].back.z = car.back.z;
                         trains[i].cars[j].back.angle = car.back.angle;
                         trains[i].cars[j].wheels = car.wheels;
                     });
