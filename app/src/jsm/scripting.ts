@@ -4026,16 +4026,44 @@ function drawObjects() {
             context.lineTo(rotationPoints.outer.rightSiding.rejoin.x[1] + background.x, rotationPoints.outer.rightSiding.rejoin.y[1] + background.y);
             context.stroke();
             context.beginPath();
-            context.moveTo(rotationPoints.outerUpper.sCurve.x[0] + background.x, rotationPoints.outerUpper.sCurve.y[0] + background.y);
-            context.bezierCurveTo(rotationPoints.outerUpper.sCurve.x[3] + background.x, rotationPoints.outerUpper.sCurve.y[3] + background.y, rotationPoints.outerUpper.sCurve.x[3] + background.x, rotationPoints.outerUpper.sCurve.y[3] + background.y, rotationPoints.outerUpper.sCurve.x[2] + background.x, rotationPoints.outerUpper.sCurve.y[2] + background.y);
+            context.moveTo(rotationPoints.outerUpper.sCurve0.x[0] + background.x, rotationPoints.outerUpper.sCurve0.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.sCurve0.x[1] + background.x, rotationPoints.outerUpper.sCurve0.y[1] + background.y, rotationPoints.outerUpper.sCurve0.x[2] + background.x, rotationPoints.outerUpper.sCurve0.y[2] + background.y, rotationPoints.outerUpper.sCurve0.x[3] + background.x, rotationPoints.outerUpper.sCurve0.y[3] + background.y);
             context.stroke();
             context.beginPath();
-            context.moveTo(rotationPoints.outerUpper.sCurve.x[2] + background.x, rotationPoints.outerUpper.sCurve.y[2] + background.y);
-            context.bezierCurveTo(rotationPoints.outerUpper.sCurve.x[4] + background.x, rotationPoints.outerUpper.sCurve.y[4] + background.y, rotationPoints.outerUpper.sCurve.x[4] + background.x, rotationPoints.outerUpper.sCurve.y[4] + background.y, rotationPoints.outerUpper.sCurve.x[1] + background.x, rotationPoints.outerUpper.sCurve.y[1] + background.y);
+            context.moveTo(rotationPoints.outerUpper.sCurve1.x[0] + background.x, rotationPoints.outerUpper.sCurve1.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.sCurve1.x[1] + background.x, rotationPoints.outerUpper.sCurve1.y[1] + background.y, rotationPoints.outerUpper.sCurve1.x[2] + background.x, rotationPoints.outerUpper.sCurve1.y[2] + background.y, rotationPoints.outerUpper.sCurve1.x[3] + background.x, rotationPoints.outerUpper.sCurve1.y[3] + background.y);
             context.stroke();
             context.beginPath();
             context.moveTo(rotationPoints.outerUpper.parallel.x[0] + background.x, rotationPoints.outerUpper.parallel.y[0] + background.y);
             context.lineTo(rotationPoints.outerUpper.parallel.x[1] + background.x, rotationPoints.outerUpper.parallel.y[1] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.loopCurve0.x[0] + background.x, rotationPoints.outerUpper.loopCurve0.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.loopCurve0.x[1] + background.x, rotationPoints.outerUpper.loopCurve0.y[1] + background.y, rotationPoints.outerUpper.loopCurve0.x[2] + background.x, rotationPoints.outerUpper.loopCurve0.y[2] + background.y, rotationPoints.outerUpper.loopCurve0.x[3] + background.x, rotationPoints.outerUpper.loopCurve0.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.pillar.x[0] + background.x, rotationPoints.outerUpper.pillar.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.pillar.x[1] + background.x, rotationPoints.outerUpper.pillar.y[1] + background.y, rotationPoints.outerUpper.pillar.x[2] + background.x, rotationPoints.outerUpper.pillar.y[2] + background.y, rotationPoints.outerUpper.pillar.x[3] + background.x, rotationPoints.outerUpper.pillar.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.loopCurve1.x[0] + background.x, rotationPoints.outerUpper.loopCurve1.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.loopCurve1.x[1] + background.x, rotationPoints.outerUpper.loopCurve1.y[1] + background.y, rotationPoints.outerUpper.loopCurve1.x[2] + background.x, rotationPoints.outerUpper.loopCurve1.y[2] + background.y, rotationPoints.outerUpper.loopCurve1.x[3] + background.x, rotationPoints.outerUpper.loopCurve1.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.loopCurve2.x[0] + background.x, rotationPoints.outerUpper.loopCurve2.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.loopCurve2.x[1] + background.x, rotationPoints.outerUpper.loopCurve2.y[1] + background.y, rotationPoints.outerUpper.loopCurve2.x[2] + background.x, rotationPoints.outerUpper.loopCurve2.y[2] + background.y, rotationPoints.outerUpper.loopCurve2.x[3] + background.x, rotationPoints.outerUpper.loopCurve2.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.loopLine0.x[0] + background.x, rotationPoints.outerUpper.loopLine0.y[0] + background.y);
+            context.lineTo(rotationPoints.outerUpper.loopLine0.x[1] + background.x, rotationPoints.outerUpper.loopLine0.y[1] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.loopCurve3.x[0] + background.x, rotationPoints.outerUpper.loopCurve3.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outerUpper.loopCurve3.x[1] + background.x, rotationPoints.outerUpper.loopCurve3.y[1] + background.y, rotationPoints.outerUpper.loopCurve3.x[2] + background.x, rotationPoints.outerUpper.loopCurve3.y[2] + background.y, rotationPoints.outerUpper.loopCurve3.x[3] + background.x, rotationPoints.outerUpper.loopCurve3.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outerUpper.loopLine1.x[0] + background.x, rotationPoints.outerUpper.loopLine1.y[0] + background.y);
+            context.lineTo(rotationPoints.outerUpper.loopLine1.x[1] + background.x, rotationPoints.outerUpper.loopLine1.y[1] + background.y);
             context.stroke();
             context.strokeStyle = "rgba(175,0,0," + (switches.sidings1.left.turned && switches.sidings2.left.turned ? "1" : "0.3") + ")";
             context.beginPath();
@@ -6476,7 +6504,7 @@ function init(state: "load" | "reload" = "reload") {
         sidings3: {left: {turned: false, angles: {normal: 1.65 * Math.PI, turned: 1.73 * Math.PI}}},
         outerRightSiding: {left: {turned: false, angles: {normal: 1.71 * Math.PI, turned: 1.76 * Math.PI}}},
         outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.7 * Math.PI, turned: 1.75 * Math.PI}}},
-        outerUpperSiding: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.727 * Math.PI}}}
+        outerUpperSiding: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.71 * Math.PI}}}
     };
     switches = switchesDefault;
     switches3D = {};
