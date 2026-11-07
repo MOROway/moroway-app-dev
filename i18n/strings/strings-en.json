@@ -294,11 +294,11 @@
 	"helpScreenGeneralTrains": "Trains {{0}}",
 	"helpScreenGeneralTrainsIcon": "🚂",
 	"helpScreenGeneralTrainsPs": [
-		"You may operate seven trains: a steam engine, two high speed trains, a railbus, a local train, a street car and an American freight train. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
+		"You may operate eight trains: a steam engine, two high speed trains, a railbus, a local train, a street car, an American freight train and a shunting locomotive. Start or stop a train by touching / clicking on it. Touch and hold / double-click a train to change it's direction.",
 		"To navigate by using “Classic UI” (only 2D-view), select a train by touching / clicking on the button on the lower-left side. Start or stop the selected train by operating the transformer.",
 		"On larger devices you are also able to control the trains's speed using the transformer. Small devices use a medium speed, but you may zoom in on the transformer to avoid this restriction.",
 		"To change a train's direction use the arrow symbol in the lower right corner of the transformer; this is not possible on small devices.",
-		"For trains turned around using the turning loop the direction display needs to be read inverted everywhere.",
+		"For trains turned around using one of the turning loops the direction display needs to be read inverted everywhere.",
 		"You may turn some switches. Touch / click and hold the background to located the switches. Touch / click on a switch to turn it. The train takes the red or green colored way.",
 		"You may access a train control center by touching with three fingers / right-clicking the background. Alternatively you may use the options menu icon below the virtual model railroad.",
 		"In the “follow train” 3D-view camera mode you can control the current train with the controls in the upper right hand corner."
@@ -370,6 +370,7 @@
 		"audio_asset_2.ogg (https://freesound.org/people/BeeProductive/sounds/430025/, modified): CC0",
 		"audio_asset_4.ogg (https://freesound.org/people/bretbernhoft/sounds/131174/, modified): CC0",
 		"audio_asset_5.ogg (https://freesound.org/people/C-V/sounds/528427/, modified): CC0",
+		"audio_asset_7.ogg (https://freesound.org/s/414739/, modified) by kangaroovindaloo: Creative Commons Attribution (CC-BY)",
 		"audio_asset_crash.ogg (https://freesound.org/people/ludvique/sounds/71853/, modified): CC0"
 	],
 	"helpScreenLegalOwn": "MOROway App {{0}}",
