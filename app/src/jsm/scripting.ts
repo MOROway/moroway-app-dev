@@ -3086,7 +3086,11 @@ function drawObjects() {
             const object = trains[three.followObject].standardDirection || trains[three.followObject].cars.length == 0 ? trains[three.followObject] : trains[three.followObject].cars[trains[three.followObject].cars.length - 1];
             const object3D = trains[three.followObject].standardDirection || trains3D[three.followObject].cars.length == 0 ? trains3D[three.followObject] : trains3D[three.followObject].cars[trains3D[three.followObject].cars.length - 1];
             background3D.animateBehind(false, (trains[three.followObject].standardDirection ? object.displayAngle : object.displayAngle - Math.PI) / (2 * Math.PI));
-            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), (object3D.positionZ == undefined ? 0 : object3D.positionZ) + (three.calcScale() * ((object.front.z ?? 0) + (object.back.z ?? 0))) / 2 / background.width);
+            // The camera sits at the train's outer end; on gradients its height follows the slope from the middle of the object to there
+            const gradientSign = trains[three.followObject].standardDirection ? 1 : -1;
+            const gradient = ((object.front.z ?? 0) - (object.back.z ?? 0)) / Math.hypot(object.front.x - object.back.x, object.front.y - object.back.y);
+            const cameraZ = ((object.front.z ?? 0) + (object.back.z ?? 0)) / 2 + gradientSign * gradient * Math.hypot(trains[three.followObject].outerX - object.x, trains[three.followObject].outerY - object.y);
+            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), (object3D.positionZ == undefined ? 0 : object3D.positionZ) + (three.calcScale() * cameraZ) / background.width);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -object.displayAngle;
             if (!trains[three.followObject].standardDirection) {
@@ -3100,7 +3104,7 @@ function drawObjects() {
             three.followCamera.rotateOnAxis(axis, rad);
             // Tilt with the train on gradients, looking up when the viewing direction climbs
             var axis = new THREE.Vector3(1, 0, 0);
-            var rad = (trains[three.followObject].standardDirection ? 1 : -1) * Math.atan2(((object.front.z ?? 0) - (object.back.z ?? 0)) / background.width, Math.hypot(object.front.x - object.back.x, object.front.y - object.back.y) / background.width);
+            var rad = gradientSign * Math.atan(gradient);
             three.followCamera.rotateOnAxis(axis, rad);
 
             if (currentMode != Modes.DEMO && !gui.controlCenter && !gui.konamiOverlay && !multiplayerMode.waitingClock.visible) {
