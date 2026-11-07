@@ -269,11 +269,6 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
     var isLast = getIsLast(cO, isFront, input1, i);
     var realIsFront = isFront != cO.turned;
     var lastObject = getLastObject(cO, input1, realStandardDirection);
-    if (isFront && ((currentObject.front.state > 300 && currentObject.front.state < 400) || (currentObject.back.state > 300 && currentObject.back.state < 400))) {
-        // Fade objects on the upper track while their centre crosses the background edge
-        const stillInside = Math.min(1, Math.max(0, 0.5 + (getUpperTrackInside(currentObject.front) + getUpperTrackInside(currentObject.back)) / (2 * (currentObject.width - 2 * currentObject.bogieDistance * currentObject.width))));
-        currentObject.opacity = trainParams.minOpacity + (1 - trainParams.minOpacity) * stillInside;
-    }
     if (i == -1 && isFront) {
         // Train sound on the upper track: audible while any part of the train is inside the background
         const bogies = [trains[input1].front, trains[input1].back];
