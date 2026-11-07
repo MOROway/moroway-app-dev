@@ -2196,10 +2196,10 @@ function drawObjects() {
     }
 
     function trainInTrackElement(state) {
-        // A track element is shown while a train is on it; an object can span a short element with its bogies on the neighbouring ones
+        // A track element is shown while a train is on it
         for (let i = 0; i < trains.length; i++) {
             const objects: (Train | Train["cars"][number])[] = [trains[i], ...trains[i].cars];
-            if (objects.some((object) => object.front.state == state || object.back.state == state || (Math.abs(object.front.state - object.back.state) == 2 && Math.min(object.front.state, object.back.state) + 1 == state))) {
+            if (objects.some((object) => object.front.state == state || object.back.state == state)) {
                 return true;
             }
         }
@@ -3314,39 +3314,6 @@ function drawObjects() {
         }
         if (trainInTrackElement(218)) {
             drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin, -1);
-        }
-        if (trainInTrackElement(310)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.sCurve0, -1);
-        }
-        if (trainInTrackElement(311)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.sCurve1, -1);
-        }
-        if (trainInTrackElement(312)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.parallel, -1);
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.parallel);
-        }
-        if (trainInTrackElement(313)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve0);
-        }
-        if (trainInTrackElement(314)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.pillar);
-        }
-        if (trainInTrackElement(315)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve1);
-        }
-        if (trainInTrackElement(316)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve2, -1);
-        }
-        if (trainInTrackElement(317)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine0, -1);
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine0);
-        }
-        if (trainInTrackElement(318)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve3);
-        }
-        if (trainInTrackElement(319)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine1, -1);
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine1);
         }
         three.scene.add(continueTrackNewObject);
 
