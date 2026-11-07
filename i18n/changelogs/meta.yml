@@ -285,3 +285,5 @@
     translations: true
 11.0.0:
   year: 2026
+  general:
+    dependencies: true

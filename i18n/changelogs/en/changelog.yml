@@ -312,6 +312,10 @@ versions:
             Multiplayer: Short window for automatic reconnect after connection loss.
         oc: |
             Update Apache Cordova Android to 15.0.0.
+    11.0.0:
+        general: |
+            {{0}} Elevated turning loop on the outer circle.
+            {{0}} New train: a shunting locomotive.
 hints:
     1.0.0:
         general: |

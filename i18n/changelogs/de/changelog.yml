@@ -251,6 +251,10 @@ versions:
             Mehrspieler: Kurzes Fenster für automatische Neu-Konnektion nach Verbindungsverlust.
         oc: |
             Aktualisierung von Apache Cordova Android auf Version 15.0.0.
+    11.0.0:
+        general: |
+            {{0}} Erhöhte Wendeschleife am äußeren Kreis.
+            {{0}} Neuer Zug: eine Rangierlok.
     7.3.1:
         snap: |
             Kleinere Verbesserungen der Nutzererfahrung
