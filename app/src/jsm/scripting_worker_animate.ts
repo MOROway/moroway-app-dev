@@ -2126,6 +2126,10 @@ function animateObjects() {
                     if (input1 != i && (trains[input1].circleFamily === null || trains[i].circleFamily === null || trains[input1].circleFamily == trains[i].circleFamily)) {
                         for (var j = -1; j < trains[i].cars.length; j++) {
                             var currentObject2 = j >= 0 ? trains[i].cars[j] : trains[i];
+                            if (Math.abs(((currentObject.front.z ?? 0) + (currentObject.back.z ?? 0)) / 2 - ((currentObject2.front.z ?? 0) + (currentObject2.back.z ?? 0)) / 2) >= trainParams.heightClearance * background.width) {
+                                // One object passes over the other
+                                continue;
+                            }
                             currentObject.points.forEach(function (point) {
                                 var testXC = point.x - currentObject2.x;
                                 var testYC = point.y - currentObject2.y;
@@ -2449,7 +2453,10 @@ const trainsDefault: TrainCalc[] = [
 ];
 var trains: TrainCalc[];
 var trainPics;
-const trainParams = {margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10};
+// heightClearance (fraction of the background width): objects whose heights differ by at least this much pass over each other
+// instead of colliding; it is the height of the tallest train object in 3D (measured 0.0196 w), so a train on the elevated
+// track (0.025 w) clears a train below, while on the low start of the S-curve collisions with the outer circle still count
+const trainParams = {margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10, heightClearance: 0.02};
 
 var switches: Switches;
 var switchesBeforeAddSidings: number[];
