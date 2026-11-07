@@ -7407,6 +7407,12 @@ window.addEventListener("load", function () {
                                 obj.front.y = (obj.front.y - background.y) / background.height;
                                 obj.back.y = (obj.back.y - background.y) / background.height;
                                 obj.y = (obj.y - background.y) / background.height;
+                                if (obj.front.z !== undefined) {
+                                    obj.front.z = obj.front.z / background.width;
+                                }
+                                if (obj.back.z !== undefined) {
+                                    obj.back.z = obj.back.z / background.width;
+                                }
                                 obj.width = obj.width / background.width;
                                 obj.height = obj.height / background.height;
                                 multiplayerMode.excludeFromSync[task.o].forEach(function (key) {
@@ -7445,6 +7451,12 @@ window.addEventListener("load", function () {
                                     obj.front.y = (obj.front.y - background.y) / background.height;
                                     obj.back.y = (obj.back.y - background.y) / background.height;
                                     obj.y = (obj.y - background.y) / background.height;
+                                    if (obj.front.z !== undefined) {
+                                        obj.front.z = obj.front.z / background.width;
+                                    }
+                                    if (obj.back.z !== undefined) {
+                                        obj.back.z = obj.back.z / background.width;
+                                    }
                                     obj.width = obj.width / background.width;
                                     obj.height = obj.height / background.height;
                                     multiplayerMode.excludeFromSync[task.o].forEach(function (key) {
