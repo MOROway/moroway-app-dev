@@ -1976,13 +1976,11 @@ function defineTrainParams() {
     rotationPoints.outerUpper.loopLine1.y[1] = rotationPoints.outerUpper.loopLine1.y[0];
 
     var outerUpperHeight = 0.025 * background.width;
-    // Gentle rise along the S-curve: smoothstep over the distance travelled, gradient 0 at both ends
-    var sCurveLength = rotationPoints.outerUpper.sCurve0.bezierLength + rotationPoints.outerUpper.sCurve1.bezierLength;
-    var sCurveShare0 = rotationPoints.outerUpper.sCurve0.bezierLength / sCurveLength;
-    var sCurveJoinHeight = outerUpperHeight * (3 * Math.pow(sCurveShare0, 2) - 2 * Math.pow(sCurveShare0, 3));
-    var sCurveJoinGradient = (outerUpperHeight * 6 * sCurveShare0 * (1 - sCurveShare0)) / sCurveLength;
-    rotationPoints.outerUpper.sCurve0.z = [0, 0, sCurveJoinHeight - (sCurveJoinGradient * rotationPoints.outerUpper.sCurve0.bezierLength) / 3, sCurveJoinHeight];
-    rotationPoints.outerUpper.sCurve1.z = [sCurveJoinHeight, sCurveJoinHeight + (sCurveJoinGradient * rotationPoints.outerUpper.sCurve1.bezierLength) / 3, outerUpperHeight, outerUpperHeight];
+    // Rise along the S-curve: flat while the track still runs on the background (below 1 px at its edge), then up to the full height, gradient 0 at both ends and continuous at the join
+    // The join height is the one with the gentlest maximum gradient that keeps the track below 1 px at the background's edge
+    var sCurveJoinHeight = 0.43 * outerUpperHeight;
+    rotationPoints.outerUpper.sCurve0.z = [0, 0, 0, sCurveJoinHeight];
+    rotationPoints.outerUpper.sCurve1.z = [sCurveJoinHeight, sCurveJoinHeight * (1 + rotationPoints.outerUpper.sCurve1.bezierLength / rotationPoints.outerUpper.sCurve0.bezierLength), outerUpperHeight, outerUpperHeight];
     rotationPoints.outerUpper.parallel.z = [outerUpperHeight, outerUpperHeight];
     rotationPoints.outerUpper.loopCurve0.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
     rotationPoints.outerUpper.pillar.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
