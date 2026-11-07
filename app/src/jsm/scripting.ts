@@ -2196,10 +2196,10 @@ function drawObjects() {
     }
 
     function trainInTrackElement(state) {
-        // A track element is shown while a train on it is partly hidden
+        // A track element is shown while a train is on it; an object can span a short element with its bogies on the neighbouring ones
         for (let i = 0; i < trains.length; i++) {
             const objects: (Train | Train["cars"][number])[] = [trains[i], ...trains[i].cars];
-            if (objects.some((object) => object.front.state == state || object.back.state == state) && objects.some((object) => object.opacity < 1)) {
+            if (objects.some((object) => object.front.state == state || object.back.state == state || (Math.abs(object.front.state - object.back.state) == 2 && Math.min(object.front.state, object.back.state) + 1 == state))) {
                 return true;
             }
         }
