@@ -3994,7 +3994,7 @@ function drawObjects() {
             context.bezierCurveTo(rotationPoints.outer.rightSiding.curve.x[1] + background.x, rotationPoints.outer.rightSiding.curve.y[1] + background.y, rotationPoints.outer.rightSiding.curve.x[2] + background.x, rotationPoints.outer.rightSiding.curve.y[2] + background.y, rotationPoints.outer.rightSiding.curve.x[3] + background.x, rotationPoints.outer.rightSiding.curve.y[3] + background.y);
             context.stroke();
             context.beginPath();
-            context.arc(rotationPoints.outer.rightSiding.curve.x[0] + background.x, rotationPoints.outer.rightSiding.curve.x[0] + background.y, background.width / 100, 0, 2 * Math.PI);
+            context.arc(rotationPoints.outer.rightSiding.curve.x[0] + background.x, rotationPoints.outer.rightSiding.curve.y[0] + background.y, background.width / 100, 0, 2 * Math.PI);
             context.arc(rotationPoints.outer.rightSiding.curve.x[1] + background.x, rotationPoints.outer.rightSiding.curve.y[1] + background.y, background.width / 100, 0, 2 * Math.PI);
             context.fill();
             context.beginPath();
