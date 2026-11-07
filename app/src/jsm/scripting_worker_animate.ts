@@ -390,13 +390,13 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
                 trains[input1].volumeCustom = stillInside;
             }
         } else if (cO.state == 310 && cO.x - background.x >= rotationPoints.outerUpper.sCurve0.x[3]) {
-            cO.stateChange = true;
-            cO.state = 311;
-        } else if (cO.state == 311 && cO.x - background.x >= rotationPoints.outerUpper.sCurve1.x[3]) {
             if (isLast) {
                 trains[input1].circleFamily = rotationPoints.outerUpper;
                 trains[input1].circle = rotationPoints.outerUpper.loop;
             }
+            cO.stateChange = true;
+            cO.state = 311;
+        } else if (cO.state == 311 && cO.x - background.x >= rotationPoints.outerUpper.sCurve1.x[3]) {
             cO.stateChange = true;
             cO.state = 312;
         } else if (cO.state == 312 && cO.x - background.x >= rotationPoints.outerUpper.parallel.x[1]) {
@@ -600,13 +600,13 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
             cO.stateChange = true;
             cO.state = 1;
         } else if (cO.state == 311 && cO.x - background.x <= rotationPoints.outerUpper.sCurve1.x[0]) {
-            cO.stateChange = true;
-            cO.state = 310;
-        } else if (cO.state == 312 && cO.x - background.x <= rotationPoints.outerUpper.parallel.x[0]) {
             if (isLast) {
                 trains[input1].circleFamily = null;
                 trains[input1].circle = rotationPoints.outer.narrow;
             }
+            cO.stateChange = true;
+            cO.state = 310;
+        } else if (cO.state == 312 && cO.x - background.x <= rotationPoints.outerUpper.parallel.x[0]) {
             cO.stateChange = true;
             cO.state = 311;
         } else if (cO.state == 313 && cO.x - background.x <= rotationPoints.outerUpper.loopCurve0.x[0]) {
