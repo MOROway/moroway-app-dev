@@ -278,7 +278,7 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
         if (bogies.some((bogie) => bogie.state > 300 && bogie.state < 400)) {
             const stillInside = Math.max(...bogies.map((bogie) => getUpperTrackInside(bogie))) / (trains[input1].width - 2 * trains[input1].bogieDistance * trains[input1].width);
             trains[input1].mute = stillInside < 0;
-            trains[input1].volumeCustom = Math.min(1, Math.max(0, stillInside));
+            trains[input1].volumeCustom = stillInside;
         }
     }
     if (realStandardDirection) {
