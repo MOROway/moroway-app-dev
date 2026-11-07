@@ -2196,14 +2196,11 @@ function drawObjects() {
     }
 
     function trainInTrackElement(state) {
+        // A track element is shown while a train on it is partly hidden
         for (let i = 0; i < trains.length; i++) {
-            if ((trains[i].front.state == state || trains[i].back.state == state) && trains[i].opacity < 1) {
+            const objects: (Train | Train["cars"][number])[] = [trains[i], ...trains[i].cars];
+            if (objects.some((object) => object.front.state == state || object.back.state == state) && objects.some((object) => object.opacity < 1)) {
                 return true;
-            }
-            for (let j = 0; j < trains[i].cars.length; j++) {
-                if ((trains[i].cars[j].front.state == state || trains[i].cars[j].back.state == state) && trains[i].cars[j].opacity < 1) {
-                    return true;
-                }
             }
         }
         return false;
@@ -2222,20 +2219,20 @@ function drawObjects() {
         objectB.translateZ(-background.width / 1000000);
         group.add(objectB);
     }
-    function drawContinueTrackLine(group, lineName, corrFac = 1) {
+    function drawContinueTrackLine(group, line, corrFac = 1) {
         const points = [];
-        points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0));
-        points.push(new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[lineName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[lineName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        points.push(new THREE.Vector3(three.calcScale() * ((line.x[0] - background.width / 2) / background.width), three.calcScale() * (-(line.y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0));
+        points.push(new THREE.Vector3(three.calcScale() * ((line.x[1] - background.width / 2) / background.width), three.calcScale() * (-(line.y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0));
         drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
     }
-    function drawContinueTrackCurve(group, curveName, corrFac = 1) {
-        const curve = new THREE.CubicBezierCurve3(
-            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[0] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0),
-            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[1] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0),
-            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[2] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[2] - background.height / 2) / background.width) + three.calcPositionY(), -0),
-            new THREE.Vector3(three.calcScale() * ((rotationPoints.outer.rightSiding[curveName].x[3] - background.width / 2) / background.width), three.calcScale() * (-(rotationPoints.outer.rightSiding[curveName].y[3] - background.height / 2) / background.width) + three.calcPositionY(), -0)
+    function drawContinueTrackCurve(group, curve, corrFac = 1) {
+        const curve3D = new THREE.CubicBezierCurve3(
+            new THREE.Vector3(three.calcScale() * ((curve.x[0] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[0] - background.height / 2) / background.width) + three.calcPositionY(), -0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[1] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[1] - background.height / 2) / background.width) + three.calcPositionY(), -0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[2] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[2] - background.height / 2) / background.width) + three.calcPositionY(), -0),
+            new THREE.Vector3(three.calcScale() * ((curve.x[3] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[3] - background.height / 2) / background.width) + three.calcPositionY(), -0)
         );
-        const points = curve.getPoints(30);
+        const points = curve3D.getPoints(30);
         drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
     }
 
@@ -3283,27 +3280,60 @@ function drawObjects() {
         const continueTrackNewObject = new THREE.Group();
         continueTrackNewObject.name = continueTrackGroupName;
         if (trainInTrackElement(212)) {
-            drawContinueTrackLine(continueTrackNewObject, "end", -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.end, -1);
         }
         if (trainInTrackElement(213)) {
-            drawContinueTrackCurve(continueTrackNewObject, "continueCurve0", -1);
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve0, -1);
         }
         if (trainInTrackElement(214)) {
-            drawContinueTrackLine(continueTrackNewObject, "continueLine0", -1);
-            drawContinueTrackLine(continueTrackNewObject, "continueLine0");
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine0, -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine0);
         }
         if (trainInTrackElement(215)) {
-            drawContinueTrackCurve(continueTrackNewObject, "continueCurve1");
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve1);
         }
         if (trainInTrackElement(216)) {
-            drawContinueTrackLine(continueTrackNewObject, "continueLine1");
-            drawContinueTrackLine(continueTrackNewObject, "continueLine1", -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine1, -1);
         }
         if (trainInTrackElement(217)) {
-            drawContinueTrackCurve(continueTrackNewObject, "continueCurve2", -1);
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve2, -1);
         }
         if (trainInTrackElement(218)) {
-            drawContinueTrackLine(continueTrackNewObject, "rejoin", -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin, -1);
+        }
+        if (trainInTrackElement(310)) {
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.sCurve0, -1);
+        }
+        if (trainInTrackElement(311)) {
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.sCurve1, -1);
+        }
+        if (trainInTrackElement(312)) {
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.parallel, -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.parallel);
+        }
+        if (trainInTrackElement(313)) {
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve0);
+        }
+        if (trainInTrackElement(314)) {
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.pillar);
+        }
+        if (trainInTrackElement(315)) {
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve1);
+        }
+        if (trainInTrackElement(316)) {
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve2, -1);
+        }
+        if (trainInTrackElement(317)) {
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine0, -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine0);
+        }
+        if (trainInTrackElement(318)) {
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outerUpper.loopCurve3);
+        }
+        if (trainInTrackElement(319)) {
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine1, -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outerUpper.loopLine1);
         }
         three.scene.add(continueTrackNewObject);
 
