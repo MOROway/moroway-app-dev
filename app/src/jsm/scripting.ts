@@ -823,7 +823,6 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             background.y = canvasBackground.height - background.height;
             background.width /= 2;
             background.height /= 2;
-            canvasSemiForeground.style.display = "none";
         }
         client.x = background.x / client.devicePixelRatio;
         client.y = background.y / client.devicePixelRatio;
@@ -2794,7 +2793,7 @@ function drawObjects() {
         canvasGesture.style.display = "";
         canvasBackground.style.display = "";
         canvas.style.display = "";
-        canvasSemiForeground.style.display = "";
+        canvasSemiForeground.style.display = APP_DATA.debug && debug.showHidden ? "none" : "";
         background3D.behind.style.display = "none";
         if (background3D.behindClone) {
             background3D.behindClone.style.display = "none";
