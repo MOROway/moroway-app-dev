@@ -1408,6 +1408,20 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                         train.cars[j].y = train.y + Math.sin(train.cars[j].displayAngle - Math.PI) * (train.cars[j].width / 2 + currentTrainMargin + train.width / 2);
                     }
                 }
+            } else if (train.state == 314) {
+                // In the middle of the pillar track, where it runs on the background: the front bogie from its curve factor, the back bogie the bogie distance behind it
+                var bogieDistance = train.width * (1 - 2 * train.bogieDistance);
+                var halfBogieDistanceFac = bogieDistance / 2 / rotationPoints.outerUpper.pillar.bezierLength;
+                train.front.currentCurveFac = 0.5 + halfBogieDistanceFac;
+                setCOPos(train.front, true, i, train, -1, 1, 1);
+                train.back.currentCurveFac = 0.5 - halfBogieDistanceFac;
+                train.back.x = train.front.x - Math.cos(train.front.angle) * bogieDistance;
+                train.back.y = train.front.y - Math.sin(train.front.angle) * bogieDistance;
+                setCOPos(train.back, false, i, train, -1, 1, 1);
+                setCOPosCorr(train.back, false, i, train, -1);
+                train.x = (train.front.x + train.back.x) / 2;
+                train.y = (train.front.y + train.back.y) / 2;
+                setCurrentObjectDisplayAngle(i, train);
             } else if ((train.state > 100 && train.state < 200 && train.state % 10 == 1) || (train.state > 200 && train.state < 300 && train.state % 10 == 0)) {
                 if (train.circleStartPosDiv == undefined) {
                     train.circleStartPosDiv = 0.9;
@@ -2442,6 +2456,22 @@ const trainsDefault: TrainCalc[] = [
             {src: 36, fac: 0.064, bogieDistance: 0.15, wheels: {front: {use3d: true}, back: {use3d: true}}},
             {src: 37, fac: 0.045, bogieDistance: 0.15, wheels: {front: {use3d: true}, back: {use3d: true}}}
         ]
+    },
+    {
+        src: 44,
+        fac: 0.047,
+        speedFac: 1 / 500,
+        accelerationSpeedStartFac: 0.026,
+        accelerationSpeedFac: 1.009,
+        circle: rotationPoints.outerUpper.loop,
+        circleFamily: rotationPoints.outerUpper,
+        standardDirectionStartValue: true,
+        bogieDistance: 0.31,
+        state: 314,
+        trainSwitchSrc: 45,
+        audioSrc: 7,
+        wheels: {front: {use3d: true}, back: {use3d: true}},
+        cars: []
     }
 ];
 var trains: TrainCalc[];

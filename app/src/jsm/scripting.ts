@@ -8604,6 +8604,7 @@ window.addEventListener("load", function () {
         {object: "asset35.glb", path: "assets/3d/", id: "35", type: "mesh"},
         {object: "asset36.glb", path: "assets/3d/", id: "36", type: "mesh"},
         {object: "asset37.glb", path: "assets/3d/", id: "37", type: "mesh"},
+        {object: "asset44.glb", path: "assets/3d/", id: "44", type: "mesh"},
         {object: "asset2_front.glb", path: "assets/3d/", id: "2_front", type: "mesh"},
         {object: "asset3_front.glb", path: "assets/3d/", id: "3_front", type: "mesh"},
         {object: "asset4_front.glb", path: "assets/3d/", id: "4_front", type: "mesh"},
@@ -8620,6 +8621,7 @@ window.addEventListener("load", function () {
         {object: "asset35_front.glb", path: "assets/3d/", id: "35_front", type: "mesh"},
         {object: "asset36_front.glb", path: "assets/3d/", id: "36_front", type: "mesh"},
         {object: "asset37_front.glb", path: "assets/3d/", id: "37_front", type: "mesh"},
+        {object: "asset44_front.glb", path: "assets/3d/", id: "44_front", type: "mesh"},
         {object: "asset2_back.glb", path: "assets/3d/", id: "2_back", type: "mesh"},
         {object: "asset3_back.glb", path: "assets/3d/", id: "3_back", type: "mesh"},
         {object: "asset4_back.glb", path: "assets/3d/", id: "4_back", type: "mesh"},
@@ -8635,7 +8637,8 @@ window.addEventListener("load", function () {
         {object: "asset34_back.glb", path: "assets/3d/", id: "34_back", type: "mesh"},
         {object: "asset35_back.glb", path: "assets/3d/", id: "35_back", type: "mesh"},
         {object: "asset36_back.glb", path: "assets/3d/", id: "36_back", type: "mesh"},
-        {object: "asset37_back.glb", path: "assets/3d/", id: "37_back", type: "mesh"}
+        {object: "asset37_back.glb", path: "assets/3d/", id: "37_back", type: "mesh"},
+        {object: "asset44_back.glb", path: "assets/3d/", id: "44_back", type: "mesh"}
     ];
     objects3D = [];
     finalLoadNo += defaultObjects3D.length;
@@ -8740,7 +8743,9 @@ window.addEventListener("load", function () {
         {id: 40, extension: "jpg"},
         {id: 41, extension: "png"},
         {id: 42, extension: "png"},
-        {id: 43, extension: "png"}
+        {id: 43, extension: "png"},
+        {id: 44, extension: "png"},
+        {id: 45, extension: "png"}
     ];
     pics = [];
     defaultObjects3D.length;

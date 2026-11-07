@@ -113,7 +113,8 @@
 		"Thalys",
 		"Straßenbahn",
 		"Regionalzug",
-		"Boston and Maine"
+		"Boston and Maine",
+		"Rangierlok"
 	],
 	"appScreenTrainSelected": "{{0}} {{1}}ausgewählt",
 	"appScreenTrainSelectedAuto": "automatisch",

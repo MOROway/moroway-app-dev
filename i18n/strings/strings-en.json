@@ -139,7 +139,8 @@
 		"🚅",
 		"🚃",
 		"🚈",
-		"🛲"
+		"🛲",
+		"🚜"
 	],
 	"appScreenTrainNames": [
 		"Steam engine",
@@ -148,7 +149,8 @@
 		"Thalys",
 		"Street car",
 		"Local train",
-		"Boston and Maine"
+		"Boston and Maine",
+		"Shunting locomotive"
 	],
 	"appScreenTrainSelected": "{{0}} {{1}}selected",
 	"appScreenTrainSelectedAuto": "auto",
