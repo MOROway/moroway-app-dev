@@ -6464,7 +6464,8 @@ function init(state: "load" | "reload" = "reload") {
         sidings2: {left: {turned: false, angles: {normal: 1.65 * Math.PI, turned: 1.72 * Math.PI}}},
         sidings3: {left: {turned: false, angles: {normal: 1.65 * Math.PI, turned: 1.73 * Math.PI}}},
         outerRightSiding: {left: {turned: false, angles: {normal: 1.71 * Math.PI, turned: 1.76 * Math.PI}}},
-        outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.7 * Math.PI, turned: 1.75 * Math.PI}}}
+        outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.7 * Math.PI, turned: 1.75 * Math.PI}}},
+        outerUpperSiding: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.71 * Math.PI}}}
     };
     switches = switchesDefault;
     switches3D = {};

@@ -168,6 +168,7 @@ export interface Switches {
     sidings3: LeftSwitch;
     outerRightSiding: LeftSwitch;
     outerRightSidingTurn: LeftSwitch;
+    outerUpperSiding: LeftSwitch;
 }
 
 function safePostMessage(message) {
@@ -1639,6 +1640,10 @@ function defineTrainParams() {
      *  - ________________________________________________________-                                                     *
      *  -----------------------------------------------------------                                                     *
      *------------------------------------------------------------------------------------------------------------------*/
+
+    //OUTER/UPPERSIDING
+    switches.outerUpperSiding.left.x = 0.585 * background.width;
+    switches.outerUpperSiding.left.y = 0.016 * background.height;
 
     /////SPEED/////
     trains.forEach(function (train) {
