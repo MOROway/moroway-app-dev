@@ -2850,8 +2850,8 @@ function drawObjects() {
         trains.forEach(function (train, i) {
             const flickerDuration = 3;
             if (trains3D[i] && trains3D[i].mesh) {
-                const trainFrontHeight = (three.calcScale() * (train.front.z ?? 0)) / background.width;
-                const trainBackHeight = (three.calcScale() * (train.back.z ?? 0)) / background.width;
+                const trainFrontHeight = (three.calcScale() * train.front.z) / background.width;
+                const trainBackHeight = (three.calcScale() * train.back.z) / background.width;
                 trains3D[i].mesh.position.set((three.calcScale() * (train.x - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + (trainFrontHeight + trainBackHeight) / 2);
                 if (trains3D[i].meshFront) {
                     trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainFrontHeight);
@@ -2892,7 +2892,7 @@ function drawObjects() {
                 trains3D[i].mesh.rotation.z = -train.displayAngle;
                 // Tilt on gradients: rotate about the object's transverse axis after its direction
                 trains3D[i].mesh.rotation.order = "ZYX";
-                trains3D[i].mesh.rotation.y = -Math.atan2(((train.front.z ?? 0) - (train.back.z ?? 0)) / background.width, Math.hypot(train.front.x - train.back.x, train.front.y - train.back.y) / background.width);
+                trains3D[i].mesh.rotation.y = -Math.atan2((train.front.z - train.back.z) / background.width, Math.hypot(train.front.x - train.back.x, train.front.y - train.back.y) / background.width);
                 if (trains3D[i].meshFront) {
                     setMaterialTransparent(trains3D[i].meshFront.left, train.opacity);
                     setMaterialTransparent(trains3D[i].meshFront.right, train.opacity);
@@ -2908,8 +2908,8 @@ function drawObjects() {
             }
             train.cars.forEach(function (car, j) {
                 if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
-                    const carFrontHeight = (three.calcScale() * (car.front.z ?? 0)) / background.width;
-                    const carBackHeight = (three.calcScale() * (car.back.z ?? 0)) / background.width;
+                    const carFrontHeight = (three.calcScale() * car.front.z) / background.width;
+                    const carBackHeight = (three.calcScale() * car.back.z) / background.width;
                     trains3D[i].cars[j].mesh.position.set(three.calcScale() * ((car.x - background.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + (carFrontHeight + carBackHeight) / 2);
                     if (trains3D[i].cars[j].meshFront) {
                         trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carFrontHeight);
@@ -2949,7 +2949,7 @@ function drawObjects() {
                     setMaterialTransparent(trains3D[i].cars[j].mesh, car.opacity);
                     trains3D[i].cars[j].mesh.rotation.z = -car.displayAngle;
                     trains3D[i].cars[j].mesh.rotation.order = "ZYX";
-                    trains3D[i].cars[j].mesh.rotation.y = -Math.atan2(((car.front.z ?? 0) - (car.back.z ?? 0)) / background.width, Math.hypot(car.front.x - car.back.x, car.front.y - car.back.y) / background.width);
+                    trains3D[i].cars[j].mesh.rotation.y = -Math.atan2((car.front.z - car.back.z) / background.width, Math.hypot(car.front.x - car.back.x, car.front.y - car.back.y) / background.width);
                     if (trains3D[i].cars[j].meshFront) {
                         setMaterialTransparent(trains3D[i].cars[j].meshFront.left, car.opacity);
                         setMaterialTransparent(trains3D[i].cars[j].meshFront.right, car.opacity);
@@ -3088,8 +3088,8 @@ function drawObjects() {
             background3D.animateBehind(false, (trains[three.followObject].standardDirection ? object.displayAngle : object.displayAngle - Math.PI) / (2 * Math.PI));
             // The camera sits at the train's outer end; on gradients its height follows the slope from the middle of the object to there
             const gradientSign = trains[three.followObject].standardDirection ? 1 : -1;
-            const gradient = ((object.front.z ?? 0) - (object.back.z ?? 0)) / Math.hypot(object.front.x - object.back.x, object.front.y - object.back.y);
-            const cameraZ = ((object.front.z ?? 0) + (object.back.z ?? 0)) / 2 + gradientSign * gradient * Math.hypot(trains[three.followObject].outerX - object.x, trains[three.followObject].outerY - object.y);
+            const gradient = (object.front.z - object.back.z) / Math.hypot(object.front.x - object.back.x, object.front.y - object.back.y);
+            const cameraZ = (object.front.z + object.back.z) / 2 + gradientSign * gradient * Math.hypot(trains[three.followObject].outerX - object.x, trains[three.followObject].outerY - object.y);
             three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), (object3D.positionZ == undefined ? 0 : object3D.positionZ) + (three.calcScale() * cameraZ) / background.width);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -object.displayAngle;
@@ -7378,12 +7378,8 @@ window.addEventListener("load", function () {
                                 obj.front.y = (obj.front.y - background.y) / background.height;
                                 obj.back.y = (obj.back.y - background.y) / background.height;
                                 obj.y = (obj.y - background.y) / background.height;
-                                if (obj.front.z !== undefined) {
-                                    obj.front.z = obj.front.z / background.width;
-                                }
-                                if (obj.back.z !== undefined) {
-                                    obj.back.z = obj.back.z / background.width;
-                                }
+                                obj.front.z = obj.front.z / background.width;
+                                obj.back.z = obj.back.z / background.width;
                                 obj.width = obj.width / background.width;
                                 obj.height = obj.height / background.height;
                                 multiplayerMode.excludeFromSync[task.o].forEach(function (key) {
@@ -7422,12 +7418,8 @@ window.addEventListener("load", function () {
                                     obj.front.y = (obj.front.y - background.y) / background.height;
                                     obj.back.y = (obj.back.y - background.y) / background.height;
                                     obj.y = (obj.y - background.y) / background.height;
-                                    if (obj.front.z !== undefined) {
-                                        obj.front.z = obj.front.z / background.width;
-                                    }
-                                    if (obj.back.z !== undefined) {
-                                        obj.back.z = obj.back.z / background.width;
-                                    }
+                                    obj.front.z = obj.front.z / background.width;
+                                    obj.back.z = obj.back.z / background.width;
                                     obj.width = obj.width / background.width;
                                     obj.height = obj.height / background.height;
                                     multiplayerMode.excludeFromSync[task.o].forEach(function (key) {

@@ -653,7 +653,7 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             var lineLengthSquare = Math.pow(linearPoints.x[1] - linearPoints.x[0], 2) + Math.pow(linearPoints.y[1] - linearPoints.y[0], 2);
             cO.z = linearPoints.z[0] + ((linearPoints.z[1] - linearPoints.z[0]) * ((x - linearPoints.x[0]) * (linearPoints.x[1] - linearPoints.x[0]) + (y - linearPoints.y[0]) * (linearPoints.y[1] - linearPoints.y[0]))) / lineLengthSquare;
         } else {
-            delete cO.z;
+            cO.z = 0;
         }
     }
 
@@ -695,7 +695,7 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         if (bezierPoints.z) {
             cO.z = getBezierPoints(cO.currentCurveFac, bezierPoints.z[0], bezierPoints.z[1], bezierPoints.z[2], bezierPoints.z[3]);
         } else {
-            delete cO.z;
+            cO.z = 0;
         }
     }
     var realStandardDirection = getRealStandardDirection(cO, input1);
@@ -1326,8 +1326,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
             train.width = train.fac * background.width;
             train.height = train.fac * (trainPics[i].height * (background.width / trainPics[i].width));
             train.move = train.switchCircles = false;
-            train.front = {};
-            train.back = {};
+            train.front = {z: 0};
+            train.back = {z: 0};
             train.front.state = train.back.state = train.state;
             if (train.margin == undefined) {
                 train.margin = trainParams.margin;
@@ -1340,8 +1340,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                 car.width = car.fac * background.width;
                 car.height = car.fac * (trainPics[i].cars[j].height * (background.width / trainPics[i].cars[j].width));
                 currentTrainWidth += car.width + currentTrainMargin;
-                car.front = {};
-                car.back = {};
+                car.front = {z: 0};
+                car.back = {z: 0};
                 car.front.state = car.back.state = train.state;
             });
             if (train.state == 1) {
@@ -2133,7 +2133,7 @@ function animateObjects() {
                     if (input1 != i && (trains[input1].circleFamily === null || trains[i].circleFamily === null || trains[input1].circleFamily == trains[i].circleFamily)) {
                         for (var j = -1; j < trains[i].cars.length; j++) {
                             var currentObject2 = j >= 0 ? trains[i].cars[j] : trains[i];
-                            if (Math.abs(((currentObject.front.z ?? 0) + (currentObject.back.z ?? 0)) / 2 - ((currentObject2.front.z ?? 0) + (currentObject2.back.z ?? 0)) / 2) >= trainParams.heightClearance * background.width) {
+                            if (Math.abs((currentObject.front.z + currentObject.back.z) / 2 - (currentObject2.front.z + currentObject2.back.z) / 2) >= trainParams.heightClearance * background.width) {
                                 // One object passes over the other
                                 continue;
                             }
@@ -2506,12 +2506,8 @@ onmessage = function (message) {
                 trains[i].x = background.x + ((trains[i].x - oldBackground.x) * background.width) / oldBackground.width;
                 trains[i].front.y = background.y + ((trains[i].front.y - oldBackground.y) * background.height) / oldBackground.height;
                 trains[i].back.y = background.y + ((trains[i].back.y - oldBackground.y) * background.height) / oldBackground.height;
-                if (trains[i].front.z !== undefined) {
-                    trains[i].front.z = (trains[i].front.z * background.width) / oldBackground.width;
-                }
-                if (trains[i].back.z !== undefined) {
-                    trains[i].back.z = (trains[i].back.z * background.width) / oldBackground.width;
-                }
+                trains[i].front.z = (trains[i].front.z * background.width) / oldBackground.width;
+                trains[i].back.z = (trains[i].back.z * background.width) / oldBackground.width;
                 trains[i].y = background.y + ((trains[i].y - oldBackground.y) * background.height) / oldBackground.height;
                 trains[i].width = (trains[i].width * background.width) / oldBackground.width;
                 trains[i].height = (trains[i].height * background.height) / oldBackground.height;
@@ -2521,12 +2517,8 @@ onmessage = function (message) {
                     trains[i].cars[j].x = background.x + ((trains[i].cars[j].x - oldBackground.x) * background.width) / oldBackground.width;
                     trains[i].cars[j].front.y = background.y + ((trains[i].cars[j].front.y - oldBackground.y) * background.height) / oldBackground.height;
                     trains[i].cars[j].back.y = background.y + ((trains[i].cars[j].back.y - oldBackground.y) * background.height) / oldBackground.height;
-                    if (trains[i].cars[j].front.z !== undefined) {
-                        trains[i].cars[j].front.z = (trains[i].cars[j].front.z * background.width) / oldBackground.width;
-                    }
-                    if (trains[i].cars[j].back.z !== undefined) {
-                        trains[i].cars[j].back.z = (trains[i].cars[j].back.z * background.width) / oldBackground.width;
-                    }
+                    trains[i].cars[j].front.z = (trains[i].cars[j].front.z * background.width) / oldBackground.width;
+                    trains[i].cars[j].back.z = (trains[i].cars[j].back.z * background.width) / oldBackground.width;
                     trains[i].cars[j].y = background.y + ((trains[i].cars[j].y - oldBackground.y) * background.height) / oldBackground.height;
                     trains[i].cars[j].width = (trains[i].cars[j].width * background.width) / oldBackground.width;
                     trains[i].cars[j].height = (trains[i].cars[j].height * background.height) / oldBackground.height;
@@ -2736,6 +2728,17 @@ onmessage = function (message) {
                     trains[t].circle = rotationPoints[message.data.savedTrains[t].circleFamily][message.data.savedTrains[t].circle];
                 }
             }
+            /* UPDATE: v11.0.0 */
+            for (var t = 0; t < trains.length; t++) {
+                [trains[t], ...trains[t].cars].forEach(function (object) {
+                    [object.front, object.back].forEach(function (bogie) {
+                        if (bogie.z == undefined) {
+                            bogie.z = 0;
+                        }
+                    });
+                });
+            }
+            /* END UPDATE: v11.0.0 */
             resizeTrains(message.data.savedBg, addedTrainIds);
             /* UPDATE: v8.0.0 */
             for (var t = 0; t < trains.length; t++) {
@@ -2927,12 +2930,8 @@ onmessage = function (message) {
         trains[message.data.i].front.y = background.y + trains[message.data.i].front.y * background.height;
         trains[message.data.i].back.y = background.y + trains[message.data.i].back.y * background.height;
         trains[message.data.i].y = background.y + trains[message.data.i].y * background.height;
-        if (trains[message.data.i].front.z !== undefined) {
-            trains[message.data.i].front.z *= background.width;
-        }
-        if (trains[message.data.i].back.z !== undefined) {
-            trains[message.data.i].back.z *= background.width;
-        }
+        trains[message.data.i].front.z *= background.width;
+        trains[message.data.i].back.z *= background.width;
         if (trains[message.data.i].circleFamily != null) {
             const cF = trains[message.data.i].circleFamily as unknown as string;
             const c = trains[message.data.i].circle as unknown as string;
@@ -2950,12 +2949,8 @@ onmessage = function (message) {
         trains[message.data.i[0]].cars[message.data.i[1]].front.y = background.y + trains[message.data.i[0]].cars[message.data.i[1]].front.y * background.height;
         trains[message.data.i[0]].cars[message.data.i[1]].back.y = background.y + trains[message.data.i[0]].cars[message.data.i[1]].back.y * background.height;
         trains[message.data.i[0]].cars[message.data.i[1]].y = background.y + trains[message.data.i[0]].cars[message.data.i[1]].y * background.height;
-        if (trains[message.data.i[0]].cars[message.data.i[1]].front.z !== undefined) {
-            trains[message.data.i[0]].cars[message.data.i[1]].front.z *= background.width;
-        }
-        if (trains[message.data.i[0]].cars[message.data.i[1]].back.z !== undefined) {
-            trains[message.data.i[0]].cars[message.data.i[1]].back.z *= background.width;
-        }
+        trains[message.data.i[0]].cars[message.data.i[1]].front.z *= background.width;
+        trains[message.data.i[0]].cars[message.data.i[1]].back.z *= background.width;
     } else if (message.data.k == "pause") {
         pause = true;
     } else if (message.data.k == "resume") {
