@@ -289,10 +289,10 @@ function measureViewSpace() {
     canvasAquarium.style.height = 90 + "px";
     canvasAquarium.width = 606;
     canvasAquarium.height = 90;
-    canvasBurningBuildung.style.width = 300 + "px";
-    canvasBurningBuildung.style.height = 300 + "px";
-    canvasBurningBuildung.width = 300;
-    canvasBurningBuildung.height = 300;
+    canvasBurningBuilding.style.width = 300 + "px";
+    canvasBurningBuilding.style.height = 300 + "px";
+    canvasBurningBuilding.width = 300;
+    canvasBurningBuilding.height = 300;
 }
 
 function drawImage(pic: CanvasImageSource, x: number, y: number, width: number, height: number, cxt: CanvasRenderingContext2D = context, sx: number | undefined = undefined, sy: number | undefined = undefined, sWidth: number | undefined = undefined, sHeight: number | undefined = undefined) {
@@ -2725,20 +2725,20 @@ function drawObjects() {
 
     function drawBurningBuilding3D() {
         var update = false;
-        contextBurningBuildung.clearRect(0, 0, canvasBurningBuildung.width, canvasBurningBuildung.height);
-        contextBurningBuildung.save();
+        contextBurningBuilding.clearRect(0, 0, canvasBurningBuilding.width, canvasBurningBuilding.height);
+        contextBurningBuilding.save();
         if (!burningBuilding3D.colorRedPosition || frameNo % 10 === 0) {
             update = true;
             burningBuilding3D.colorRedPosition = Math.random();
-            contextBurningBuildung.rotate(Math.random() * Math.PI);
+            contextBurningBuilding.rotate(Math.random() * Math.PI);
         }
-        const gradient = contextBurningBuildung.createLinearGradient(0, 0, canvasBurningBuildung.width, canvasBurningBuildung.height);
+        const gradient = contextBurningBuilding.createLinearGradient(0, 0, canvasBurningBuilding.width, canvasBurningBuilding.height);
         gradient.addColorStop(0, "black");
         gradient.addColorStop(burningBuilding3D.colorRedPosition, "darkRed");
         gradient.addColorStop(1, "black");
-        contextBurningBuildung.fillStyle = gradient;
-        contextBurningBuildung.fillRect(0, 0, canvasBurningBuildung.width, canvasBurningBuildung.height);
-        contextBurningBuildung.restore();
+        contextBurningBuilding.fillStyle = gradient;
+        contextBurningBuilding.fillRect(0, 0, canvasBurningBuilding.width, canvasBurningBuilding.height);
+        contextBurningBuilding.restore();
         return update;
     }
 
@@ -2774,7 +2774,7 @@ function drawObjects() {
     }
     hardware.mouse.cursor = hardware.mouse.isDrag ? "move" : "default";
     canvasAquarium.style.display = "none";
-    canvasBurningBuildung.style.display = "none";
+    canvasBurningBuilding.style.display = "none";
     if (gui.three) {
         /////THREE.JS/////
         canvasGesture.style.display = "none";
@@ -5743,7 +5743,7 @@ var canvas: HTMLCanvasElement;
 var canvas2: HTMLCanvasElement;
 var canvasGesture: HTMLCanvasElement;
 var canvasAquarium: HTMLCanvasElement;
-var canvasBurningBuildung: HTMLCanvasElement;
+var canvasBurningBuilding: HTMLCanvasElement;
 var canvasBackground: HTMLCanvasElement;
 var canvasSemiForeground: HTMLCanvasElement;
 var canvasForeground: HTMLCanvasElement;
@@ -5752,7 +5752,7 @@ var context: CanvasRenderingContext2D;
 var context2: CanvasRenderingContext2D;
 var contextGesture: CanvasRenderingContext2D;
 var contextAquarium: CanvasRenderingContext2D;
-var contextBurningBuildung: CanvasRenderingContext2D;
+var contextBurningBuilding: CanvasRenderingContext2D;
 var contextBackground: CanvasRenderingContext2D;
 var contextSemiForeground: CanvasRenderingContext2D;
 var contextForeground: CanvasRenderingContext2D;
@@ -7015,7 +7015,7 @@ function init(state: "load" | "reload" = "reload") {
     };
     background3D.aquarium.resize();
     three.mainGroup.add(background3D.aquarium.mesh);
-    background3D.burningBuilding.canvas = new THREE.CanvasTexture(canvasBurningBuildung);
+    background3D.burningBuilding.canvas = new THREE.CanvasTexture(canvasBurningBuilding);
     background3D.burningBuilding.mesh = new THREE.Mesh(new THREE.BoxGeometry(1.53, 0.8, 0.55), new THREE.MeshPhysicalMaterial({map: background3D.burningBuilding.canvas}));
     background3D.burningBuilding.resize = function () {
         const scale = three.calcScale();
@@ -8606,7 +8606,7 @@ window.addEventListener("load", function () {
     canvas2 = document.querySelector("canvas#game-gameplay-main2");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
     canvasAquarium = document.querySelector("canvas#game-gameplay-aquarium");
-    canvasBurningBuildung = document.querySelector("canvas#game-gameplay-burning-building");
+    canvasBurningBuilding = document.querySelector("canvas#game-gameplay-burning-building");
     canvasBackground = document.querySelector("canvas#game-gameplay-bg");
     canvasSemiForeground = document.querySelector("canvas#game-gameplay-sfg");
     canvasForeground = document.querySelector("canvas#game-gameplay-fg");
@@ -8615,7 +8615,7 @@ window.addEventListener("load", function () {
     context2 = canvas2.getContext("2d");
     contextGesture = canvasGesture.getContext("2d");
     contextAquarium = canvasAquarium.getContext("2d");
-    contextBurningBuildung = canvasBurningBuildung.getContext("2d");
+    contextBurningBuilding = canvasBurningBuilding.getContext("2d");
     contextBackground = canvasBackground.getContext("2d");
     contextSemiForeground = canvasSemiForeground.getContext("2d");
     contextForeground = canvasForeground.getContext("2d");
