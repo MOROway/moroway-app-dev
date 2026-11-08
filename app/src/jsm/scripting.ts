@@ -281,10 +281,10 @@ function measureViewSpace() {
     client.devicePixelRatio = window.devicePixelRatio;
     client.width = window.innerWidth;
     client.height = window.innerHeight;
-    canvasForeground.style.width = canvasSemiForeground.style.width = canvasBackground.style.width = canvasGesture.style.width = canvas.style.width = client.width + "px";
-    canvasForeground.style.height = canvasSemiForeground.style.height = canvasBackground.style.height = canvasGesture.style.height = canvas.style.height = client.height + "px";
-    canvasForeground.width = canvasSemiForeground.width = canvasBackground.width = canvasGesture.width = canvas.width = client.width * client.devicePixelRatio;
-    canvasForeground.height = canvasSemiForeground.height = canvasBackground.height = canvasGesture.height = canvas.height = client.height * client.devicePixelRatio;
+    canvasMargins.style.width = canvasForeground.style.width = canvasSemiForeground.style.width = canvasBackground.style.width = canvasGesture.style.width = canvas2.style.width = canvas.style.width = client.width + "px";
+    canvasMargins.style.height = canvasForeground.style.height = canvasSemiForeground.style.height = canvasBackground.style.height = canvasGesture.style.height = canvas2.style.height = canvas.style.height = client.height + "px";
+    canvasMargins.width = canvasForeground.width = canvasSemiForeground.width = canvasBackground.width = canvasGesture.width = canvas2.width = canvas.width = client.width * client.devicePixelRatio;
+    canvasMargins.height = canvasForeground.height = canvasSemiForeground.height = canvasBackground.height = canvasGesture.height = canvas2.height = canvas.height = client.height * client.devicePixelRatio;
     canvasAquarium.style.width = 606 + "px";
     canvasAquarium.style.height = 90 + "px";
     canvasAquarium.width = 606;
@@ -549,6 +549,17 @@ export function getMode(): Modes {
  *      Background and menus functions     *
  ******************************************/
 
+function getKonamiGradient() {
+    const bgGradient = contextMargins.createRadialGradient(0, canvasMargins.height / 2, canvasMargins.height / 2, canvasMargins.width + canvasMargins.height / 2, canvasMargins.height / 2, canvasMargins.height / 2);
+    bgGradient.addColorStop(0, "red");
+    bgGradient.addColorStop(0.2, "orange");
+    bgGradient.addColorStop(0.4, "yellow");
+    bgGradient.addColorStop(0.6, "lightgreen");
+    bgGradient.addColorStop(0.8, "blue");
+    bgGradient.addColorStop(1, "violet");
+    return bgGradient;
+}
+
 function drawBackground() {
     /////DRAW/BACKGROUND/Layer-1/////
     contextBackground.clearRect(0, 0, canvasBackground.width, canvasBackground.height);
@@ -556,57 +567,60 @@ function drawBackground() {
     var pic = pics[background.src];
     drawImage(pic, background.x, background.y, background.width, background.height, contextBackground);
 
+    /////BACKGROUND/Layer-2/////
     contextSemiForeground.clearRect(0, 0, canvasSemiForeground.width, canvasSemiForeground.height);
     contextSemiForeground.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasSemiForeground.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasSemiForeground.height) / 2 + client.zoomAndTilt.offsetY);
-    /////BACKGROUND/Layer-2/////
     drawImage(pics[background.secondLayer], background.x, background.y, background.width, background.height, contextSemiForeground);
-    /////BACKGROUND/Margins-2////
-    if (konamiState >= 0) {
-        contextSemiForeground.save();
-        if (client.zoomAndTilt.realScale == 1) {
-            var width = pic.height / pic.width - canvasSemiForeground.height / canvasSemiForeground.width < 0 ? canvasSemiForeground.height * (pic.width / pic.height) : canvasSemiForeground.width;
-            var height = pic.height / pic.width - canvasSemiForeground.height / canvasSemiForeground.width < 0 ? canvasSemiForeground.height : canvasSemiForeground.width * (pic.height / pic.width);
-            var posX = 0;
-            var posY = 0;
-            var picPosX = (((width - canvasSemiForeground.width) / 2) * pic.width) / width;
-            var picPosY = (((height - canvasSemiForeground.height) / 2) * pic.height) / height;
-            var fillWidth = canvasSemiForeground.width;
-            var fillHeight = background.y;
-            var picWidth = (fillWidth * pic.width) / width;
-            var picHeight = (fillHeight * pic.height) / height;
-            drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
-            posY += background.y + background.height + menus.outerContainer.height * client.devicePixelRatio;
-            picPosY += ((background.y + background.height + menus.outerContainer.height * client.devicePixelRatio) * pic.height) / height;
-            drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
-            posX = 0;
-            posY = 0;
-            picPosX = (((width - canvasSemiForeground.width) / 2) * pic.width) / width;
-            picPosY = (((height - canvasSemiForeground.height) / 2) * pic.height) / height;
-            fillWidth = background.x;
-            fillHeight = canvasSemiForeground.height;
-            picWidth = (fillWidth * pic.width) / width;
-            picHeight = (fillHeight * pic.height) / height;
-            drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
-            posX += background.x + background.width;
-            picPosX += ((background.x + background.width) * pic.width) / width;
-            drawImage(pic, posX, posY, fillWidth, fillHeight, contextSemiForeground, picPosX, picPosY, picWidth, picHeight);
-            var bgGradient = contextSemiForeground.createLinearGradient(0, 0, canvasSemiForeground.width, canvasSemiForeground.height / 2);
-            bgGradient.addColorStop(0, "rgba(0,0,0,1)");
-            bgGradient.addColorStop(0.2, "rgba(0,0,0,0.95)");
-            bgGradient.addColorStop(0.4, "rgba(0,0,0,0.85)");
-            bgGradient.addColorStop(0.6, "rgba(0,0,0,0.85)");
-            bgGradient.addColorStop(0.8, "rgba(0,0,0,0.95)");
-            bgGradient.addColorStop(1, "rgba(0,0,0,0.9)");
-            contextSemiForeground.fillStyle = bgGradient;
-        } else {
-            contextSemiForeground.fillStyle = "black";
-        }
-        contextSemiForeground.fillRect(0, 0, background.x, canvasSemiForeground.height);
-        contextSemiForeground.fillRect(0, 0, canvasSemiForeground.width, background.y);
-        contextSemiForeground.fillRect(background.x + background.width, 0, background.x, canvasSemiForeground.height);
-        contextSemiForeground.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvasSemiForeground.width, background.y);
-        contextSemiForeground.restore();
+
+    /////BACKGROUND/Margins////
+    contextMargins.clearRect(0, 0, canvasMargins.width, canvasMargins.height);
+    contextMargins.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasMargins.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasMargins.height) / 2 + client.zoomAndTilt.offsetY);
+    contextMargins.save();
+    if (konamiState < 0) {
+        contextMargins.fillStyle = getKonamiGradient();
+    } else if (client.zoomAndTilt.realScale == 1) {
+        var width = pic.height / pic.width - canvasMargins.height / canvasMargins.width < 0 ? canvasMargins.height * (pic.width / pic.height) : canvasMargins.width;
+        var height = pic.height / pic.width - canvasMargins.height / canvasMargins.width < 0 ? canvasMargins.height : canvasMargins.width * (pic.height / pic.width);
+        var posX = 0;
+        var posY = 0;
+        var picPosX = (((width - canvasMargins.width) / 2) * pic.width) / width;
+        var picPosY = (((height - canvasMargins.height) / 2) * pic.height) / height;
+        var fillWidth = canvasMargins.width;
+        var fillHeight = background.y;
+        var picWidth = (fillWidth * pic.width) / width;
+        var picHeight = (fillHeight * pic.height) / height;
+        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
+        posY += background.y + background.height + menus.outerContainer.height * client.devicePixelRatio;
+        picPosY += ((background.y + background.height + menus.outerContainer.height * client.devicePixelRatio) * pic.height) / height;
+        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
+        posX = 0;
+        posY = 0;
+        picPosX = (((width - canvasMargins.width) / 2) * pic.width) / width;
+        picPosY = (((height - canvasMargins.height) / 2) * pic.height) / height;
+        fillWidth = background.x;
+        fillHeight = canvasMargins.height;
+        picWidth = (fillWidth * pic.width) / width;
+        picHeight = (fillHeight * pic.height) / height;
+        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
+        posX += background.x + background.width;
+        picPosX += ((background.x + background.width) * pic.width) / width;
+        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
+        var bgGradient = contextMargins.createLinearGradient(0, 0, canvasMargins.width, canvasMargins.height / 2);
+        bgGradient.addColorStop(0, "rgba(0,0,0,1)");
+        bgGradient.addColorStop(0.2, "rgba(0,0,0,0.95)");
+        bgGradient.addColorStop(0.4, "rgba(0,0,0,0.85)");
+        bgGradient.addColorStop(0.6, "rgba(0,0,0,0.85)");
+        bgGradient.addColorStop(0.8, "rgba(0,0,0,0.95)");
+        bgGradient.addColorStop(1, "rgba(0,0,0,0.9)");
+        contextMargins.fillStyle = bgGradient;
+    } else {
+        contextMargins.fillStyle = "black";
     }
+    contextMargins.fillRect(0, 0, background.x, canvasMargins.height);
+    contextMargins.fillRect(0, 0, canvasMargins.width, background.y);
+    contextMargins.fillRect(background.x + background.width, 0, background.x, canvasMargins.height);
+    contextMargins.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvasMargins.width, background.y);
+    contextMargins.restore();
 
     /////DRAW/BACKGROUND/Konami/////
     if (konamiState < 0) {
@@ -1980,15 +1994,16 @@ function drawObjects() {
     function drawTrains(input1) {
         function drawTrain(i) {
             const currentObject = i < 0 ? trains[input1] : trains[input1].cars[i];
+            const currentContext = currentObject.front.z > 0 && currentObject.back.z > 0 ? context2 : context;
 
             const flickerDuration = 3;
             const flickerZoom = 1.01;
             if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 6 && !trains[input1].move && Math.random() > 0.7 && (i < 0 || i == trains[input1].cars.length - 1)) {
-                context.save();
-                context.translate(currentObject.x, currentObject.y);
-                context.rotate(currentObject.displayAngle);
-                context.strokeStyle = "rgba(255,255,224," + (client.isSmall ? 1 : 0.5) + ")";
-                context.lineWidth = client.isTiny ? 1 : 3;
+                currentContext.save();
+                currentContext.translate(currentObject.x, currentObject.y);
+                currentContext.rotate(currentObject.displayAngle);
+                currentContext.strokeStyle = "rgba(255,255,224," + (client.isSmall ? 1 : 0.5) + ")";
+                currentContext.lineWidth = client.isTiny ? 1 : 3;
                 if (i == -1 && trains[input1].standardDirection) {
                     if (trains[input1].flickerFacFront == undefined) {
                         trains[input1].flickerFacFront = 2;
@@ -1996,13 +2011,13 @@ function drawObjects() {
                     if (trains[input1].flickerFacFrontOffset == undefined) {
                         trains[input1].flickerFacFrontOffset = 3.5;
                     }
-                    context.beginPath();
-                    context.moveTo(currentObject.width / trains[input1].flickerFacFront + background.width / 500, -currentObject.height / trains[input1].flickerFacFrontOffset);
-                    context.lineTo(currentObject.width / trains[input1].flickerFacFront, -currentObject.height / 4);
-                    context.moveTo(currentObject.width / trains[input1].flickerFacFront + background.width / 500, currentObject.height / trains[input1].flickerFacFrontOffset);
-                    context.lineTo(currentObject.width / trains[input1].flickerFacFront, currentObject.height / 4);
-                    context.stroke();
-                    context.closePath();
+                    currentContext.beginPath();
+                    currentContext.moveTo(currentObject.width / trains[input1].flickerFacFront + background.width / 500, -currentObject.height / trains[input1].flickerFacFrontOffset);
+                    currentContext.lineTo(currentObject.width / trains[input1].flickerFacFront, -currentObject.height / 4);
+                    currentContext.moveTo(currentObject.width / trains[input1].flickerFacFront + background.width / 500, currentObject.height / trains[input1].flickerFacFrontOffset);
+                    currentContext.lineTo(currentObject.width / trains[input1].flickerFacFront, currentObject.height / 4);
+                    currentContext.stroke();
+                    currentContext.closePath();
                 }
                 if (i == trains[input1].cars.length - 1 && !trains[input1].standardDirection) {
                     if (trains[input1].flickerFacBack == undefined) {
@@ -2011,114 +2026,114 @@ function drawObjects() {
                     if (trains[input1].flickerFacBackOffset == undefined) {
                         trains[input1].flickerFacBackOffset = 3.5;
                     }
-                    context.beginPath();
-                    context.moveTo(-currentObject.width / trains[input1].flickerFacBack - background.width / 500, -currentObject.height / trains[input1].flickerFacBackOffset);
-                    context.lineTo(-currentObject.width / trains[input1].flickerFacBack, -currentObject.height / 4);
-                    context.moveTo(-currentObject.width / trains[input1].flickerFacBack - background.width / 500, currentObject.height / trains[input1].flickerFacBackOffset);
-                    context.lineTo(-currentObject.width / trains[input1].flickerFacBack, currentObject.height / 4);
-                    context.stroke();
-                    context.closePath();
+                    currentContext.beginPath();
+                    currentContext.moveTo(-currentObject.width / trains[input1].flickerFacBack - background.width / 500, -currentObject.height / trains[input1].flickerFacBackOffset);
+                    currentContext.lineTo(-currentObject.width / trains[input1].flickerFacBack, -currentObject.height / 4);
+                    currentContext.moveTo(-currentObject.width / trains[input1].flickerFacBack - background.width / 500, currentObject.height / trains[input1].flickerFacBackOffset);
+                    currentContext.lineTo(-currentObject.width / trains[input1].flickerFacBack, currentObject.height / 4);
+                    currentContext.stroke();
+                    currentContext.closePath();
                 }
-                context.restore();
+                currentContext.restore();
             }
 
             if (currentObject.wheels?.front?.src2d && konamiState >= 0) {
                 const wheelWidthFront = currentObject.width * (pics[currentObject.wheels.front.src2d].width / pics[currentObject.src].width);
                 const wheelHeightFront = currentObject.height * (pics[currentObject.wheels.front.src2d].height / pics[currentObject.src].height);
-                context.save();
-                context.translate(currentObject.wheels.front.leftX, currentObject.wheels.front.leftY);
+                currentContext.save();
+                currentContext.translate(currentObject.wheels.front.leftX, currentObject.wheels.front.leftY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     var xMove = currentObject.wheels.moveX * (flickerZoom - 1);
                     var yMove = currentObject.wheels.moveY * (flickerZoom - 1);
-                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                    currentContext.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
-                context.rotate(currentObject.front.angle);
+                currentContext.rotate(currentObject.front.angle);
                 if (currentObject.assetFlip) {
-                    context.scale(-1, 1);
+                    currentContext.scale(-1, 1);
                 }
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    context.scale(flickerZoom, flickerZoom);
+                    currentContext.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheels.front.src2d], -wheelWidthFront / 2, -wheelHeightFront / 2, wheelWidthFront, wheelHeightFront);
-                context.restore();
-                context.save();
-                context.translate(currentObject.wheels.front.rightX, currentObject.wheels.front.rightY);
+                drawImage(pics[currentObject.wheels.front.src2d], -wheelWidthFront / 2, -wheelHeightFront / 2, wheelWidthFront, wheelHeightFront, currentContext);
+                currentContext.restore();
+                currentContext.save();
+                currentContext.translate(currentObject.wheels.front.rightX, currentObject.wheels.front.rightY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     var xMove = currentObject.wheels.moveX * (flickerZoom - 1);
                     var yMove = -currentObject.wheels.moveY * (flickerZoom - 1);
-                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                    currentContext.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
-                context.rotate(currentObject.front.angle);
+                currentContext.rotate(currentObject.front.angle);
                 if (currentObject.assetFlip) {
-                    context.scale(-1, 1);
+                    currentContext.scale(-1, 1);
                 }
-                context.scale(1, -1);
+                currentContext.scale(1, -1);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    context.scale(flickerZoom, flickerZoom);
+                    currentContext.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheels.front.src2d], -wheelWidthFront / 2, 0, wheelWidthFront, wheelHeightFront);
-                context.restore();
+                drawImage(pics[currentObject.wheels.front.src2d], -wheelWidthFront / 2, 0, wheelWidthFront, wheelHeightFront, currentContext);
+                currentContext.restore();
             }
             if (currentObject.wheels?.back?.src2d && konamiState >= 0) {
                 const wheelWidthBack = currentObject.width * (pics[currentObject.wheels.back.src2d].width / pics[currentObject.src].width);
                 const wheelHeightBack = currentObject.height * (pics[currentObject.wheels.back.src2d].height / pics[currentObject.src].height);
-                context.save();
-                context.translate(currentObject.wheels.back.leftX, currentObject.wheels.back.leftY);
+                currentContext.save();
+                currentContext.translate(currentObject.wheels.back.leftX, currentObject.wheels.back.leftY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     var xMove = -currentObject.wheels.moveX * (flickerZoom - 1);
                     var yMove = currentObject.wheels.moveY * (flickerZoom - 1);
-                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                    currentContext.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
-                context.rotate(currentObject.back.angle);
+                currentContext.rotate(currentObject.back.angle);
                 if (currentObject.assetFlip) {
-                    context.scale(-1, 1);
+                    currentContext.scale(-1, 1);
                 }
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    context.scale(flickerZoom, flickerZoom);
+                    currentContext.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheels.back.src2d], -wheelWidthBack / 2, -wheelHeightBack / 2, wheelWidthBack, wheelHeightBack);
-                context.restore();
-                context.save();
-                context.translate(currentObject.wheels.back.rightX, currentObject.wheels.back.rightY);
+                drawImage(pics[currentObject.wheels.back.src2d], -wheelWidthBack / 2, -wheelHeightBack / 2, wheelWidthBack, wheelHeightBack, currentContext);
+                currentContext.restore();
+                currentContext.save();
+                currentContext.translate(currentObject.wheels.back.rightX, currentObject.wheels.back.rightY);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
                     var xMove = -currentObject.wheels.moveX * (flickerZoom - 1);
                     var yMove = -currentObject.wheels.moveY * (flickerZoom - 1);
-                    context.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
+                    currentContext.translate(xMove * Math.sin(Math.PI / 2 - currentObject.displayAngle) - yMove * Math.cos(-Math.PI / 2 - currentObject.displayAngle), xMove * Math.cos(Math.PI / 2 - currentObject.displayAngle) + yMove * Math.sin(-Math.PI / 2 - currentObject.displayAngle));
                 }
-                context.rotate(currentObject.back.angle);
+                currentContext.rotate(currentObject.back.angle);
                 if (currentObject.assetFlip) {
-                    context.scale(-1, 1);
+                    currentContext.scale(-1, 1);
                 }
-                context.scale(1, -1);
+                currentContext.scale(1, -1);
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    context.scale(flickerZoom, flickerZoom);
+                    currentContext.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.wheels.back.src2d], -wheelWidthBack / 2, 0, wheelWidthBack, wheelHeightBack);
-                context.restore();
+                drawImage(pics[currentObject.wheels.back.src2d], -wheelWidthBack / 2, 0, wheelWidthBack, wheelHeightBack, currentContext);
+                currentContext.restore();
             }
 
-            context.save();
-            context.translate(currentObject.x, currentObject.y);
-            context.rotate(currentObject.displayAngle);
-            context.save();
+            currentContext.save();
+            currentContext.translate(currentObject.x, currentObject.y);
+            currentContext.rotate(currentObject.displayAngle);
+            currentContext.save();
             if (currentObject.assetFlip) {
-                context.scale(-1, 1);
+                currentContext.scale(-1, 1);
             }
             if (konamiState < 0) {
-                context.scale(-1, 1);
-                context.textAlign = "center";
+                currentContext.scale(-1, 1);
+                currentContext.textAlign = "center";
                 var icon = i == -1 || ("konamiUseTrainIcon" in currentObject && currentObject.konamiUseTrainIcon) ? getString(["appScreenTrainIcons", input1]) : getString("appScreenTrainCarIcon");
-                context.font = measureFontSize(icon, "sans-serif", 100, currentObject.width, 5, currentObject.width / 100);
-                context.fillStyle = "white";
-                context.scale(1, currentObject.height / getFontSize(context.font, "px"));
-                context.fillText(icon, 0, 0);
+                currentContext.font = measureFontSize(icon, "sans-serif", 100, currentObject.width, 5, currentObject.width / 100);
+                currentContext.fillStyle = "white";
+                currentContext.scale(1, currentObject.height / getFontSize(currentContext.font, "px"));
+                currentContext.fillText(icon, 0, 0);
             } else {
                 if (frameNo <= trains[input1].lastDirectionChange + flickerDuration * 3 && (frameNo <= trains[input1].lastDirectionChange + flickerDuration || frameNo > trains[input1].lastDirectionChange + flickerDuration * 2)) {
-                    context.scale(flickerZoom, flickerZoom);
+                    currentContext.scale(flickerZoom, flickerZoom);
                 }
-                drawImage(pics[currentObject.src], -currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
+                drawImage(pics[currentObject.src], -currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height, currentContext);
             }
-            context.restore();
+            currentContext.restore();
             if (gui.infoOverlay && i == -1 && (menus.infoOverlay.focus == undefined || menus.infoOverlay.focus == 1)) {
                 contextForeground.save();
                 contextForeground.translate(currentObject.x, currentObject.y);
@@ -2141,17 +2156,17 @@ function drawObjects() {
                 }
                 contextForeground.restore();
             }
-            context.beginPath();
-            context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
-            if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
+            currentContext.beginPath();
+            currentContext.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
+            if (currentContext.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && !hardware.mouse.isDrag) {
                 hardware.mouse.cursor = "pointer";
             }
-            if (context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) {
+            if (currentContext.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY) && hardware.mouse.isHold) {
                 inTrain = true;
                 if (hardware.lastInputTouch < hardware.lastInputMouse) {
                     hardware.mouse.isHold = false;
                 }
-                if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && context.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && context.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
+                if ((hardware.lastInputTouch < hardware.lastInputMouse && hardware.mouse.downTime - hardware.mouse.upTime > 0 && currentContext.isPointInPath(hardware.mouse.upX, hardware.mouse.upY) && currentContext.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && hardware.mouse.downTime - hardware.mouse.upTime < doubleClickTime && !hardware.mouse.lastClickDoubleClick) || (hardware.lastInputTouch > hardware.lastInputMouse && currentContext.isPointInPath(hardware.mouse.downX, hardware.mouse.downY) && Date.now() - hardware.mouse.downTime > longTouchTime)) {
                     if (clickTimeOut !== undefined && clickTimeOut !== null) {
                         clearTimeout(clickTimeOut);
                         clickTimeOut = null;
@@ -2187,7 +2202,7 @@ function drawObjects() {
                     );
                 }
             }
-            context.restore();
+            currentContext.restore();
         }
 
         for (var i = -1; i < trains[input1].cars.length; i++) {
@@ -2765,7 +2780,9 @@ function drawObjects() {
         canvasGesture.style.display = "none";
         canvasBackground.style.display = "none";
         canvas.style.display = "none";
+        canvas2.style.display = "none";
         canvasSemiForeground.style.display = "none";
+        canvasMargins.style.display = "none";
         background3D.behind.style.display = "block";
         if (background3D.behindClone) {
             background3D.behindClone.style.display = "block";
@@ -2790,7 +2807,9 @@ function drawObjects() {
         canvasGesture.style.display = "";
         canvasBackground.style.display = "";
         canvas.style.display = "";
-        canvasSemiForeground.style.display = APP_DATA.debug && debug.showHidden ? "none" : "";
+        canvas2.style.display = "";
+        canvasSemiForeground.style.display = "";
+        canvasMargins.style.display = APP_DATA.debug && debug.showHidden ? "none" : "";
         background3D.behind.style.display = "none";
         if (background3D.behindClone) {
             background3D.behindClone.style.display = "none";
@@ -2800,6 +2819,8 @@ function drawObjects() {
         contextForeground.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasForeground.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasForeground.height) / 2 + client.zoomAndTilt.offsetY);
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvas.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvas.height) / 2 + client.zoomAndTilt.offsetY);
+        context2.clearRect(0, 0, canvas2.width, canvas2.height);
+        context2.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvas2.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvas2.height) / 2 + client.zoomAndTilt.offsetY);
     }
     var deltaDiv = 80;
     if (client.zoomAndTilt.realScale > 1) {
@@ -4679,38 +4700,20 @@ function drawObjects() {
         multiplayerMode.waitingClock.draw();
     }
 
-    /////BACKGROUND/Margins-2////
-    if (konamiState < 0) {
-        var bgGradient = contextForeground.createRadialGradient(0, canvasForeground.height / 2, canvasForeground.height / 2, canvasForeground.width + canvasForeground.height / 2, canvasForeground.height / 2, canvasForeground.height / 2);
-        bgGradient.addColorStop(0, "red");
-        bgGradient.addColorStop(0.2, "orange");
-        bgGradient.addColorStop(0.4, "yellow");
-        bgGradient.addColorStop(0.6, "lightgreen");
-        bgGradient.addColorStop(0.8, "blue");
-        bgGradient.addColorStop(1, "violet");
-        if (gui.konamiOverlay) {
-            hardware.mouse.cursor = "default";
-            contextForeground.save();
-            contextForeground.fillStyle = "black";
-            contextForeground.fillRect(background.x, background.y, background.width, background.height);
-            contextForeground.textAlign = "center";
-            contextForeground.fillStyle = bgGradient;
-            var konamiText = getString("appScreenKonami", "!");
-            contextForeground.font = measureFontSize(konamiText, "monospace", 100, background.width / 1.1, 5, background.width / 300);
-            contextForeground.fillText(konamiText, background.x + background.width / 2, background.y + background.height / 2);
-            contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 4);
-            contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 2 + background.height / 4);
-            contextForeground.restore();
-        }
-        if (!gui.three) {
-            context.save();
-            context.fillStyle = bgGradient;
-            context.fillRect(0, 0, background.x, canvas.height);
-            context.fillRect(0, 0, canvas.width, background.y);
-            context.fillRect(background.x + background.width, 0, background.x, canvas.height);
-            context.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvas.width, background.y);
-            context.restore();
-        }
+    /////Konami overlay////
+    if (konamiState < 0 && gui.konamiOverlay) {
+        hardware.mouse.cursor = "default";
+        contextForeground.save();
+        contextForeground.fillStyle = "black";
+        contextForeground.fillRect(background.x, background.y, background.width, background.height);
+        contextForeground.textAlign = "center";
+        contextForeground.fillStyle = getKonamiGradient();
+        var konamiText = getString("appScreenKonami", "!");
+        contextForeground.font = measureFontSize(konamiText, "monospace", 100, background.width / 1.1, 5, background.width / 300);
+        contextForeground.fillText(konamiText, background.x + background.width / 2, background.y + background.height / 2);
+        contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 4);
+        contextForeground.fillText(getString("appScreenKonamiIconRow"), background.x + background.width / 2, background.y + background.height / 2 + background.height / 4);
+        contextForeground.restore();
     }
 
     /////CURSOR/////
@@ -5736,19 +5739,23 @@ const carActions = {
 
 //Canvas and drawing
 var canvas: HTMLCanvasElement;
+var canvas2: HTMLCanvasElement;
 var canvasGesture: HTMLCanvasElement;
 var canvasAquarium: HTMLCanvasElement;
 var canvasBurningBuildung: HTMLCanvasElement;
 var canvasBackground: HTMLCanvasElement;
 var canvasSemiForeground: HTMLCanvasElement;
 var canvasForeground: HTMLCanvasElement;
+var canvasMargins: HTMLCanvasElement;
 var context: CanvasRenderingContext2D;
+var context2: CanvasRenderingContext2D;
 var contextGesture: CanvasRenderingContext2D;
 var contextAquarium: CanvasRenderingContext2D;
 var contextBurningBuildung: CanvasRenderingContext2D;
 var contextBackground: CanvasRenderingContext2D;
 var contextSemiForeground: CanvasRenderingContext2D;
 var contextForeground: CanvasRenderingContext2D;
+var contextMargins: CanvasRenderingContext2D;
 var drawInterval;
 var drawTimeout;
 var drawing = false;
@@ -6458,9 +6465,11 @@ function init(state: "load" | "reload" = "reload") {
 
         //Reset all canvases
         canvas.style.display = "none";
+        canvas2.style.display = "none";
         canvasGesture.style.display = "none";
         canvasBackground.style.display = "none";
         canvasSemiForeground.style.display = "none";
+        canvasMargins.style.display = "none";
         background3D.behind.style.display = "none";
         if (background3D.behindClone) {
             background3D.behindClone.remove();
@@ -6769,6 +6778,7 @@ function init(state: "load" | "reload" = "reload") {
 
     measureViewSpace();
     context.clearRect(0, 0, canvas.width, canvas.height);
+    context2.clearRect(0, 0, canvas2.width, canvas2.height);
     calcMenusAndBackground(state);
 
     const savedGameBg = localStorage.getItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg");
@@ -8592,19 +8602,23 @@ window.addEventListener("load", function () {
 
     //Initialize canvases and contexts
     canvas = document.querySelector("canvas#game-gameplay-main");
+    canvas2 = document.querySelector("canvas#game-gameplay-main2");
     canvasGesture = document.querySelector("canvas#game-gameplay-gesture");
     canvasAquarium = document.querySelector("canvas#game-gameplay-aquarium");
     canvasBurningBuildung = document.querySelector("canvas#game-gameplay-burning-building");
     canvasBackground = document.querySelector("canvas#game-gameplay-bg");
     canvasSemiForeground = document.querySelector("canvas#game-gameplay-sfg");
     canvasForeground = document.querySelector("canvas#game-gameplay-fg");
+    canvasMargins = document.querySelector("canvas#game-gameplay-margins");
     context = canvas.getContext("2d");
+    context2 = canvas2.getContext("2d");
     contextGesture = canvasGesture.getContext("2d");
     contextAquarium = canvasAquarium.getContext("2d");
     contextBurningBuildung = canvasBurningBuildung.getContext("2d");
     contextBackground = canvasBackground.getContext("2d");
     contextSemiForeground = canvasSemiForeground.getContext("2d");
     contextForeground = canvasForeground.getContext("2d");
+    contextMargins = canvasMargins.getContext("2d");
 
     //Load media
     var finalLoadNo = 0;
