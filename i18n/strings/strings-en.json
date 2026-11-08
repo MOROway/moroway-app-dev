@@ -125,6 +125,7 @@
 	"appScreenTextCommandsGeneralFailure": "failure",
 	"appScreenTextCommandsGeneralSuccess": "success",
 	"appScreenTextCommandsGeneralUsage": "usage: {{0}}",
+	"appScreenTextCommandsSwitchesName": "switch",
 	"appScreenTextCommandsTrainsCrash": "crash / end of track: {{0}}",
 	"appScreenTextCommandsTrainsMoving": "moving: {{0}}",
 	"appScreenTextCommandsTrainsName": "train",

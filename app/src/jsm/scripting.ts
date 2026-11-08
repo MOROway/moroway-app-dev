@@ -5111,6 +5111,33 @@ const textControl = {
                 return textControl.execute("cars", args);
             }
         },
+        switches: {
+            subcommands: {
+                list: {
+                    args: {min: 0, max: 0},
+                    execute() {
+                        return Object.entries(switches)
+                            .map(([key, sides]) => key + " (" + Object.keys(sides).join(",") + ")")
+                            .join(", ");
+                    },
+                    usage: ""
+                },
+                turn: {
+                    args: {min: 2, max: 2},
+                    execute(args) {
+                        if (switchActions.turn(args[1], args[2])) {
+                            return getString("appScreenTextCommandsGeneralSuccess", "!", "upper");
+                        }
+                        return getString("appScreenTextCommandsGeneralFailure", "!", "upper");
+                    },
+                    usage: "{name} {side}"
+                }
+            },
+            nameIdentifier: "appScreenTextCommandsSwitchesName",
+            action(args) {
+                return textControl.execute("switches", args);
+            }
+        },
         exit: {
             action() {
                 textControl.elements.root.style.display = "";
@@ -5574,7 +5601,13 @@ const trainActions = {
     }
 };
 const switchActions = {
+    checkExistence(key, side) {
+        return Object.hasOwn(switches, key) && Object.hasOwn(switches[key], side);
+    },
     turn(key, side) {
+        if (!this.checkExistence(key, side)) {
+            return false;
+        }
         if (currentMode == Modes.MULTIPLAYER) {
             actionSync("switches", [key, side], [{turned: !switches[key][side].turned}], [{getString: ["appScreenSwitchTurns", "."]}]);
         } else {
@@ -5589,6 +5622,7 @@ const switchActions = {
         if (audioControl.mayPlay()) {
             audioControl.startObject("switch", null, false);
         }
+        return true;
     }
 };
 const carActions = {

@@ -100,6 +100,7 @@
 	"appScreenTextCommandsGeneralFailure": "Fehlschlag",
 	"appScreenTextCommandsGeneralSuccess": "Erfolg",
 	"appScreenTextCommandsGeneralUsage": "Nutzung: {{0}}",
+	"appScreenTextCommandsSwitchesName": "Weichen",
 	"appScreenTextCommandsTrainsCrash": "Unfall / Am Ende des Gleises: {{0}}",
 	"appScreenTextCommandsTrainsMoving": "In Bewegung: {{0}}",
 	"appScreenTextCommandsTrainsName": "Zug",
