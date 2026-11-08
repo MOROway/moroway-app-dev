@@ -34,7 +34,8 @@ DevTools on port 9333 (1600 × 800 px) and runs the steps. Screenshots and logs 
 | `["shot", name]` | screenshot |
 
 Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `trains turn <n>`,
-`trains speed <n> <percent>`, `trains status <n>`.
+`trains speed <n> <percent>`, `trains status <n>`, `switches list`,
+`switches turn <name> <side>` (e.g. `switches turn outerUpperSiding left`).
 
 ## Notes
 
