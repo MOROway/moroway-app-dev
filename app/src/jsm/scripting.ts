@@ -1188,10 +1188,10 @@ function getGesture(gesture) {
                 client.zoomAndTilt.pinchHypot = gesture.pinchOHypot;
                 break;
             case "pinchoffset":
-                client.zoomAndTilt.offsetX += canvas.width / 2 - gesture.deltaX;
-                client.zoomAndTilt.offsetY += canvas.height / 2 - gesture.deltaY;
-                client.zoomAndTilt.pinchX = canvas.width / 2 - client.zoomAndTilt.offsetX / client.zoomAndTilt.realScale;
-                client.zoomAndTilt.pinchY = canvas.height / 2 - client.zoomAndTilt.offsetY / client.zoomAndTilt.realScale;
+                client.zoomAndTilt.offsetX += canvasGesture.width / 2 - gesture.deltaX;
+                client.zoomAndTilt.offsetY += canvasGesture.height / 2 - gesture.deltaY;
+                client.zoomAndTilt.pinchX = canvasGesture.width / 2 - client.zoomAndTilt.offsetX / client.zoomAndTilt.realScale;
+                client.zoomAndTilt.pinchY = canvasGesture.height / 2 - client.zoomAndTilt.offsetY / client.zoomAndTilt.realScale;
                 client.zoomAndTilt.pinchHypot = gesture.pinchOHypot;
                 break;
             case "pinchend":
@@ -1210,12 +1210,12 @@ function getGesture(gesture) {
                 client.zoomAndTilt.tiltY -= gesture.deltaY;
                 break;
         }
-        client.zoomAndTilt.offsetX = (canvas.width / 2 - client.zoomAndTilt.pinchX) * client.zoomAndTilt.realScale;
-        client.zoomAndTilt.offsetY = (canvas.height / 2 - client.zoomAndTilt.pinchY) * client.zoomAndTilt.realScale;
+        client.zoomAndTilt.offsetX = (canvasGesture.width / 2 - client.zoomAndTilt.pinchX) * client.zoomAndTilt.realScale;
+        client.zoomAndTilt.offsetY = (canvasGesture.height / 2 - client.zoomAndTilt.pinchY) * client.zoomAndTilt.realScale;
     }
 
-    var xMaxOffset = (client.zoomAndTilt.realScale - 1) * (canvas.width / 2 - background.x);
-    var yMaxOffset = (client.zoomAndTilt.realScale - 1) * (canvas.height / 2 - background.y);
+    var xMaxOffset = (client.zoomAndTilt.realScale - 1) * (canvasGesture.width / 2 - background.x);
+    var yMaxOffset = (client.zoomAndTilt.realScale - 1) * (canvasGesture.height / 2 - background.y);
     if (client.zoomAndTilt.offsetX > xMaxOffset) {
         client.zoomAndTilt.offsetX = xMaxOffset;
     }
@@ -1229,9 +1229,9 @@ function getGesture(gesture) {
         client.zoomAndTilt.offsetY = -yMaxOffset;
     }
     var xMinPinch = background.x;
-    var xMaxPinch = canvas.width - background.x;
+    var xMaxPinch = canvasGesture.width - background.x;
     var yMinPinch = background.y;
-    var yMaxPinch = canvas.height - background.y;
+    var yMaxPinch = canvasGesture.height - background.y;
     if (client.zoomAndTilt.pinchX > xMaxPinch) {
         client.zoomAndTilt.pinchX = xMaxPinch;
     }
@@ -1285,7 +1285,7 @@ function onMouseMove(event: MouseEvent) {
     if (client.zoomAndTilt.realScale > 1 && ((!classicUI.pointInTransformerInput(event.clientX * client.devicePixelRatio, event.clientY * client.devicePixelRatio) && hardware.mouse.isHold) || hardware.mouse.isDrag)) {
         var deltaX = -5 * (hardware.mouse.moveX - event.clientX * client.devicePixelRatio);
         var deltaY = -5 * (hardware.mouse.moveY - event.clientY * client.devicePixelRatio);
-        if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height) / 30) {
+        if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvasGesture.width, canvasGesture.height) / 30) {
             getGesture({type: "swipe", deltaX: deltaX / 4, deltaY: deltaY / 4});
             hardware.mouse.isDrag = true;
             hardware.mouse.isHold = false;
@@ -1389,7 +1389,7 @@ function getTouchMove(event: TouchEvent) {
     if (event.touches.length == 1 && typeof client.zoomAndTilt.pinchHypot == "undefined" && !client.zoomAndTilt.pinchGestureIsTilt) {
         var deltaX = -5 * (hardware.mouse.moveX - event.touches[0].clientX * client.devicePixelRatio);
         var deltaY = -5 * (hardware.mouse.moveY - event.touches[0].clientY * client.devicePixelRatio);
-        if (client.zoomAndTilt.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvas.width, canvas.height) / 30 && !classicUI.pointInTransformerInput(event.touches[0].clientX * client.devicePixelRatio, event.touches[0].clientY * client.devicePixelRatio)) {
+        if (client.zoomAndTilt.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvasGesture.width, canvasGesture.height) / 30 && !classicUI.pointInTransformerInput(event.touches[0].clientX * client.devicePixelRatio, event.touches[0].clientY * client.devicePixelRatio)) {
             resetGestures();
             getGesture({type: "swipe", deltaX: deltaX / 4, deltaY: deltaY / 4});
             if (clickTimeOut !== undefined && clickTimeOut !== null) {
@@ -2743,10 +2743,10 @@ function drawObjects() {
     }
 
     function adjustScaleX(x) {
-        return ((canvas.width * client.zoomAndTilt.realScale) / 2 - canvas.width / 2) / client.zoomAndTilt.realScale + x / client.zoomAndTilt.realScale - client.zoomAndTilt.offsetX / client.zoomAndTilt.realScale;
+        return ((canvasGesture.width * client.zoomAndTilt.realScale) / 2 - canvasGesture.width / 2) / client.zoomAndTilt.realScale + x / client.zoomAndTilt.realScale - client.zoomAndTilt.offsetX / client.zoomAndTilt.realScale;
     }
     function adjustScaleY(y) {
-        return ((canvas.height * client.zoomAndTilt.realScale) / 2 - canvas.height / 2) / client.zoomAndTilt.realScale + y / client.zoomAndTilt.realScale - client.zoomAndTilt.offsetY / client.zoomAndTilt.realScale;
+        return ((canvasGesture.height * client.zoomAndTilt.realScale) / 2 - canvasGesture.height / 2) / client.zoomAndTilt.realScale + y / client.zoomAndTilt.realScale - client.zoomAndTilt.offsetY / client.zoomAndTilt.realScale;
     }
 
     /////GENERAL/////
@@ -2827,16 +2827,16 @@ function drawObjects() {
         var deltaX = 0;
         var deltaY = 0;
         if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && !hardware.keyboard.keysHold["ArrowLeft"].ctrlKey) {
-            deltaX += (canvas.width * client.zoomAndTilt.realScale) / deltaDiv;
+            deltaX += (canvasGesture.width * client.zoomAndTilt.realScale) / deltaDiv;
         }
         if (hardware.keyboard.keysHold["ArrowUp"] && hardware.keyboard.keysHold["ArrowUp"].active && !hardware.keyboard.keysHold["ArrowUp"].ctrlKey) {
-            deltaY += (canvas.height * client.zoomAndTilt.realScale) / deltaDiv;
+            deltaY += (canvasGesture.height * client.zoomAndTilt.realScale) / deltaDiv;
         }
         if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && !hardware.keyboard.keysHold["ArrowRight"].ctrlKey) {
-            deltaX -= (canvas.width * client.zoomAndTilt.realScale) / deltaDiv;
+            deltaX -= (canvasGesture.width * client.zoomAndTilt.realScale) / deltaDiv;
         }
         if (hardware.keyboard.keysHold["ArrowDown"] && hardware.keyboard.keysHold["ArrowDown"].active && !hardware.keyboard.keysHold["ArrowDown"].ctrlKey) {
-            deltaY -= (canvas.height * client.zoomAndTilt.realScale) / deltaDiv;
+            deltaY -= (canvasGesture.height * client.zoomAndTilt.realScale) / deltaDiv;
         }
         if (deltaX != 0 || deltaY != 0) {
             getGesture({type: "swipe", deltaX: deltaX, deltaY: deltaY});
@@ -2845,16 +2845,16 @@ function drawObjects() {
     var deltaX = 0;
     var deltaY = 0;
     if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && hardware.keyboard.keysHold["ArrowLeft"].ctrlKey) {
-        deltaX += canvas.width / deltaDiv;
+        deltaX += canvasGesture.width / deltaDiv;
     }
     if (hardware.keyboard.keysHold["ArrowUp"] && hardware.keyboard.keysHold["ArrowUp"].active && hardware.keyboard.keysHold["ArrowUp"].ctrlKey) {
-        deltaY += canvas.height / deltaDiv;
+        deltaY += canvasGesture.height / deltaDiv;
     }
     if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && hardware.keyboard.keysHold["ArrowRight"].ctrlKey) {
-        deltaX -= canvas.width / deltaDiv;
+        deltaX -= canvasGesture.width / deltaDiv;
     }
     if (hardware.keyboard.keysHold["ArrowDown"] && hardware.keyboard.keysHold["ArrowDown"].active && hardware.keyboard.keysHold["ArrowDown"].ctrlKey) {
-        deltaY -= canvas.height / deltaDiv;
+        deltaY -= canvasGesture.height / deltaDiv;
     }
     if (deltaX != 0 || deltaY != 0) {
         getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
@@ -3350,12 +3350,13 @@ function drawObjects() {
         var classicUISavedMouseDrag;
         var classicUISavedWheelScroll;
         if (classicUI.ready()) {
-            context.save();
-            context.beginPath();
-            context.rect(background.x, background.y, background.width, background.height);
-            var moveInPath = context.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY);
-            var wheelInPath = context.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY);
-            context.restore();
+            contextGesture.save();
+            contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
+            contextGesture.beginPath();
+            contextGesture.rect(background.x, background.y, background.width, background.height);
+            var moveInPath = contextGesture.isPointInPath(hardware.mouse.moveX, hardware.mouse.moveY);
+            var wheelInPath = contextGesture.isPointInPath(hardware.mouse.wheelX, hardware.mouse.wheelY);
+            contextGesture.restore();
             if (!moveInPath || classicUI.pointInTransformerImage(hardware.mouse.moveX, hardware.mouse.moveY)) {
                 classicUISavedMouseHold = hardware.mouse.isHold;
                 classicUISavedMouseDrag = hardware.mouse.isDrag;
@@ -4318,7 +4319,7 @@ function drawObjects() {
         var colorLight = "floralwhite";
         var colorDark = "rgb(120,120,120)";
         var colorBorder = "rgba(255,255,255,0.7)";
-        var contextClick = controlCenter.mouse.clickEvent && Math.abs(hardware.mouse.downX - hardware.mouse.upX) < canvas.width / 100 && Math.abs(hardware.mouse.downY - hardware.mouse.upY) < canvas.width / 100;
+        var contextClick = controlCenter.mouse.clickEvent && Math.abs(hardware.mouse.downX - hardware.mouse.upX) < canvasGesture.width / 100 && Math.abs(hardware.mouse.downY - hardware.mouse.upY) < canvasGesture.width / 100;
         controlCenter.mouse.clickEvent = false;
         hardware.mouse.cursor = "default";
         contextForeground.save();
