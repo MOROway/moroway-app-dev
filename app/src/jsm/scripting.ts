@@ -6593,15 +6593,15 @@ function init(state: "load" | "reload" = "reload") {
             if (classicUI.transformer.angle == undefined || classicUI.transformer.x == undefined || classicUI.transformer.y == undefined || classicUI.transformer.width == undefined || classicUI.transformer.height == undefined) {
                 return false;
             }
+            contextGesture.save();
             contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
             contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
             contextGesture.rotate(classicUI.transformer.angle);
             contextGesture.beginPath();
             contextGesture.rect(-classicUI.transformer.width / 2, -classicUI.transformer.height / 2, classicUI.transformer.width, classicUI.transformer.height);
-            if (contextGesture.isPointInPath(x, y)) {
-                return true;
-            }
-            return false;
+            const isInPath = contextGesture.isPointInPath(x, y);
+            contextGesture.restore();
+            return isInPath;
         },
         pointInTransformerWheelInput(x, y): boolean {
             if (!classicUI.pointInTransformerImage(x, y)) {
@@ -6610,6 +6610,7 @@ function init(state: "load" | "reload" = "reload") {
             if (classicUI.transformer.wheelInput.diffY == undefined || classicUI.transformer.wheelInput.angle == undefined || classicUI.transformer.wheelInput.width == undefined || classicUI.transformer.wheelInput.height == undefined) {
                 return false;
             }
+            contextGesture.save();
             contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
             contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
             contextGesture.rotate(classicUI.transformer.angle);
@@ -6617,10 +6618,9 @@ function init(state: "load" | "reload" = "reload") {
             contextGesture.rotate(classicUI.transformer.wheelInput.angle);
             contextGesture.beginPath();
             contextGesture.rect(-classicUI.transformer.wheelInput.width / 2, -classicUI.transformer.wheelInput.height / 2, classicUI.transformer.wheelInput.width, classicUI.transformer.wheelInput.height);
-            if (contextGesture.isPointInPath(x, y)) {
-                return true;
-            }
-            return false;
+            const isInPath = contextGesture.isPointInPath(x, y);
+            contextGesture.restore();
+            return isInPath;
         },
         pointInTransformerDirectionInput(x, y): boolean {
             if (!classicUI.pointInTransformerImage(x, y)) {
@@ -6629,16 +6629,16 @@ function init(state: "load" | "reload" = "reload") {
             if (classicUI.transformer.directionInput.diffX == undefined || classicUI.transformer.directionInput.diffY == undefined || classicUI.transformer.directionInput.width == undefined || classicUI.transformer.directionInput.height == undefined) {
                 return false;
             }
+            contextGesture.save();
             contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
             contextGesture.translate(classicUI.transformer.x + classicUI.transformer.width / 2, classicUI.transformer.y + classicUI.transformer.height / 2);
             contextGesture.rotate(classicUI.transformer.angle);
             contextGesture.translate(classicUI.transformer.directionInput.diffX, classicUI.transformer.directionInput.diffY);
             contextGesture.beginPath();
             contextGesture.rect(-classicUI.transformer.directionInput.width / 2, -classicUI.transformer.directionInput.height / 2, classicUI.transformer.directionInput.width, classicUI.transformer.directionInput.height);
-            if (contextGesture.isPointInPath(x, y)) {
-                return true;
-            }
-            return false;
+            const isInPath = contextGesture.isPointInPath(x, y);
+            contextGesture.restore();
+            return isInPath;
         },
         pointInTransformerInput(x, y): boolean {
             return classicUI.pointInTransformerWheelInput(x, y) || classicUI.pointInTransformerDirectionInput(x, y);
@@ -6650,15 +6650,15 @@ function init(state: "load" | "reload" = "reload") {
             if (classicUI.trainSwitch.angle == undefined || classicUI.trainSwitch.x == undefined || classicUI.trainSwitch.y == undefined || classicUI.trainSwitch.width == undefined || classicUI.trainSwitch.height == undefined) {
                 return false;
             }
+            contextGesture.save();
             contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
             contextGesture.translate(classicUI.trainSwitch.x + classicUI.trainSwitch.width / 2, classicUI.trainSwitch.y + classicUI.trainSwitch.height / 2);
             contextGesture.rotate(classicUI.trainSwitch.angle);
             contextGesture.beginPath();
             contextGesture.rect(-classicUI.trainSwitch.width / 2, -classicUI.trainSwitch.height / 2, classicUI.trainSwitch.width, classicUI.trainSwitch.height);
-            if (contextGesture.isPointInPath(x, y)) {
-                return true;
-            }
-            return false;
+            const isInPath = contextGesture.isPointInPath(x, y);
+            contextGesture.restore();
+            return isInPath;
         },
         pointInTrainSwitchInputText(x, y): boolean {
             if (!classicUI.ready()) {
@@ -6670,13 +6670,13 @@ function init(state: "load" | "reload" = "reload") {
             if (classicUI.trainSwitch.selectedTrainDisplay.x == undefined || classicUI.trainSwitch.selectedTrainDisplay.y == undefined || classicUI.trainSwitch.selectedTrainDisplay.width == undefined || classicUI.trainSwitch.selectedTrainDisplay.height == undefined) {
                 return false;
             }
+            contextGesture.save();
             contextGesture.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasGesture.height) / 2 + client.zoomAndTilt.offsetY);
             contextGesture.beginPath();
             contextGesture.rect(classicUI.trainSwitch.selectedTrainDisplay.x, classicUI.trainSwitch.selectedTrainDisplay.y, classicUI.trainSwitch.selectedTrainDisplay.width, classicUI.trainSwitch.selectedTrainDisplay.height);
-            if (contextGesture.isPointInPath(x, y)) {
-                return true;
-            }
-            return false;
+            const isInPath = contextGesture.isPointInPath(x, y);
+            contextGesture.restore();
+            return isInPath;
         },
         pointInTrainSwitchInput(x, y): boolean {
             return classicUI.pointInTrainSwitchInputImage(x, y) || classicUI.pointInTrainSwitchInputText(x, y);
