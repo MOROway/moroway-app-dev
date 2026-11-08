@@ -399,7 +399,7 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
         } else if (cO.state == 312 && cO.x - background.x >= rotationPoints.outerUpper.parallel.x[1]) {
             cO.stateChange = true;
             if (lastObject.state == 318 || lastObject.state == 319) {
-                // Train reversed while straddling the turnout: follow the leader back onto the way back
+                // A train reversed while standing across the turnout on its way out of the loop: its bogies follow the leading object back onto the loop's return line (319) instead of entering the loop start (313)
                 cO.turned = !cO.turned;
                 if (isFirst) {
                     trains[input1].trainTurned = cO.turned;
@@ -720,7 +720,7 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         }
         var beforeUpperSiding = cO.x - background.x < rotationPoints.outerUpper.sCurve0.x[0];
         setCOPosLinear(trains[input1].switchCircles ? pointsSwitch : points, !realStandardDirection, false);
-        // Followers check position, not crossing: setCOPosCorr may move them past the switch
+        // The first object turns off only when it crosses the switch in this step, so a train already past it is not diverted when the switch is turned; the others follow the leading object onto the upper track as soon as they are past the switch, by position, because setCOPosCorr may move them past it between two checks
         if (realStandardDirection && cO.x - background.x >= rotationPoints.outerUpper.sCurve0.x[0] && ((isFirst && beforeUpperSiding && trains[input1].circleFamily == rotationPoints.outer && switches.outerUpperSiding.left.turned) || (lastObject.state > 300 && lastObject.state < 400))) {
             if (isFirst) {
                 trains[input1].circleFamily = null;
@@ -1990,8 +1990,8 @@ function defineTrainParams() {
     rotationPoints.outerUpper.loopLine1.y[1] = rotationPoints.outerUpper.loopLine1.y[0];
 
     var outerUpperHeight = 0.025 * background.width;
-    // Rise along the S-curve: flat while the track still runs on the background (below 1 px at its edge), then up to the full height, gradient 0 at both ends and continuous at the join
-    // The join height is the one with the gentlest maximum gradient that keeps the track below 1 px at the background's edge
+    // Rise along the S-curve: z = J * t^3 on sCurve0 stays nearly flat at first, so the track rises only after it has left the background; then up to the full height, gradient 0 at both ends and continuous at the join
+    // 0.43 was found numerically for this geometry: the gentlest maximum gradient that keeps the track below 1 px at the background's edge; check it again when the S-curve changes
     var sCurveJoinHeight = 0.43 * outerUpperHeight;
     rotationPoints.outerUpper.sCurve0.z = [0, 0, 0, sCurveJoinHeight];
     rotationPoints.outerUpper.sCurve1.z = [sCurveJoinHeight, sCurveJoinHeight * (1 + rotationPoints.outerUpper.sCurve1.bezierLength / rotationPoints.outerUpper.sCurve0.bezierLength), outerUpperHeight, outerUpperHeight];
