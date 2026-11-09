@@ -1297,19 +1297,14 @@ function setCurrentObjectDisplayAngle(input1, currentObject) {
         if (currentObject.back.state > 100 && currentObject.back.state < 200) {
             currentObject.displayAngle = Math.PI + Math.atan((currentObject.front.y - currentObject.back.y) / (currentObject.front.x - currentObject.back.x));
         }
-    } else if (currentObject.front.state > 100 && currentObject.front.state < 300) {
+    } else if (currentObject.front.state > 100 && currentObject.front.state < 200) {
         currentObject.displayAngle = Math.PI + Math.atan((currentObject.front.y - currentObject.back.y) / (currentObject.front.x - currentObject.back.x));
-    } else if (currentObject.front.state > 300 && currentObject.front.state < 400) {
+    } else if (currentObject.front.state > 200 && currentObject.front.state < 400) {
         // Orientation straight from the bogies, valid for turned objects too
         currentObject.displayAngle = Math.atan2(currentObject.front.y - currentObject.back.y, currentObject.front.x - currentObject.back.x);
     }
     adjustAngle();
-    if ((currentObject.back.state == 212 || (currentObject.back.state == 211 && currentObject.back.currentCurveFac < 0.25) || (currentObject.back.state == 213 && currentObject.back.currentCurveFac > 0.75)) && currentObject.displayAngle > Math.PI) {
-        currentObject.displayAngle += Math.PI;
-    } else if ((currentObject.back.state == 216 && currentObject.front.state == 216 && !currentObject.back.turned && !currentObject.front.turned) || (currentObject.back.state > 217 && currentObject.back.state < 300 && currentObject.front.state > 217 && currentObject.front.state < 300) || ((currentObject.back.state == 216 || currentObject.front.state == 216) && currentObject.displayAngle < Math.PI) || ((currentObject.back.state == 217 || currentObject.front.state == 217) && currentObject.displayAngle < 1.25 * Math.PI)) {
-        currentObject.displayAngle += Math.PI;
-    }
-    if (!(currentObject.front.state > 300 && currentObject.front.state < 400) && ((currentObject.back.turned && currentObject.front.turned) || (currentObject.back.turned && !currentObject.front.turned && currentObject.back.angle - currentObject.front.angle > 0))) {
+    if (!(currentObject.front.state > 200 && currentObject.front.state < 400) && ((currentObject.back.turned && currentObject.front.turned) || (currentObject.back.turned && !currentObject.front.turned && currentObject.back.angle - currentObject.front.angle > 0))) {
         currentObject.displayAngle -= Math.PI;
     }
     adjustAngle();
