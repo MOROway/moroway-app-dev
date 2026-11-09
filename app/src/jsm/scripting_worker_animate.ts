@@ -130,6 +130,7 @@ interface RotationPointsOuter {
     narrow: RotationPointCircle;
     altState3: {left: RotationPointBezier; right: RotationPointBezier};
     rightSiding: {enter: RotationPoint; curve: RotationPointBezier; end: RotationPoint; continueCurve0: RotationPointBezier; continueLine0: RotationPointBezier; continueCurve1: RotationPointBezier; continueLine1: RotationPoint; continueCurve2: RotationPointBezier; rejoin: RotationPoint};
+    rightSidingPassing: {diverge: RotationPointBezier; curve0: RotationPointBezier; line0: RotationPoint; curve1: RotationPointBezier; line1: RotationPoint; curve2: RotationPointBezier; line2: RotationPoint; merge: RotationPointBezier};
 }
 interface RotationPointsOuterUpper {
     loop: RotationPointCircle;
@@ -185,6 +186,8 @@ export interface Switches {
     outerRightSiding: LeftSwitch;
     outerRightSidingTurn: LeftSwitch;
     outerUpperSiding: LeftSwitch;
+    outerRightSidingPassingTop: LeftSwitch;
+    outerRightSidingPassingBottom: LeftSwitch;
 }
 
 function safePostMessage(message) {
@@ -2018,6 +2021,96 @@ function defineTrainParams() {
      *                                                          \_________________________________________/             *
      *------------------------------------------------------------------------------------------------------------------*/
 
+    //OUTER/RIGHTSIDING/PASSING
+    // Second track outside rightSiding's loop from its left leg (diverge) to its bottom straight (merge).
+    // Straights stay passingSpacing outside the red loop's straights, corners are quarter circles.
+    // The right straight runs under the upper loop's right straight instead; the portals there have to span it.
+    var passingSpacing = 0.044 * background.width;
+    var passingRadius = 0.072 * background.width;
+    var passingControl = (4 / 3) * Math.tan(Math.PI / 8) * passingRadius;
+    var passingLeft = rotationPoints.outer.rightSiding.end.x[1] - passingSpacing;
+    var passingTop = rotationPoints.outer.rightSiding.continueLine0.y[0] - passingSpacing;
+    var passingRight = rotationPoints.outerUpper.loopLine0.x[0];
+    var passingBottom = rotationPoints.outer.rightSiding.rejoin.y[0] + passingSpacing;
+    var passingEndLength = Math.hypot(rotationPoints.outer.rightSiding.end.x[1] - rotationPoints.outer.rightSiding.end.x[0], rotationPoints.outer.rightSiding.end.y[1] - rotationPoints.outer.rightSiding.end.y[0]);
+    rotationPoints.outer.rightSidingPassing.diverge.y[0] = -0.006 * background.height;
+    rotationPoints.outer.rightSidingPassing.diverge.x[0] = rotationPoints.outer.rightSiding.end.x[0] + ((rotationPoints.outer.rightSidingPassing.diverge.y[0] - rotationPoints.outer.rightSiding.end.y[0]) * (rotationPoints.outer.rightSiding.end.x[1] - rotationPoints.outer.rightSiding.end.x[0])) / (rotationPoints.outer.rightSiding.end.y[1] - rotationPoints.outer.rightSiding.end.y[0]);
+    rotationPoints.outer.rightSidingPassing.diverge.x[3] = passingLeft;
+    rotationPoints.outer.rightSidingPassing.diverge.y[3] = passingTop + passingRadius;
+    var passingDivergeControl = (rotationPoints.outer.rightSidingPassing.diverge.y[0] - rotationPoints.outer.rightSidingPassing.diverge.y[3]) / 3;
+    rotationPoints.outer.rightSidingPassing.diverge.x[1] = rotationPoints.outer.rightSidingPassing.diverge.x[0] + (passingDivergeControl * (rotationPoints.outer.rightSiding.end.x[1] - rotationPoints.outer.rightSiding.end.x[0])) / passingEndLength;
+    rotationPoints.outer.rightSidingPassing.diverge.y[1] = rotationPoints.outer.rightSidingPassing.diverge.y[0] + (passingDivergeControl * (rotationPoints.outer.rightSiding.end.y[1] - rotationPoints.outer.rightSiding.end.y[0])) / passingEndLength;
+    rotationPoints.outer.rightSidingPassing.diverge.x[2] = passingLeft;
+    rotationPoints.outer.rightSidingPassing.diverge.y[2] = rotationPoints.outer.rightSidingPassing.diverge.y[3] + passingDivergeControl;
+    bezierPoints = {x: [rotationPoints.outer.rightSidingPassing.diverge.x[0], rotationPoints.outer.rightSidingPassing.diverge.x[1], rotationPoints.outer.rightSidingPassing.diverge.x[2], rotationPoints.outer.rightSidingPassing.diverge.x[3]], y: [rotationPoints.outer.rightSidingPassing.diverge.y[0], rotationPoints.outer.rightSidingPassing.diverge.y[1], rotationPoints.outer.rightSidingPassing.diverge.y[2], rotationPoints.outer.rightSidingPassing.diverge.y[3]]};
+    rotationPoints.outer.rightSidingPassing.diverge.bezierLength = getBezierLength(bezierPoints, repNo);
+
+    switches.outerRightSidingPassingTop.left.x = rotationPoints.outer.rightSidingPassing.diverge.x[0];
+    switches.outerRightSidingPassingTop.left.y = rotationPoints.outer.rightSidingPassing.diverge.y[0];
+
+    rotationPoints.outer.rightSidingPassing.curve0.x[0] = passingLeft;
+    rotationPoints.outer.rightSidingPassing.curve0.x[1] = passingLeft;
+    rotationPoints.outer.rightSidingPassing.curve0.x[2] = passingLeft + passingRadius - passingControl;
+    rotationPoints.outer.rightSidingPassing.curve0.x[3] = passingLeft + passingRadius;
+    rotationPoints.outer.rightSidingPassing.curve0.y[0] = passingTop + passingRadius;
+    rotationPoints.outer.rightSidingPassing.curve0.y[1] = passingTop + passingRadius - passingControl;
+    rotationPoints.outer.rightSidingPassing.curve0.y[2] = passingTop;
+    rotationPoints.outer.rightSidingPassing.curve0.y[3] = passingTop;
+    bezierPoints = {x: [rotationPoints.outer.rightSidingPassing.curve0.x[0], rotationPoints.outer.rightSidingPassing.curve0.x[1], rotationPoints.outer.rightSidingPassing.curve0.x[2], rotationPoints.outer.rightSidingPassing.curve0.x[3]], y: [rotationPoints.outer.rightSidingPassing.curve0.y[0], rotationPoints.outer.rightSidingPassing.curve0.y[1], rotationPoints.outer.rightSidingPassing.curve0.y[2], rotationPoints.outer.rightSidingPassing.curve0.y[3]]};
+    rotationPoints.outer.rightSidingPassing.curve0.bezierLength = getBezierLength(bezierPoints, repNo);
+
+    rotationPoints.outer.rightSidingPassing.line0.x[0] = passingLeft + passingRadius;
+    rotationPoints.outer.rightSidingPassing.line0.x[1] = passingRight - passingRadius;
+    rotationPoints.outer.rightSidingPassing.line0.y[0] = passingTop;
+    rotationPoints.outer.rightSidingPassing.line0.y[1] = passingTop;
+
+    rotationPoints.outer.rightSidingPassing.curve1.x[0] = passingRight - passingRadius;
+    rotationPoints.outer.rightSidingPassing.curve1.x[1] = passingRight - passingRadius + passingControl;
+    rotationPoints.outer.rightSidingPassing.curve1.x[2] = passingRight;
+    rotationPoints.outer.rightSidingPassing.curve1.x[3] = passingRight;
+    rotationPoints.outer.rightSidingPassing.curve1.y[0] = passingTop;
+    rotationPoints.outer.rightSidingPassing.curve1.y[1] = passingTop;
+    rotationPoints.outer.rightSidingPassing.curve1.y[2] = passingTop + passingRadius - passingControl;
+    rotationPoints.outer.rightSidingPassing.curve1.y[3] = passingTop + passingRadius;
+    bezierPoints = {x: [rotationPoints.outer.rightSidingPassing.curve1.x[0], rotationPoints.outer.rightSidingPassing.curve1.x[1], rotationPoints.outer.rightSidingPassing.curve1.x[2], rotationPoints.outer.rightSidingPassing.curve1.x[3]], y: [rotationPoints.outer.rightSidingPassing.curve1.y[0], rotationPoints.outer.rightSidingPassing.curve1.y[1], rotationPoints.outer.rightSidingPassing.curve1.y[2], rotationPoints.outer.rightSidingPassing.curve1.y[3]]};
+    rotationPoints.outer.rightSidingPassing.curve1.bezierLength = getBezierLength(bezierPoints, repNo);
+
+    rotationPoints.outer.rightSidingPassing.line1.x[0] = passingRight;
+    rotationPoints.outer.rightSidingPassing.line1.x[1] = passingRight;
+    rotationPoints.outer.rightSidingPassing.line1.y[0] = passingTop + passingRadius;
+    rotationPoints.outer.rightSidingPassing.line1.y[1] = passingBottom - passingRadius;
+
+    rotationPoints.outer.rightSidingPassing.curve2.x[0] = passingRight;
+    rotationPoints.outer.rightSidingPassing.curve2.x[1] = passingRight;
+    rotationPoints.outer.rightSidingPassing.curve2.x[2] = passingRight - passingRadius + passingControl;
+    rotationPoints.outer.rightSidingPassing.curve2.x[3] = passingRight - passingRadius;
+    rotationPoints.outer.rightSidingPassing.curve2.y[0] = passingBottom - passingRadius;
+    rotationPoints.outer.rightSidingPassing.curve2.y[1] = passingBottom - passingRadius + passingControl;
+    rotationPoints.outer.rightSidingPassing.curve2.y[2] = passingBottom;
+    rotationPoints.outer.rightSidingPassing.curve2.y[3] = passingBottom;
+    bezierPoints = {x: [rotationPoints.outer.rightSidingPassing.curve2.x[0], rotationPoints.outer.rightSidingPassing.curve2.x[1], rotationPoints.outer.rightSidingPassing.curve2.x[2], rotationPoints.outer.rightSidingPassing.curve2.x[3]], y: [rotationPoints.outer.rightSidingPassing.curve2.y[0], rotationPoints.outer.rightSidingPassing.curve2.y[1], rotationPoints.outer.rightSidingPassing.curve2.y[2], rotationPoints.outer.rightSidingPassing.curve2.y[3]]};
+    rotationPoints.outer.rightSidingPassing.curve2.bezierLength = getBezierLength(bezierPoints, repNo);
+
+    var passingMergeLength = 0.144 * background.width;
+    rotationPoints.outer.rightSidingPassing.merge.x[3] = 1.018 * background.width;
+    rotationPoints.outer.rightSidingPassing.merge.y[3] = rotationPoints.outer.rightSiding.rejoin.y[0];
+    rotationPoints.outer.rightSidingPassing.merge.x[0] = rotationPoints.outer.rightSidingPassing.merge.x[3] + passingMergeLength;
+    rotationPoints.outer.rightSidingPassing.merge.y[0] = passingBottom;
+    rotationPoints.outer.rightSidingPassing.merge.x[1] = rotationPoints.outer.rightSidingPassing.merge.x[0] - passingMergeLength / 3;
+    rotationPoints.outer.rightSidingPassing.merge.y[1] = passingBottom;
+    rotationPoints.outer.rightSidingPassing.merge.x[2] = rotationPoints.outer.rightSidingPassing.merge.x[3] + passingMergeLength / 3;
+    rotationPoints.outer.rightSidingPassing.merge.y[2] = rotationPoints.outer.rightSidingPassing.merge.y[3];
+    bezierPoints = {x: [rotationPoints.outer.rightSidingPassing.merge.x[0], rotationPoints.outer.rightSidingPassing.merge.x[1], rotationPoints.outer.rightSidingPassing.merge.x[2], rotationPoints.outer.rightSidingPassing.merge.x[3]], y: [rotationPoints.outer.rightSidingPassing.merge.y[0], rotationPoints.outer.rightSidingPassing.merge.y[1], rotationPoints.outer.rightSidingPassing.merge.y[2], rotationPoints.outer.rightSidingPassing.merge.y[3]]};
+    rotationPoints.outer.rightSidingPassing.merge.bezierLength = getBezierLength(bezierPoints, repNo);
+
+    rotationPoints.outer.rightSidingPassing.line2.x[0] = passingRight - passingRadius;
+    rotationPoints.outer.rightSidingPassing.line2.x[1] = rotationPoints.outer.rightSidingPassing.merge.x[0];
+    rotationPoints.outer.rightSidingPassing.line2.y[0] = passingBottom;
+    rotationPoints.outer.rightSidingPassing.line2.y[1] = passingBottom;
+
+    switches.outerRightSidingPassingBottom.left.x = rotationPoints.outer.rightSidingPassing.merge.x[3];
+    switches.outerRightSidingPassingBottom.left.y = rotationPoints.outer.rightSidingPassing.merge.y[3];
+
     /////SPEED/////
     trains.forEach(function (train) {
         defineTrainSpeed(train);
@@ -2317,7 +2410,7 @@ var animateTimeoutDelay;
 
 const rotationPoints: RotationPoints = {
     inner: {narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}}, wide: {x: [], y: [], bezierLength: {left: 0, right: 0}}, sidings: {first: {x: [], y: [], bezierLength: 0}, firstS1: {x: [], y: []}, firstS2: {x: [], y: [], bezierLength: 0}, second: {x: [], y: [], bezierLength: 0}, secondS1: {x: [], y: []}, secondS2: {x: [], y: [], bezierLength: 0}, third: {x: [], y: [], bezierLength: 0}, thirdS1: {x: [], y: []}, thirdS2: {x: [], y: [], bezierLength: 0}}},
-    outer: {narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}}, altState3: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}}, rightSiding: {enter: {x: [], y: []}, curve: {x: [], y: [], bezierLength: 0}, continueCurve0: {x: [], y: [], bezierLength: 0}, continueLine0: {x: [], y: [], bezierLength: 0}, continueCurve1: {x: [], y: [], bezierLength: 0}, continueLine1: {x: [], y: []}, continueCurve2: {x: [], y: [], bezierLength: 0}, rejoin: {x: [], y: []}, end: {x: [], y: []}}},
+    outer: {narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}}, altState3: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}}, rightSiding: {enter: {x: [], y: []}, curve: {x: [], y: [], bezierLength: 0}, continueCurve0: {x: [], y: [], bezierLength: 0}, continueLine0: {x: [], y: [], bezierLength: 0}, continueCurve1: {x: [], y: [], bezierLength: 0}, continueLine1: {x: [], y: []}, continueCurve2: {x: [], y: [], bezierLength: 0}, rejoin: {x: [], y: []}, end: {x: [], y: []}}, rightSidingPassing: {diverge: {x: [], y: [], bezierLength: 0}, curve0: {x: [], y: [], bezierLength: 0}, line0: {x: [], y: []}, curve1: {x: [], y: [], bezierLength: 0}, line1: {x: [], y: []}, curve2: {x: [], y: [], bezierLength: 0}, line2: {x: [], y: []}, merge: {x: [], y: [], bezierLength: 0}}},
     outerUpper: {loop: {x: [], y: [], bezierLength: {left: 0, right: 0}}, sCurve0: {x: [], y: [], bezierLength: 0}, sCurve1: {x: [], y: [], bezierLength: 0}, parallel: {x: [], y: []}, loopCurve0: {x: [], y: [], bezierLength: 0}, pillar: {x: [], y: [], bezierLength: 0}, loopCurve1: {x: [], y: [], bezierLength: 0}, loopCurve2: {x: [], y: [], bezierLength: 0}, loopLine0: {x: [], y: []}, loopCurve3: {x: [], y: [], bezierLength: 0}, loopLine1: {x: [], y: []}},
     inner2outer: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}}
 };

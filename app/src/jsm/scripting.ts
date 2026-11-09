@@ -4062,6 +4062,38 @@ function drawObjects() {
             context.lineTo(rotationPoints.outer.rightSiding.rejoin.x[1] + background.x, rotationPoints.outer.rightSiding.rejoin.y[1] + background.y);
             context.stroke();
             context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.diverge.x[0] + background.x, rotationPoints.outer.rightSidingPassing.diverge.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outer.rightSidingPassing.diverge.x[1] + background.x, rotationPoints.outer.rightSidingPassing.diverge.y[1] + background.y, rotationPoints.outer.rightSidingPassing.diverge.x[2] + background.x, rotationPoints.outer.rightSidingPassing.diverge.y[2] + background.y, rotationPoints.outer.rightSidingPassing.diverge.x[3] + background.x, rotationPoints.outer.rightSidingPassing.diverge.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.curve0.x[0] + background.x, rotationPoints.outer.rightSidingPassing.curve0.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outer.rightSidingPassing.curve0.x[1] + background.x, rotationPoints.outer.rightSidingPassing.curve0.y[1] + background.y, rotationPoints.outer.rightSidingPassing.curve0.x[2] + background.x, rotationPoints.outer.rightSidingPassing.curve0.y[2] + background.y, rotationPoints.outer.rightSidingPassing.curve0.x[3] + background.x, rotationPoints.outer.rightSidingPassing.curve0.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.line0.x[0] + background.x, rotationPoints.outer.rightSidingPassing.line0.y[0] + background.y);
+            context.lineTo(rotationPoints.outer.rightSidingPassing.line0.x[1] + background.x, rotationPoints.outer.rightSidingPassing.line0.y[1] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.curve1.x[0] + background.x, rotationPoints.outer.rightSidingPassing.curve1.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outer.rightSidingPassing.curve1.x[1] + background.x, rotationPoints.outer.rightSidingPassing.curve1.y[1] + background.y, rotationPoints.outer.rightSidingPassing.curve1.x[2] + background.x, rotationPoints.outer.rightSidingPassing.curve1.y[2] + background.y, rotationPoints.outer.rightSidingPassing.curve1.x[3] + background.x, rotationPoints.outer.rightSidingPassing.curve1.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.line1.x[0] + background.x, rotationPoints.outer.rightSidingPassing.line1.y[0] + background.y);
+            context.lineTo(rotationPoints.outer.rightSidingPassing.line1.x[1] + background.x, rotationPoints.outer.rightSidingPassing.line1.y[1] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.curve2.x[0] + background.x, rotationPoints.outer.rightSidingPassing.curve2.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outer.rightSidingPassing.curve2.x[1] + background.x, rotationPoints.outer.rightSidingPassing.curve2.y[1] + background.y, rotationPoints.outer.rightSidingPassing.curve2.x[2] + background.x, rotationPoints.outer.rightSidingPassing.curve2.y[2] + background.y, rotationPoints.outer.rightSidingPassing.curve2.x[3] + background.x, rotationPoints.outer.rightSidingPassing.curve2.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.line2.x[0] + background.x, rotationPoints.outer.rightSidingPassing.line2.y[0] + background.y);
+            context.lineTo(rotationPoints.outer.rightSidingPassing.line2.x[1] + background.x, rotationPoints.outer.rightSidingPassing.line2.y[1] + background.y);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(rotationPoints.outer.rightSidingPassing.merge.x[0] + background.x, rotationPoints.outer.rightSidingPassing.merge.y[0] + background.y);
+            context.bezierCurveTo(rotationPoints.outer.rightSidingPassing.merge.x[1] + background.x, rotationPoints.outer.rightSidingPassing.merge.y[1] + background.y, rotationPoints.outer.rightSidingPassing.merge.x[2] + background.x, rotationPoints.outer.rightSidingPassing.merge.y[2] + background.y, rotationPoints.outer.rightSidingPassing.merge.x[3] + background.x, rotationPoints.outer.rightSidingPassing.merge.y[3] + background.y);
+            context.stroke();
+            context.beginPath();
             context.moveTo(rotationPoints.outerUpper.sCurve0.x[0] + background.x, rotationPoints.outerUpper.sCurve0.y[0] + background.y);
             context.bezierCurveTo(rotationPoints.outerUpper.sCurve0.x[1] + background.x, rotationPoints.outerUpper.sCurve0.y[1] + background.y, rotationPoints.outerUpper.sCurve0.x[2] + background.x, rotationPoints.outerUpper.sCurve0.y[2] + background.y, rotationPoints.outerUpper.sCurve0.x[3] + background.x, rotationPoints.outerUpper.sCurve0.y[3] + background.y);
             context.stroke();
@@ -6562,7 +6594,9 @@ function init(state: "load" | "reload" = "reload") {
         sidings3: {left: {turned: false, angles: {normal: 1.65 * Math.PI, turned: 1.73 * Math.PI}}},
         outerRightSiding: {left: {turned: false, angles: {normal: 1.71 * Math.PI, turned: 1.76 * Math.PI}}},
         outerRightSidingTurn: {left: {turned: false, angles: {normal: 1.7 * Math.PI, turned: 1.75 * Math.PI}}},
-        outerUpperSiding: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.71 * Math.PI}}}
+        outerUpperSiding: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.71 * Math.PI}}},
+        outerRightSidingPassingTop: {left: {turned: false, angles: {normal: 1.24 * Math.PI, turned: 1.17 * Math.PI}}},
+        outerRightSidingPassingBottom: {left: {turned: false, angles: {normal: 1.75 * Math.PI, turned: 1.83 * Math.PI}}}
     };
     switches = switchesDefault;
     switches3D = {};
