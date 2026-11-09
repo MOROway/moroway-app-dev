@@ -187,8 +187,6 @@ export interface Switches {
     outerRightSiding: LeftSwitch;
     outerRightSidingTurn: LeftSwitch;
     outerUpperSiding: LeftSwitch;
-    outerRightSidingPassingTop: LeftSwitch;
-    outerRightSidingPassingBottom: LeftSwitch;
 }
 
 function safePostMessage(message) {
@@ -1110,10 +1108,9 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         if (cO.stateChange) {
             cO.stateChange = false;
         }
-        var beforePassingTop = cO.y - background.y > rotationPoints.outer.rightSidingPassing.diverge.y[0];
         setCOPosLinear(points, !realStandardDirection, false);
-        // As at outerUpperSiding: the leading object turns off only when it crosses the junction in this step, the others follow it onto the passing track
-        if (!realStandardDirection && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.diverge.y[0] && ((isLast && beforePassingTop && switches.outerRightSidingPassingTop.left.turned) || (lastObject.state > 219 && lastObject.state < 228))) {
+        // Right-hand running: clockwise trains stay on the inner track here; objects follow a leading object that is already on the passing track (a train turned while partly on it)
+        if (!realStandardDirection && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.diverge.y[0] && lastObject.state > 219 && lastObject.state < 228) {
             cO.stateChange = true;
             cO.state = 220;
         }
@@ -1187,8 +1184,8 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         }
         var beforePassingBottom = cO.x - background.x < rotationPoints.outer.rightSidingPassing.merge.x[3];
         setCOPosLinear(points, !realStandardDirection, false);
-        // As at outerUpperSiding: the leading object turns off only when it crosses the junction in this step, the others follow it onto the passing track
-        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.merge.x[3] && ((isFirst && beforePassingBottom && switches.outerRightSidingPassingBottom.left.turned) || (lastObject.state > 219 && lastObject.state < 228))) {
+        // Right-hand running: counterclockwise trains take the passing track; the leading object turns off only when it crosses the junction in this step, the others follow it
+        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.merge.x[3] && ((isFirst && beforePassingBottom) || (lastObject.state > 219 && lastObject.state < 228))) {
             cO.stateChange = true;
             cO.state = 227;
         }
@@ -2177,9 +2174,6 @@ function defineTrainParams() {
     bezierPoints = {x: [rotationPoints.outer.rightSidingPassing.diverge.x[0], rotationPoints.outer.rightSidingPassing.diverge.x[1], rotationPoints.outer.rightSidingPassing.diverge.x[2], rotationPoints.outer.rightSidingPassing.diverge.x[3]], y: [rotationPoints.outer.rightSidingPassing.diverge.y[0], rotationPoints.outer.rightSidingPassing.diverge.y[1], rotationPoints.outer.rightSidingPassing.diverge.y[2], rotationPoints.outer.rightSidingPassing.diverge.y[3]]};
     rotationPoints.outer.rightSidingPassing.diverge.bezierLength = getBezierLength(bezierPoints, repNo);
 
-    switches.outerRightSidingPassingTop.left.x = rotationPoints.outer.rightSidingPassing.diverge.x[0];
-    switches.outerRightSidingPassingTop.left.y = rotationPoints.outer.rightSidingPassing.diverge.y[0];
-
     rotationPoints.outer.rightSidingPassing.curve0.x[0] = passingLeft;
     rotationPoints.outer.rightSidingPassing.curve0.x[1] = passingLeft;
     rotationPoints.outer.rightSidingPassing.curve0.x[2] = passingLeft + passingRadius - passingControl;
@@ -2239,9 +2233,6 @@ function defineTrainParams() {
     rotationPoints.outer.rightSidingPassing.line2.x[1] = rotationPoints.outer.rightSidingPassing.merge.x[0];
     rotationPoints.outer.rightSidingPassing.line2.y[0] = passingBottom;
     rotationPoints.outer.rightSidingPassing.line2.y[1] = passingBottom;
-
-    switches.outerRightSidingPassingBottom.left.x = rotationPoints.outer.rightSidingPassing.merge.x[3];
-    switches.outerRightSidingPassingBottom.left.y = rotationPoints.outer.rightSidingPassing.merge.y[3];
 
     /////SPEED/////
     trains.forEach(function (train) {
