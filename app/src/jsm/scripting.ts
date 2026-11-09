@@ -2210,11 +2210,11 @@ function drawObjects() {
         }
     }
 
-    function trainInTrackElement(state) {
-        // A track element is shown while a train on it is partly hidden
+    function trainInTrackElement(state, isOnPart = (_bogie) => true) {
+        // A track element (or the part of it isOnPart accepts) is shown while a train on it is partly hidden
         for (let i = 0; i < trains.length; i++) {
             const objects: (Train | Train["cars"][number])[] = [trains[i], ...trains[i].cars];
-            if (objects.some((object) => object.front.state == state || object.back.state == state) && objects.some((object) => object.opacity < 1)) {
+            if (objects.some((object) => [object.front, object.back].some((bogie) => bogie.state == state && isOnPart(bogie))) && objects.some((object) => object.opacity < 1)) {
                 return true;
             }
         }
@@ -3317,8 +3317,13 @@ function drawObjects() {
         }
         const continueTrackNewObject = new THREE.Group();
         continueTrackNewObject.name = continueTrackGroupName;
-        if (trainInTrackElement(212)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.end, -1);
+        // rightSiding's left leg and bottom straight are split at the passing track's junctions: each part is shown only while a train is on it
+        const passing = rotationPoints.outer.rightSidingPassing;
+        if (trainInTrackElement(212, (bogie) => bogie.y - background.y >= passing.diverge.y[0])) {
+            drawContinueTrackLine(continueTrackNewObject, {x: [rotationPoints.outer.rightSiding.end.x[0], passing.diverge.x[0]], y: [rotationPoints.outer.rightSiding.end.y[0], passing.diverge.y[0]]}, -1);
+        }
+        if (trainInTrackElement(212, (bogie) => bogie.y - background.y < passing.diverge.y[0])) {
+            drawContinueTrackLine(continueTrackNewObject, {x: [passing.diverge.x[0], rotationPoints.outer.rightSiding.end.x[1]], y: [passing.diverge.y[0], rotationPoints.outer.rightSiding.end.y[1]]}, -1);
         }
         if (trainInTrackElement(213)) {
             drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve0, -1);
@@ -3337,8 +3342,37 @@ function drawObjects() {
         if (trainInTrackElement(217)) {
             drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve2, -1);
         }
-        if (trainInTrackElement(218)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin, -1);
+        if (trainInTrackElement(218, (bogie) => bogie.x - background.x > passing.merge.x[3])) {
+            drawContinueTrackLine(continueTrackNewObject, {x: [rotationPoints.outer.rightSiding.rejoin.x[0], passing.merge.x[3]], y: [rotationPoints.outer.rightSiding.rejoin.y[0], passing.merge.y[3]]}, -1);
+        }
+        if (trainInTrackElement(218, (bogie) => bogie.x - background.x <= passing.merge.x[3])) {
+            drawContinueTrackLine(continueTrackNewObject, {x: [passing.merge.x[3], rotationPoints.outer.rightSiding.rejoin.x[1]], y: [passing.merge.y[3], rotationPoints.outer.rightSiding.rejoin.y[1]]}, -1);
+        }
+        if (trainInTrackElement(220)) {
+            drawContinueTrackCurve(continueTrackNewObject, passing.diverge);
+        }
+        if (trainInTrackElement(221)) {
+            drawContinueTrackCurve(continueTrackNewObject, passing.curve0, -1);
+        }
+        if (trainInTrackElement(222)) {
+            drawContinueTrackLine(continueTrackNewObject, passing.line0, -1);
+            drawContinueTrackLine(continueTrackNewObject, passing.line0);
+        }
+        if (trainInTrackElement(223)) {
+            drawContinueTrackCurve(continueTrackNewObject, passing.curve1);
+        }
+        if (trainInTrackElement(224)) {
+            drawContinueTrackLine(continueTrackNewObject, passing.line1);
+            drawContinueTrackLine(continueTrackNewObject, passing.line1, -1);
+        }
+        if (trainInTrackElement(225)) {
+            drawContinueTrackCurve(continueTrackNewObject, passing.curve2, -1);
+        }
+        if (trainInTrackElement(226)) {
+            drawContinueTrackLine(continueTrackNewObject, passing.line2, -1);
+        }
+        if (trainInTrackElement(227)) {
+            drawContinueTrackCurve(continueTrackNewObject, passing.merge);
         }
         three.scene.add(continueTrackNewObject);
 
