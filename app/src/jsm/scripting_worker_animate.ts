@@ -1955,14 +1955,16 @@ function defineTrainParams() {
     rotationPoints.outer.rightSiding.end.y[0] = rotationPoints.outer.rightSiding.curve.y[3];
     rotationPoints.outer.rightSiding.end.y[1] = rotationPoints.outer.rightSiding.end.y[0] - 0.85 * background.height;
 
+    // The two top corners' control points lie on the adjoining straights; their distances make each corner's tightest spot as wide as possible
+    var rightSidingEndLength = Math.hypot(rotationPoints.outer.rightSiding.end.x[1] - rotationPoints.outer.rightSiding.end.x[0], rotationPoints.outer.rightSiding.end.y[1] - rotationPoints.outer.rightSiding.end.y[0]);
     rotationPoints.outer.rightSiding.continueCurve0.x[0] = rotationPoints.outer.rightSiding.end.x[1];
-    rotationPoints.outer.rightSiding.continueCurve0.x[1] = rotationPoints.outer.rightSiding.continueCurve0.x[0] - 0.02 * background.width;
-    rotationPoints.outer.rightSiding.continueCurve0.x[2] = rotationPoints.outer.rightSiding.continueCurve0.x[0] + 0.11 * background.width;
     rotationPoints.outer.rightSiding.continueCurve0.x[3] = rotationPoints.outer.rightSiding.continueCurve0.x[0] + 0.15 * background.width;
     rotationPoints.outer.rightSiding.continueCurve0.y[0] = rotationPoints.outer.rightSiding.end.y[1];
-    rotationPoints.outer.rightSiding.continueCurve0.y[1] = rotationPoints.outer.rightSiding.continueCurve0.y[0] - 0.28 * background.height;
-    rotationPoints.outer.rightSiding.continueCurve0.y[2] = rotationPoints.outer.rightSiding.continueCurve0.y[0] - 0.2 * background.height;
     rotationPoints.outer.rightSiding.continueCurve0.y[3] = rotationPoints.outer.rightSiding.continueCurve0.y[0] - 0.21 * background.height;
+    rotationPoints.outer.rightSiding.continueCurve0.x[1] = rotationPoints.outer.rightSiding.continueCurve0.x[0] + (0.1116 * background.width * (rotationPoints.outer.rightSiding.end.x[1] - rotationPoints.outer.rightSiding.end.x[0])) / rightSidingEndLength;
+    rotationPoints.outer.rightSiding.continueCurve0.y[1] = rotationPoints.outer.rightSiding.continueCurve0.y[0] + (0.1116 * background.width * (rotationPoints.outer.rightSiding.end.y[1] - rotationPoints.outer.rightSiding.end.y[0])) / rightSidingEndLength;
+    rotationPoints.outer.rightSiding.continueCurve0.x[2] = rotationPoints.outer.rightSiding.continueCurve0.x[3] - 0.033 * background.width;
+    rotationPoints.outer.rightSiding.continueCurve0.y[2] = rotationPoints.outer.rightSiding.continueCurve0.y[3];
     bezierPoints = {x: [rotationPoints.outer.rightSiding.continueCurve0.x[0], rotationPoints.outer.rightSiding.continueCurve0.x[1], rotationPoints.outer.rightSiding.continueCurve0.x[2], rotationPoints.outer.rightSiding.continueCurve0.x[3]], y: [rotationPoints.outer.rightSiding.continueCurve0.y[0], rotationPoints.outer.rightSiding.continueCurve0.y[1], rotationPoints.outer.rightSiding.continueCurve0.y[2], rotationPoints.outer.rightSiding.continueCurve0.y[3]]};
     rotationPoints.outer.rightSiding.continueCurve0.bezierLength = getBezierLength(bezierPoints, repNo);
 
@@ -1972,13 +1974,13 @@ function defineTrainParams() {
     rotationPoints.outer.rightSiding.continueLine0.y[1] = rotationPoints.outer.rightSiding.continueCurve0.y[3];
 
     rotationPoints.outer.rightSiding.continueCurve1.x[0] = rotationPoints.outer.rightSiding.continueLine0.x[1];
-    rotationPoints.outer.rightSiding.continueCurve1.x[1] = rotationPoints.outer.rightSiding.continueCurve1.x[0] + 0.02 * background.width;
-    rotationPoints.outer.rightSiding.continueCurve1.x[2] = rotationPoints.outer.rightSiding.continueCurve1.x[0] + 0.15 * background.width;
     rotationPoints.outer.rightSiding.continueCurve1.x[3] = rotationPoints.outer.rightSiding.continueCurve1.x[0] + 0.15 * background.width;
     rotationPoints.outer.rightSiding.continueCurve1.y[0] = rotationPoints.outer.rightSiding.continueLine0.y[1];
-    rotationPoints.outer.rightSiding.continueCurve1.y[1] = rotationPoints.outer.rightSiding.continueCurve1.y[0] + 0.003 * background.height;
-    rotationPoints.outer.rightSiding.continueCurve1.y[2] = rotationPoints.outer.rightSiding.continueCurve1.y[0] - 0.06 * background.height;
     rotationPoints.outer.rightSiding.continueCurve1.y[3] = rotationPoints.outer.rightSiding.continueCurve1.y[0] + 0.2 * background.height;
+    rotationPoints.outer.rightSiding.continueCurve1.x[1] = rotationPoints.outer.rightSiding.continueCurve1.x[0] + 0.0268 * background.width;
+    rotationPoints.outer.rightSiding.continueCurve1.y[1] = rotationPoints.outer.rightSiding.continueCurve1.y[0];
+    rotationPoints.outer.rightSiding.continueCurve1.x[2] = rotationPoints.outer.rightSiding.continueCurve1.x[3];
+    rotationPoints.outer.rightSiding.continueCurve1.y[2] = rotationPoints.outer.rightSiding.continueCurve1.y[3] - 0.0967 * background.width;
     bezierPoints = {x: [rotationPoints.outer.rightSiding.continueCurve1.x[0], rotationPoints.outer.rightSiding.continueCurve1.x[1], rotationPoints.outer.rightSiding.continueCurve1.x[2], rotationPoints.outer.rightSiding.continueCurve1.x[3]], y: [rotationPoints.outer.rightSiding.continueCurve1.y[0], rotationPoints.outer.rightSiding.continueCurve1.y[1], rotationPoints.outer.rightSiding.continueCurve1.y[2], rotationPoints.outer.rightSiding.continueCurve1.y[3]]};
     rotationPoints.outer.rightSiding.continueCurve1.bezierLength = getBezierLength(bezierPoints, repNo);
 
