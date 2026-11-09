@@ -8,6 +8,7 @@ interface TrainBoogie {
     y?: number;
     z?: number;
     angle?: number;
+    turned?: boolean;
 }
 interface TrainWheel {
     front?: {
@@ -377,7 +378,31 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
         } else if (cO.state == 218 && cO.x - background.x >= rotationPoints.outer.rightSiding.rejoin.x[0]) {
             cO.stateChange = true;
             cO.state = 217;
-        } else if (cO.state == 218 && cO.x - background.x > background.width) {
+        } else if (cO.state == 220 && cO.y - background.y >= rotationPoints.outer.rightSidingPassing.diverge.y[0]) {
+            cO.stateChange = true;
+            cO.state = 212;
+        } else if (cO.state == 221 && cO.y - background.y >= rotationPoints.outer.rightSidingPassing.curve0.y[0]) {
+            cO.stateChange = true;
+            cO.state = 220;
+        } else if (cO.state == 222 && cO.x - background.x <= rotationPoints.outer.rightSidingPassing.line0.x[0]) {
+            cO.stateChange = true;
+            cO.state = 221;
+        } else if (cO.state == 223 && cO.x - background.x <= rotationPoints.outer.rightSidingPassing.curve1.x[0]) {
+            cO.stateChange = true;
+            cO.state = 222;
+        } else if (cO.state == 224 && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.line1.y[0]) {
+            cO.stateChange = true;
+            cO.state = 223;
+        } else if (cO.state == 225 && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.curve2.y[0]) {
+            cO.stateChange = true;
+            cO.state = 224;
+        } else if (cO.state == 226 && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.line2.x[0]) {
+            cO.stateChange = true;
+            cO.state = 225;
+        } else if (cO.state == 227 && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.merge.x[0]) {
+            cO.stateChange = true;
+            cO.state = 226;
+        } else if ((cO.state == 218 || cO.state == 227) && cO.x - background.x > background.width) {
             const stillInside = 1 + (background.width - cO.x + background.x) / (currentObject.width - 2 * currentObject.bogieDistance * currentObject.width);
             if (!realIsFront) {
                 currentObject.invisible = true;
@@ -533,7 +558,8 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
             }
         } else if (cO.state == 210 && Math.round(cO.x - background.x) >= Math.round(rotationPoints.outer.rightSiding.enter.x[1])) {
             cO.stateChange = true;
-            if ((isLast && switches.outerRightSidingTurn.left.turned) || (lastObject.state > 215 && lastObject.state < 300)) {
+            // A leading object on the passing track went the 218 way only if it already turned here
+            if ((isLast && switches.outerRightSidingTurn.left.turned) || (lastObject.state > 215 && lastObject.state < 219) || (lastObject.state > 219 && lastObject.state < 228 && lastObject.turned != cO.turned)) {
                 cO.state = 218;
                 cO.turned = !cO.turned;
                 if (isFirst) {
@@ -548,7 +574,31 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
         } else if (cO.state == 212 && cO.y - background.y <= rotationPoints.outer.rightSiding.end.y[1]) {
             cO.stateChange = true;
             cO.state = 213;
-        } else if (cO.state == 212 && cO.y - background.y < 0) {
+        } else if (cO.state == 220 && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.diverge.y[3]) {
+            cO.stateChange = true;
+            cO.state = 221;
+        } else if (cO.state == 221 && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.curve0.x[3]) {
+            cO.stateChange = true;
+            cO.state = 222;
+        } else if (cO.state == 222 && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.line0.x[1]) {
+            cO.stateChange = true;
+            cO.state = 223;
+        } else if (cO.state == 223 && cO.y - background.y >= rotationPoints.outer.rightSidingPassing.curve1.y[3]) {
+            cO.stateChange = true;
+            cO.state = 224;
+        } else if (cO.state == 224 && cO.y - background.y >= rotationPoints.outer.rightSidingPassing.line1.y[1]) {
+            cO.stateChange = true;
+            cO.state = 225;
+        } else if (cO.state == 225 && cO.x - background.x <= rotationPoints.outer.rightSidingPassing.curve2.x[3]) {
+            cO.stateChange = true;
+            cO.state = 226;
+        } else if (cO.state == 226 && cO.x - background.x <= rotationPoints.outer.rightSidingPassing.line2.x[1]) {
+            cO.stateChange = true;
+            cO.state = 227;
+        } else if (cO.state == 227 && cO.x - background.x <= rotationPoints.outer.rightSidingPassing.merge.x[3]) {
+            cO.stateChange = true;
+            cO.state = 218;
+        } else if ((cO.state == 212 || cO.state == 220) && cO.y - background.y < 0) {
             const stillInside = 1 + (cO.y - background.y) / (currentObject.width - 2 * currentObject.bogieDistance * currentObject.width);
             if (realIsFront) {
                 currentObject.invisible = true;
@@ -1060,7 +1110,13 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         if (cO.stateChange) {
             cO.stateChange = false;
         }
+        var beforePassingTop = cO.y - background.y > rotationPoints.outer.rightSidingPassing.diverge.y[0];
         setCOPosLinear(points, !realStandardDirection, false);
+        // As at outerUpperSiding: the leading object turns off only when it crosses the junction in this step, the others follow it onto the passing track
+        if (!realStandardDirection && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.diverge.y[0] && ((isLast && beforePassingTop && switches.outerRightSidingPassingTop.left.turned) || (lastObject.state > 219 && lastObject.state < 228))) {
+            cO.stateChange = true;
+            cO.state = 220;
+        }
     } else if (cO.state == 213) {
         points = {x: [rotationPoints.outer.rightSiding.continueCurve0.x[0] + background.x, rotationPoints.outer.rightSiding.continueCurve0.x[1] + background.x, rotationPoints.outer.rightSiding.continueCurve0.x[2] + background.x, rotationPoints.outer.rightSiding.continueCurve0.x[3] + background.x], y: [rotationPoints.outer.rightSiding.continueCurve0.y[0] + background.y, rotationPoints.outer.rightSiding.continueCurve0.y[1] + background.y, rotationPoints.outer.rightSiding.continueCurve0.y[2] + background.y, rotationPoints.outer.rightSiding.continueCurve0.y[3] + background.y]};
         points.x.reverse();
@@ -1129,7 +1185,88 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         if (cO.stateChange) {
             cO.stateChange = false;
         }
+        var beforePassingBottom = cO.x - background.x < rotationPoints.outer.rightSidingPassing.merge.x[3];
         setCOPosLinear(points, !realStandardDirection, false);
+        // As at outerUpperSiding: the leading object turns off only when it crosses the junction in this step, the others follow it onto the passing track
+        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.merge.x[3] && ((isFirst && beforePassingBottom && switches.outerRightSidingPassingBottom.left.turned) || (lastObject.state > 219 && lastObject.state < 228))) {
+            cO.stateChange = true;
+            cO.state = 227;
+        }
+    } else if (cO.state == 220) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.diverge.x[0] + background.x, rotationPoints.outer.rightSidingPassing.diverge.x[1] + background.x, rotationPoints.outer.rightSidingPassing.diverge.x[2] + background.x, rotationPoints.outer.rightSidingPassing.diverge.x[3] + background.x], y: [rotationPoints.outer.rightSidingPassing.diverge.y[0] + background.y, rotationPoints.outer.rightSidingPassing.diverge.y[1] + background.y, rotationPoints.outer.rightSidingPassing.diverge.y[2] + background.y, rotationPoints.outer.rightSidingPassing.diverge.y[3] + background.y]};
+        points.x.reverse();
+        points.y.reverse();
+        if (cO.stateChange) {
+            cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
+            cO.stateChange = false;
+        }
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.rightSidingPassing.diverge.bezierLength);
+    } else if (cO.state == 221) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.curve0.x[0] + background.x, rotationPoints.outer.rightSidingPassing.curve0.x[1] + background.x, rotationPoints.outer.rightSidingPassing.curve0.x[2] + background.x, rotationPoints.outer.rightSidingPassing.curve0.x[3] + background.x], y: [rotationPoints.outer.rightSidingPassing.curve0.y[0] + background.y, rotationPoints.outer.rightSidingPassing.curve0.y[1] + background.y, rotationPoints.outer.rightSidingPassing.curve0.y[2] + background.y, rotationPoints.outer.rightSidingPassing.curve0.y[3] + background.y]};
+        points.x.reverse();
+        points.y.reverse();
+        if (cO.stateChange) {
+            cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
+            cO.stateChange = false;
+        }
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.rightSidingPassing.curve0.bezierLength);
+    } else if (cO.state == 222) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.line0.x[0] + background.x, rotationPoints.outer.rightSidingPassing.line0.x[1] + background.x], y: [rotationPoints.outer.rightSidingPassing.line0.y[0] + background.y, rotationPoints.outer.rightSidingPassing.line0.y[1] + background.y]};
+        if (realStandardDirection) {
+            points.x.reverse();
+            points.y.reverse();
+        }
+        if (cO.stateChange) {
+            cO.stateChange = false;
+        }
+        setCOPosLinear(points, !realStandardDirection, true);
+    } else if (cO.state == 223) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.curve1.x[0] + background.x, rotationPoints.outer.rightSidingPassing.curve1.x[1] + background.x, rotationPoints.outer.rightSidingPassing.curve1.x[2] + background.x, rotationPoints.outer.rightSidingPassing.curve1.x[3] + background.x], y: [rotationPoints.outer.rightSidingPassing.curve1.y[0] + background.y, rotationPoints.outer.rightSidingPassing.curve1.y[1] + background.y, rotationPoints.outer.rightSidingPassing.curve1.y[2] + background.y, rotationPoints.outer.rightSidingPassing.curve1.y[3] + background.y]};
+        points.x.reverse();
+        points.y.reverse();
+        if (cO.stateChange) {
+            cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
+            cO.stateChange = false;
+        }
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.rightSidingPassing.curve1.bezierLength);
+    } else if (cO.state == 224) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.line1.x[0] + background.x, rotationPoints.outer.rightSidingPassing.line1.x[1] + background.x], y: [rotationPoints.outer.rightSidingPassing.line1.y[0] + background.y, rotationPoints.outer.rightSidingPassing.line1.y[1] + background.y]};
+        if (realStandardDirection) {
+            points.x.reverse();
+            points.y.reverse();
+        }
+        if (cO.stateChange) {
+            cO.stateChange = false;
+        }
+        setCOPosLinear(points, !realStandardDirection, !realStandardDirection);
+    } else if (cO.state == 225) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.curve2.x[0] + background.x, rotationPoints.outer.rightSidingPassing.curve2.x[1] + background.x, rotationPoints.outer.rightSidingPassing.curve2.x[2] + background.x, rotationPoints.outer.rightSidingPassing.curve2.x[3] + background.x], y: [rotationPoints.outer.rightSidingPassing.curve2.y[0] + background.y, rotationPoints.outer.rightSidingPassing.curve2.y[1] + background.y, rotationPoints.outer.rightSidingPassing.curve2.y[2] + background.y, rotationPoints.outer.rightSidingPassing.curve2.y[3] + background.y]};
+        points.x.reverse();
+        points.y.reverse();
+        if (cO.stateChange) {
+            cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
+            cO.stateChange = false;
+        }
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.rightSidingPassing.curve2.bezierLength);
+    } else if (cO.state == 226) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.line2.x[0] + background.x, rotationPoints.outer.rightSidingPassing.line2.x[1] + background.x], y: [rotationPoints.outer.rightSidingPassing.line2.y[0] + background.y, rotationPoints.outer.rightSidingPassing.line2.y[1] + background.y]};
+        if (realStandardDirection) {
+            points.x.reverse();
+            points.y.reverse();
+        }
+        if (cO.stateChange) {
+            cO.stateChange = false;
+        }
+        setCOPosLinear(points, !realStandardDirection, false);
+    } else if (cO.state == 227) {
+        points = {x: [rotationPoints.outer.rightSidingPassing.merge.x[0] + background.x, rotationPoints.outer.rightSidingPassing.merge.x[1] + background.x, rotationPoints.outer.rightSidingPassing.merge.x[2] + background.x, rotationPoints.outer.rightSidingPassing.merge.x[3] + background.x], y: [rotationPoints.outer.rightSidingPassing.merge.y[0] + background.y, rotationPoints.outer.rightSidingPassing.merge.y[1] + background.y, rotationPoints.outer.rightSidingPassing.merge.y[2] + background.y, rotationPoints.outer.rightSidingPassing.merge.y[3] + background.y]};
+        points.x.reverse();
+        points.y.reverse();
+        if (cO.stateChange) {
+            cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
+            cO.stateChange = false;
+        }
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.rightSidingPassing.merge.bezierLength);
     } else if (cO.state == 310) {
         points = {x: [rotationPoints.outerUpper.sCurve0.x[0] + background.x, rotationPoints.outerUpper.sCurve0.x[1] + background.x, rotationPoints.outerUpper.sCurve0.x[2] + background.x, rotationPoints.outerUpper.sCurve0.x[3] + background.x], y: [rotationPoints.outerUpper.sCurve0.y[0] + background.y, rotationPoints.outerUpper.sCurve0.y[1] + background.y, rotationPoints.outerUpper.sCurve0.y[2] + background.y, rotationPoints.outerUpper.sCurve0.y[3] + background.y], z: [rotationPoints.outerUpper.sCurve0.z[0], rotationPoints.outerUpper.sCurve0.z[1], rotationPoints.outerUpper.sCurve0.z[2], rotationPoints.outerUpper.sCurve0.z[3]]};
         if (cO.stateChange) {
