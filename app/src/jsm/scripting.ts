@@ -2221,34 +2221,43 @@ function drawObjects() {
         return false;
     }
 
-    function drawContinueTrackElement(group, geometry, corrFac) {
-        const material = new THREE.LineBasicMaterial({color: three.night ? 0x541e03 : 0x963c0e});
-        const objectA = new THREE.Line(geometry, material);
-        objectA.translateX((-corrFac * background.width) / 990000);
-        objectA.translateY(-background.width / 990000);
-        objectA.translateZ(-background.width / 1000000);
-        group.add(objectA);
-        const objectB = new THREE.Line(geometry, material);
-        objectB.translateX((corrFac * background.width) / 990000);
-        objectB.translateY(background.width / 990000);
-        objectB.translateZ(-background.width / 1000000);
-        group.add(objectB);
+    function drawContinueTrackElement(group, points) {
+        // Two rails along the track's points (background px, height z): narrow strips, each offset by half the track width perpendicular to the track
+        const material = new THREE.MeshBasicMaterial({color: three.night ? 0x541e03 : 0x963c0e, side: THREE.DoubleSide});
+        const halfTrackWidth = (trainParams.trackWidth / 2) * background.width;
+        // At least one screen pixel wide, so that the rails do not flicker on small screens
+        const halfRailWidth = Math.max(0.0009 * background.width, client.devicePixelRatio) / 2;
+        const normals = points.map(function (_point, k) {
+            const before = points[Math.max(k - 1, 0)];
+            const after = points[Math.min(k + 1, points.length - 1)];
+            const length = Math.hypot(after.x - before.x, after.y - before.y);
+            return {x: -(after.y - before.y) / length, y: (after.x - before.x) / length};
+        });
+        for (const side of [-1, 1]) {
+            const vertices = [];
+            points.forEach(function (point, k) {
+                for (const edge of [-1, 1]) {
+                    const offset = side * halfTrackWidth + edge * halfRailWidth;
+                    const x = point.x + offset * normals[k].x;
+                    const y = point.y + offset * normals[k].y;
+                    vertices.push(new THREE.Vector3(three.calcScale() * ((x - background.width / 2) / background.width), three.calcScale() * (-(y - background.height / 2) / background.width) + three.calcPositionY(), (three.calcScale() * point.z) / background.width - background.width / 1000000));
+                }
+            });
+            const indices = [];
+            for (let k = 0; k < points.length - 1; k++) {
+                indices.push(2 * k, 2 * k + 1, 2 * k + 2, 2 * k + 1, 2 * k + 3, 2 * k + 2);
+            }
+            const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+            geometry.setIndex(indices);
+            group.add(new THREE.Mesh(geometry, material));
+        }
     }
-    function drawContinueTrackLine(group, line, corrFac = 1) {
-        const points = [];
-        points.push(new THREE.Vector3(three.calcScale() * ((line.x[0] - background.width / 2) / background.width), three.calcScale() * (-(line.y[0] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[0]) / background.width : 0));
-        points.push(new THREE.Vector3(three.calcScale() * ((line.x[1] - background.width / 2) / background.width), three.calcScale() * (-(line.y[1] - background.height / 2) / background.width) + three.calcPositionY(), line.z ? (three.calcScale() * line.z[1]) / background.width : 0));
-        drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+    function drawContinueTrackLine(group, line) {
+        drawContinueTrackElement(group, [new THREE.Vector3(line.x[0], line.y[0], line.z ? line.z[0] : 0), new THREE.Vector3(line.x[1], line.y[1], line.z ? line.z[1] : 0)]);
     }
-    function drawContinueTrackCurve(group, curve, corrFac = 1) {
-        const curve3D = new THREE.CubicBezierCurve3(
-            new THREE.Vector3(three.calcScale() * ((curve.x[0] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[0] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[0]) / background.width : 0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[1] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[1] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[1]) / background.width : 0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[2] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[2] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[2]) / background.width : 0),
-            new THREE.Vector3(three.calcScale() * ((curve.x[3] - background.width / 2) / background.width), three.calcScale() * (-(curve.y[3] - background.height / 2) / background.width) + three.calcPositionY(), curve.z ? (three.calcScale() * curve.z[3]) / background.width : 0)
-        );
-        const points = curve3D.getPoints(30);
-        drawContinueTrackElement(group, new THREE.BufferGeometry().setFromPoints(points), corrFac);
+    function drawContinueTrackCurve(group, curve) {
+        const bezier = new THREE.CubicBezierCurve3(new THREE.Vector3(curve.x[0], curve.y[0], curve.z ? curve.z[0] : 0), new THREE.Vector3(curve.x[1], curve.y[1], curve.z ? curve.z[1] : 0), new THREE.Vector3(curve.x[2], curve.y[2], curve.z ? curve.z[2] : 0), new THREE.Vector3(curve.x[3], curve.y[3], curve.z ? curve.z[3] : 0));
+        drawContinueTrackElement(group, bezier.getPoints(30));
     }
 
     function calcCars() {
@@ -3320,15 +3329,14 @@ function drawObjects() {
         // rightSiding's left leg and bottom straight are shown whole while a train is on them beyond the passing track's junction, otherwise only up to the junction
         const passing = rotationPoints.outer.rightSidingPassing;
         if (trainInTrackElement(212, (bogie) => bogie.y - background.y < passing.diverge.y[0])) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.end, -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.end);
         } else if (trainInTrackElement(212)) {
-            drawContinueTrackLine(continueTrackNewObject, {x: [rotationPoints.outer.rightSiding.end.x[0], passing.diverge.x[0]], y: [rotationPoints.outer.rightSiding.end.y[0], passing.diverge.y[0]]}, -1);
+            drawContinueTrackLine(continueTrackNewObject, {x: [rotationPoints.outer.rightSiding.end.x[0], passing.diverge.x[0]], y: [rotationPoints.outer.rightSiding.end.y[0], passing.diverge.y[0]]});
         }
         if (trainInTrackElement(213)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve0, -1);
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve0);
         }
         if (trainInTrackElement(214)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine0, -1);
             drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine0);
         }
         if (trainInTrackElement(215)) {
@@ -3336,24 +3344,22 @@ function drawObjects() {
         }
         if (trainInTrackElement(216)) {
             drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine1);
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine1, -1);
         }
         if (trainInTrackElement(217)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve2, -1);
+            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve2);
         }
         if (trainInTrackElement(218, (bogie) => bogie.x - background.x > passing.merge.x[3])) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin, -1);
+            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin);
         } else if (trainInTrackElement(218)) {
-            drawContinueTrackLine(continueTrackNewObject, {x: [passing.merge.x[3], rotationPoints.outer.rightSiding.rejoin.x[1]], y: [passing.merge.y[3], rotationPoints.outer.rightSiding.rejoin.y[1]]}, -1);
+            drawContinueTrackLine(continueTrackNewObject, {x: [passing.merge.x[3], rotationPoints.outer.rightSiding.rejoin.x[1]], y: [passing.merge.y[3], rotationPoints.outer.rightSiding.rejoin.y[1]]});
         }
         if (trainInTrackElement(220)) {
             drawContinueTrackCurve(continueTrackNewObject, passing.diverge);
         }
         if (trainInTrackElement(221)) {
-            drawContinueTrackCurve(continueTrackNewObject, passing.curve0, -1);
+            drawContinueTrackCurve(continueTrackNewObject, passing.curve0);
         }
         if (trainInTrackElement(222)) {
-            drawContinueTrackLine(continueTrackNewObject, passing.line0, -1);
             drawContinueTrackLine(continueTrackNewObject, passing.line0);
         }
         if (trainInTrackElement(223)) {
@@ -3361,13 +3367,12 @@ function drawObjects() {
         }
         if (trainInTrackElement(224)) {
             drawContinueTrackLine(continueTrackNewObject, passing.line1);
-            drawContinueTrackLine(continueTrackNewObject, passing.line1, -1);
         }
         if (trainInTrackElement(225)) {
-            drawContinueTrackCurve(continueTrackNewObject, passing.curve2, -1);
+            drawContinueTrackCurve(continueTrackNewObject, passing.curve2);
         }
         if (trainInTrackElement(226)) {
-            drawContinueTrackLine(continueTrackNewObject, passing.line2, -1);
+            drawContinueTrackLine(continueTrackNewObject, passing.line2);
         }
         if (trainInTrackElement(227)) {
             drawContinueTrackCurve(continueTrackNewObject, passing.merge);
