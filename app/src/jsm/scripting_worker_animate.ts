@@ -52,7 +52,7 @@ export interface Train extends Object {
     height?: number;
     displayAngle?: number;
     assetFlip?: boolean;
-    circleFamily: RotationPointsInner | RotationPointsOuter | RotationPointsOuterUpper;
+    circleFamily: RotationPointsInner | RotationPointsOuter;
     circle: RotationPointCircle;
     move?: boolean;
     lastDirectionChange?: number;
@@ -132,19 +132,18 @@ interface RotationPointsOuter {
     altState3: {left: RotationPointBezier; right: RotationPointBezier};
     rightSiding: {enter: RotationPoint; curve: RotationPointBezier; end: RotationPoint; continueCurve0: RotationPointBezier; continueLine0: RotationPointBezier; continueCurve1: RotationPointBezier; continueLine1: RotationPoint; continueCurve2: RotationPointBezier; rejoin: RotationPoint};
     rightSidingPassing: {diverge: RotationPointBezier; curve0: RotationPointBezier; line0: RotationPoint; curve1: RotationPointBezier; line1: RotationPoint; curve2: RotationPointBezier; line2: RotationPoint; merge: RotationPointBezier};
-}
-interface RotationPointsOuterUpper {
-    loop: RotationPointCircle;
-    sCurve0: RotationPointBezier;
-    sCurve1: RotationPointBezier;
-    parallel: RotationPoint;
-    loopCurve0: RotationPointBezier;
-    pillar: RotationPointBezier;
-    loopCurve1: RotationPointBezier;
-    loopCurve2: RotationPointBezier;
-    loopLine0: RotationPoint;
-    loopCurve3: RotationPointBezier;
-    loopLine1: RotationPoint;
+    upperSiding: {
+        sCurve0: RotationPointBezier;
+        sCurve1: RotationPointBezier;
+        parallel: RotationPoint;
+        loopCurve0: RotationPointBezier;
+        pillar: RotationPointBezier;
+        loopCurve1: RotationPointBezier;
+        loopCurve2: RotationPointBezier;
+        loopLine0: RotationPoint;
+        loopCurve3: RotationPointBezier;
+        loopLine1: RotationPoint;
+    };
 }
 interface RotationPointsInner2Outer {
     left: RotationPointBezier;
@@ -153,7 +152,6 @@ interface RotationPointsInner2Outer {
 export interface RotationPoints {
     inner: RotationPointsInner;
     outer: RotationPointsOuter;
-    outerUpper: RotationPointsOuterUpper;
     inner2outer: RotationPointsInner2Outer;
 }
 
@@ -412,17 +410,13 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
             } else if (getIsSecondLast(cO, isFront, input1, i)) {
                 trains[input1].volumeCustom = stillInside;
             }
-        } else if (cO.state == 310 && cO.x - background.x >= rotationPoints.outerUpper.sCurve0.x[3]) {
-            if (isLast) {
-                trains[input1].circleFamily = rotationPoints.outerUpper;
-                trains[input1].circle = rotationPoints.outerUpper.loop;
-            }
+        } else if (cO.state == 310 && cO.x - background.x >= rotationPoints.outer.upperSiding.sCurve0.x[3]) {
             cO.stateChange = true;
             cO.state = 311;
-        } else if (cO.state == 311 && cO.x - background.x >= rotationPoints.outerUpper.sCurve1.x[3]) {
+        } else if (cO.state == 311 && cO.x - background.x >= rotationPoints.outer.upperSiding.sCurve1.x[3]) {
             cO.stateChange = true;
             cO.state = 312;
-        } else if (cO.state == 312 && cO.x - background.x >= rotationPoints.outerUpper.parallel.x[1]) {
+        } else if (cO.state == 312 && cO.x - background.x >= rotationPoints.outer.upperSiding.parallel.x[1]) {
             cO.stateChange = true;
             if (lastObject.state == 318 || lastObject.state == 319) {
                 // A train reversed while standing across the turnout on its way out of the loop: its bogies follow the leading object back onto the loop's return line (319) instead of entering the loop start (313)
@@ -434,25 +428,25 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
             } else {
                 cO.state = 313;
             }
-        } else if (cO.state == 313 && cO.y - background.y >= rotationPoints.outerUpper.loopCurve0.y[3]) {
+        } else if (cO.state == 313 && cO.y - background.y >= rotationPoints.outer.upperSiding.loopCurve0.y[3]) {
             cO.stateChange = true;
             cO.state = 314;
-        } else if (cO.state == 314 && cO.y - background.y >= rotationPoints.outerUpper.pillar.y[3]) {
+        } else if (cO.state == 314 && cO.y - background.y >= rotationPoints.outer.upperSiding.pillar.y[3]) {
             cO.stateChange = true;
             cO.state = 315;
-        } else if (cO.state == 315 && cO.x - background.x >= rotationPoints.outerUpper.loopCurve1.x[3]) {
+        } else if (cO.state == 315 && cO.x - background.x >= rotationPoints.outer.upperSiding.loopCurve1.x[3]) {
             cO.stateChange = true;
             cO.state = 316;
-        } else if (cO.state == 316 && cO.y - background.y <= rotationPoints.outerUpper.loopCurve2.y[3]) {
+        } else if (cO.state == 316 && cO.y - background.y <= rotationPoints.outer.upperSiding.loopCurve2.y[3]) {
             cO.stateChange = true;
             cO.state = 317;
-        } else if (cO.state == 317 && cO.y - background.y <= rotationPoints.outerUpper.loopLine0.y[1]) {
+        } else if (cO.state == 317 && cO.y - background.y <= rotationPoints.outer.upperSiding.loopLine0.y[1]) {
             cO.stateChange = true;
             cO.state = 318;
-        } else if (cO.state == 318 && cO.x - background.x <= rotationPoints.outerUpper.loopCurve3.x[3]) {
+        } else if (cO.state == 318 && cO.x - background.x <= rotationPoints.outer.upperSiding.loopCurve3.x[3]) {
             cO.stateChange = true;
             cO.state = 319;
-        } else if (cO.state == 319 && cO.x - background.x <= rotationPoints.outerUpper.loopLine1.x[1]) {
+        } else if (cO.state == 319 && cO.x - background.x <= rotationPoints.outer.upperSiding.loopLine1.x[1]) {
             cO.stateChange = true;
             cO.turned = !cO.turned;
             if (isFirst) {
@@ -640,42 +634,34 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
                 trains[input1].mute = false;
                 trains[input1].volumeCustom = stillInside;
             }
-        } else if (cO.state == 310 && cO.x - background.x <= rotationPoints.outerUpper.sCurve0.x[0]) {
-            if (isFirst) {
-                trains[input1].circleFamily = rotationPoints.outer;
-                trains[input1].circle = rotationPoints.outer.narrow;
-            }
+        } else if (cO.state == 310 && cO.x - background.x <= rotationPoints.outer.upperSiding.sCurve0.x[0]) {
             cO.stateChange = true;
             cO.state = 1;
-        } else if (cO.state == 311 && cO.x - background.x <= rotationPoints.outerUpper.sCurve1.x[0]) {
-            if (isLast) {
-                trains[input1].circleFamily = null;
-                trains[input1].circle = rotationPoints.outer.narrow;
-            }
+        } else if (cO.state == 311 && cO.x - background.x <= rotationPoints.outer.upperSiding.sCurve1.x[0]) {
             cO.stateChange = true;
             cO.state = 310;
-        } else if (cO.state == 312 && cO.x - background.x <= rotationPoints.outerUpper.parallel.x[0]) {
+        } else if (cO.state == 312 && cO.x - background.x <= rotationPoints.outer.upperSiding.parallel.x[0]) {
             cO.stateChange = true;
             cO.state = 311;
-        } else if (cO.state == 313 && cO.x - background.x <= rotationPoints.outerUpper.loopCurve0.x[0]) {
+        } else if (cO.state == 313 && cO.x - background.x <= rotationPoints.outer.upperSiding.loopCurve0.x[0]) {
             cO.stateChange = true;
             cO.state = 312;
-        } else if (cO.state == 314 && cO.y - background.y <= rotationPoints.outerUpper.pillar.y[0]) {
+        } else if (cO.state == 314 && cO.y - background.y <= rotationPoints.outer.upperSiding.pillar.y[0]) {
             cO.stateChange = true;
             cO.state = 313;
-        } else if (cO.state == 315 && cO.y - background.y <= rotationPoints.outerUpper.loopCurve1.y[0]) {
+        } else if (cO.state == 315 && cO.y - background.y <= rotationPoints.outer.upperSiding.loopCurve1.y[0]) {
             cO.stateChange = true;
             cO.state = 314;
-        } else if (cO.state == 316 && cO.x - background.x <= rotationPoints.outerUpper.loopCurve2.x[0]) {
+        } else if (cO.state == 316 && cO.x - background.x <= rotationPoints.outer.upperSiding.loopCurve2.x[0]) {
             cO.stateChange = true;
             cO.state = 315;
-        } else if (cO.state == 317 && cO.y - background.y >= rotationPoints.outerUpper.loopLine0.y[0]) {
+        } else if (cO.state == 317 && cO.y - background.y >= rotationPoints.outer.upperSiding.loopLine0.y[0]) {
             cO.stateChange = true;
             cO.state = 316;
-        } else if (cO.state == 318 && cO.y - background.y >= rotationPoints.outerUpper.loopCurve3.y[0]) {
+        } else if (cO.state == 318 && cO.y - background.y >= rotationPoints.outer.upperSiding.loopCurve3.y[0]) {
             cO.stateChange = true;
             cO.state = 317;
-        } else if (cO.state == 319 && cO.x - background.x >= rotationPoints.outerUpper.loopLine1.x[0]) {
+        } else if (cO.state == 319 && cO.x - background.x >= rotationPoints.outer.upperSiding.loopLine1.x[0]) {
             cO.stateChange = true;
             cO.state = 318;
         }
@@ -769,13 +755,10 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             pointsSwitch.x.reverse();
             pointsSwitch.y.reverse();
         }
-        var beforeUpperSiding = cO.x - background.x < rotationPoints.outerUpper.sCurve0.x[0];
+        var beforeUpperSiding = cO.x - background.x < rotationPoints.outer.upperSiding.sCurve0.x[0];
         setCOPosLinear(trains[input1].switchCircles ? pointsSwitch : points, !realStandardDirection, false);
         // The first object turns off only when it crosses the switch in this step, so a train already past it is not diverted when the switch is turned; the others follow the leading object onto the upper track as soon as they are past the switch, by position, because setCOPosCorr may move them past it between two checks
-        if (realStandardDirection && cO.x - background.x >= rotationPoints.outerUpper.sCurve0.x[0] && ((isFirst && beforeUpperSiding && trains[input1].circleFamily == rotationPoints.outer && switches.outerUpperSiding.left.turned) || (lastObject.state > 300 && lastObject.state < 400))) {
-            if (isFirst) {
-                trains[input1].circleFamily = null;
-            }
+        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.upperSiding.sCurve0.x[0] && ((isFirst && beforeUpperSiding && trains[input1].circleFamily == rotationPoints.outer && switches.outerUpperSiding.left.turned) || (lastObject.state > 300 && lastObject.state < 400))) {
             cO.stateChange = true;
             cO.state = 310;
         }
@@ -1265,21 +1248,21 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         }
         setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.rightSidingPassing.merge.bezierLength);
     } else if (cO.state == 310) {
-        points = {x: [rotationPoints.outerUpper.sCurve0.x[0] + background.x, rotationPoints.outerUpper.sCurve0.x[1] + background.x, rotationPoints.outerUpper.sCurve0.x[2] + background.x, rotationPoints.outerUpper.sCurve0.x[3] + background.x], y: [rotationPoints.outerUpper.sCurve0.y[0] + background.y, rotationPoints.outerUpper.sCurve0.y[1] + background.y, rotationPoints.outerUpper.sCurve0.y[2] + background.y, rotationPoints.outerUpper.sCurve0.y[3] + background.y], z: [rotationPoints.outerUpper.sCurve0.z[0], rotationPoints.outerUpper.sCurve0.z[1], rotationPoints.outerUpper.sCurve0.z[2], rotationPoints.outerUpper.sCurve0.z[3]]};
+        points = {x: [rotationPoints.outer.upperSiding.sCurve0.x[0] + background.x, rotationPoints.outer.upperSiding.sCurve0.x[1] + background.x, rotationPoints.outer.upperSiding.sCurve0.x[2] + background.x, rotationPoints.outer.upperSiding.sCurve0.x[3] + background.x], y: [rotationPoints.outer.upperSiding.sCurve0.y[0] + background.y, rotationPoints.outer.upperSiding.sCurve0.y[1] + background.y, rotationPoints.outer.upperSiding.sCurve0.y[2] + background.y, rotationPoints.outer.upperSiding.sCurve0.y[3] + background.y], z: [rotationPoints.outer.upperSiding.sCurve0.z[0], rotationPoints.outer.upperSiding.sCurve0.z[1], rotationPoints.outer.upperSiding.sCurve0.z[2], rotationPoints.outer.upperSiding.sCurve0.z[3]]};
         if (cO.stateChange) {
             cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
             cO.stateChange = false;
         }
-        setCOPosBezier(points, !realStandardDirection, rotationPoints.outerUpper.sCurve0.bezierLength);
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.upperSiding.sCurve0.bezierLength);
     } else if (cO.state == 311) {
-        points = {x: [rotationPoints.outerUpper.sCurve1.x[0] + background.x, rotationPoints.outerUpper.sCurve1.x[1] + background.x, rotationPoints.outerUpper.sCurve1.x[2] + background.x, rotationPoints.outerUpper.sCurve1.x[3] + background.x], y: [rotationPoints.outerUpper.sCurve1.y[0] + background.y, rotationPoints.outerUpper.sCurve1.y[1] + background.y, rotationPoints.outerUpper.sCurve1.y[2] + background.y, rotationPoints.outerUpper.sCurve1.y[3] + background.y], z: [rotationPoints.outerUpper.sCurve1.z[0], rotationPoints.outerUpper.sCurve1.z[1], rotationPoints.outerUpper.sCurve1.z[2], rotationPoints.outerUpper.sCurve1.z[3]]};
+        points = {x: [rotationPoints.outer.upperSiding.sCurve1.x[0] + background.x, rotationPoints.outer.upperSiding.sCurve1.x[1] + background.x, rotationPoints.outer.upperSiding.sCurve1.x[2] + background.x, rotationPoints.outer.upperSiding.sCurve1.x[3] + background.x], y: [rotationPoints.outer.upperSiding.sCurve1.y[0] + background.y, rotationPoints.outer.upperSiding.sCurve1.y[1] + background.y, rotationPoints.outer.upperSiding.sCurve1.y[2] + background.y, rotationPoints.outer.upperSiding.sCurve1.y[3] + background.y], z: [rotationPoints.outer.upperSiding.sCurve1.z[0], rotationPoints.outer.upperSiding.sCurve1.z[1], rotationPoints.outer.upperSiding.sCurve1.z[2], rotationPoints.outer.upperSiding.sCurve1.z[3]]};
         if (cO.stateChange) {
             cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
             cO.stateChange = false;
         }
-        setCOPosBezier(points, !realStandardDirection, rotationPoints.outerUpper.sCurve1.bezierLength);
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.upperSiding.sCurve1.bezierLength);
     } else if (cO.state == 312) {
-        points = {x: [rotationPoints.outerUpper.parallel.x[0] + background.x, rotationPoints.outerUpper.parallel.x[1] + background.x], y: [rotationPoints.outerUpper.parallel.y[0] + background.y, rotationPoints.outerUpper.parallel.y[1] + background.y], z: [rotationPoints.outerUpper.parallel.z[0], rotationPoints.outerUpper.parallel.z[1]]};
+        points = {x: [rotationPoints.outer.upperSiding.parallel.x[0] + background.x, rotationPoints.outer.upperSiding.parallel.x[1] + background.x], y: [rotationPoints.outer.upperSiding.parallel.y[0] + background.y, rotationPoints.outer.upperSiding.parallel.y[1] + background.y], z: [rotationPoints.outer.upperSiding.parallel.z[0], rotationPoints.outer.upperSiding.parallel.z[1]]};
         if (!realStandardDirection) {
             points.x.reverse();
             points.y.reverse();
@@ -1290,35 +1273,35 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         }
         setCOPosLinear(points, !realStandardDirection, false);
     } else if (cO.state == 313) {
-        points = {x: [rotationPoints.outerUpper.loopCurve0.x[0] + background.x, rotationPoints.outerUpper.loopCurve0.x[1] + background.x, rotationPoints.outerUpper.loopCurve0.x[2] + background.x, rotationPoints.outerUpper.loopCurve0.x[3] + background.x], y: [rotationPoints.outerUpper.loopCurve0.y[0] + background.y, rotationPoints.outerUpper.loopCurve0.y[1] + background.y, rotationPoints.outerUpper.loopCurve0.y[2] + background.y, rotationPoints.outerUpper.loopCurve0.y[3] + background.y], z: [rotationPoints.outerUpper.loopCurve0.z[0], rotationPoints.outerUpper.loopCurve0.z[1], rotationPoints.outerUpper.loopCurve0.z[2], rotationPoints.outerUpper.loopCurve0.z[3]]};
+        points = {x: [rotationPoints.outer.upperSiding.loopCurve0.x[0] + background.x, rotationPoints.outer.upperSiding.loopCurve0.x[1] + background.x, rotationPoints.outer.upperSiding.loopCurve0.x[2] + background.x, rotationPoints.outer.upperSiding.loopCurve0.x[3] + background.x], y: [rotationPoints.outer.upperSiding.loopCurve0.y[0] + background.y, rotationPoints.outer.upperSiding.loopCurve0.y[1] + background.y, rotationPoints.outer.upperSiding.loopCurve0.y[2] + background.y, rotationPoints.outer.upperSiding.loopCurve0.y[3] + background.y], z: [rotationPoints.outer.upperSiding.loopCurve0.z[0], rotationPoints.outer.upperSiding.loopCurve0.z[1], rotationPoints.outer.upperSiding.loopCurve0.z[2], rotationPoints.outer.upperSiding.loopCurve0.z[3]]};
         if (cO.stateChange) {
             cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
             cO.stateChange = false;
         }
-        setCOPosBezier(points, !realStandardDirection, rotationPoints.outerUpper.loopCurve0.bezierLength);
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.upperSiding.loopCurve0.bezierLength);
     } else if (cO.state == 314) {
-        points = {x: [rotationPoints.outerUpper.pillar.x[0] + background.x, rotationPoints.outerUpper.pillar.x[1] + background.x, rotationPoints.outerUpper.pillar.x[2] + background.x, rotationPoints.outerUpper.pillar.x[3] + background.x], y: [rotationPoints.outerUpper.pillar.y[0] + background.y, rotationPoints.outerUpper.pillar.y[1] + background.y, rotationPoints.outerUpper.pillar.y[2] + background.y, rotationPoints.outerUpper.pillar.y[3] + background.y], z: [rotationPoints.outerUpper.pillar.z[0], rotationPoints.outerUpper.pillar.z[1], rotationPoints.outerUpper.pillar.z[2], rotationPoints.outerUpper.pillar.z[3]]};
+        points = {x: [rotationPoints.outer.upperSiding.pillar.x[0] + background.x, rotationPoints.outer.upperSiding.pillar.x[1] + background.x, rotationPoints.outer.upperSiding.pillar.x[2] + background.x, rotationPoints.outer.upperSiding.pillar.x[3] + background.x], y: [rotationPoints.outer.upperSiding.pillar.y[0] + background.y, rotationPoints.outer.upperSiding.pillar.y[1] + background.y, rotationPoints.outer.upperSiding.pillar.y[2] + background.y, rotationPoints.outer.upperSiding.pillar.y[3] + background.y], z: [rotationPoints.outer.upperSiding.pillar.z[0], rotationPoints.outer.upperSiding.pillar.z[1], rotationPoints.outer.upperSiding.pillar.z[2], rotationPoints.outer.upperSiding.pillar.z[3]]};
         if (cO.stateChange) {
             cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
             cO.stateChange = false;
         }
-        setCOPosBezier(points, !realStandardDirection, rotationPoints.outerUpper.pillar.bezierLength);
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.upperSiding.pillar.bezierLength);
     } else if (cO.state == 315) {
-        points = {x: [rotationPoints.outerUpper.loopCurve1.x[0] + background.x, rotationPoints.outerUpper.loopCurve1.x[1] + background.x, rotationPoints.outerUpper.loopCurve1.x[2] + background.x, rotationPoints.outerUpper.loopCurve1.x[3] + background.x], y: [rotationPoints.outerUpper.loopCurve1.y[0] + background.y, rotationPoints.outerUpper.loopCurve1.y[1] + background.y, rotationPoints.outerUpper.loopCurve1.y[2] + background.y, rotationPoints.outerUpper.loopCurve1.y[3] + background.y], z: [rotationPoints.outerUpper.loopCurve1.z[0], rotationPoints.outerUpper.loopCurve1.z[1], rotationPoints.outerUpper.loopCurve1.z[2], rotationPoints.outerUpper.loopCurve1.z[3]]};
+        points = {x: [rotationPoints.outer.upperSiding.loopCurve1.x[0] + background.x, rotationPoints.outer.upperSiding.loopCurve1.x[1] + background.x, rotationPoints.outer.upperSiding.loopCurve1.x[2] + background.x, rotationPoints.outer.upperSiding.loopCurve1.x[3] + background.x], y: [rotationPoints.outer.upperSiding.loopCurve1.y[0] + background.y, rotationPoints.outer.upperSiding.loopCurve1.y[1] + background.y, rotationPoints.outer.upperSiding.loopCurve1.y[2] + background.y, rotationPoints.outer.upperSiding.loopCurve1.y[3] + background.y], z: [rotationPoints.outer.upperSiding.loopCurve1.z[0], rotationPoints.outer.upperSiding.loopCurve1.z[1], rotationPoints.outer.upperSiding.loopCurve1.z[2], rotationPoints.outer.upperSiding.loopCurve1.z[3]]};
         if (cO.stateChange) {
             cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
             cO.stateChange = false;
         }
-        setCOPosBezier(points, !realStandardDirection, rotationPoints.outerUpper.loopCurve1.bezierLength);
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.upperSiding.loopCurve1.bezierLength);
     } else if (cO.state == 316) {
-        points = {x: [rotationPoints.outerUpper.loopCurve2.x[0] + background.x, rotationPoints.outerUpper.loopCurve2.x[1] + background.x, rotationPoints.outerUpper.loopCurve2.x[2] + background.x, rotationPoints.outerUpper.loopCurve2.x[3] + background.x], y: [rotationPoints.outerUpper.loopCurve2.y[0] + background.y, rotationPoints.outerUpper.loopCurve2.y[1] + background.y, rotationPoints.outerUpper.loopCurve2.y[2] + background.y, rotationPoints.outerUpper.loopCurve2.y[3] + background.y], z: [rotationPoints.outerUpper.loopCurve2.z[0], rotationPoints.outerUpper.loopCurve2.z[1], rotationPoints.outerUpper.loopCurve2.z[2], rotationPoints.outerUpper.loopCurve2.z[3]]};
+        points = {x: [rotationPoints.outer.upperSiding.loopCurve2.x[0] + background.x, rotationPoints.outer.upperSiding.loopCurve2.x[1] + background.x, rotationPoints.outer.upperSiding.loopCurve2.x[2] + background.x, rotationPoints.outer.upperSiding.loopCurve2.x[3] + background.x], y: [rotationPoints.outer.upperSiding.loopCurve2.y[0] + background.y, rotationPoints.outer.upperSiding.loopCurve2.y[1] + background.y, rotationPoints.outer.upperSiding.loopCurve2.y[2] + background.y, rotationPoints.outer.upperSiding.loopCurve2.y[3] + background.y], z: [rotationPoints.outer.upperSiding.loopCurve2.z[0], rotationPoints.outer.upperSiding.loopCurve2.z[1], rotationPoints.outer.upperSiding.loopCurve2.z[2], rotationPoints.outer.upperSiding.loopCurve2.z[3]]};
         if (cO.stateChange) {
             cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
             cO.stateChange = false;
         }
-        setCOPosBezier(points, !realStandardDirection, rotationPoints.outerUpper.loopCurve2.bezierLength);
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.upperSiding.loopCurve2.bezierLength);
     } else if (cO.state == 317) {
-        points = {x: [rotationPoints.outerUpper.loopLine0.x[0] + background.x, rotationPoints.outerUpper.loopLine0.x[1] + background.x], y: [rotationPoints.outerUpper.loopLine0.y[0] + background.y, rotationPoints.outerUpper.loopLine0.y[1] + background.y], z: [rotationPoints.outerUpper.loopLine0.z[0], rotationPoints.outerUpper.loopLine0.z[1]]};
+        points = {x: [rotationPoints.outer.upperSiding.loopLine0.x[0] + background.x, rotationPoints.outer.upperSiding.loopLine0.x[1] + background.x], y: [rotationPoints.outer.upperSiding.loopLine0.y[0] + background.y, rotationPoints.outer.upperSiding.loopLine0.y[1] + background.y], z: [rotationPoints.outer.upperSiding.loopLine0.z[0], rotationPoints.outer.upperSiding.loopLine0.z[1]]};
         if (!realStandardDirection) {
             points.x.reverse();
             points.y.reverse();
@@ -1329,14 +1312,14 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         }
         setCOPosLinear(points, !realStandardDirection, !realStandardDirection);
     } else if (cO.state == 318) {
-        points = {x: [rotationPoints.outerUpper.loopCurve3.x[0] + background.x, rotationPoints.outerUpper.loopCurve3.x[1] + background.x, rotationPoints.outerUpper.loopCurve3.x[2] + background.x, rotationPoints.outerUpper.loopCurve3.x[3] + background.x], y: [rotationPoints.outerUpper.loopCurve3.y[0] + background.y, rotationPoints.outerUpper.loopCurve3.y[1] + background.y, rotationPoints.outerUpper.loopCurve3.y[2] + background.y, rotationPoints.outerUpper.loopCurve3.y[3] + background.y], z: [rotationPoints.outerUpper.loopCurve3.z[0], rotationPoints.outerUpper.loopCurve3.z[1], rotationPoints.outerUpper.loopCurve3.z[2], rotationPoints.outerUpper.loopCurve3.z[3]]};
+        points = {x: [rotationPoints.outer.upperSiding.loopCurve3.x[0] + background.x, rotationPoints.outer.upperSiding.loopCurve3.x[1] + background.x, rotationPoints.outer.upperSiding.loopCurve3.x[2] + background.x, rotationPoints.outer.upperSiding.loopCurve3.x[3] + background.x], y: [rotationPoints.outer.upperSiding.loopCurve3.y[0] + background.y, rotationPoints.outer.upperSiding.loopCurve3.y[1] + background.y, rotationPoints.outer.upperSiding.loopCurve3.y[2] + background.y, rotationPoints.outer.upperSiding.loopCurve3.y[3] + background.y], z: [rotationPoints.outer.upperSiding.loopCurve3.z[0], rotationPoints.outer.upperSiding.loopCurve3.z[1], rotationPoints.outer.upperSiding.loopCurve3.z[2], rotationPoints.outer.upperSiding.loopCurve3.z[3]]};
         if (cO.stateChange) {
             cO.currentCurveFac = getBezierFac(realStandardDirection ? 0 : 1, 2000, 1000, cO, points);
             cO.stateChange = false;
         }
-        setCOPosBezier(points, !realStandardDirection, rotationPoints.outerUpper.loopCurve3.bezierLength);
+        setCOPosBezier(points, !realStandardDirection, rotationPoints.outer.upperSiding.loopCurve3.bezierLength);
     } else if (cO.state == 319) {
-        points = {x: [rotationPoints.outerUpper.loopLine1.x[0] + background.x, rotationPoints.outerUpper.loopLine1.x[1] + background.x], y: [rotationPoints.outerUpper.loopLine1.y[0] + background.y, rotationPoints.outerUpper.loopLine1.y[1] + background.y], z: [rotationPoints.outerUpper.loopLine1.z[0], rotationPoints.outerUpper.loopLine1.z[1]]};
+        points = {x: [rotationPoints.outer.upperSiding.loopLine1.x[0] + background.x, rotationPoints.outer.upperSiding.loopLine1.x[1] + background.x], y: [rotationPoints.outer.upperSiding.loopLine1.y[0] + background.y, rotationPoints.outer.upperSiding.loopLine1.y[1] + background.y], z: [rotationPoints.outer.upperSiding.loopLine1.z[0], rotationPoints.outer.upperSiding.loopLine1.z[1]]};
         if (!realStandardDirection) {
             points.x.reverse();
             points.y.reverse();
@@ -1543,7 +1526,7 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
             } else if (train.state == 314) {
                 // In the middle of the pillar track, where it runs on the background: the front bogie from its curve factor, the back bogie the bogie distance behind it
                 var bogieDistance = train.width * (1 - 2 * train.bogieDistance);
-                var halfBogieDistanceFac = bogieDistance / 2 / rotationPoints.outerUpper.pillar.bezierLength;
+                var halfBogieDistanceFac = bogieDistance / 2 / rotationPoints.outer.upperSiding.pillar.bezierLength;
                 train.front.currentCurveFac = 0.5 + halfBogieDistanceFac;
                 setCOPos(train.front, true, i, train, -1, 1, 1);
                 train.back.currentCurveFac = 0.5 - halfBogieDistanceFac;
@@ -2023,120 +2006,120 @@ function defineTrainParams() {
     var sCurveAngle = Math.acos(1 - (0.329 * background.height) / (sCurveRadius0 + sCurveRadius1));
     var sCurveControl0 = (4 / 3) * Math.tan(sCurveAngle / 4) * sCurveRadius0;
     var sCurveControl1 = (4 / 3) * Math.tan(sCurveAngle / 4) * sCurveRadius1;
-    rotationPoints.outerUpper.sCurve0.x[0] = 0.577 * background.width;
-    rotationPoints.outerUpper.sCurve0.y[0] = rotationPoints.outer.narrow.y[0] + (rotationPoints.outerUpper.sCurve0.x[0] - rotationPoints.outer.narrow.x[0]) * Math.tan(outerTopAngle);
-    rotationPoints.outerUpper.sCurve0.x[3] = rotationPoints.outerUpper.sCurve0.x[0] + sCurveRadius0 * (Math.sin(outerTopAngle) - Math.sin(outerTopAngle - sCurveAngle));
-    rotationPoints.outerUpper.sCurve0.y[3] = rotationPoints.outerUpper.sCurve0.y[0] + sCurveRadius0 * (Math.cos(outerTopAngle - sCurveAngle) - Math.cos(outerTopAngle));
-    rotationPoints.outerUpper.sCurve0.x[1] = rotationPoints.outerUpper.sCurve0.x[0] + sCurveControl0 * Math.cos(outerTopAngle);
-    rotationPoints.outerUpper.sCurve0.y[1] = rotationPoints.outerUpper.sCurve0.y[0] + sCurveControl0 * Math.sin(outerTopAngle);
-    rotationPoints.outerUpper.sCurve0.x[2] = rotationPoints.outerUpper.sCurve0.x[3] - sCurveControl0 * Math.cos(outerTopAngle - sCurveAngle);
-    rotationPoints.outerUpper.sCurve0.y[2] = rotationPoints.outerUpper.sCurve0.y[3] - sCurveControl0 * Math.sin(outerTopAngle - sCurveAngle);
-    bezierPoints = {x: [rotationPoints.outerUpper.sCurve0.x[0], rotationPoints.outerUpper.sCurve0.x[1], rotationPoints.outerUpper.sCurve0.x[2], rotationPoints.outerUpper.sCurve0.x[3]], y: [rotationPoints.outerUpper.sCurve0.y[0], rotationPoints.outerUpper.sCurve0.y[1], rotationPoints.outerUpper.sCurve0.y[2], rotationPoints.outerUpper.sCurve0.y[3]]};
-    rotationPoints.outerUpper.sCurve0.bezierLength = getBezierLength(bezierPoints, repNo);
+    rotationPoints.outer.upperSiding.sCurve0.x[0] = 0.577 * background.width;
+    rotationPoints.outer.upperSiding.sCurve0.y[0] = rotationPoints.outer.narrow.y[0] + (rotationPoints.outer.upperSiding.sCurve0.x[0] - rotationPoints.outer.narrow.x[0]) * Math.tan(outerTopAngle);
+    rotationPoints.outer.upperSiding.sCurve0.x[3] = rotationPoints.outer.upperSiding.sCurve0.x[0] + sCurveRadius0 * (Math.sin(outerTopAngle) - Math.sin(outerTopAngle - sCurveAngle));
+    rotationPoints.outer.upperSiding.sCurve0.y[3] = rotationPoints.outer.upperSiding.sCurve0.y[0] + sCurveRadius0 * (Math.cos(outerTopAngle - sCurveAngle) - Math.cos(outerTopAngle));
+    rotationPoints.outer.upperSiding.sCurve0.x[1] = rotationPoints.outer.upperSiding.sCurve0.x[0] + sCurveControl0 * Math.cos(outerTopAngle);
+    rotationPoints.outer.upperSiding.sCurve0.y[1] = rotationPoints.outer.upperSiding.sCurve0.y[0] + sCurveControl0 * Math.sin(outerTopAngle);
+    rotationPoints.outer.upperSiding.sCurve0.x[2] = rotationPoints.outer.upperSiding.sCurve0.x[3] - sCurveControl0 * Math.cos(outerTopAngle - sCurveAngle);
+    rotationPoints.outer.upperSiding.sCurve0.y[2] = rotationPoints.outer.upperSiding.sCurve0.y[3] - sCurveControl0 * Math.sin(outerTopAngle - sCurveAngle);
+    bezierPoints = {x: [rotationPoints.outer.upperSiding.sCurve0.x[0], rotationPoints.outer.upperSiding.sCurve0.x[1], rotationPoints.outer.upperSiding.sCurve0.x[2], rotationPoints.outer.upperSiding.sCurve0.x[3]], y: [rotationPoints.outer.upperSiding.sCurve0.y[0], rotationPoints.outer.upperSiding.sCurve0.y[1], rotationPoints.outer.upperSiding.sCurve0.y[2], rotationPoints.outer.upperSiding.sCurve0.y[3]]};
+    rotationPoints.outer.upperSiding.sCurve0.bezierLength = getBezierLength(bezierPoints, repNo);
 
-    rotationPoints.outerUpper.sCurve1.x[0] = rotationPoints.outerUpper.sCurve0.x[3];
-    rotationPoints.outerUpper.sCurve1.y[0] = rotationPoints.outerUpper.sCurve0.y[3];
-    rotationPoints.outerUpper.sCurve1.x[3] = rotationPoints.outerUpper.sCurve1.x[0] + sCurveRadius1 * (Math.sin(outerTopAngle) - Math.sin(outerTopAngle - sCurveAngle));
-    rotationPoints.outerUpper.sCurve1.y[3] = rotationPoints.outerUpper.sCurve1.y[0] + sCurveRadius1 * (Math.cos(outerTopAngle - sCurveAngle) - Math.cos(outerTopAngle));
-    rotationPoints.outerUpper.sCurve1.x[1] = rotationPoints.outerUpper.sCurve1.x[0] + sCurveControl1 * Math.cos(outerTopAngle - sCurveAngle);
-    rotationPoints.outerUpper.sCurve1.y[1] = rotationPoints.outerUpper.sCurve1.y[0] + sCurveControl1 * Math.sin(outerTopAngle - sCurveAngle);
-    rotationPoints.outerUpper.sCurve1.x[2] = rotationPoints.outerUpper.sCurve1.x[3] - sCurveControl1 * Math.cos(outerTopAngle);
-    rotationPoints.outerUpper.sCurve1.y[2] = rotationPoints.outerUpper.sCurve1.y[3] - sCurveControl1 * Math.sin(outerTopAngle);
-    bezierPoints = {x: [rotationPoints.outerUpper.sCurve1.x[0], rotationPoints.outerUpper.sCurve1.x[1], rotationPoints.outerUpper.sCurve1.x[2], rotationPoints.outerUpper.sCurve1.x[3]], y: [rotationPoints.outerUpper.sCurve1.y[0], rotationPoints.outerUpper.sCurve1.y[1], rotationPoints.outerUpper.sCurve1.y[2], rotationPoints.outerUpper.sCurve1.y[3]]};
-    rotationPoints.outerUpper.sCurve1.bezierLength = getBezierLength(bezierPoints, repNo);
+    rotationPoints.outer.upperSiding.sCurve1.x[0] = rotationPoints.outer.upperSiding.sCurve0.x[3];
+    rotationPoints.outer.upperSiding.sCurve1.y[0] = rotationPoints.outer.upperSiding.sCurve0.y[3];
+    rotationPoints.outer.upperSiding.sCurve1.x[3] = rotationPoints.outer.upperSiding.sCurve1.x[0] + sCurveRadius1 * (Math.sin(outerTopAngle) - Math.sin(outerTopAngle - sCurveAngle));
+    rotationPoints.outer.upperSiding.sCurve1.y[3] = rotationPoints.outer.upperSiding.sCurve1.y[0] + sCurveRadius1 * (Math.cos(outerTopAngle - sCurveAngle) - Math.cos(outerTopAngle));
+    rotationPoints.outer.upperSiding.sCurve1.x[1] = rotationPoints.outer.upperSiding.sCurve1.x[0] + sCurveControl1 * Math.cos(outerTopAngle - sCurveAngle);
+    rotationPoints.outer.upperSiding.sCurve1.y[1] = rotationPoints.outer.upperSiding.sCurve1.y[0] + sCurveControl1 * Math.sin(outerTopAngle - sCurveAngle);
+    rotationPoints.outer.upperSiding.sCurve1.x[2] = rotationPoints.outer.upperSiding.sCurve1.x[3] - sCurveControl1 * Math.cos(outerTopAngle);
+    rotationPoints.outer.upperSiding.sCurve1.y[2] = rotationPoints.outer.upperSiding.sCurve1.y[3] - sCurveControl1 * Math.sin(outerTopAngle);
+    bezierPoints = {x: [rotationPoints.outer.upperSiding.sCurve1.x[0], rotationPoints.outer.upperSiding.sCurve1.x[1], rotationPoints.outer.upperSiding.sCurve1.x[2], rotationPoints.outer.upperSiding.sCurve1.x[3]], y: [rotationPoints.outer.upperSiding.sCurve1.y[0], rotationPoints.outer.upperSiding.sCurve1.y[1], rotationPoints.outer.upperSiding.sCurve1.y[2], rotationPoints.outer.upperSiding.sCurve1.y[3]]};
+    rotationPoints.outer.upperSiding.sCurve1.bezierLength = getBezierLength(bezierPoints, repNo);
 
-    switches.outerUpperSiding.left.x = rotationPoints.outerUpper.sCurve0.x[0];
-    switches.outerUpperSiding.left.y = rotationPoints.outerUpper.sCurve0.y[0];
+    switches.outerUpperSiding.left.x = rotationPoints.outer.upperSiding.sCurve0.x[0];
+    switches.outerUpperSiding.left.y = rotationPoints.outer.upperSiding.sCurve0.y[0];
 
-    rotationPoints.outerUpper.parallel.x[0] = rotationPoints.outerUpper.sCurve1.x[3];
-    rotationPoints.outerUpper.parallel.x[1] = 0.88 * background.width;
-    rotationPoints.outerUpper.parallel.y[0] = rotationPoints.outerUpper.sCurve1.y[3];
-    rotationPoints.outerUpper.parallel.y[1] = rotationPoints.outerUpper.parallel.y[0] + (rotationPoints.outerUpper.parallel.x[1] - rotationPoints.outerUpper.parallel.x[0]) * Math.tan(outerTopAngle);
+    rotationPoints.outer.upperSiding.parallel.x[0] = rotationPoints.outer.upperSiding.sCurve1.x[3];
+    rotationPoints.outer.upperSiding.parallel.x[1] = 0.88 * background.width;
+    rotationPoints.outer.upperSiding.parallel.y[0] = rotationPoints.outer.upperSiding.sCurve1.y[3];
+    rotationPoints.outer.upperSiding.parallel.y[1] = rotationPoints.outer.upperSiding.parallel.y[0] + (rotationPoints.outer.upperSiding.parallel.x[1] - rotationPoints.outer.upperSiding.parallel.x[0]) * Math.tan(outerTopAngle);
 
     var loopRadius0 = 0.1306 * background.width;
     var loopAngle0 = (108 / 180) * Math.PI;
     var loopControl0 = (4 / 3) * Math.tan(loopAngle0 / 4) * loopRadius0;
-    rotationPoints.outerUpper.loopCurve0.x[0] = rotationPoints.outerUpper.parallel.x[1];
-    rotationPoints.outerUpper.loopCurve0.y[0] = rotationPoints.outerUpper.parallel.y[1];
-    rotationPoints.outerUpper.loopCurve0.x[3] = rotationPoints.outerUpper.loopCurve0.x[0] + loopRadius0 * (Math.sin(outerTopAngle + loopAngle0) - Math.sin(outerTopAngle));
-    rotationPoints.outerUpper.loopCurve0.y[3] = rotationPoints.outerUpper.loopCurve0.y[0] + loopRadius0 * (Math.cos(outerTopAngle) - Math.cos(outerTopAngle + loopAngle0));
-    rotationPoints.outerUpper.loopCurve0.x[1] = rotationPoints.outerUpper.loopCurve0.x[0] + loopControl0 * Math.cos(outerTopAngle);
-    rotationPoints.outerUpper.loopCurve0.y[1] = rotationPoints.outerUpper.loopCurve0.y[0] + loopControl0 * Math.sin(outerTopAngle);
-    rotationPoints.outerUpper.loopCurve0.x[2] = rotationPoints.outerUpper.loopCurve0.x[3] - loopControl0 * Math.cos(outerTopAngle + loopAngle0);
-    rotationPoints.outerUpper.loopCurve0.y[2] = rotationPoints.outerUpper.loopCurve0.y[3] - loopControl0 * Math.sin(outerTopAngle + loopAngle0);
-    bezierPoints = {x: [rotationPoints.outerUpper.loopCurve0.x[0], rotationPoints.outerUpper.loopCurve0.x[1], rotationPoints.outerUpper.loopCurve0.x[2], rotationPoints.outerUpper.loopCurve0.x[3]], y: [rotationPoints.outerUpper.loopCurve0.y[0], rotationPoints.outerUpper.loopCurve0.y[1], rotationPoints.outerUpper.loopCurve0.y[2], rotationPoints.outerUpper.loopCurve0.y[3]]};
-    rotationPoints.outerUpper.loopCurve0.bezierLength = getBezierLength(bezierPoints, repNo);
+    rotationPoints.outer.upperSiding.loopCurve0.x[0] = rotationPoints.outer.upperSiding.parallel.x[1];
+    rotationPoints.outer.upperSiding.loopCurve0.y[0] = rotationPoints.outer.upperSiding.parallel.y[1];
+    rotationPoints.outer.upperSiding.loopCurve0.x[3] = rotationPoints.outer.upperSiding.loopCurve0.x[0] + loopRadius0 * (Math.sin(outerTopAngle + loopAngle0) - Math.sin(outerTopAngle));
+    rotationPoints.outer.upperSiding.loopCurve0.y[3] = rotationPoints.outer.upperSiding.loopCurve0.y[0] + loopRadius0 * (Math.cos(outerTopAngle) - Math.cos(outerTopAngle + loopAngle0));
+    rotationPoints.outer.upperSiding.loopCurve0.x[1] = rotationPoints.outer.upperSiding.loopCurve0.x[0] + loopControl0 * Math.cos(outerTopAngle);
+    rotationPoints.outer.upperSiding.loopCurve0.y[1] = rotationPoints.outer.upperSiding.loopCurve0.y[0] + loopControl0 * Math.sin(outerTopAngle);
+    rotationPoints.outer.upperSiding.loopCurve0.x[2] = rotationPoints.outer.upperSiding.loopCurve0.x[3] - loopControl0 * Math.cos(outerTopAngle + loopAngle0);
+    rotationPoints.outer.upperSiding.loopCurve0.y[2] = rotationPoints.outer.upperSiding.loopCurve0.y[3] - loopControl0 * Math.sin(outerTopAngle + loopAngle0);
+    bezierPoints = {x: [rotationPoints.outer.upperSiding.loopCurve0.x[0], rotationPoints.outer.upperSiding.loopCurve0.x[1], rotationPoints.outer.upperSiding.loopCurve0.x[2], rotationPoints.outer.upperSiding.loopCurve0.x[3]], y: [rotationPoints.outer.upperSiding.loopCurve0.y[0], rotationPoints.outer.upperSiding.loopCurve0.y[1], rotationPoints.outer.upperSiding.loopCurve0.y[2], rotationPoints.outer.upperSiding.loopCurve0.y[3]]};
+    rotationPoints.outer.upperSiding.loopCurve0.bezierLength = getBezierLength(bezierPoints, repNo);
 
-    rotationPoints.outerUpper.pillar.x[0] = rotationPoints.outerUpper.loopCurve0.x[3];
-    rotationPoints.outerUpper.pillar.y[0] = rotationPoints.outerUpper.loopCurve0.y[3];
-    rotationPoints.outerUpper.pillar.x[3] = 1.0022 * background.width;
-    rotationPoints.outerUpper.pillar.y[3] = 0.8095 * background.height;
-    rotationPoints.outerUpper.pillar.x[1] = rotationPoints.outerUpper.pillar.x[0] + 0.1137 * background.width * Math.cos(outerTopAngle + loopAngle0);
-    rotationPoints.outerUpper.pillar.y[1] = rotationPoints.outerUpper.pillar.y[0] + 0.1137 * background.width * Math.sin(outerTopAngle + loopAngle0);
-    rotationPoints.outerUpper.pillar.x[2] = rotationPoints.outerUpper.pillar.x[3];
-    rotationPoints.outerUpper.pillar.y[2] = rotationPoints.outerUpper.pillar.y[3] - 0.1497 * background.width;
-    bezierPoints = {x: [rotationPoints.outerUpper.pillar.x[0], rotationPoints.outerUpper.pillar.x[1], rotationPoints.outerUpper.pillar.x[2], rotationPoints.outerUpper.pillar.x[3]], y: [rotationPoints.outerUpper.pillar.y[0], rotationPoints.outerUpper.pillar.y[1], rotationPoints.outerUpper.pillar.y[2], rotationPoints.outerUpper.pillar.y[3]]};
-    rotationPoints.outerUpper.pillar.bezierLength = getBezierLength(bezierPoints, repNo);
+    rotationPoints.outer.upperSiding.pillar.x[0] = rotationPoints.outer.upperSiding.loopCurve0.x[3];
+    rotationPoints.outer.upperSiding.pillar.y[0] = rotationPoints.outer.upperSiding.loopCurve0.y[3];
+    rotationPoints.outer.upperSiding.pillar.x[3] = 1.0022 * background.width;
+    rotationPoints.outer.upperSiding.pillar.y[3] = 0.8095 * background.height;
+    rotationPoints.outer.upperSiding.pillar.x[1] = rotationPoints.outer.upperSiding.pillar.x[0] + 0.1137 * background.width * Math.cos(outerTopAngle + loopAngle0);
+    rotationPoints.outer.upperSiding.pillar.y[1] = rotationPoints.outer.upperSiding.pillar.y[0] + 0.1137 * background.width * Math.sin(outerTopAngle + loopAngle0);
+    rotationPoints.outer.upperSiding.pillar.x[2] = rotationPoints.outer.upperSiding.pillar.x[3];
+    rotationPoints.outer.upperSiding.pillar.y[2] = rotationPoints.outer.upperSiding.pillar.y[3] - 0.1497 * background.width;
+    bezierPoints = {x: [rotationPoints.outer.upperSiding.pillar.x[0], rotationPoints.outer.upperSiding.pillar.x[1], rotationPoints.outer.upperSiding.pillar.x[2], rotationPoints.outer.upperSiding.pillar.x[3]], y: [rotationPoints.outer.upperSiding.pillar.y[0], rotationPoints.outer.upperSiding.pillar.y[1], rotationPoints.outer.upperSiding.pillar.y[2], rotationPoints.outer.upperSiding.pillar.y[3]]};
+    rotationPoints.outer.upperSiding.pillar.bezierLength = getBezierLength(bezierPoints, repNo);
 
     var loopRadius1 = 0.2395 * background.width;
     var loopControl1 = (4 / 3) * Math.tan(Math.PI / 8) * loopRadius1;
-    rotationPoints.outerUpper.loopCurve1.x[0] = rotationPoints.outerUpper.pillar.x[3];
-    rotationPoints.outerUpper.loopCurve1.y[0] = rotationPoints.outerUpper.pillar.y[3];
-    rotationPoints.outerUpper.loopCurve1.x[1] = rotationPoints.outerUpper.loopCurve1.x[0];
-    rotationPoints.outerUpper.loopCurve1.y[1] = rotationPoints.outerUpper.loopCurve1.y[0] + loopControl1;
-    rotationPoints.outerUpper.loopCurve1.x[3] = rotationPoints.outerUpper.loopCurve1.x[0] + loopRadius1;
-    rotationPoints.outerUpper.loopCurve1.y[3] = rotationPoints.outerUpper.loopCurve1.y[0] + loopRadius1;
-    rotationPoints.outerUpper.loopCurve1.x[2] = rotationPoints.outerUpper.loopCurve1.x[3] - loopControl1;
-    rotationPoints.outerUpper.loopCurve1.y[2] = rotationPoints.outerUpper.loopCurve1.y[3];
-    bezierPoints = {x: [rotationPoints.outerUpper.loopCurve1.x[0], rotationPoints.outerUpper.loopCurve1.x[1], rotationPoints.outerUpper.loopCurve1.x[2], rotationPoints.outerUpper.loopCurve1.x[3]], y: [rotationPoints.outerUpper.loopCurve1.y[0], rotationPoints.outerUpper.loopCurve1.y[1], rotationPoints.outerUpper.loopCurve1.y[2], rotationPoints.outerUpper.loopCurve1.y[3]]};
-    rotationPoints.outerUpper.loopCurve1.bezierLength = getBezierLength(bezierPoints, repNo);
+    rotationPoints.outer.upperSiding.loopCurve1.x[0] = rotationPoints.outer.upperSiding.pillar.x[3];
+    rotationPoints.outer.upperSiding.loopCurve1.y[0] = rotationPoints.outer.upperSiding.pillar.y[3];
+    rotationPoints.outer.upperSiding.loopCurve1.x[1] = rotationPoints.outer.upperSiding.loopCurve1.x[0];
+    rotationPoints.outer.upperSiding.loopCurve1.y[1] = rotationPoints.outer.upperSiding.loopCurve1.y[0] + loopControl1;
+    rotationPoints.outer.upperSiding.loopCurve1.x[3] = rotationPoints.outer.upperSiding.loopCurve1.x[0] + loopRadius1;
+    rotationPoints.outer.upperSiding.loopCurve1.y[3] = rotationPoints.outer.upperSiding.loopCurve1.y[0] + loopRadius1;
+    rotationPoints.outer.upperSiding.loopCurve1.x[2] = rotationPoints.outer.upperSiding.loopCurve1.x[3] - loopControl1;
+    rotationPoints.outer.upperSiding.loopCurve1.y[2] = rotationPoints.outer.upperSiding.loopCurve1.y[3];
+    bezierPoints = {x: [rotationPoints.outer.upperSiding.loopCurve1.x[0], rotationPoints.outer.upperSiding.loopCurve1.x[1], rotationPoints.outer.upperSiding.loopCurve1.x[2], rotationPoints.outer.upperSiding.loopCurve1.x[3]], y: [rotationPoints.outer.upperSiding.loopCurve1.y[0], rotationPoints.outer.upperSiding.loopCurve1.y[1], rotationPoints.outer.upperSiding.loopCurve1.y[2], rotationPoints.outer.upperSiding.loopCurve1.y[3]]};
+    rotationPoints.outer.upperSiding.loopCurve1.bezierLength = getBezierLength(bezierPoints, repNo);
 
-    rotationPoints.outerUpper.loopCurve2.x[0] = rotationPoints.outerUpper.loopCurve1.x[3];
-    rotationPoints.outerUpper.loopCurve2.y[0] = rotationPoints.outerUpper.loopCurve1.y[3];
-    rotationPoints.outerUpper.loopCurve2.x[1] = rotationPoints.outerUpper.loopCurve2.x[0] + loopControl1;
-    rotationPoints.outerUpper.loopCurve2.y[1] = rotationPoints.outerUpper.loopCurve2.y[0];
-    rotationPoints.outerUpper.loopCurve2.x[3] = rotationPoints.outerUpper.loopCurve2.x[0] + loopRadius1;
-    rotationPoints.outerUpper.loopCurve2.y[3] = rotationPoints.outerUpper.loopCurve2.y[0] - loopRadius1;
-    rotationPoints.outerUpper.loopCurve2.x[2] = rotationPoints.outerUpper.loopCurve2.x[3];
-    rotationPoints.outerUpper.loopCurve2.y[2] = rotationPoints.outerUpper.loopCurve2.y[3] + loopControl1;
-    bezierPoints = {x: [rotationPoints.outerUpper.loopCurve2.x[0], rotationPoints.outerUpper.loopCurve2.x[1], rotationPoints.outerUpper.loopCurve2.x[2], rotationPoints.outerUpper.loopCurve2.x[3]], y: [rotationPoints.outerUpper.loopCurve2.y[0], rotationPoints.outerUpper.loopCurve2.y[1], rotationPoints.outerUpper.loopCurve2.y[2], rotationPoints.outerUpper.loopCurve2.y[3]]};
-    rotationPoints.outerUpper.loopCurve2.bezierLength = getBezierLength(bezierPoints, repNo);
+    rotationPoints.outer.upperSiding.loopCurve2.x[0] = rotationPoints.outer.upperSiding.loopCurve1.x[3];
+    rotationPoints.outer.upperSiding.loopCurve2.y[0] = rotationPoints.outer.upperSiding.loopCurve1.y[3];
+    rotationPoints.outer.upperSiding.loopCurve2.x[1] = rotationPoints.outer.upperSiding.loopCurve2.x[0] + loopControl1;
+    rotationPoints.outer.upperSiding.loopCurve2.y[1] = rotationPoints.outer.upperSiding.loopCurve2.y[0];
+    rotationPoints.outer.upperSiding.loopCurve2.x[3] = rotationPoints.outer.upperSiding.loopCurve2.x[0] + loopRadius1;
+    rotationPoints.outer.upperSiding.loopCurve2.y[3] = rotationPoints.outer.upperSiding.loopCurve2.y[0] - loopRadius1;
+    rotationPoints.outer.upperSiding.loopCurve2.x[2] = rotationPoints.outer.upperSiding.loopCurve2.x[3];
+    rotationPoints.outer.upperSiding.loopCurve2.y[2] = rotationPoints.outer.upperSiding.loopCurve2.y[3] + loopControl1;
+    bezierPoints = {x: [rotationPoints.outer.upperSiding.loopCurve2.x[0], rotationPoints.outer.upperSiding.loopCurve2.x[1], rotationPoints.outer.upperSiding.loopCurve2.x[2], rotationPoints.outer.upperSiding.loopCurve2.x[3]], y: [rotationPoints.outer.upperSiding.loopCurve2.y[0], rotationPoints.outer.upperSiding.loopCurve2.y[1], rotationPoints.outer.upperSiding.loopCurve2.y[2], rotationPoints.outer.upperSiding.loopCurve2.y[3]]};
+    rotationPoints.outer.upperSiding.loopCurve2.bezierLength = getBezierLength(bezierPoints, repNo);
 
-    rotationPoints.outerUpper.loopLine0.x[0] = rotationPoints.outerUpper.loopCurve2.x[3];
-    rotationPoints.outerUpper.loopLine0.y[0] = rotationPoints.outerUpper.loopCurve2.y[3];
-    rotationPoints.outerUpper.loopLine0.x[1] = rotationPoints.outerUpper.loopLine0.x[0];
-    rotationPoints.outerUpper.loopLine0.y[1] = rotationPoints.outerUpper.parallel.y[1] + loopRadius1;
+    rotationPoints.outer.upperSiding.loopLine0.x[0] = rotationPoints.outer.upperSiding.loopCurve2.x[3];
+    rotationPoints.outer.upperSiding.loopLine0.y[0] = rotationPoints.outer.upperSiding.loopCurve2.y[3];
+    rotationPoints.outer.upperSiding.loopLine0.x[1] = rotationPoints.outer.upperSiding.loopLine0.x[0];
+    rotationPoints.outer.upperSiding.loopLine0.y[1] = rotationPoints.outer.upperSiding.parallel.y[1] + loopRadius1;
 
-    rotationPoints.outerUpper.loopCurve3.x[0] = rotationPoints.outerUpper.loopLine0.x[1];
-    rotationPoints.outerUpper.loopCurve3.y[0] = rotationPoints.outerUpper.loopLine0.y[1];
-    rotationPoints.outerUpper.loopCurve3.x[1] = rotationPoints.outerUpper.loopCurve3.x[0];
-    rotationPoints.outerUpper.loopCurve3.y[1] = rotationPoints.outerUpper.loopCurve3.y[0] - loopControl1;
-    rotationPoints.outerUpper.loopCurve3.x[3] = rotationPoints.outerUpper.loopCurve3.x[0] - loopRadius1;
-    rotationPoints.outerUpper.loopCurve3.y[3] = rotationPoints.outerUpper.loopCurve3.y[0] - loopRadius1;
-    rotationPoints.outerUpper.loopCurve3.x[2] = rotationPoints.outerUpper.loopCurve3.x[3] + loopControl1;
-    rotationPoints.outerUpper.loopCurve3.y[2] = rotationPoints.outerUpper.loopCurve3.y[3];
-    bezierPoints = {x: [rotationPoints.outerUpper.loopCurve3.x[0], rotationPoints.outerUpper.loopCurve3.x[1], rotationPoints.outerUpper.loopCurve3.x[2], rotationPoints.outerUpper.loopCurve3.x[3]], y: [rotationPoints.outerUpper.loopCurve3.y[0], rotationPoints.outerUpper.loopCurve3.y[1], rotationPoints.outerUpper.loopCurve3.y[2], rotationPoints.outerUpper.loopCurve3.y[3]]};
-    rotationPoints.outerUpper.loopCurve3.bezierLength = getBezierLength(bezierPoints, repNo);
+    rotationPoints.outer.upperSiding.loopCurve3.x[0] = rotationPoints.outer.upperSiding.loopLine0.x[1];
+    rotationPoints.outer.upperSiding.loopCurve3.y[0] = rotationPoints.outer.upperSiding.loopLine0.y[1];
+    rotationPoints.outer.upperSiding.loopCurve3.x[1] = rotationPoints.outer.upperSiding.loopCurve3.x[0];
+    rotationPoints.outer.upperSiding.loopCurve3.y[1] = rotationPoints.outer.upperSiding.loopCurve3.y[0] - loopControl1;
+    rotationPoints.outer.upperSiding.loopCurve3.x[3] = rotationPoints.outer.upperSiding.loopCurve3.x[0] - loopRadius1;
+    rotationPoints.outer.upperSiding.loopCurve3.y[3] = rotationPoints.outer.upperSiding.loopCurve3.y[0] - loopRadius1;
+    rotationPoints.outer.upperSiding.loopCurve3.x[2] = rotationPoints.outer.upperSiding.loopCurve3.x[3] + loopControl1;
+    rotationPoints.outer.upperSiding.loopCurve3.y[2] = rotationPoints.outer.upperSiding.loopCurve3.y[3];
+    bezierPoints = {x: [rotationPoints.outer.upperSiding.loopCurve3.x[0], rotationPoints.outer.upperSiding.loopCurve3.x[1], rotationPoints.outer.upperSiding.loopCurve3.x[2], rotationPoints.outer.upperSiding.loopCurve3.x[3]], y: [rotationPoints.outer.upperSiding.loopCurve3.y[0], rotationPoints.outer.upperSiding.loopCurve3.y[1], rotationPoints.outer.upperSiding.loopCurve3.y[2], rotationPoints.outer.upperSiding.loopCurve3.y[3]]};
+    rotationPoints.outer.upperSiding.loopCurve3.bezierLength = getBezierLength(bezierPoints, repNo);
 
-    rotationPoints.outerUpper.loopLine1.x[0] = rotationPoints.outerUpper.loopCurve3.x[3];
-    rotationPoints.outerUpper.loopLine1.y[0] = rotationPoints.outerUpper.loopCurve3.y[3];
-    rotationPoints.outerUpper.loopLine1.x[1] = rotationPoints.outerUpper.parallel.x[1];
-    rotationPoints.outerUpper.loopLine1.y[1] = rotationPoints.outerUpper.loopLine1.y[0];
+    rotationPoints.outer.upperSiding.loopLine1.x[0] = rotationPoints.outer.upperSiding.loopCurve3.x[3];
+    rotationPoints.outer.upperSiding.loopLine1.y[0] = rotationPoints.outer.upperSiding.loopCurve3.y[3];
+    rotationPoints.outer.upperSiding.loopLine1.x[1] = rotationPoints.outer.upperSiding.parallel.x[1];
+    rotationPoints.outer.upperSiding.loopLine1.y[1] = rotationPoints.outer.upperSiding.loopLine1.y[0];
 
     var outerUpperHeight = 0.025 * background.width;
     // Rise along the S-curve: z = J * t^3 on sCurve0 stays nearly flat at first, so the track rises only after it has left the background; then up to the full height, gradient 0 at both ends and continuous at the join
     // 0.43 was found numerically for this geometry: the gentlest maximum gradient that keeps the track below 1 px at the background's edge; check it again when the S-curve changes
     var sCurveJoinHeight = 0.43 * outerUpperHeight;
-    rotationPoints.outerUpper.sCurve0.z = [0, 0, 0, sCurveJoinHeight];
-    rotationPoints.outerUpper.sCurve1.z = [sCurveJoinHeight, sCurveJoinHeight * (1 + rotationPoints.outerUpper.sCurve1.bezierLength / rotationPoints.outerUpper.sCurve0.bezierLength), outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.parallel.z = [outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.loopCurve0.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.pillar.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.loopCurve1.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.loopCurve2.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.loopLine0.z = [outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.loopCurve3.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
-    rotationPoints.outerUpper.loopLine1.z = [outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.sCurve0.z = [0, 0, 0, sCurveJoinHeight];
+    rotationPoints.outer.upperSiding.sCurve1.z = [sCurveJoinHeight, sCurveJoinHeight * (1 + rotationPoints.outer.upperSiding.sCurve1.bezierLength / rotationPoints.outer.upperSiding.sCurve0.bezierLength), outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.parallel.z = [outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.loopCurve0.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.pillar.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.loopCurve1.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.loopCurve2.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.loopLine0.z = [outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.loopCurve3.z = [outerUpperHeight, outerUpperHeight, outerUpperHeight, outerUpperHeight];
+    rotationPoints.outer.upperSiding.loopLine1.z = [outerUpperHeight, outerUpperHeight];
     /*------------------------------------------------------------------------------------------------------------------*
      *                                           _1__2_3____T_____________________________________________              *
      *                                     /1__2_3/           \                                           |             *
@@ -2161,7 +2144,7 @@ function defineTrainParams() {
     var passingControl = (4 / 3) * Math.tan(Math.PI / 8) * passingRadius;
     var passingLeft = rotationPoints.outer.rightSiding.end.x[1] - passingSpacing;
     var passingTop = rotationPoints.outer.rightSiding.continueLine0.y[0] - passingSpacing;
-    var passingRight = rotationPoints.outerUpper.loopLine0.x[0];
+    var passingRight = rotationPoints.outer.upperSiding.loopLine0.x[0];
     var passingBottom = rotationPoints.outer.rightSiding.rejoin.y[0] + passingSpacing;
     var passingEndLength = Math.hypot(rotationPoints.outer.rightSiding.end.x[1] - rotationPoints.outer.rightSiding.end.x[0], rotationPoints.outer.rightSiding.end.y[1] - rotationPoints.outer.rightSiding.end.y[0]);
     rotationPoints.outer.rightSidingPassing.diverge.y[0] = -0.006 * background.height;
@@ -2535,8 +2518,13 @@ var animateTimeoutDelay;
 
 const rotationPoints: RotationPoints = {
     inner: {narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}}, wide: {x: [], y: [], bezierLength: {left: 0, right: 0}}, sidings: {first: {x: [], y: [], bezierLength: 0}, firstS1: {x: [], y: []}, firstS2: {x: [], y: [], bezierLength: 0}, second: {x: [], y: [], bezierLength: 0}, secondS1: {x: [], y: []}, secondS2: {x: [], y: [], bezierLength: 0}, third: {x: [], y: [], bezierLength: 0}, thirdS1: {x: [], y: []}, thirdS2: {x: [], y: [], bezierLength: 0}}},
-    outer: {narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}}, altState3: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}}, rightSiding: {enter: {x: [], y: []}, curve: {x: [], y: [], bezierLength: 0}, continueCurve0: {x: [], y: [], bezierLength: 0}, continueLine0: {x: [], y: [], bezierLength: 0}, continueCurve1: {x: [], y: [], bezierLength: 0}, continueLine1: {x: [], y: []}, continueCurve2: {x: [], y: [], bezierLength: 0}, rejoin: {x: [], y: []}, end: {x: [], y: []}}, rightSidingPassing: {diverge: {x: [], y: [], bezierLength: 0}, curve0: {x: [], y: [], bezierLength: 0}, line0: {x: [], y: []}, curve1: {x: [], y: [], bezierLength: 0}, line1: {x: [], y: []}, curve2: {x: [], y: [], bezierLength: 0}, line2: {x: [], y: []}, merge: {x: [], y: [], bezierLength: 0}}},
-    outerUpper: {loop: {x: [], y: [], bezierLength: {left: 0, right: 0}}, sCurve0: {x: [], y: [], bezierLength: 0}, sCurve1: {x: [], y: [], bezierLength: 0}, parallel: {x: [], y: []}, loopCurve0: {x: [], y: [], bezierLength: 0}, pillar: {x: [], y: [], bezierLength: 0}, loopCurve1: {x: [], y: [], bezierLength: 0}, loopCurve2: {x: [], y: [], bezierLength: 0}, loopLine0: {x: [], y: []}, loopCurve3: {x: [], y: [], bezierLength: 0}, loopLine1: {x: [], y: []}},
+    outer: {
+        narrow: {x: [], y: [], bezierLength: {left: 0, right: 0}},
+        altState3: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}},
+        rightSiding: {enter: {x: [], y: []}, curve: {x: [], y: [], bezierLength: 0}, continueCurve0: {x: [], y: [], bezierLength: 0}, continueLine0: {x: [], y: [], bezierLength: 0}, continueCurve1: {x: [], y: [], bezierLength: 0}, continueLine1: {x: [], y: []}, continueCurve2: {x: [], y: [], bezierLength: 0}, rejoin: {x: [], y: []}, end: {x: [], y: []}},
+        rightSidingPassing: {diverge: {x: [], y: [], bezierLength: 0}, curve0: {x: [], y: [], bezierLength: 0}, line0: {x: [], y: []}, curve1: {x: [], y: [], bezierLength: 0}, line1: {x: [], y: []}, curve2: {x: [], y: [], bezierLength: 0}, line2: {x: [], y: []}, merge: {x: [], y: [], bezierLength: 0}},
+        upperSiding: {sCurve0: {x: [], y: [], bezierLength: 0}, sCurve1: {x: [], y: [], bezierLength: 0}, parallel: {x: [], y: []}, loopCurve0: {x: [], y: [], bezierLength: 0}, pillar: {x: [], y: [], bezierLength: 0}, loopCurve1: {x: [], y: [], bezierLength: 0}, loopCurve2: {x: [], y: [], bezierLength: 0}, loopLine0: {x: [], y: []}, loopCurve3: {x: [], y: [], bezierLength: 0}, loopLine1: {x: [], y: []}}
+    },
     inner2outer: {left: {x: [], y: [], bezierLength: 0}, right: {x: [], y: [], bezierLength: 0}}
 };
 const trainsDefault: TrainCalc[] = [
@@ -2681,8 +2669,8 @@ const trainsDefault: TrainCalc[] = [
         speedFac: 1 / 500,
         accelerationSpeedStartFac: 0.026,
         accelerationSpeedFac: 1.009,
-        circle: rotationPoints.outerUpper.loop,
-        circleFamily: rotationPoints.outerUpper,
+        circle: rotationPoints.outer.narrow,
+        circleFamily: rotationPoints.outer,
         standardDirectionStartValue: true,
         bogieDistance: 0.31,
         state: 314,
@@ -2942,8 +2930,20 @@ onmessage = function (message) {
             trains = copyJSObject(message.data.savedTrains);
             for (var t = 0; t < trains.length; t++) {
                 if (message.data.savedTrains[t].circleFamily != null) {
-                    trains[t].circleFamily = rotationPoints[message.data.savedTrains[t].circleFamily];
-                    trains[t].circle = rotationPoints[message.data.savedTrains[t].circleFamily][message.data.savedTrains[t].circle];
+                    if (message.data.savedTrains[t].circleFamily == "outerUpper") {
+                        /* UPDATE: v11.0.0 (beta 1) */
+                        trains[t].circleFamily = rotationPoints["outer"];
+                        trains[t].circle = rotationPoints["outer"]["narrow"];
+                        /* END UPDATE: v11.0.0 (beta 1) */
+                    } else {
+                        trains[t].circleFamily = rotationPoints[message.data.savedTrains[t].circleFamily];
+                        trains[t].circle = rotationPoints[message.data.savedTrains[t].circleFamily][message.data.savedTrains[t].circle];
+                    }
+                } else if ([trains[t], ...trains[t].cars].some((object) => [object.front, object.back].some((bogie) => bogie.state > 300 && bogie.state < 400))) {
+                    /* UPDATE: v11.0.0 (beta 1) */
+                    trains[t].circleFamily = rotationPoints["outer"];
+                    trains[t].circle = rotationPoints["outer"]["narrow"];
+                    /* END UPDATE: v11.0.0 (beta 1) */
                 }
             }
             /* UPDATE: v11.0.0 */
