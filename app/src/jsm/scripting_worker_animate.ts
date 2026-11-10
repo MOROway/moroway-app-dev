@@ -242,12 +242,12 @@ function getIsSecond(cO, isFront, input1, i) {
 function getIsSecondLast(cO, isFront, input1, i) {
     return getIsLast(cO, !isFront, input1, i);
 }
-function getLastObject(cO, input1, realStandardDirection) {
-    var lastObject = realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
-    if (cO.turned) {
-        lastObject = !realStandardDirection ? trains[input1].front : trains[input1].cars.length == 0 ? trains[input1].back : trains[input1].cars[trains[input1].cars.length - 1].back;
+function getLeadingBogie(cO, input1, realStandardDirection) {
+    const train = trains[input1];
+    if (realStandardDirection != Boolean(cO.turned)) {
+        return train.front;
     }
-    return lastObject;
+    return train.cars.length == 0 ? train.back : train.cars[train.cars.length - 1].back;
 }
 function getUpperTrackInside(cO) {
     // Distance along the track to the background edge the upper track crosses (top or right); negative outside
@@ -268,7 +268,7 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
     var isFirst = getIsFirst(cO, isFront, input1, i);
     var isLast = getIsLast(cO, isFront, input1, i);
     var realIsFront = isFront != cO.turned;
-    var lastObject = getLastObject(cO, input1, realStandardDirection);
+    var leadingBogie = getLeadingBogie(cO, input1, realStandardDirection);
     if (i == -1 && isFront) {
         // Train sound on the upper track: audible while any part of the train is inside the background
         const bogies = [trains[input1].front, trains[input1].back];
@@ -297,7 +297,7 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
                 trains[input1].switchCircles = false;
             }
             cO.stateChange = true;
-            cO.state = (trains[input1].circleFamily == rotationPoints.outer && switches.outerAltState3.right.turned && isFirst) || lastObject.state == -3 ? -3 : 3;
+            cO.state = (trains[input1].circleFamily == rotationPoints.outer && switches.outerAltState3.right.turned && isFirst) || leadingBogie.state == -3 ? -3 : 3;
         } else if ((Math.abs(cO.state) == 3 || (cO.state > 100 && cO.state < 200)) && Math.round(cO.x - background.x) <= Math.round(trains[input1].circle.x[3])) {
             if (isFirst && trains[input1].circleFamily == rotationPoints.inner && switches.inner2outer.left.turned) {
                 trains[input1].switchCircles = true;
@@ -418,8 +418,8 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
             cO.state = 312;
         } else if (cO.state == 312 && cO.x - background.x >= rotationPoints.outer.upperSiding.parallel.x[1]) {
             cO.stateChange = true;
-            if (lastObject.state == 318 || lastObject.state == 319) {
-                // A train reversed while standing across the turnout on its way out of the loop: its bogies follow the leading object back onto the loop's return line (319) instead of entering the loop start (313)
+            if (leadingBogie.state == 318 || leadingBogie.state == 319) {
+                // A train reversed while standing across the turnout on its way out of the loop: its bogies follow the leading bogie back onto the loop's return line (319) instead of entering the loop start (313)
                 cO.turned = !cO.turned;
                 if (isFirst) {
                     trains[input1].trainTurned = cO.turned;
@@ -482,7 +482,7 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
             cO.stateChange = true;
             cO.state = trains[input1].switchCircles ? -2 : 2;
         } else if (trains[input1].circleFamily == rotationPoints.outer && cO.state == -3 && Math.round(cO.x - background.x) >= Math.round(rotationPoints.outer.altState3.right.x[1])) {
-            if ((isLast && switches.outerRightSiding.left.turned && cO.stateChangeLocal) || (lastObject.state > 200 && lastObject.state < 300)) {
+            if ((isLast && switches.outerRightSiding.left.turned && cO.stateChangeLocal) || (leadingBogie.state > 200 && leadingBogie.state < 300)) {
                 cO.stateChange = true;
                 cO.state = 210;
             }
@@ -493,11 +493,11 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
                 trains[input1].switchCircles = false;
             }
             cO.stateChange = true;
-            cO.state = (trains[input1].circleFamily == rotationPoints.outer && switches.outerAltState3.left.turned && isLast) || lastObject.state == -3 ? -3 : 3;
-            if ((trains[input1].circleFamily == null || trains[input1].circleFamily == rotationPoints.inner) && ((isLast && switches.sidings1.left.turned) || (lastObject.state > 100 && lastObject.state < 200))) {
-                if ((trains[input1].circleFamily == null || trains[input1].circleFamily == rotationPoints.inner) && ((isLast && switches.sidings2.left.turned) || (lastObject.state >= 110 && lastObject.state < 120))) {
+            cO.state = (trains[input1].circleFamily == rotationPoints.outer && switches.outerAltState3.left.turned && isLast) || leadingBogie.state == -3 ? -3 : 3;
+            if ((trains[input1].circleFamily == null || trains[input1].circleFamily == rotationPoints.inner) && ((isLast && switches.sidings1.left.turned) || (leadingBogie.state > 100 && leadingBogie.state < 200))) {
+                if ((trains[input1].circleFamily == null || trains[input1].circleFamily == rotationPoints.inner) && ((isLast && switches.sidings2.left.turned) || (leadingBogie.state >= 110 && leadingBogie.state < 120))) {
                     cO.state = 110;
-                } else if ((trains[input1].circleFamily == null || trains[input1].circleFamily == rotationPoints.inner) && ((isLast && switches.sidings3.left.turned) || (lastObject.state >= 110 && lastObject.state < 130))) {
+                } else if ((trains[input1].circleFamily == null || trains[input1].circleFamily == rotationPoints.inner) && ((isLast && switches.sidings3.left.turned) || (leadingBogie.state >= 110 && leadingBogie.state < 130))) {
                     cO.state = 120;
                 } else {
                     cO.state = 130;
@@ -550,8 +550,8 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
             }
         } else if (cO.state == 210 && Math.round(cO.x - background.x) >= Math.round(rotationPoints.outer.rightSiding.enter.x[1])) {
             cO.stateChange = true;
-            // A leading object on the passing track went the 218 way only if it already turned here
-            if ((isLast && switches.outerRightSidingTurn.left.turned) || (lastObject.state > 215 && lastObject.state < 219) || (lastObject.state > 219 && lastObject.state < 228 && lastObject.turned != cO.turned)) {
+            // A leading bogie on the passing track went the 218 way only if it already turned here
+            if ((isLast && switches.outerRightSidingTurn.left.turned) || (leadingBogie.state > 215 && leadingBogie.state < 219) || (leadingBogie.state > 219 && leadingBogie.state < 228 && leadingBogie.turned != cO.turned)) {
                 cO.state = 218;
                 cO.turned = !cO.turned;
                 if (isFirst) {
@@ -738,7 +738,7 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
     var realStandardDirection = getRealStandardDirection(cO, input1);
     var isFirst = getIsFirst(cO, isFront, input1, i);
     var isLast = getIsLast(cO, isFront, input1, i);
-    var lastObject = getLastObject(cO, input1, realStandardDirection);
+    var leadingBogie = getLeadingBogie(cO, input1, realStandardDirection);
     var points;
     if (cO.state == 1) {
         // Calc bogie position
@@ -757,8 +757,8 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         }
         var beforeUpperSiding = cO.x - background.x < rotationPoints.outer.upperSiding.sCurve0.x[0];
         setCOPosLinear(trains[input1].switchCircles ? pointsSwitch : points, !realStandardDirection, false);
-        // The first object turns off only when it crosses the switch in this step, so a train already past it is not diverted when the switch is turned; the others follow the leading object onto the upper track as soon as they are past the switch, by position, because setCOPosCorr may move them past it between two checks
-        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.upperSiding.sCurve0.x[0] && ((isFirst && beforeUpperSiding && trains[input1].circleFamily == rotationPoints.outer && switches.outerUpperSiding.left.turned) || (lastObject.state > 300 && lastObject.state < 400))) {
+        // The first object turns off only when it crosses the switch in this step, so a train already past it is not diverted when the switch is turned; the others follow the leading bogie onto the upper track as soon as they are past the switch, by position, because setCOPosCorr may move them past it between two checks
+        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.upperSiding.sCurve0.x[0] && ((isFirst && beforeUpperSiding && trains[input1].circleFamily == rotationPoints.outer && switches.outerUpperSiding.left.turned) || (leadingBogie.state > 300 && leadingBogie.state < 400))) {
             cO.stateChange = true;
             cO.state = 310;
         }
@@ -946,8 +946,8 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             cO.stateChangeLocal = false;
         }
         setCOPosBezier(points, !realStandardDirection, rotationPoints.inner.sidings.first.bezierLength);
-        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && !switches.sidings2.left.turned) || (!isLast && lastObject.state >= 120))) {
-            cO.state = isLast ? (switches.sidings3.left.turned ? 120 : 130) : lastObject.state >= 130 ? 130 : 120;
+        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && !switches.sidings2.left.turned) || (!isLast && leadingBogie.state >= 120))) {
+            cO.state = isLast ? (switches.sidings3.left.turned ? 120 : 130) : leadingBogie.state >= 130 ? 130 : 120;
             cO.stateChangeLocal = true;
         }
     } else if (cO.state == 111) {
@@ -986,10 +986,10 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             cO.stateChangeLocal = false;
         }
         setCOPosBezier(points, !realStandardDirection, rotationPoints.inner.sidings.second.bezierLength);
-        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || (!isLast && lastObject.state < 120))) {
+        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || (!isLast && leadingBogie.state < 120))) {
             cO.state = 110;
             cO.stateChangeLocal = true;
-        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && !switches.sidings3.left.turned) || (!isLast && lastObject.state >= 130))) {
+        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && !switches.sidings3.left.turned) || (!isLast && leadingBogie.state >= 130))) {
             cO.state = 130;
             cO.stateChangeLocal = true;
         }
@@ -1029,10 +1029,10 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             cO.stateChangeLocal = false;
         }
         setCOPosBezier(points, !realStandardDirection, rotationPoints.inner.sidings.third.bezierLength);
-        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || (!isLast && lastObject.state < 120))) {
+        if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings2.left.y + switchesBeforeAddSidings[0] && switches.sidings2.left.turned) || (!isLast && leadingBogie.state < 120))) {
             cO.state = 110;
             cO.stateChangeLocal = true;
-        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && switches.sidings3.left.turned) || (!isLast && lastObject.state < 130))) {
+        } else if (!realStandardDirection && ((isLast && cO.y - background.y > switches.sidings3.left.y + switchesBeforeAddSidings[1] && switches.sidings3.left.turned) || (!isLast && leadingBogie.state < 130))) {
             cO.state = 120;
             cO.stateChangeLocal = true;
         }
@@ -1092,8 +1092,8 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
             cO.stateChange = false;
         }
         setCOPosLinear(points, !realStandardDirection, false);
-        // Right-hand running: clockwise trains stay on the inner track here; objects follow a leading object that is already on the passing track (a train turned while partly on it)
-        if (!realStandardDirection && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.diverge.y[0] && lastObject.state > 219 && lastObject.state < 228) {
+        // Right-hand running: clockwise trains stay on the inner track here; objects follow a leading bogie that is already on the passing track (a train turned while partly on it)
+        if (!realStandardDirection && cO.y - background.y <= rotationPoints.outer.rightSidingPassing.diverge.y[0] && leadingBogie.state > 219 && leadingBogie.state < 228) {
             cO.stateChange = true;
             cO.state = 220;
         }
@@ -1168,7 +1168,7 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
         var beforePassingBottom = cO.x - background.x < rotationPoints.outer.rightSidingPassing.merge.x[3];
         setCOPosLinear(points, !realStandardDirection, false);
         // Right-hand running: counterclockwise trains take the passing track; the leading object turns off only when it crosses the junction in this step, the others follow it
-        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.merge.x[3] && ((isFirst && beforePassingBottom) || (lastObject.state > 219 && lastObject.state < 228))) {
+        if (realStandardDirection && cO.x - background.x >= rotationPoints.outer.rightSidingPassing.merge.x[3] && ((isFirst && beforePassingBottom) || (leadingBogie.state > 219 && leadingBogie.state < 228))) {
             cO.stateChange = true;
             cO.state = 227;
         }
