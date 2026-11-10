@@ -3319,11 +3319,10 @@ function drawObjects() {
         continueTrackNewObject.name = continueTrackGroupName;
         // rightSiding's left leg and bottom straight are shown whole while a train is on them beyond the passing track's junction, otherwise only up to the junction
         const passing = rotationPoints.outer.rightSidingPassing;
-        if (trainInTrackElement(212, (bogie) => bogie.y - background.y >= passing.diverge.y[0])) {
-            drawContinueTrackLine(continueTrackNewObject, {x: [rotationPoints.outer.rightSiding.end.x[0], passing.diverge.x[0]], y: [rotationPoints.outer.rightSiding.end.y[0], passing.diverge.y[0]]}, -1);
-        }
         if (trainInTrackElement(212, (bogie) => bogie.y - background.y < passing.diverge.y[0])) {
             drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.end, -1);
+        } else if (trainInTrackElement(212)) {
+            drawContinueTrackLine(continueTrackNewObject, {x: [rotationPoints.outer.rightSiding.end.x[0], passing.diverge.x[0]], y: [rotationPoints.outer.rightSiding.end.y[0], passing.diverge.y[0]]}, -1);
         }
         if (trainInTrackElement(213)) {
             drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve0, -1);
@@ -3344,8 +3343,7 @@ function drawObjects() {
         }
         if (trainInTrackElement(218, (bogie) => bogie.x - background.x > passing.merge.x[3])) {
             drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin, -1);
-        }
-        if (trainInTrackElement(218, (bogie) => bogie.x - background.x <= passing.merge.x[3])) {
+        } else if (trainInTrackElement(218)) {
             drawContinueTrackLine(continueTrackNewObject, {x: [passing.merge.x[3], rotationPoints.outer.rightSiding.rejoin.x[1]], y: [passing.merge.y[3], rotationPoints.outer.rightSiding.rejoin.y[1]]}, -1);
         }
         if (trainInTrackElement(220)) {
