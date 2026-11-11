@@ -40,6 +40,8 @@ const screenshot = async (name) => {
     writeFileSync(`${prefix}-${name}.png`, Buffer.from(shot.result.data, "base64"));
 };
 const mouse = (type, x, y) => send("Input.dispatchMouseEvent", {type, x, y, button: "left", clickCount: 1});
+const middle = (type, x, y, buttons) =>
+    send("Input.dispatchMouseEvent", {type, x, y, button: "middle", buttons, clickCount: 1});
 const key = (k, code, keyCode) =>
     Promise.all([
         send("Input.dispatchKeyEvent", {type: "keyDown", key: k, code, windowsVirtualKeyCode: keyCode, text: k === "Enter" ? "\r" : k}),
@@ -97,6 +99,21 @@ for (const [op, ...a] of steps) {
     } else if (op === "reload") {
         logs.push("--- reload ---");
         await send("Page.reload", {ignoreCache: false});
+    } else if (op === "middrag") {
+        // drag with the middle button held (tilts the 3D view): from x, y by dx, dy in n steps
+        const [x, y, dx, dy, n] = a;
+        await mouse("mouseMoved", x, y);
+        await middle("mousePressed", x, y, 4);
+        for (let k = 1; k <= n; k++) {
+            await middle("mouseMoved", x + (dx * k) / n, y + (dy * k) / n, 4);
+            await sleep(30);
+        }
+        await middle("mouseReleased", x + dx, y + dy, 0);
+    } else if (op === "eval") {
+        // evaluate an expression in the page (awaits promises), log the result
+        const options = {expression: a[0], awaitPromise: true, returnByValue: true};
+        const out = await send("Runtime.evaluate", options);
+        logs.push(`eval -> ${JSON.stringify(out.result.result.value)}`);
     } else if (op === "shot") {
         await screenshot(a[0]);
     }

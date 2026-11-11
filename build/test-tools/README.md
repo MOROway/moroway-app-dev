@@ -27,10 +27,12 @@ DevTools on port 9333 (1600 × 800 px) and runs the steps. Screenshots and logs 
 | `["click", x, y]` | click at screen position |
 | `["hold", x, y, ms]` | press, hold, release |
 | `["holdshot", x, y, ms, name]` | hold on an empty spot (shows all switches), screenshot, release |
+| `["middrag", x, y, dx, dy, n]` | middle-button drag by dx, dy in n steps (tilts the 3D view) |
 | `["cmd", "trains start 1"]` | run an in-app text command (opened with `/`); output is logged |
 | `["until", regex, timeoutMs]` | wait until a `DBG` log line matches |
 | `["nav", url]` | navigate (e.g. to the same game with `gui-3d=1`; the saved game keeps switches) |
 | `["reload"]` | reload the page (saved game is restored) |
+| `["eval", expression]` | evaluate JavaScript in the page and log the result (awaits promises) |
 | `["shot", name]` | screenshot |
 
 Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `trains turn <n>`,
@@ -46,3 +48,11 @@ Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `tra
   (e.g. where the main thread receives train data from the worker), run, evaluate the logged
   lines, then remove it again. `until` waits for such lines, which makes timing exact.
 - `sheet.py` combines screenshots into a contact sheet for a quick look.
+- Saved games across two builds (e.g. a migration): run both with one persistent browser profile
+  (a `CHROMIUM` wrapper passing `--user-data-dir`). The service worker then serves the first build
+  again; clear it before testing the second one:
+  `["eval","(async () => { for (const r of await navigator.serviceWorker.getRegistrations())
+  await r.unregister(); for (const k of await caches.keys()) await caches.delete(k); })()"]`,
+  then `["reload"]`.
+- `middrag` tilts the 3D view (bird's eye); it shows the hidden tracks outside the background in
+  perspective.
