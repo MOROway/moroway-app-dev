@@ -18,6 +18,10 @@ ws.addEventListener("message", (e) => {
     if (m.id && pending.has(m.id)) {
         pending.get(m.id)(m);
         pending.delete(m.id);
+    } else if (m.method === "Target.attachedToTarget") {
+        // the animation worker: its exceptions and logs then arrive here like the page's
+        const {sessionId} = m.params;
+        ws.send(JSON.stringify({id: ++id, method: "Runtime.enable", sessionId}));
     } else if (m.method === "Runtime.exceptionThrown") {
         logs.push("EXC " + JSON.stringify(m.params.exceptionDetails).slice(0, 600));
     } else if (m.method === "Runtime.consoleAPICalled" && m.params.type === "log" && String(m.params.args[0]?.value).startsWith("DBG")) {
@@ -50,6 +54,8 @@ const key = (k, code, keyCode) =>
 
 await send("Runtime.enable");
 await send("Page.enable");
+const autoAttach = {autoAttach: true, waitForDebuggerOnStart: false, flatten: true};
+await send("Target.setAutoAttach", autoAttach);
 await send("Emulation.setDeviceMetricsOverride", {width: 1600, height: 800, deviceScaleFactor: 1, mobile: false});
 await send("Page.navigate", {url});
 for (const [op, ...a] of steps) {
@@ -99,6 +105,10 @@ for (const [op, ...a] of steps) {
     } else if (op === "reload") {
         logs.push("--- reload ---");
         await send("Page.reload", {ignoreCache: false});
+    } else if (op === "size") {
+        // window size for the following steps; a reload makes the app start at that size
+        const metrics = {width: a[0], height: a[1], deviceScaleFactor: 1, mobile: false};
+        await send("Emulation.setDeviceMetricsOverride", metrics);
     } else if (op === "middrag") {
         // drag with the middle button held (tilts the 3D view): from x, y by dx, dy in n steps
         const [x, y, dx, dy, n] = a;

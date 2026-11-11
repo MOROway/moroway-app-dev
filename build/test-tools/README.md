@@ -32,6 +32,7 @@ DevTools on port 9333 (1600 × 800 px) and runs the steps. Screenshots and logs 
 | `["until", regex, timeoutMs]` | wait until a `DBG` log line matches |
 | `["nav", url]` | navigate (e.g. to the same game with `gui-3d=1`; the saved game keeps switches) |
 | `["reload"]` | reload the page (saved game is restored) |
+| `["size", w, h]` | change the window size (default 1600 × 800), e.g. before a `reload` |
 | `["eval", expression]` | evaluate JavaScript in the page and log the result (awaits promises) |
 | `["shot", name]` | screenshot |
 
@@ -47,6 +48,8 @@ Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `tra
 - Measurements: add a temporary `console.log("DBG… " + JSON.stringify(...))` in `scripting.ts`
   (e.g. where the main thread receives train data from the worker), run, evaluate the logged
   lines, then remove it again. `until` waits for such lines, which makes timing exact.
+- The animation worker is attached too: its exceptions appear in the output like the page's,
+  and `DBG` lines logged in `scripting_worker_animate.ts` count as well.
 - `sheet.py` combines screenshots into a contact sheet for a quick look.
 - Saved games across two builds (e.g. a migration): run both with one persistent browser profile
   (a `CHROMIUM` wrapper passing `--user-data-dir`). The service worker then serves the first build
