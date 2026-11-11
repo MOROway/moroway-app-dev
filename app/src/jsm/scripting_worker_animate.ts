@@ -2754,6 +2754,9 @@ onmessage = function (message) {
         }
         return Math.min(Math.max(interval * defaultInterval, defaultInterval), 3 * defaultInterval);
     }
+    function isRotationPointCircle(point: object): point is RotationPointCircle {
+        return "bezierLength" in point && typeof point.bezierLength == "object";
+    }
     function updateStateNegative3V8(cO) {
         if (cO.state == -3) {
             if (cO.x > rotationPoints.outer.altState3.right.x[2] + background.x) {
@@ -2946,6 +2949,22 @@ onmessage = function (message) {
                     trains[t].circleFamily = rotationPoints["outer"];
                     trains[t].circle = rotationPoints["outer"]["narrow"];
                     /* END UPDATE: v11.0.0 (beta 1) */
+                } else {
+                    // Without a circle family (while changing between them), the saved circle
+                    // is a copy made for the saved background: link the circle it matches
+                    const copy = message.data.savedTrains[t].circle;
+                    const savedWidth = message.data.savedBg.width;
+                    const circles = Object.values(rotationPoints).flatMap(function (family) {
+                        return Object.values(family).filter(isRotationPointCircle);
+                    });
+                    const circle = circles.find(function (candidate) {
+                        return candidate.x.every(function (x, k) {
+                            return Math.abs(x / background.width - copy.x[k] / savedWidth) < 1e-6;
+                        });
+                    });
+                    if (circle != undefined) {
+                        trains[t].circle = circle;
+                    }
                 }
             }
             /* UPDATE: v11.0.0 */
