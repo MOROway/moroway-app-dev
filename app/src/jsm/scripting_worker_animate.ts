@@ -883,7 +883,7 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
                     cO.stateChangeLocal = false;
                 }
                 setCOPosBezier(points, !realStandardDirection, 0.5 * rotationPoints.outer.altState3.left.bezierLength);
-            } else if ((cO.stateLocal = 5)) {
+            } else if (cO.stateLocal == 5) {
                 var x1 = rotationPoints.outer.altState3.left.x[2] + background.x;
                 var x2 = rotationPoints.outer.altState3.left.x[0] + background.x;
                 var x3 = rotationPoints.outer.altState3.left.x[3] + background.x;
