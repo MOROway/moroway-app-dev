@@ -244,7 +244,7 @@ function getIsSecondLast(cO, isFront, input1, i) {
 }
 function getLeadingBogie(cO, input1, realStandardDirection) {
     const train = trains[input1];
-    if (realStandardDirection != Boolean(cO.turned)) {
+    if (realStandardDirection != cO.turned) {
         return train.front;
     }
     return train.cars.length == 0 ? train.back : train.cars[train.cars.length - 1].back;
@@ -258,9 +258,6 @@ function getUpperTrackInside(cO) {
     return Math.min((cO.y - background.y) / Math.abs(Math.sin(cO.angle)), (background.x + background.width - cO.x) / Math.abs(Math.cos(cO.angle)));
 }
 function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false) {
-    if (cO.turned == undefined) {
-        cO.turned = false;
-    }
     if (trains[input1].trainTurned == undefined) {
         trains[input1].trainTurned = false;
     }
@@ -1441,8 +1438,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
             train.width = train.fac * background.width;
             train.height = train.fac * (trainPics[i].height * (background.width / trainPics[i].width));
             train.move = train.switchCircles = false;
-            train.front = {z: 0};
-            train.back = {z: 0};
+            train.front = {turned: false};
+            train.back = {turned: false};
             train.front.state = train.back.state = train.state;
             if (train.margin == undefined) {
                 train.margin = trainParams.margin;
@@ -1455,8 +1452,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                 car.width = car.fac * background.width;
                 car.height = car.fac * (trainPics[i].cars[j].height * (background.width / trainPics[i].cars[j].width));
                 currentTrainWidth += car.width + currentTrainMargin;
-                car.front = {z: 0};
-                car.back = {z: 0};
+                car.front = {turned: false};
+                car.back = {turned: false};
                 car.front.state = car.back.state = train.state;
             });
             if (train.state == 1) {
@@ -1617,6 +1614,13 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                         setCurrentObjectDisplayAngle(i, train.cars[j]);
                     }
                 }
+            }
+            if (train.state == 1 || train.state == 3) {
+                // Like all other start states, the circles' bogies pass through setCOPos once, so that they get everything it sets (e.g. the height); speed 0 keeps the positions computed above
+                [train, ...train.cars].forEach(function (object, j) {
+                    setCOPos(object.front, true, i, object, j - 1, 0, 1);
+                    setCOPos(object.back, false, i, object, j - 1, 0, 1);
+                });
             }
             delete train.state;
             delete train.circleStartPosDiv;
@@ -2952,6 +2956,9 @@ onmessage = function (message) {
                     [object.front, object.back].forEach(function (bogie) {
                         if (bogie.z == undefined) {
                             bogie.z = 0;
+                        }
+                        if (bogie.turned == undefined) {
+                            bogie.turned = false;
                         }
                     });
                 });
