@@ -258,9 +258,6 @@ function getUpperTrackInside(cO) {
     return Math.min((cO.y - background.y) / Math.abs(Math.sin(cO.angle)), (background.x + background.width - cO.x) / Math.abs(Math.cos(cO.angle)));
 }
 function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false) {
-    if (trains[input1].trainTurned == undefined) {
-        trains[input1].trainTurned = false;
-    }
     var realStandardDirection = getRealStandardDirection(cO, input1, reverse);
     var isFirst = getIsFirst(cO, isFront, input1, i);
     var isLast = getIsLast(cO, isFront, input1, i);
@@ -1434,6 +1431,7 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
             train.standardDirection = train.standardDirectionStartValue;
             delete train.standardDirectionStartValue;
             train.endOfTrack = false;
+            train.trainTurned = false;
 
             train.width = train.fac * background.width;
             train.height = train.fac * (trainPics[i].height * (background.width / trainPics[i].width));
@@ -2477,7 +2475,7 @@ function animateObjects() {
         trains[i].crash = false;
         for (var j = 0; j < trains.length; j++) {
             if (i != j) {
-                if (trainCollisions[i][j] >= trainParams.innerCollisionFac || trainCollisions[i][j] > trainCollisions[j][i] || (trains[i].endOfTrack && trains[i].endOfTrackStandardDirection == ((trains[i].standardDirection && !trains[i].trainTurned) || (!trains[i].standardDirection && trains[i].trainTurned)))) {
+                if (trainCollisions[i][j] >= trainParams.innerCollisionFac || trainCollisions[i][j] > trainCollisions[j][i] || (trains[i].endOfTrack && trains[i].endOfTrackStandardDirection == (trains[i].standardDirection != trains[i].trainTurned))) {
                     trains[i].crash = true;
                     if (trains[i].move) {
                         trains[i].move = false;
@@ -2952,6 +2950,9 @@ onmessage = function (message) {
             }
             /* UPDATE: v11.0.0 */
             for (var t = 0; t < trains.length; t++) {
+                if (trains[t].trainTurned == undefined) {
+                    trains[t].trainTurned = false;
+                }
                 [trains[t], ...trains[t].cars].forEach(function (object) {
                     [object.front, object.back].forEach(function (bogie) {
                         if (bogie.z == undefined) {
