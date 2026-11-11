@@ -17,7 +17,7 @@ import { formatJSString, getString, setHTMLStrings } from "./common/string_tools
 import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltip, initTooltips } from "./common/tooltip.js";
 import { followLink, getQueryStringValue, getServerLink, getShareLink, LinkStates, Protocols } from "./common/web_tools.js";
-import { RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_animate.js";
+import { Background, RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_animate.js";
 
 /*******************************************
  *          TypeScript Interfaces          *
@@ -125,14 +125,6 @@ interface CarPoint {
     angle: number[][];
 }
 
-interface Background {
-    src: number;
-    secondLayer: number;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-}
 interface BackgroundObject3D extends Object3D {
     src: string;
 }

@@ -114,6 +114,14 @@ export interface TrainPoint {
     weight: number;
 }
 
+export interface Background {
+    src: number;
+    secondLayer: number;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+}
 interface RotationPoint {
     x: number[];
     y: number[];
@@ -665,8 +673,12 @@ function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, curr
     }
 }
 
+function getBezierPoints(fac: number, a: number, b: number, c: number, d: number): number {
+    return Math.pow(1 - fac, 3) * a + 3 * fac * Math.pow(1 - fac, 2) * b + 3 * Math.pow(fac, 2) * (1 - fac) * c + Math.pow(fac, 3) * d;
+}
+
 function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, speed: number, customSpeed: number): void {
-    function setCOPosLinear(linearPoints, isBackwards, isRotated) {
+    function setCOPosLinear(linearPoints: RotationPoint, isBackwards: boolean, isRotated: boolean): void {
         var angleCorr = isRotated ? Math.PI : 0;
         var calcCorr = 1;
         if (isRotated != isBackwards) {
@@ -691,10 +703,7 @@ function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, 
         }
     }
 
-    function getBezierPoints(fac, a, b, c, d) {
-        return Math.pow(1 - fac, 3) * a + 3 * fac * Math.pow(1 - fac, 2) * b + 3 * Math.pow(fac, 2) * (1 - fac) * c + Math.pow(fac, 3) * d;
-    }
-    function getBezierFac(fac, approxNO, maxDuration, cCO, bezierPoints, closeEnough = 0.1) {
+    function getBezierFac(fac: number, approxNO: number, maxDuration: number, cCO: TrainBoogie, bezierPoints: RotationPoint, closeEnough: number = 0.1): number {
         var x = getBezierPoints(fac, bezierPoints.x[0], bezierPoints.x[1], bezierPoints.x[2], bezierPoints.x[3]);
         var y = getBezierPoints(fac, bezierPoints.y[0], bezierPoints.y[1], bezierPoints.y[2], bezierPoints.y[3]);
         var distance = Math.sqrt(Math.pow(cCO.x - x, 2) + Math.pow(cCO.y - y, 2));
@@ -711,15 +720,15 @@ function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, 
         newFac = newFac < 0 ? 0 : newFac > 1 ? 1 : newFac;
         return Math.abs(distance) <= Math.abs(newDistance) ? fac : Math.abs(newDistance) < closeEnough * Math.abs(bezierPoints.x[0] - bezierPoints.x[3]) || --maxDuration < 1 ? newFac : getBezierFac(newFac, approxNO, maxDuration, cCO, bezierPoints, closeEnough);
     }
-    function getBezierAngle(fac, a, b) {
-        function getBezierPointsDifferential(fac, a, b, c, d) {
+    function getBezierAngle(fac: number, a: number[], b: number[]): number {
+        function getBezierPointsDifferential(fac: number, a: number, b: number, c: number, d: number): number {
             return 3 * Math.pow(1 - fac, 2) * (b - a) + 6 * fac * (1 - fac) * (c - b) + 3 * Math.pow(fac, 2) * (d - c);
         }
         var dxdt = getBezierPointsDifferential(fac, a[0], a[1], a[2], a[3]);
         var dydt = getBezierPointsDifferential(fac, b[0], b[1], b[2], b[3]);
         return Math.atan2(dydt, dxdt);
     }
-    function setCOPosBezier(bezierPoints, isBackwards, length) {
+    function setCOPosBezier(bezierPoints: RotationPoint, isBackwards: boolean, length: number): void {
         var backwardsCorr = isBackwards ? -1 : 1;
         var fac = i < 0 && isFront ? cO.currentCurveFac : getBezierFac(cO.currentCurveFac, 500, 100, cO, bezierPoints);
         cO.currentCurveFac = fac + backwardsCorr * ((speed * customSpeed) / length);
@@ -1331,7 +1340,7 @@ function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, 
 
 function setCOPosCorr(cO: TrainBoogie, isFront: boolean, input1: number, currentObject: TrainCalc | TrainCalcCar, i: number): void {
     // Fix car position and angle relative to locomotive
-    function getPointsForPosCorr(x, y, angle, height) {
+    function getPointsForPosCorr(x: number, y: number, angle: number, height: number): {x: number[]; y: number[]} {
         var xa: number[] = [];
         var ya: number[] = [];
         xa[0] = x;
@@ -1360,15 +1369,15 @@ function setCOPosCorr(cO: TrainBoogie, isFront: boolean, input1: number, current
     } while (Math.abs(supposedDistance - distance) > 0.001 && --maxRepeatNo > 0);
 }
 
-function setTrainOuterPos(input1) {
+function setTrainOuterPos(input1: number): void {
     const isFront = trains[input1].standardDirection;
     const carObject = isFront || trains[input1].cars.length == 0 ? trains[input1] : trains[input1].cars[trains[input1].cars.length - 1];
     trains[input1].outerX = carObject.x + Math.cos(carObject.displayAngle) * ((carObject.width * 1.05) / 2) * (isFront ? 1 : -1);
     trains[input1].outerY = carObject.y + Math.sin(carObject.displayAngle) * ((carObject.width * 1.05) / 2) * (isFront ? 1 : -1);
 }
 
-function setCurrentObjectDisplayAngle(input1, currentObject) {
-    function adjustAngle() {
+function setCurrentObjectDisplayAngle(input1: number, currentObject: TrainCalc | TrainCalcCar): void {
+    function adjustAngle(): void {
         while (currentObject.displayAngle < 0) {
             currentObject.displayAngle += Math.PI * 2;
         }
@@ -1428,7 +1437,7 @@ function setCurrentObjectDisplayAngle(input1, currentObject) {
  * Animation functions for load and resize *
  ******************************************/
 
-function placeTrainsAtInitialPositions(trainNumber = -1) {
+function placeTrainsAtInitialPositions(trainNumber: number = -1): void {
     trains.forEach(function (train, i) {
         if (trainNumber == -1 || trainNumber == i) {
             train.standardDirection = train.standardDirectionStartValue;
@@ -1629,16 +1638,12 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
     });
 }
 
-function defineTrainSpeed(train) {
+function defineTrainSpeed(train: TrainCalc): void {
     train.speed = train.speedFac * background.width;
 }
 
-function defineTrainParams() {
-    function getBezierPoints(fac, a, b, c, d) {
-        return Math.pow(1 - fac, 3) * a + 3 * fac * Math.pow(1 - fac, 2) * b + 3 * Math.pow(fac, 2) * (1 - fac) * c + Math.pow(fac, 3) * d;
-    }
-
-    function getBezierLength(bezierPoints, repNo) {
+function defineTrainParams(): void {
+    function getBezierLength(bezierPoints: RotationPoint, repNo: number): number {
         var x: number[] = [];
         var y: number[] = [];
         var dis = 0;
@@ -2234,9 +2239,9 @@ function defineTrainParams() {
              animate  functions
 ******************************************/
 
-function animateObjects() {
-    function collisionMatrix() {
-        function collisionWeight(input1) {
+function animateObjects(): void {
+    function collisionMatrix(): number[][] {
+        function collisionWeight(input1: number): number[] {
             var currentObjects: any = [];
             currentObjects[0] = copyJSObject(trains[input1]);
             if (trains[input1].cars.length == 0 && trains[input1].standardDirection) {
@@ -2360,15 +2365,15 @@ function animateObjects() {
             return collisionMatrix;
         }
 
-        var collisionMatrix: any[] = [];
+        var collisionMatrix: number[][] = [];
         for (var i = 0; i < trains.length; i++) {
             collisionMatrix[i] = collisionWeight(i);
         }
         return collisionMatrix;
     }
 
-    function animateTrains(input1) {
-        function animateTrain(i) {
+    function animateTrains(input1: number): void {
+        function animateTrain(i: number): void {
             var currentObject = i < 0 ? trains[input1] : trains[input1].cars[i];
             if (trains[input1].move) {
                 //Calc train position
@@ -2709,7 +2714,7 @@ var debug: boolean;
 var saveTheGameSendTimeout;
 
 onmessage = function (message) {
-    function resizeTrains(oldBackground, excludes: number[] = []) {
+    function resizeTrains(oldBackground: Background, excludes: number[] = []): void {
         for (var i = 0; i < trains.length; i++) {
             if (typeof excludes != "object" || !Array.isArray(excludes) || !excludes.includes(i)) {
                 trains[i].front.x = background.x + ((trains[i].front.x - oldBackground.x) * background.width) / oldBackground.width;
@@ -2737,8 +2742,8 @@ onmessage = function (message) {
             }
         }
     }
-    function getAnimateInterval(interval: number | undefined = undefined) {
-        function performanceTest() {
+    function getAnimateInterval(interval: number | undefined = undefined): number {
+        function performanceTest(): number {
             const startTime = performance.now();
             for (var i = 0; i < 3; i++) {
                 const startNo = 12500000;
