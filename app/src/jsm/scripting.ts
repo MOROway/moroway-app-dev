@@ -2222,34 +2222,39 @@ function drawObjects() {
     }
 
     function drawContinueTrackElement(group, points) {
-        // Two rails along the track's points (background px, height z): narrow strips, each offset by half the track width perpendicular to the track
-        const material = new THREE.MeshBasicMaterial({color: three.night ? 0x541e03 : 0x963c0e, side: THREE.DoubleSide});
+        // Two rails along the track's points (background px, height z), each offset by half the track width perpendicular to the track:
+        // a narrow strip, and a 1 px line along its middle that keeps the rail continuous where the strip is narrower than a pixel (far away or tilted)
+        const color = three.night ? 0x541e03 : 0x963c0e;
+        const stripMaterial = new THREE.MeshBasicMaterial({color: color, side: THREE.DoubleSide});
+        const lineMaterial = new THREE.LineBasicMaterial({color: color});
         const halfTrackWidth = (trainParams.trackWidth / 2) * background.width;
-        // At least one screen pixel wide, so that the rails do not flicker on small screens
-        const halfRailWidth = Math.max(0.0009 * background.width, client.devicePixelRatio) / 2;
+        const halfRailWidth = (0.0009 * background.width) / 2;
         const normals = points.map(function (_point, k) {
             const before = points[Math.max(k - 1, 0)];
             const after = points[Math.min(k + 1, points.length - 1)];
             const length = Math.hypot(after.x - before.x, after.y - before.y);
             return {x: -(after.y - before.y) / length, y: (after.x - before.x) / length};
         });
+        function toScene(point, k, offset) {
+            const x = point.x + offset * normals[k].x;
+            const y = point.y + offset * normals[k].y;
+            return new THREE.Vector3(three.calcScale() * ((x - background.width / 2) / background.width), three.calcScale() * (-(y - background.height / 2) / background.width) + three.calcPositionY(), (three.calcScale() * point.z) / background.width - background.width / 1000000);
+        }
         for (const side of [-1, 1]) {
-            const vertices = [];
+            const stripVertices = [];
+            const lineVertices = [];
             points.forEach(function (point, k) {
-                for (const edge of [-1, 1]) {
-                    const offset = side * halfTrackWidth + edge * halfRailWidth;
-                    const x = point.x + offset * normals[k].x;
-                    const y = point.y + offset * normals[k].y;
-                    vertices.push(new THREE.Vector3(three.calcScale() * ((x - background.width / 2) / background.width), three.calcScale() * (-(y - background.height / 2) / background.width) + three.calcPositionY(), (three.calcScale() * point.z) / background.width - background.width / 1000000));
-                }
+                stripVertices.push(toScene(point, k, side * halfTrackWidth - halfRailWidth), toScene(point, k, side * halfTrackWidth + halfRailWidth));
+                lineVertices.push(toScene(point, k, side * halfTrackWidth));
             });
             const indices = [];
             for (let k = 0; k < points.length - 1; k++) {
                 indices.push(2 * k, 2 * k + 1, 2 * k + 2, 2 * k + 1, 2 * k + 3, 2 * k + 2);
             }
-            const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-            geometry.setIndex(indices);
-            group.add(new THREE.Mesh(geometry, material));
+            const stripGeometry = new THREE.BufferGeometry().setFromPoints(stripVertices);
+            stripGeometry.setIndex(indices);
+            group.add(new THREE.Mesh(stripGeometry, stripMaterial));
+            group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(lineVertices), lineMaterial));
         }
     }
     function drawContinueTrackLine(group, line) {
