@@ -71,6 +71,10 @@ MOROway App uses Weblate for translations.
     - `build-libs`:
       - Used in build scripts
       - See [here](./build/build-libs/README.md)
+    - `test-tools`:
+      - Check the running app headless (web, debug mode): screenshots, in-app text commands, measurements
+      - Node.js 22 or newer, Chromium or Chrome and Python 3 required
+      - See [here](./build/test-tools/README.md)
   - Configuration files:
     - `conf` and `conf_local` (for local override)
       - `version`: MAJOR.MINOR.PATCH
