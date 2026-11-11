@@ -3,6 +3,9 @@ import { copyJSObject } from "./common/js_objects.js";
 
 interface TrainBoogie {
     state?: number;
+    stateChange?: boolean;
+    stateLocal?: number;
+    stateChangeLocal?: boolean;
     currentCurveFac?: number;
     x?: number;
     y?: number;
@@ -52,7 +55,7 @@ export interface Train extends Object {
     height?: number;
     displayAngle?: number;
     assetFlip?: boolean;
-    circleFamily: RotationPointsInner | RotationPointsOuter;
+    circleFamily: RotationPointsInner | RotationPointsOuter | null;
     circle: RotationPointCircle;
     move?: boolean;
     lastDirectionChange?: number;
@@ -215,41 +218,41 @@ function saveTheGameSend() {
     }
     safePostMessage({k: "save-game", saveTrains: saveTrains});
 }
-function getRealStandardDirection(cO, input1, reverse = false) {
+function getRealStandardDirection(cO: TrainBoogie, input1: number, reverse: boolean = false): boolean {
     var realStandardDirection = (trains[input1].standardDirection && !reverse) || (!trains[input1].standardDirection && reverse);
     if (cO.turned) {
         realStandardDirection = !realStandardDirection;
     }
     return realStandardDirection;
 }
-function getIsFirst(cO, isFront, input1, i) {
+function getIsFirst(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
     var isFirst = isFront && i == -1;
     if (cO.turned) {
         isFirst = !isFront && i == trains[input1].cars.length - 1;
     }
     return isFirst;
 }
-function getIsLast(cO, isFront, input1, i) {
+function getIsLast(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
     var isLast = !isFront && i == trains[input1].cars.length - 1;
     if (cO.turned) {
         isLast = isFront && i == -1;
     }
     return isLast;
 }
-function getIsSecond(cO, isFront, input1, i) {
+function getIsSecond(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
     return getIsFirst(cO, !isFront, input1, i);
 }
-function getIsSecondLast(cO, isFront, input1, i) {
+function getIsSecondLast(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
     return getIsLast(cO, !isFront, input1, i);
 }
-function getLeadingBogie(cO, input1, realStandardDirection) {
+function getLeadingBogie(cO: TrainBoogie, input1: number, realStandardDirection: boolean): TrainBoogie {
     const train = trains[input1];
     if (realStandardDirection != cO.turned) {
         return train.front;
     }
     return train.cars.length == 0 ? train.back : train.cars[train.cars.length - 1].back;
 }
-function getUpperTrackInside(cO) {
+function getUpperTrackInside(cO: TrainBoogie): number {
     // Distance along the track to the background edge the upper track crosses (top or right); negative outside
     if (cO.state >= 313 && cO.state <= 315) {
         // The pillar track and its adjoining curves run nearly parallel to the right edge: measure along them via y between where the pillar track enters and leaves the background
@@ -257,7 +260,7 @@ function getUpperTrackInside(cO) {
     }
     return Math.min((cO.y - background.y) / Math.abs(Math.sin(cO.angle)), (background.x + background.width - cO.x) / Math.abs(Math.cos(cO.angle)));
 }
-function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false) {
+function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, currentObject: TrainCalc | TrainCalcCar, i: number, reverse: boolean = false): void {
     var realStandardDirection = getRealStandardDirection(cO, input1, reverse);
     var isFirst = getIsFirst(cO, isFront, input1, i);
     var isLast = getIsLast(cO, isFront, input1, i);
@@ -662,7 +665,7 @@ function changeCOSection(cO, isFront, input1, currentObject, i, reverse = false)
     }
 }
 
-function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
+function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, speed: number, customSpeed: number): void {
     function setCOPosLinear(linearPoints, isBackwards, isRotated) {
         var angleCorr = isRotated ? Math.PI : 0;
         var calcCorr = 1;
@@ -1326,7 +1329,7 @@ function setCOPos(cO, isFront, input1, currentObject, i, speed, customSpeed) {
     }
 }
 
-function setCOPosCorr(cO, isFront, input1, currentObject, i) {
+function setCOPosCorr(cO: TrainBoogie, isFront: boolean, input1: number, currentObject: TrainCalc | TrainCalcCar, i: number): void {
     // Fix car position and angle relative to locomotive
     function getPointsForPosCorr(x, y, angle, height) {
         var xa: number[] = [];
@@ -1523,11 +1526,11 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                 var bogieDistance = train.width * (1 - 2 * train.bogieDistance);
                 var halfBogieDistanceFac = bogieDistance / 2 / rotationPoints.outer.upperSiding.pillar.bezierLength;
                 train.front.currentCurveFac = 0.5 + halfBogieDistanceFac;
-                setCOPos(train.front, true, i, train, -1, 1, 1);
+                setCOPos(train.front, true, i, -1, 1, 1);
                 train.back.currentCurveFac = 0.5 - halfBogieDistanceFac;
                 train.back.x = train.front.x - Math.cos(train.front.angle) * bogieDistance;
                 train.back.y = train.front.y - Math.sin(train.front.angle) * bogieDistance;
-                setCOPos(train.back, false, i, train, -1, 1, 1);
+                setCOPos(train.back, false, i, -1, 1, 1);
                 setCOPosCorr(train.back, false, i, train, -1);
                 train.x = (train.front.x + train.back.x) / 2;
                 train.y = (train.front.y + train.back.y) / 2;
@@ -1550,8 +1553,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                 }
                 train.back.x = train.front.x + train.width;
                 train.back.y = train.front.y;
-                setCOPos(train.front, true, i, train, -1, 1, 1);
-                setCOPos(train.back, false, i, train, -1, 1, 1);
+                setCOPos(train.front, true, i, -1, 1, 1);
+                setCOPos(train.back, false, i, -1, 1, 1);
                 setCOPosCorr(train.back, false, i, train, -1);
                 train.x = (train.front.x + train.back.x) / 2;
                 train.y = (train.front.y + train.back.y) / 2;
@@ -1571,8 +1574,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                         train.cars[j].back.currentCurveFac = train.cars[j - 1].back.currentCurveFac;
                         changeCOSection(train.cars[j].front, true, i, train.cars[j], j, true);
                         changeCOSection(train.cars[j].back, false, i, train.cars[j], j, true);
-                        setCOPos(train.cars[j].front, true, i, train.cars[j], j, -1, train.cars[j].width * train.cars[j].bogieDistance + currentTrainMargin + train.cars[j - 1].width / 2);
-                        setCOPos(train.cars[j].back, false, i, train.cars[j], j, -1, train.cars[j].width * (1 - train.cars[j].bogieDistance) + currentTrainMargin + train.cars[j - 1].width / 2);
+                        setCOPos(train.cars[j].front, true, i, j, -1, train.cars[j].width * train.cars[j].bogieDistance + currentTrainMargin + train.cars[j - 1].width / 2);
+                        setCOPos(train.cars[j].back, false, i, j, -1, train.cars[j].width * (1 - train.cars[j].bogieDistance) + currentTrainMargin + train.cars[j - 1].width / 2);
                     } else {
                         train.cars[j].front.state = train.back.state;
                         train.cars[j].back.state = train.back.state;
@@ -1586,8 +1589,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                         train.cars[j].back.currentCurveFac = train.back.currentCurveFac;
                         changeCOSection(train.cars[j].front, true, i, train.cars[j], j, true);
                         changeCOSection(train.cars[j].back, false, i, train.cars[j], j, true);
-                        setCOPos(train.cars[j].front, true, i, train.cars[j], j, -1, train.cars[j].width * train.cars[j].bogieDistance + currentTrainMargin + train.width / 2);
-                        setCOPos(train.cars[j].back, false, i, train.cars[j], j, -1, train.cars[j].width * (1 - train.cars[j].bogieDistance) + currentTrainMargin + train.width / 2);
+                        setCOPos(train.cars[j].front, true, i, j, -1, train.cars[j].width * train.cars[j].bogieDistance + currentTrainMargin + train.width / 2);
+                        setCOPos(train.cars[j].back, false, i, j, -1, train.cars[j].width * (1 - train.cars[j].bogieDistance) + currentTrainMargin + train.width / 2);
                     }
                     setCOPosCorr(train.cars[j].front, true, i, train.cars[j], j);
                     setCOPosCorr(train.cars[j].back, false, i, train.cars[j], j);
@@ -1597,13 +1600,13 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
                         if (j > 0) {
                             changeCOSection(train.cars[j].front, true, i, train.cars[j], j, true);
                             changeCOSection(train.cars[j].back, false, i, train.cars[j], j, true);
-                            setCOPos(train.cars[j].front, true, i, train.cars[j], j, 1, 1);
-                            setCOPos(train.cars[j].back, false, i, train.cars[j], j, 1, 1);
+                            setCOPos(train.cars[j].front, true, i, j, 1, 1);
+                            setCOPos(train.cars[j].back, false, i, j, 1, 1);
                         } else {
                             changeCOSection(train.cars[j].front, true, i, train.cars[j], j, true);
                             changeCOSection(train.cars[j].back, false, i, train.cars[j], j, true);
-                            setCOPos(train.cars[j].front, true, i, train.cars[j], j, 1, 1);
-                            setCOPos(train.cars[j].back, false, i, train.cars[j], j, 1, 1);
+                            setCOPos(train.cars[j].front, true, i, j, 1, 1);
+                            setCOPos(train.cars[j].back, false, i, j, 1, 1);
                         }
                         setCOPosCorr(train.cars[j].front, true, i, train.cars[j], j);
                         setCOPosCorr(train.cars[j].back, false, i, train.cars[j], j);
@@ -1616,8 +1619,8 @@ function placeTrainsAtInitialPositions(trainNumber = -1) {
             if (train.state == 1 || train.state == 3) {
                 // Like all other start states, the circles' bogies pass through setCOPos once, so that they get everything it sets (e.g. the height); speed 0 keeps the positions computed above
                 [train, ...train.cars].forEach(function (object, j) {
-                    setCOPos(object.front, true, i, object, j - 1, 0, 1);
-                    setCOPos(object.back, false, i, object, j - 1, 0, 1);
+                    setCOPos(object.front, true, i, j - 1, 0, 1);
+                    setCOPos(object.back, false, i, j - 1, 0, 1);
                 });
             }
             delete train.state;
@@ -2374,8 +2377,8 @@ function animateObjects() {
 
                 changeCOSection(currentObject.front, true, input1, currentObject, i);
                 changeCOSection(currentObject.back, false, input1, currentObject, i);
-                setCOPos(currentObject.front, true, input1, currentObject, i, speed, customSpeed);
-                setCOPos(currentObject.back, false, input1, currentObject, i, speed, customSpeed);
+                setCOPos(currentObject.front, true, input1, i, speed, customSpeed);
+                setCOPos(currentObject.back, false, input1, i, speed, customSpeed);
 
                 if (i == -1) {
                     setCOPosCorr(currentObject.back, false, input1, currentObject, i);
@@ -2757,7 +2760,7 @@ onmessage = function (message) {
     function isRotationPointCircle(point: object): point is RotationPointCircle {
         return "bezierLength" in point && typeof point.bezierLength == "object";
     }
-    function updateStateNegative3V8(cO) {
+    function updateStateNegative3V8(cO: TrainBoogie): void {
         if (cO.state == -3) {
             if (cO.x > rotationPoints.outer.altState3.right.x[2] + background.x) {
                 cO.stateLocal = 1;
