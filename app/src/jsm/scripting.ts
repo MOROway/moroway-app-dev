@@ -325,8 +325,10 @@ function resetScale() {
 function resetTilt() {
     client.zoomAndTilt.tiltX = client.width / 2;
     client.zoomAndTilt.tiltY = client.height / 2;
+    client.zoomAndTilt.rotation = 0;
     three.scene.rotation.x = 0;
     three.scene.rotation.y = 0;
+    three.scene.rotation.z = 0;
 }
 
 function measureFontSize(text: string, fontFamily: string, fontSize: number, wantedTextWidth: number, approximation: number, tolerance: number, recursion: number = 0): string {
@@ -1201,6 +1203,9 @@ function getGesture(gesture) {
                 client.zoomAndTilt.tiltX -= gesture.deltaX;
                 client.zoomAndTilt.tiltY -= gesture.deltaY;
                 break;
+            case "rotate":
+                client.zoomAndTilt.rotation += gesture.angle;
+                break;
         }
         client.zoomAndTilt.offsetX = (canvasGesture.width / 2 - client.zoomAndTilt.pinchX) * client.zoomAndTilt.realScale;
         client.zoomAndTilt.offsetY = (canvasGesture.height / 2 - client.zoomAndTilt.pinchY) * client.zoomAndTilt.realScale;
@@ -1257,6 +1262,7 @@ function getGesture(gesture) {
     three.camera.position.set(scale * ((client.zoomAndTilt.pinchX / client.devicePixelRatio - client.width / 2) / client.width), scale * (-(client.zoomAndTilt.pinchY / client.devicePixelRatio - client.height / 2) / client.width), 1);
     three.scene.rotation.x = (client.zoomAndTilt.tiltY - client.height / 2) / client.height;
     three.scene.rotation.y = (client.zoomAndTilt.tiltX - client.width / 2) / client.width;
+    three.scene.rotation.z = client.zoomAndTilt.rotation;
     three.camera.zoom = three.zoom + (client.zoomAndTilt.realScale - 1);
     three.camera.updateProjectionMatrix();
 
@@ -1518,6 +1524,7 @@ function onKeyDown(event: KeyboardEvent) {
         }
         hardware.keyboard.keysHold[event.key].active = true;
         hardware.keyboard.keysHold[event.key].ctrlKey = event.ctrlKey;
+        hardware.keyboard.keysHold[event.key].shiftKey = event.shiftKey;
     }
     if (event.key == "Tab" || event.key == "Enter") {
         event.preventDefault();
@@ -1611,6 +1618,7 @@ function onKeyUp(event: KeyboardEvent) {
     }
     hardware.keyboard.keysHold[event.key].active = false;
     hardware.keyboard.keysHold[event.key].ctrlKey = false;
+    hardware.keyboard.keysHold[event.key].shiftKey = false;
 }
 function preventKeyZoomDuringLoad(event: KeyboardEvent) {
     if (event.key == "Escape" || (event.ctrlKey && (event.key == "+" || event.key == "-" || event.key == "0"))) {
@@ -2832,16 +2840,16 @@ function drawObjects() {
     if (client.zoomAndTilt.realScale > 1) {
         var deltaX = 0;
         var deltaY = 0;
-        if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && !hardware.keyboard.keysHold["ArrowLeft"].ctrlKey) {
+        if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && !hardware.keyboard.keysHold["ArrowLeft"].ctrlKey && !hardware.keyboard.keysHold["ArrowLeft"].shiftKey) {
             deltaX += (canvasGesture.width * client.zoomAndTilt.realScale) / deltaDiv;
         }
-        if (hardware.keyboard.keysHold["ArrowUp"] && hardware.keyboard.keysHold["ArrowUp"].active && !hardware.keyboard.keysHold["ArrowUp"].ctrlKey) {
+        if (hardware.keyboard.keysHold["ArrowUp"] && hardware.keyboard.keysHold["ArrowUp"].active && !hardware.keyboard.keysHold["ArrowUp"].ctrlKey && !hardware.keyboard.keysHold["ArrowUp"].shiftKey) {
             deltaY += (canvasGesture.height * client.zoomAndTilt.realScale) / deltaDiv;
         }
-        if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && !hardware.keyboard.keysHold["ArrowRight"].ctrlKey) {
+        if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && !hardware.keyboard.keysHold["ArrowRight"].ctrlKey && !hardware.keyboard.keysHold["ArrowRight"].shiftKey) {
             deltaX -= (canvasGesture.width * client.zoomAndTilt.realScale) / deltaDiv;
         }
-        if (hardware.keyboard.keysHold["ArrowDown"] && hardware.keyboard.keysHold["ArrowDown"].active && !hardware.keyboard.keysHold["ArrowDown"].ctrlKey) {
+        if (hardware.keyboard.keysHold["ArrowDown"] && hardware.keyboard.keysHold["ArrowDown"].active && !hardware.keyboard.keysHold["ArrowDown"].ctrlKey && !hardware.keyboard.keysHold["ArrowDown"].shiftKey) {
             deltaY -= (canvasGesture.height * client.zoomAndTilt.realScale) / deltaDiv;
         }
         if (deltaX != 0 || deltaY != 0) {
@@ -2850,20 +2858,30 @@ function drawObjects() {
     }
     var deltaX = 0;
     var deltaY = 0;
-    if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && hardware.keyboard.keysHold["ArrowLeft"].ctrlKey) {
+    if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && hardware.keyboard.keysHold["ArrowLeft"].ctrlKey && !hardware.keyboard.keysHold["ArrowLeft"].shiftKey) {
         deltaX += canvasGesture.width / deltaDiv;
     }
-    if (hardware.keyboard.keysHold["ArrowUp"] && hardware.keyboard.keysHold["ArrowUp"].active && hardware.keyboard.keysHold["ArrowUp"].ctrlKey) {
+    if (hardware.keyboard.keysHold["ArrowUp"] && hardware.keyboard.keysHold["ArrowUp"].active && hardware.keyboard.keysHold["ArrowUp"].ctrlKey && !hardware.keyboard.keysHold["ArrowUp"].shiftKey) {
         deltaY += canvasGesture.height / deltaDiv;
     }
-    if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && hardware.keyboard.keysHold["ArrowRight"].ctrlKey) {
+    if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && hardware.keyboard.keysHold["ArrowRight"].ctrlKey && !hardware.keyboard.keysHold["ArrowRight"].shiftKey) {
         deltaX -= canvasGesture.width / deltaDiv;
     }
-    if (hardware.keyboard.keysHold["ArrowDown"] && hardware.keyboard.keysHold["ArrowDown"].active && hardware.keyboard.keysHold["ArrowDown"].ctrlKey) {
+    if (hardware.keyboard.keysHold["ArrowDown"] && hardware.keyboard.keysHold["ArrowDown"].active && hardware.keyboard.keysHold["ArrowDown"].ctrlKey && !hardware.keyboard.keysHold["ArrowDown"].shiftKey) {
         deltaY -= canvasGesture.height / deltaDiv;
     }
     if (deltaX != 0 || deltaY != 0) {
         getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
+    }
+    var deltaAngle = 0;
+    if (hardware.keyboard.keysHold["ArrowLeft"] && hardware.keyboard.keysHold["ArrowLeft"].active && hardware.keyboard.keysHold["ArrowLeft"].shiftKey) {
+        deltaAngle += 1 / deltaDiv;
+    }
+    if (hardware.keyboard.keysHold["ArrowRight"] && hardware.keyboard.keysHold["ArrowRight"].active && hardware.keyboard.keysHold["ArrowRight"].shiftKey) {
+        deltaAngle -= 1 / deltaDiv;
+    }
+    if (deltaAngle != 0) {
+        getGesture({type: "rotate", angle: deltaAngle});
     }
 
     /////CARS/////
