@@ -1313,6 +1313,10 @@ function onMouseMove(event: MouseEvent) {
             hardware.mouse.isDrag = true;
             hardware.mouse.isHold = false;
         }
+    } else if (gui.three && hardware.mouse.isWheelHold && event.shiftKey) {
+        // A drag across the whole width turns by a full turn, to the right clockwise
+        var deltaX = hardware.mouse.moveX - event.clientX * client.devicePixelRatio;
+        getGesture({type: "rotate", angle: (deltaX / canvasGesture.width) * 2 * Math.PI});
     } else if (gui.three && hardware.mouse.isWheelHold) {
         var deltaX = 5 * (hardware.mouse.moveX - event.clientX * client.devicePixelRatio);
         var deltaY = 5 * (hardware.mouse.moveY - event.clientY * client.devicePixelRatio);
