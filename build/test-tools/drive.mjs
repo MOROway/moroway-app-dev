@@ -1,6 +1,7 @@
 // Drive the app in headless Chromium via the DevTools protocol with a list of steps.
 // usage: node drive.mjs <devtools-port> <url> <shot-prefix> '<steps-json>'
-// Steps (see README.md): wait, click, hold, holdshot, cmd, until, nav, reload, shot.
+// Steps (see README.md): wait, click, hold, holdshot, middrag, twofinger, key, cmd, until, nav,
+// reload, size, eval, shot.
 // Screenshots are written to <shot-prefix>-<name>.png. Closes the browser at the end.
 import {writeFileSync} from "node:fs";
 
@@ -46,6 +47,8 @@ const screenshot = async (name) => {
 const mouse = (type, x, y) => send("Input.dispatchMouseEvent", {type, x, y, button: "left", clickCount: 1});
 const middle = (type, x, y, buttons) =>
     send("Input.dispatchMouseEvent", {type, x, y, button: "middle", buttons, clickCount: 1});
+const arrowKeyCodes = {ArrowLeft: 37, ArrowUp: 38, ArrowRight: 39, ArrowDown: 40};
+const touch = (type, touchPoints) => send("Input.dispatchTouchEvent", {type, touchPoints});
 const key = (k, code, keyCode) =>
     Promise.all([
         send("Input.dispatchKeyEvent", {type: "keyDown", key: k, code, windowsVirtualKeyCode: keyCode, text: k === "Enter" ? "\r" : k}),
@@ -119,6 +122,34 @@ for (const [op, ...a] of steps) {
             await sleep(30);
         }
         await middle("mouseReleased", x + dx, y + dy, 0);
+    } else if (op === "twofinger") {
+        // two fingers at distance d around x, y; in n steps the centre moves by dx, dy, the
+        // fingers turn by deg and their distance is scaled by scale
+        const [x, y, d, dx, dy, deg, scale, n] = a;
+        const fingers = (k) => {
+            const t = k / n;
+            const r = (d * (1 + (scale - 1) * t)) / 2;
+            const angle = (deg * t * Math.PI) / 180;
+            const [cx, cy, cos, sin] = [x + dx * t, y + dy * t, Math.cos(angle), Math.sin(angle)];
+            return [
+                {x: cx - r * cos, y: cy - r * sin, id: 0},
+                {x: cx + r * cos, y: cy + r * sin, id: 1}
+            ];
+        };
+        await touch("touchStart", fingers(0));
+        for (let k = 1; k <= n; k++) {
+            await sleep(30);
+            await touch("touchMove", fingers(k));
+        }
+        await touch("touchEnd", []);
+    } else if (op === "key") {
+        // hold an arrow key for ms, with optional modifiers "ctrl", "shift" or "ctrl+shift"
+        const [k, ms, mods = ""] = a;
+        const modifiers = (mods.includes("ctrl") ? 2 : 0) + (mods.includes("shift") ? 8 : 0);
+        const event = {key: k, code: k, windowsVirtualKeyCode: arrowKeyCodes[k], modifiers};
+        await send("Input.dispatchKeyEvent", {type: "keyDown", ...event});
+        await sleep(ms);
+        await send("Input.dispatchKeyEvent", {type: "keyUp", ...event});
     } else if (op === "eval") {
         // evaluate an expression in the page (awaits promises), log the result
         const options = {expression: a[0], awaitPromise: true, returnByValue: true};
