@@ -221,6 +221,7 @@ interface Three {
     activeCamera?: any;
     camera?: any;
     followCamera?: any;
+    soundCamera?: any;
     followObject?: number;
     mainGroup?: any;
     night?: boolean;
@@ -1913,6 +1914,8 @@ function requestResize() {
 
         three.camera.aspect = client.width / client.height;
         three.camera.updateProjectionMatrix();
+        three.soundCamera.aspect = client.width / client.height;
+        three.soundCamera.updateProjectionMatrix();
         three.followCamera.aspect = client.width / client.height;
         three.followCamera.fov = Math.min(45, 45 / (client.width / client.height / 2));
         three.followCamera.updateProjectionMatrix();
@@ -5555,6 +5558,39 @@ const audioControl: any = {
     }
 };
 
+// Volume factor of a train's sound in 3D, from the camera instead of the hidden tracks as in 2D;
+// the locomotive and each car count, the loudest of them decides
+function getTrainSoundFactor3D(i: number): number {
+    const train3D = trains3D?.[i];
+    if (train3D?.mesh == undefined) {
+        return 1;
+    }
+    const parts = [train3D, ...(train3D.cars ?? [])].filter((part) => part.mesh != undefined);
+    const positions = parts.map((part) => part.mesh.getWorldPosition(new THREE.Vector3()));
+    const followCar = three.cameraMode == ThreeCameraModes.FOLLOW_CAR;
+    if (!followCar && three.cameraMode != ThreeCameraModes.FOLLOW_TRAIN) {
+        // Bird's-eye: full while visible without zoom; outside it falls off with the distance to
+        // the screen edge like real sound (1/d), halved at a tenth of the screen width
+        const factors = positions.map(function (position) {
+            const projected = position.project(three.soundCamera);
+            const beyondX = (Math.max(0, Math.abs(projected.x) - 1) * client.width) / 2;
+            const beyondY = (Math.max(0, Math.abs(projected.y) - 1) * client.height) / 2;
+            return 1 / (1 + Math.hypot(beyondX, beyondY) / (client.width / 10));
+        });
+        return Math.max(...factors);
+    }
+    // Follow cameras: full up to the distance of the followed object, beyond it falls off like real
+    // sound (1/d), halved a tenth of the board width further
+    const followed = (followCar ? cars3D : trains3D)[three.followObject];
+    if (followed?.mesh == undefined) {
+        return 1;
+    }
+    const camera = three.followCamera.getWorldPosition(new THREE.Vector3());
+    const reference = camera.distanceTo(followed.mesh.getWorldPosition(new THREE.Vector3()));
+    const nearest = Math.min(...positions.map((position) => camera.distanceTo(position)));
+    return 1 / (1 + Math.max(0, nearest - reference) / (three.calcScale() / 10));
+}
+
 //3D view
 const three: Three = {
     calcScale() {
@@ -7280,6 +7316,9 @@ function init(state: "load" | "reload" = "reload") {
     three.camera.zoom = three.zoom;
     three.camera.aspect = client.width / client.height;
     three.camera.updateProjectionMatrix();
+    // The bird's-eye camera without zoom: the train sounds do not depend on the zoom
+    three.soundCamera = three.camera.clone();
+    three.soundCamera.updateMatrixWorld();
 
     three.followCamera = new THREE.PerspectiveCamera(45, client.width / client.height, 0.001, 1);
     three.followCamera.zoom = 1;
@@ -8620,12 +8659,15 @@ window.addEventListener("load", function () {
                         trains[i].cars[j].back.angle = car.back.angle;
                         trains[i].cars[j].wheels = car.wheels;
                     });
-                    if (train.move && train.volumeCustom > 0 && audioControl.mayPlay()) {
+                    // 2D fades and silences trains on hidden track, 3D follows the camera instead
+                    const volumeFactor = gui.three ? getTrainSoundFactor3D(i) : train.volumeCustom;
+                    if (train.move && volumeFactor > 0 && audioControl.mayPlay()) {
                         audioControl.startObject("train", trains[i].audioSrc, true);
                         if (train.currentSpeedInPercent == undefined) {
                             train.currentSpeedInPercent = 0;
                         }
-                        audioControl.setObjectVolume("train", trains[i].audioSrc, train.volume);
+                        const volume = train.volume * volumeFactor;
+                        audioControl.setObjectVolume("train", trains[i].audioSrc, volume);
                     } else {
                         audioControl.stopObject("train", trains[i].audioSrc);
                     }

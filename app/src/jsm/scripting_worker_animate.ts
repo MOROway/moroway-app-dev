@@ -2446,7 +2446,7 @@ function animateObjects(): void {
                 }
             }
             trains[input1].currentSpeedInPercent = trains[input1].accelerationSpeedCustom * trains[input1].speedInPercent;
-            trains[input1].volume = Math.abs(trains[input1].accelerationSpeed) * trains[input1].currentSpeedInPercent * trains[input1].volumeCustom;
+            trains[input1].volume = Math.abs(trains[input1].accelerationSpeed) * trains[input1].currentSpeedInPercent;
         } else {
             trains[input1].accelerationSpeed = 0;
             trains[input1].accelerationSpeedCustom = 1;
