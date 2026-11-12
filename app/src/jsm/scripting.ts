@@ -329,6 +329,8 @@ function resetTilt() {
     three.scene.rotation.x = 0;
     three.scene.rotation.y = 0;
     three.scene.rotation.z = 0;
+    three.scene.scale.setScalar(1);
+    three.scene.position.set(0, 0, 0);
 }
 
 function measureFontSize(text: string, fontFamily: string, fontSize: number, wantedTextWidth: number, approximation: number, tolerance: number, recursion: number = 0): string {
@@ -1204,7 +1206,9 @@ function getGesture(gesture) {
                 client.zoomAndTilt.tiltY -= gesture.deltaY;
                 break;
             case "rotate":
-                client.zoomAndTilt.rotation += gesture.angle;
+                if (gui.three) {
+                    client.zoomAndTilt.rotation += gesture.angle;
+                }
                 break;
         }
         client.zoomAndTilt.offsetX = (canvasGesture.width / 2 - client.zoomAndTilt.pinchX) * client.zoomAndTilt.realScale;
@@ -1225,10 +1229,22 @@ function getGesture(gesture) {
     if (client.zoomAndTilt.offsetY < -yMaxOffset) {
         client.zoomAndTilt.offsetY = -yMaxOffset;
     }
-    var xMinPinch = background.x;
-    var xMaxPinch = canvasGesture.width - background.x;
-    var yMinPinch = background.y;
-    var yMaxPinch = canvasGesture.height - background.y;
+    // In 3D the rotated board is scaled to fit the area the background is fitted into; the zoom
+    // centre stays within the board, so its limits change by the board's size difference to the
+    // background
+    const rotation = client.zoomAndTilt.rotation;
+    const [cos, sin] = [Math.abs(Math.cos(rotation)), Math.abs(Math.sin(rotation))];
+    const menuHeight = menus.outerContainer.height * client.devicePixelRatio;
+    const availableHeight = canvasBackground.height - menuHeight;
+    const rotatedWidth = background.width * cos + background.height * sin;
+    const rotatedHeight = background.width * sin + background.height * cos;
+    const fit = Math.min(1, canvasBackground.width / rotatedWidth, availableHeight / rotatedHeight);
+    const extraX = (fit * rotatedWidth - background.width) / 2;
+    const extraY = (fit * rotatedHeight - background.height) / 2;
+    var xMinPinch = background.x - extraX;
+    var xMaxPinch = canvasGesture.width - background.x + extraX;
+    var yMinPinch = background.y - extraY;
+    var yMaxPinch = canvasGesture.height - background.y + extraY;
     if (client.zoomAndTilt.pinchX > xMaxPinch) {
         client.zoomAndTilt.pinchX = xMaxPinch;
     }
@@ -1263,6 +1279,15 @@ function getGesture(gesture) {
     three.scene.rotation.x = (client.zoomAndTilt.tiltY - client.height / 2) / client.height;
     three.scene.rotation.y = (client.zoomAndTilt.tiltX - client.width / 2) / client.width;
     three.scene.rotation.z = client.zoomAndTilt.rotation;
+    // The board is scaled to fit and turned around its own centre instead of the window centre
+    const centreY = three.calcPositionY();
+    const shift = fit * centreY;
+    const pivotX = shift * Math.sin(rotation);
+    const pivotY = centreY - shift * Math.cos(rotation);
+    const pivot = new THREE.Vector3(pivotX, pivotY, 0);
+    const tilt = new THREE.Euler(three.scene.rotation.x, three.scene.rotation.y, 0);
+    three.scene.scale.setScalar(fit);
+    three.scene.position.copy(pivot.applyEuler(tilt));
     three.camera.zoom = three.zoom + (client.zoomAndTilt.realScale - 1);
     three.camera.updateProjectionMatrix();
 
