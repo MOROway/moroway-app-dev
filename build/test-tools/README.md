@@ -59,6 +59,9 @@ Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `tra
   `["eval","(async () => { for (const r of await navigator.serviceWorker.getRegistrations())
   await r.unregister(); for (const k of await caches.keys()) await caches.delete(k); })()"]`,
   then `["reload"]`.
+- 3D renders at only a few frames per second without a GPU, so anything that changes per frame
+  (e.g. holding Ctrl + arrow to tilt) moves very slowly. `GPU=1 build/test-tools/run_test.sh …`
+  renders with the GPU (Vulkan, about 60 frames per second).
 - `twofinger`: two fingers at distance d around x, y; in n steps the centre moves by dx, dy, the
   fingers turn by deg degrees and their distance is scaled by scale. A move at scale 1 tilts the 3D
   view, a scale other than 1 pinches (zooms). `key` with `"ctrl"` on an arrow key tilts as well.
