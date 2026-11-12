@@ -44,7 +44,9 @@ Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `tra
 
 ## Notes
 
-- The debug build shows a notification at startup; `["click",800,684]` after ~9 s closes it.
+- The debug build shows a notification at startup; after ~9 s, `["click",800,684]` closes it at
+  the default size, and at any size
+  `["eval","document.querySelector(\".server-note-button-no\")?.click()"]`.
 - Clicks only reach the game inside the background area; trains on hidden track are controlled
   via text commands.
 - Measurements: add a temporary `console.log("DBG… " + JSON.stringify(...))` in `scripting.ts`
