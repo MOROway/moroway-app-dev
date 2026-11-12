@@ -1410,6 +1410,10 @@ function preventEvent(event: Event) {
     event.preventDefault();
 }
 
+function getFingersDistance(touches: TouchList): number {
+    const [first, second] = [touches[0], touches[1]];
+    return Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+}
 function getFingersAngle(touches: TouchList): number {
     const [first, second] = [touches[0], touches[1]];
     return Math.atan2(second.clientY - first.clientY, second.clientX - first.clientX);
@@ -1425,7 +1429,7 @@ function getAngleDifference(from: number, to: number): number {
 function getTouchMove(event: TouchEvent) {
     event.preventDefault();
     client.chosenInputMethod = "touch";
-    if (event.touches.length == 1 && typeof client.zoomAndTilt.pinchHypot == "undefined" && !client.zoomAndTilt.pinchGestureIsTilt) {
+    if (event.touches.length == 1 && client.zoomAndTilt.twoFingerGesture == undefined) {
         var deltaX = -5 * (hardware.mouse.moveX - event.touches[0].clientX * client.devicePixelRatio);
         var deltaY = -5 * (hardware.mouse.moveY - event.touches[0].clientY * client.devicePixelRatio);
         if (client.zoomAndTilt.realScale > 1 && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > Math.min(canvasGesture.width, canvasGesture.height) / 30 && !classicUI.pointInTransformerInput(event.touches[0].clientX * client.devicePixelRatio, event.touches[0].clientY * client.devicePixelRatio)) {
@@ -1445,21 +1449,20 @@ function getTouchMove(event: TouchEvent) {
             clearTimeout(clickTimeOut);
             clickTimeOut = null;
         }
-        var hypot = Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
+        var hypot = getFingersDistance(event.touches);
         const fingersAngle = getFingersAngle(event.touches);
-        const fingersTurn = getAngleDifference(client.zoomAndTilt.pinchAngleDown, fingersAngle);
+        const fingersTurn = getAngleDifference(client.zoomAndTilt.fingersAngleDown, fingersAngle);
         // In 3D, turning the fingers by more than 10° rotates the board (along with pinching)
         const twisted = gui.three && Math.abs(fingersTurn) > Math.PI / 18;
         const centre = getFingersCentre(event.touches);
-        const centreDown = client.zoomAndTilt.pinchCentreDown;
+        const centreDown = client.zoomAndTilt.fingersCentreDown;
         const centreShift = Math.hypot(centre.x - centreDown.x, centre.y - centreDown.y);
-        var pinchActive = typeof client.zoomAndTilt.pinchHypot != "undefined";
-        if (!pinchActive && !client.zoomAndTilt.pinchGestureIsTilt) {
+        if (client.zoomAndTilt.twoFingerGesture == undefined) {
             // The first of the gestures to pass its own threshold decides: a twist, a pinch (finger
             // distance) or a two-finger move (tilt), which hardly turns the fingers, unlike a twist
             // around one finger that moves their centre as far as it turns them
             const dpr = client.devicePixelRatio;
-            const distanceChange = Math.abs(hypot - client.zoomAndTilt.pinchHypotDown) * dpr;
+            const distanceChange = Math.abs(hypot - client.zoomAndTilt.fingersDistanceDown) * dpr;
             const pinched = distanceChange > background.width / 30;
             const turning = gui.three && hypot * Math.abs(fingersTurn) > centreShift;
             const moved = centreShift * dpr > background.width / 20 && !turning;
@@ -1472,15 +1475,15 @@ function getTouchMove(event: TouchEvent) {
                     getGesture({type: "pinchoffset", deltaX: x, deltaY: y, pinchOHypot: hypot});
                 }
                 hardware.mouse.isDrag = false;
-                pinchActive = true;
+                client.zoomAndTilt.twoFingerGesture = "pinch";
             } else if (moved) {
                 client.zoomAndTilt.tiltXOld = centre.x * dpr;
                 client.zoomAndTilt.tiltYOld = centre.y * dpr;
-                client.zoomAndTilt.pinchGestureIsTilt = true;
+                client.zoomAndTilt.twoFingerGesture = "tilt";
                 hardware.mouse.isDrag = true;
             }
         }
-        if (client.zoomAndTilt.pinchGestureIsTilt) {
+        if (client.zoomAndTilt.twoFingerGesture == "tilt") {
             var tiltXNew = centre.x * client.devicePixelRatio;
             var tiltYNew = centre.y * client.devicePixelRatio;
             var deltaX = 3 * (client.zoomAndTilt.tiltXOld - tiltXNew);
@@ -1488,18 +1491,18 @@ function getTouchMove(event: TouchEvent) {
             getGesture({type: "tilt", deltaX: deltaX, deltaY: deltaY});
             client.zoomAndTilt.tiltXOld = tiltXNew;
             client.zoomAndTilt.tiltYOld = tiltYNew;
-        } else if (pinchActive) {
+        } else if (client.zoomAndTilt.twoFingerGesture == "pinch") {
             getGesture({type: "pinch", scale: hypot / client.zoomAndTilt.pinchHypot, deltaX: client.zoomAndTilt.pinchX, deltaY: client.zoomAndTilt.pinchY});
-            if (twisted && !client.zoomAndTilt.pinchGestureIsRotation) {
+            if (twisted && !client.zoomAndTilt.twoFingerRotation) {
                 // The rotation starts from here, so the board does not jump by the threshold
-                client.zoomAndTilt.pinchGestureIsRotation = true;
-                client.zoomAndTilt.pinchAngleOld = fingersAngle;
+                client.zoomAndTilt.twoFingerRotation = true;
+                client.zoomAndTilt.fingersAngleOld = fingersAngle;
             }
-            if (client.zoomAndTilt.pinchGestureIsRotation) {
+            if (client.zoomAndTilt.twoFingerRotation) {
                 // Screen y points down, so turning the fingers clockwise lowers the angle
-                const turn = getAngleDifference(fingersAngle, client.zoomAndTilt.pinchAngleOld);
+                const turn = getAngleDifference(fingersAngle, client.zoomAndTilt.fingersAngleOld);
                 getGesture({type: "rotate", angle: turn});
-                client.zoomAndTilt.pinchAngleOld = fingersAngle;
+                client.zoomAndTilt.fingersAngleOld = fingersAngle;
             }
         }
     } else {
@@ -1536,10 +1539,10 @@ function getTouchStart(event: TouchEvent) {
             clickTimeOut = null;
         }
         if (event.touches.length == 2) {
-            client.zoomAndTilt.pinchHypotDown = Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY);
-            client.zoomAndTilt.pinchAngleDown = getFingersAngle(event.touches);
-            client.zoomAndTilt.pinchCentreDown = getFingersCentre(event.touches);
-            client.zoomAndTilt.pinchGestureIsRotation = false;
+            client.zoomAndTilt.fingersDistanceDown = getFingersDistance(event.touches);
+            client.zoomAndTilt.fingersAngleDown = getFingersAngle(event.touches);
+            client.zoomAndTilt.fingersCentreDown = getFingersCentre(event.touches);
+            client.zoomAndTilt.twoFingerRotation = false;
         }
         hardware.lastInputTouch = hardware.mouse.downTime = Date.now();
         hardware.mouse.moveX = hardware.mouse.downX = xTS;
@@ -1555,8 +1558,8 @@ function getTouchEnd(event: TouchEvent) {
     if (event.touches.length == 1) {
         getGesture({type: "pinchend"});
     } else if (event.touches.length == 0) {
-        client.zoomAndTilt.pinchGestureIsTilt = false;
-        client.zoomAndTilt.pinchGestureIsRotation = false;
+        client.zoomAndTilt.twoFingerGesture = undefined;
+        client.zoomAndTilt.twoFingerRotation = false;
         getGesture({type: "pinchreset"});
     }
     hardware.mouse.upX = event.changedTouches[0].clientX * client.devicePixelRatio;
