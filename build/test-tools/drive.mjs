@@ -45,8 +45,10 @@ const screenshot = async (name) => {
     writeFileSync(`${prefix}-${name}.png`, Buffer.from(shot.result.data, "base64"));
 };
 const mouse = (type, x, y) => send("Input.dispatchMouseEvent", {type, x, y, button: "left", clickCount: 1});
-const middle = (type, x, y, buttons) =>
-    send("Input.dispatchMouseEvent", {type, x, y, button: "middle", buttons, clickCount: 1});
+const middle = (type, x, y, buttons, modifiers = 0) => {
+    const event = {type, x, y, button: "middle", buttons, clickCount: 1, modifiers};
+    return send("Input.dispatchMouseEvent", event);
+};
 const arrowKeyCodes = {ArrowLeft: 37, ArrowUp: 38, ArrowRight: 39, ArrowDown: 40};
 const touch = (type, touchPoints) => send("Input.dispatchTouchEvent", {type, touchPoints});
 const key = (k, code, keyCode) =>
@@ -113,15 +115,17 @@ for (const [op, ...a] of steps) {
         const metrics = {width: a[0], height: a[1], deviceScaleFactor: 1, mobile: false};
         await send("Emulation.setDeviceMetricsOverride", metrics);
     } else if (op === "middrag") {
-        // drag with the middle button held (tilts the 3D view): from x, y by dx, dy in n steps
-        const [x, y, dx, dy, n] = a;
+        // drag with the middle button held (tilts the 3D view, with "shift" rotates it): from x, y
+        // by dx, dy in n steps
+        const [x, y, dx, dy, n, mods = ""] = a;
+        const modifiers = mods.includes("shift") ? 8 : 0;
         await mouse("mouseMoved", x, y);
-        await middle("mousePressed", x, y, 4);
+        await middle("mousePressed", x, y, 4, modifiers);
         for (let k = 1; k <= n; k++) {
-            await middle("mouseMoved", x + (dx * k) / n, y + (dy * k) / n, 4);
+            await middle("mouseMoved", x + (dx * k) / n, y + (dy * k) / n, 4, modifiers);
             await sleep(30);
         }
-        await middle("mouseReleased", x + dx, y + dy, 0);
+        await middle("mouseReleased", x + dx, y + dy, 0, modifiers);
     } else if (op === "twofinger") {
         // two fingers at distance d around x, y; in n steps the centre moves by dx, dy, the
         // fingers turn by deg and their distance is scaled by scale

@@ -27,7 +27,7 @@ DevTools on port 9333 (1600 × 800 px) and runs the steps. Screenshots and logs 
 | `["click", x, y]` | click at screen position |
 | `["hold", x, y, ms]` | press, hold, release |
 | `["holdshot", x, y, ms, name]` | hold on an empty spot (shows all switches), screenshot, release |
-| `["middrag", x, y, dx, dy, n]` | middle-button drag by dx, dy in n steps (tilts the 3D view) |
+| `["middrag", x, y, dx, dy, n, mods]` | middle-button drag by dx, dy in n steps (see notes) |
 | `["twofinger", x, y, d, dx, dy, deg, scale, n]` | two-finger touch gesture (see notes) |
 | `["key", key, ms, mods]` | hold an arrow key for ms; mods `"ctrl"`, `"shift"` or `"ctrl+shift"` |
 | `["cmd", "trains start 1"]` | run an in-app text command (opened with `/`); output is logged |
@@ -68,4 +68,4 @@ Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `tra
   fingers turn by deg degrees and their distance is scaled by scale. A move at scale 1 tilts the 3D
   view, a scale other than 1 pinches (zooms). `key` with `"ctrl"` on an arrow key tilts as well.
 - `middrag` tilts the 3D view (bird's eye); it shows the hidden tracks outside the background in
-  perspective.
+  perspective. With mods `"shift"` it rotates the view instead.
