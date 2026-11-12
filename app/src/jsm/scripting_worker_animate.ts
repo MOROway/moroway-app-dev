@@ -2716,7 +2716,7 @@ var saveTheGameSendTimeout;
 onmessage = function (message) {
     function resizeTrains(oldBackground: Background, excludes: number[] = []): void {
         for (var i = 0; i < trains.length; i++) {
-            if (typeof excludes != "object" || !Array.isArray(excludes) || !excludes.includes(i)) {
+            if (!excludes.includes(i)) {
                 trains[i].front.x = background.x + ((trains[i].front.x - oldBackground.x) * background.width) / oldBackground.width;
                 trains[i].back.x = background.x + ((trains[i].back.x - oldBackground.x) * background.width) / oldBackground.width;
                 trains[i].x = background.x + ((trains[i].x - oldBackground.x) * background.width) / oldBackground.width;
