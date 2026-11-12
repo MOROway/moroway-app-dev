@@ -316,6 +316,7 @@ versions:
         general: |
             {{0}} Elevated turning loop on the outer circle.
             {{0}} New train: a shunting locomotive.
+            Rotation gesture for 3D bird's-eye view.
 hints:
     1.0.0:
         general: |

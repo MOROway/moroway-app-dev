@@ -278,9 +278,10 @@
 	"helpScreenGeneralGesturesPs": [
 		"To zoom in and out you have several options: “control”-key + “+”/“-”, “control”-key + mouse wheel and the pinch touch gesture.",
 		"To change the zoom display detail you may use the arrow keys or click/touch the background, hold and move.",
-		"The reset the zoom factor you may use the “control”-key + “0” or double-touch on the background.",
+		"To reset the zoom factor you may use the “control”-key + “0” or double-touch on the background.",
 		"In the 3D-view you can also tilt the view by using the “control”-key + an “arrow”-key, click and hold the mouse wheel + move the mouse or moving two fingers parallel (touch only).",
-		"In the 3D-view you can reset the tilt by double-click or touch and hold on the black area next to the game.",
+		"Furthermore in the 3D-view you can rotate the view by using the “shift”-key + the “left”/“right”-arrow-key, the “shift”-key + click and hold the mouse wheel + move the mouse left/right or twisting two fingers (touch only).",
+		"In the 3D-view you can reset the tilt and the rotation by double-click or touch and hold on the black area next to the game.",
 		"In the 3D-view all gestures are only available in the bird's-eye camera mode."
 	],
 	"helpScreenGeneralTeamplay": "Multiplayer mode {{0}}",
