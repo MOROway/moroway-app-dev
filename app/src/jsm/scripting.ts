@@ -2254,7 +2254,7 @@ function drawObjects() {
     }
     function drawContinueTrackCurve(group, curve) {
         const bezier = new THREE.CubicBezierCurve3(new THREE.Vector3(curve.x[0], curve.y[0], curve.z ? curve.z[0] : 0), new THREE.Vector3(curve.x[1], curve.y[1], curve.z ? curve.z[1] : 0), new THREE.Vector3(curve.x[2], curve.y[2], curve.z ? curve.z[2] : 0), new THREE.Vector3(curve.x[3], curve.y[3], curve.z ? curve.z[3] : 0));
-        drawContinueTrackElement(group, bezier.getPoints(30));
+        drawContinueTrackElement(group, bezier.getPoints(20));
     }
 
     function calcCars() {
@@ -3323,12 +3323,10 @@ function drawObjects() {
         }
         const continueTrackNewObject = new THREE.Group();
         continueTrackNewObject.name = continueTrackGroupName;
-        // rightSiding's left leg and bottom straight are shown whole while a train is on them beyond the passing track's junction, otherwise only up to the junction
+        // rightSiding's left leg and bottom straight are shown whole while a train is on them beyond the passing track's junction
         const passing = rotationPoints.outer.rightSidingPassing;
         if (trainInTrackElement(212, (bogie) => bogie.y - background.y < passing.diverge.y[0])) {
             drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.end);
-        } else if (trainInTrackElement(212)) {
-            drawContinueTrackLine(continueTrackNewObject, {x: [rotationPoints.outer.rightSiding.end.x[0], passing.diverge.x[0]], y: [rotationPoints.outer.rightSiding.end.y[0], passing.diverge.y[0]]});
         }
         if (trainInTrackElement(213)) {
             drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve0);
@@ -3347,8 +3345,6 @@ function drawObjects() {
         }
         if (trainInTrackElement(218, (bogie) => bogie.x - background.x > passing.merge.x[3])) {
             drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin);
-        } else if (trainInTrackElement(218)) {
-            drawContinueTrackLine(continueTrackNewObject, {x: [passing.merge.x[3], rotationPoints.outer.rightSiding.rejoin.x[1]], y: [passing.merge.y[3], rotationPoints.outer.rightSiding.rejoin.y[1]]});
         }
         if (trainInTrackElement(220)) {
             drawContinueTrackCurve(continueTrackNewObject, passing.diverge);
