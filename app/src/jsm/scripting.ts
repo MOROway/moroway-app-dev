@@ -8594,7 +8594,6 @@ window.addEventListener("load", function () {
                     trains[i].accelerationSpeedCustom = train.accelerationSpeedCustom;
                     trains[i].standardDirection = train.standardDirection;
                     trains[i].crash = train.crash;
-                    trains[i].mute = train.mute;
                     trains[i].volume = train.volume;
                     trains[i].invisible = train.invisible;
                     trains[i].opacity = train.opacity;
@@ -8621,7 +8620,7 @@ window.addEventListener("load", function () {
                         trains[i].cars[j].back.angle = car.back.angle;
                         trains[i].cars[j].wheels = car.wheels;
                     });
-                    if (train.move && !train.mute && audioControl.mayPlay()) {
+                    if (train.move && train.volumeCustom > 0 && audioControl.mayPlay()) {
                         audioControl.startObject("train", trains[i].audioSrc, true);
                         if (train.currentSpeedInPercent == undefined) {
                             train.currentSpeedInPercent = 0;

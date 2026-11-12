@@ -65,7 +65,6 @@ export interface Train extends Object {
     accelerationSpeedCustom?: number;
     standardDirection?: boolean;
     crash?: boolean;
-    mute?: boolean;
     volume?: number;
     invisible?: boolean;
     opacity?: number;
@@ -282,7 +281,6 @@ function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, curr
         });
         if (bogies.some((bogie) => bogie.state > 300 && bogie.state < 400)) {
             const stillInside = Math.max(...bogies.map((bogie) => getUpperTrackInside(bogie))) / (trains[input1].width - 2 * trains[input1].bogieDistance * trains[input1].width);
-            trains[input1].mute = stillInside < 0;
             trains[input1].volumeCustom = stillInside;
         }
     }
@@ -358,7 +356,6 @@ function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, curr
                 currentObject.opacity = trainParams.minOpacity + (1 - trainParams.minOpacity) * stillInside;
             }
             if (isFirst) {
-                trains[input1].mute = false;
                 trains[input1].volumeCustom = stillInside;
             }
         } else if (cO.state == 213 && cO.y - background.y >= rotationPoints.outer.rightSiding.continueCurve0.y[0]) {
@@ -411,7 +408,7 @@ function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, curr
                 currentObject.opacity = trainParams.minOpacity + (1 - trainParams.minOpacity) * stillInside;
             }
             if (isLast) {
-                trains[input1].mute = true;
+                trains[input1].volumeCustom = 0;
             } else if (getIsSecondLast(cO, isFront, input1, i)) {
                 trains[input1].volumeCustom = stillInside;
             }
@@ -603,7 +600,7 @@ function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, curr
                 currentObject.opacity = trainParams.minOpacity + (1 - trainParams.minOpacity) * stillInside;
             }
             if (isFirst) {
-                trains[input1].mute = true;
+                trains[input1].volumeCustom = 0;
             } else if (getIsSecond(cO, isFront, input1, i)) {
                 trains[input1].volumeCustom = stillInside;
             }
@@ -636,7 +633,6 @@ function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, curr
                 currentObject.opacity = trainParams.minOpacity + (1 - trainParams.minOpacity) * stillInside;
             }
             if (isLast) {
-                trains[input1].mute = false;
                 trains[input1].volumeCustom = stillInside;
             }
         } else if (cO.state == 310 && cO.x - background.x <= rotationPoints.outer.upperSiding.sCurve0.x[0]) {
@@ -2980,6 +2976,11 @@ onmessage = function (message) {
                 if (trains[t].trainTurned == undefined) {
                     trains[t].trainTurned = false;
                 }
+                // Older versions marked a silent train with mute instead of a volume of 0
+                if (message.data.savedTrains[t].mute) {
+                    trains[t].volumeCustom = 0;
+                }
+                Reflect.deleteProperty(trains[t], "mute");
                 [trains[t], ...trains[t].cars].forEach(function (object) {
                     [object.front, object.back].forEach(function (bogie) {
                         if (bogie.z == undefined) {
