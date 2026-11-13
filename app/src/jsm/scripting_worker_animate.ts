@@ -2758,8 +2758,8 @@ onmessage = function (message) {
         }
         return Math.min(Math.max(interval * defaultInterval, defaultInterval), 3 * defaultInterval);
     }
-    function isRotationPointCircle(point: object): point is RotationPointCircle {
-        return "bezierLength" in point && typeof point.bezierLength == "object";
+    function isRotationPointCircle(point: unknown): point is RotationPointCircle {
+        return typeof point == "object" && point != null && "bezierLength" in point && typeof point.bezierLength == "object";
     }
     function updateStateNegative3V8(cO: TrainBoogie): void {
         if (cO.state == -3) {

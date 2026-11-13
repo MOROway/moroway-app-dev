@@ -72,7 +72,7 @@ export function setHTMLStrings() {
                 argsNo = 1;
             }
         } while (argsNo > 1);
-        elemsContent[i].textContent = formatJSString.apply(null, args);
+        elemsContent[i].textContent = formatJSString(args[0], ...args.slice(1));
     }
     const elemsTitle = document.querySelectorAll<HTMLElement>("*[data-stringid-title]");
     for (let i = 0; i < elemsTitle.length; i++) {
@@ -89,7 +89,7 @@ export function setHTMLStrings() {
                 argsNo = 1;
             }
         } while (argsNo > 1);
-        elemsTitle[i].title = formatJSString.apply(null, args);
+        elemsTitle[i].title = formatJSString(args[0], ...args.slice(1));
     }
     const elemsTooltip = document.querySelectorAll<HTMLElement>("*[data-stringid-tooltip]");
     for (let i = 0; i < elemsTooltip.length; i++) {
@@ -106,7 +106,7 @@ export function setHTMLStrings() {
                 argsNo = 1;
             }
         } while (argsNo > 1);
-        elemsTooltip[i].dataset.tooltip = formatJSString.apply(null, args);
+        elemsTooltip[i].dataset.tooltip = formatJSString(args[0], ...args.slice(1));
     }
     const elemsAlt = document.querySelectorAll<HTMLImageElement>("img[data-stringid-alt]");
     for (let i = 0; i < elemsAlt.length; i++) {
@@ -123,7 +123,7 @@ export function setHTMLStrings() {
                 argsNo = 1;
             }
         } while (argsNo > 1);
-        elemsAlt[i].alt = formatJSString.apply(null, args);
+        elemsAlt[i].alt = formatJSString(args[0], ...args.slice(1));
     }
 }
 

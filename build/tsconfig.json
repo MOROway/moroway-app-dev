@@ -2,6 +2,10 @@
     "compilerOptions": {
         "lib": ["ES2022", "DOM", "DOM.Iterable"],
         "module": "ES2022",
-        "strict": false
+        "strict": false,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "useUnknownInCatchVariables": true
     }
 }

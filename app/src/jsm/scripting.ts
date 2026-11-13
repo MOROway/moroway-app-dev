@@ -4940,7 +4940,7 @@ function actionSync(objectName: string, index: any[] | number | undefined = unde
                     notification.forEach(function (elem) {
                         notifyArr.push(getString.apply(null, elem.getString));
                     });
-                    var notifyStr = formatJSString.apply(null, notifyArr);
+                    var notifyStr = formatJSString(notifyArr[0], ...notifyArr.slice(1));
                     notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
                 }
                 break;
@@ -7926,7 +7926,7 @@ window.addEventListener("load", function () {
                                                     notifyArr.push(elem);
                                                 }
                                             });
-                                            var notifyStr = formatJSString.apply(null, notifyArr);
+                                            var notifyStr = formatJSString(notifyArr[0], ...notifyArr.slice(1));
                                             if (onlineConnection.sessionId != json.sessionId) {
                                                 notifyStr = json.sessionName + ": " + notifyStr;
                                             }
@@ -8752,7 +8752,7 @@ window.addEventListener("load", function () {
                         localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
                     } catch (e) {
                         if (APP_DATA.debug) {
-                            console.error(e.name, e.message);
+                            console.error(e);
                         }
                         notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y + menus.outerContainer.height);
                     }
