@@ -1,7 +1,7 @@
 "use strict";
 import { copyJSObject } from "./common/js_objects.js";
 
-interface TrainBoogie {
+export interface TrainBogie {
     state?: number;
     stateChange?: boolean;
     stateLocal?: number;
@@ -33,7 +33,7 @@ interface TrainWheel {
     moveX?: number;
     moveY?: number;
 }
-interface TrainCar extends Object {
+export interface TrainCar extends Object {
     width?: number;
     height?: number;
     x?: number;
@@ -45,8 +45,8 @@ interface TrainCar extends Object {
     opacity?: number;
     src: number;
     wheels?: TrainWheel;
-    front?: TrainBoogie;
-    back?: TrainBoogie;
+    front?: TrainBogie;
+    back?: TrainBogie;
 }
 export interface Train extends Object {
     x?: number;
@@ -78,8 +78,8 @@ export interface Train extends Object {
     flickerFacBackOffset?: number;
     outerX?: number;
     outerY?: number;
-    front?: TrainBoogie;
-    back?: TrainBoogie;
+    front?: TrainBogie;
+    back?: TrainBogie;
     cars: TrainCar[];
 }
 
@@ -225,41 +225,41 @@ function saveTheGameSend() {
     }
     safePostMessage({k: "save-game", saveTrains: saveTrains});
 }
-function getRealStandardDirection(cO: TrainBoogie, input1: number, reverse: boolean = false): boolean {
+function getRealStandardDirection(cO: TrainBogie, input1: number, reverse: boolean = false): boolean {
     var realStandardDirection = (trains[input1].standardDirection && !reverse) || (!trains[input1].standardDirection && reverse);
     if (cO.turned) {
         realStandardDirection = !realStandardDirection;
     }
     return realStandardDirection;
 }
-function getIsFirst(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
+function getIsFirst(cO: TrainBogie, isFront: boolean, input1: number, i: number): boolean {
     var isFirst = isFront && i == -1;
     if (cO.turned) {
         isFirst = !isFront && i == trains[input1].cars.length - 1;
     }
     return isFirst;
 }
-function getIsLast(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
+function getIsLast(cO: TrainBogie, isFront: boolean, input1: number, i: number): boolean {
     var isLast = !isFront && i == trains[input1].cars.length - 1;
     if (cO.turned) {
         isLast = isFront && i == -1;
     }
     return isLast;
 }
-function getIsSecond(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
+function getIsSecond(cO: TrainBogie, isFront: boolean, input1: number, i: number): boolean {
     return getIsFirst(cO, !isFront, input1, i);
 }
-function getIsSecondLast(cO: TrainBoogie, isFront: boolean, input1: number, i: number): boolean {
+function getIsSecondLast(cO: TrainBogie, isFront: boolean, input1: number, i: number): boolean {
     return getIsLast(cO, !isFront, input1, i);
 }
-function getLeadingBogie(cO: TrainBoogie, input1: number, realStandardDirection: boolean): TrainBoogie {
+function getLeadingBogie(cO: TrainBogie, input1: number, realStandardDirection: boolean): TrainBogie {
     const train = trains[input1];
     if (realStandardDirection != cO.turned) {
         return train.front;
     }
     return train.cars.length == 0 ? train.back : train.cars[train.cars.length - 1].back;
 }
-function getUpperTrackInside(cO: TrainBoogie): number {
+function getUpperTrackInside(cO: TrainBogie): number {
     // Distance along the track to the background edge the upper track crosses (top or right); negative outside
     if (cO.state >= 313 && cO.state <= 315) {
         // The pillar track and its adjoining curves run nearly parallel to the right edge: measure along them via y between where the pillar track enters and leaves the background
@@ -267,7 +267,7 @@ function getUpperTrackInside(cO: TrainBoogie): number {
     }
     return Math.min((cO.y - background.y) / Math.abs(Math.sin(cO.angle)), (background.x + background.width - cO.x) / Math.abs(Math.cos(cO.angle)));
 }
-function changeCOSection(cO: TrainBoogie, isFront: boolean, input1: number, currentObject: TrainCalc | TrainCalcCar, i: number, reverse: boolean = false): void {
+function changeCOSection(cO: TrainBogie, isFront: boolean, input1: number, currentObject: TrainCalc | TrainCalcCar, i: number, reverse: boolean = false): void {
     var realStandardDirection = getRealStandardDirection(cO, input1, reverse);
     var isFirst = getIsFirst(cO, isFront, input1, i);
     var isLast = getIsLast(cO, isFront, input1, i);
@@ -673,7 +673,7 @@ function getBezierPoints(fac: number, a: number, b: number, c: number, d: number
     return Math.pow(1 - fac, 3) * a + 3 * fac * Math.pow(1 - fac, 2) * b + 3 * Math.pow(fac, 2) * (1 - fac) * c + Math.pow(fac, 3) * d;
 }
 
-function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, speed: number, customSpeed: number): void {
+function setCOPos(cO: TrainBogie, isFront: boolean, input1: number, i: number, speed: number, customSpeed: number): void {
     function setCOPosLinear(linearPoints: RotationPoint, isBackwards: boolean, isRotated: boolean): void {
         var angleCorr = isRotated ? Math.PI : 0;
         var calcCorr = 1;
@@ -699,7 +699,7 @@ function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, 
         }
     }
 
-    function getBezierFac(fac: number, approxNO: number, maxDuration: number, cCO: TrainBoogie, bezierPoints: RotationPoint, closeEnough: number = 0.1): number {
+    function getBezierFac(fac: number, approxNO: number, maxDuration: number, cCO: TrainBogie, bezierPoints: RotationPoint, closeEnough: number = 0.1): number {
         var x = getBezierPoints(fac, bezierPoints.x[0], bezierPoints.x[1], bezierPoints.x[2], bezierPoints.x[3]);
         var y = getBezierPoints(fac, bezierPoints.y[0], bezierPoints.y[1], bezierPoints.y[2], bezierPoints.y[3]);
         var distance = Math.sqrt(Math.pow(cCO.x - x, 2) + Math.pow(cCO.y - y, 2));
@@ -1334,7 +1334,7 @@ function setCOPos(cO: TrainBoogie, isFront: boolean, input1: number, i: number, 
     }
 }
 
-function setCOPosCorr(cO: TrainBoogie, isFront: boolean, input1: number, currentObject: TrainCalc | TrainCalcCar, i: number): void {
+function setCOPosCorr(cO: TrainBogie, isFront: boolean, input1: number, currentObject: TrainCalc | TrainCalcCar, i: number): void {
     // Fix car position and angle relative to locomotive
     function getPointsForPosCorr(x: number, y: number, angle: number, height: number): {x: number[]; y: number[]} {
         var xa: number[] = [];
@@ -2761,7 +2761,7 @@ onmessage = function (message) {
     function isRotationPointCircle(point: unknown): point is RotationPointCircle {
         return typeof point == "object" && point != null && "bezierLength" in point && typeof point.bezierLength == "object";
     }
-    function updateStateNegative3V8(cO: TrainBoogie): void {
+    function updateStateNegative3V8(cO: TrainBogie): void {
         if (cO.state == -3) {
             if (cO.x > rotationPoints.outer.altState3.right.x[2] + background.x) {
                 cO.stateLocal = 1;

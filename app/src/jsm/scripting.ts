@@ -17,7 +17,7 @@ import { formatJSString, getString, setHTMLStrings } from "./common/string_tools
 import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltip, initTooltips } from "./common/tooltip.js";
 import { followLink, getQueryStringValue, getServerLink, getShareLink, LinkStates, Protocols } from "./common/web_tools.js";
-import { Background, RotationPoints, Switches, Train, TrainPoint } from "./scripting_worker_animate.js";
+import { Background, RotationPoints, Switches, Train, TrainBogie, TrainCar, TrainPoint } from "./scripting_worker_animate.js";
 
 /*******************************************
  *          TypeScript Interfaces          *
@@ -259,6 +259,15 @@ interface HTMLElementChatToBottom extends HTMLElement {
     toggleDisplay(): void;
 }
 
+interface Gesture {
+    type: "doubletap" | "pinch" | "pinchend" | "pinchinit" | "pinchoffset" | "pinchreset" | "rotate" | "swipe" | "tilt";
+    angle?: number;
+    deltaX?: number;
+    deltaY?: number;
+    pinchOHypot?: number;
+    scale?: number;
+}
+
 interface Debug {
     paint: boolean;
     showHidden?: boolean;
@@ -278,7 +287,7 @@ export enum Modes {
  *             Helper functions            *
  ******************************************/
 
-function measureViewSpace() {
+function measureViewSpace(): void {
     client.isSmall = window.innerHeight < 290 || window.innerWidth < 750;
     client.isTiny = window.innerHeight < 250 || window.innerWidth < 600;
     client.devicePixelRatio = window.devicePixelRatio;
@@ -312,18 +321,18 @@ function drawImage(pic: CanvasImageSource, x: number, y: number, width: number, 
     }
 }
 
-function resetAll() {
+function resetAll(): void {
     resetGestures();
     resetScale();
     resetTilt();
     resetRotation();
 }
 
-function resetGestures() {
+function resetGestures(): void {
     hardware.mouse.isHold = hardware.mouse.isWheelHold = hardware.mouse.isDrag = controlCenter.mouse.hold = three.followCamControls.dragging = false;
 }
 
-function resetScale() {
+function resetScale(): void {
     client.zoomAndTilt.realScale = 1;
     client.zoomAndTilt.pinchScale = 1;
     client.zoomAndTilt.pinchScaleOld = 1;
@@ -334,14 +343,14 @@ function resetScale() {
     three.camera.updateProjectionMatrix();
 }
 
-function resetTilt() {
+function resetTilt(): void {
     client.zoomAndTilt.tiltX = client.width / 2;
     client.zoomAndTilt.tiltY = client.height / 2;
     three.scene.rotation.x = 0;
     three.scene.rotation.y = 0;
 }
 
-function resetRotation() {
+function resetRotation(): void {
     client.zoomAndTilt.rotation = 0;
     three.scene.rotation.z = 0;
     three.scene.scale.setScalar(1);
@@ -370,7 +379,7 @@ function getFontSize(font: string, unit: string): number {
  *             Mode functions              *
  ******************************************/
 
-function showConfirmDialogLeaveMultiplayerMode() {
+function showConfirmDialogLeaveMultiplayerMode(): void {
     resetConfirmDialog();
     const confirmDialog = document.querySelector<HTMLElement>("#confirm-dialog");
     if (confirmDialog) {
@@ -397,7 +406,7 @@ function showConfirmDialogLeaveMultiplayerMode() {
     }
 }
 
-function showConfirmDialogEnterDemoMode() {
+function showConfirmDialogEnterDemoMode(): void {
     resetConfirmDialog();
     const confirmDialog: HTMLElement | null = document.querySelector("#confirm-dialog");
     if (confirmDialog) {
@@ -489,13 +498,13 @@ function showConfirmDialogEnterDemoMode() {
     }
 }
 
-function closeConfirmDialog() {
+function closeConfirmDialog(): void {
     const confirmDialog: HTMLElement | null = document.querySelector("#confirm-dialog");
     if (confirmDialog) {
         confirmDialog.style.display = "";
     }
 }
-function resetConfirmDialog() {
+function resetConfirmDialog(): void {
     const confirmDialog: HTMLElement | null = document.querySelector("#confirm-dialog");
     if (confirmDialog) {
         const confirmDialogTitle: HTMLElement | null = confirmDialog.querySelector("#confirm-dialog-title");
@@ -512,7 +521,7 @@ function resetConfirmDialog() {
 }
 
 function switchMode(mode: Modes = Modes.SINGLEPLAYER, additionalParameters: Record<string, string> = {}): void {
-    function requestModeSwitch() {
+    function requestModeSwitch(): void {
         if (modeSwitchingTimeout !== undefined && modeSwitchingTimeout !== null) {
             clearTimeout(modeSwitchingTimeout);
         }
@@ -560,7 +569,7 @@ export function getMode(): Modes {
  *      Background and menus functions     *
  ******************************************/
 
-function getKonamiGradient() {
+function getKonamiGradient(): CanvasGradient {
     const bgGradient = contextMargins.createRadialGradient(0, canvasMargins.height / 2, canvasMargins.height / 2, canvasMargins.width + canvasMargins.height / 2, canvasMargins.height / 2, canvasMargins.height / 2);
     bgGradient.addColorStop(0, "red");
     bgGradient.addColorStop(0.2, "orange");
@@ -571,7 +580,7 @@ function getKonamiGradient() {
     return bgGradient;
 }
 
-function drawBackground() {
+function drawBackground(): void {
     /////DRAW/BACKGROUND/Layer-1/////
     contextBackground.clearRect(0, 0, canvasBackground.width, canvasBackground.height);
     contextBackground.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasBackground.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasBackground.height) / 2 + client.zoomAndTilt.offsetY);
@@ -655,8 +664,8 @@ function drawBackground() {
         contextSemiForeground.putImageData(imgData, 0, 0);
     }
 }
-function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible" | "menu-switch") {
-    function drawMenuIcons(menu, state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible") {
+function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible" | "menu-switch"): void {
+    function drawMenuIcons(menu, state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible"): void {
         var menusInnerWidth = menus.innerWidth;
         if (menus.innerWidthRelativeToItemLength) {
             menusInnerWidth *= menu.items.length;
@@ -698,7 +707,7 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
             }
         }
     }
-    function drawInfoOverlayMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible") {
+    function drawInfoOverlayMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible"): void {
         if (menus.infoOverlay.textTimeout != undefined && menus.infoOverlay.textTimeout != null) {
             clearTimeout(menus.infoOverlay.textTimeout);
             delete menus.infoOverlay.focus;
@@ -794,7 +803,7 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
             drawMenuIcons(menus.infoOverlay, state);
         }
     }
-    function drawOptionsMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible") {
+    function drawOptionsMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible"): void {
         menus.options.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
         if (menus.options.items.length > 0) {
             drawMenuIcons(menus.options, state);
@@ -817,12 +826,12 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
         drawOptionsMenu(state);
     }
 }
-function beforeOptionsMenuChange() {
+function beforeOptionsMenuChange(): void {
     closeConfirmDialog();
 }
 
-function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-change" | "settings-change") {
-    function calcBackground(simulate = false) {
+function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-change" | "settings-change"): void {
+    function calcBackground(simulate = false): void {
         var additionalHeight;
         if (simulate) {
             additionalHeight = 0;
@@ -856,7 +865,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             drawBackground();
         }
     }
-    function setMediaItems() {
+    function setMediaItems(): void {
         if (audio.active) {
             menus.options.elements.soundToggle.querySelector("i").textContent = "volume_up";
             menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOn"));
@@ -865,7 +874,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             menus.options.elements.soundToggle.dataset.tooltip = formatJSString(getString("generalXAreY"), getString("appScreenSound"), getString("generalOff"));
         }
     }
-    function set3DItems() {
+    function set3DItems(): void {
         if (gui.three) {
             menus.options.elements.infoToggle.classList.add("gui-hidden");
             menus.options.elements.view3DNightToggle.classList.remove("gui-hidden");
@@ -1143,7 +1152,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     }
 }
 
-export function optionsMenuEditorAdd(id, title, icon, onClickFunction) {
+export function optionsMenuEditorAdd(id, title, icon, onClickFunction): void {
     const itemToAdd = document.createElement("button");
     const itemToAddChild = document.createElement("i");
     itemToAdd.classList.add("canvas-options-button");
@@ -1161,7 +1170,7 @@ export function optionsMenuEditorAdd(id, title, icon, onClickFunction) {
     calcMenusAndBackground("items-change");
 }
 
-export function optionsMenuEditorHide(id) {
+export function optionsMenuEditorHide(id): void {
     for (var i = 0; i < menus.options.items.length; i++) {
         if (menus.options.items[i].id == id) {
             menus.options.items[i].classList.add("hidden");
@@ -1174,7 +1183,7 @@ export function optionsMenuEditorHide(id) {
  *     Mouse, touch and key functions      *
  ******************************************/
 
-function getGesture(gesture) {
+function getGesture(gesture: Gesture): void {
     if (!gui.controlCenter && !resized && (!gui.three || three.cameraMode == undefined || three.cameraMode == ThreeCameraModes.BIRDS_EYE)) {
         switch (gesture.type) {
             case "doubletap":
@@ -1310,7 +1319,7 @@ function getGesture(gesture) {
     }
 }
 
-function onMouseMove(event: MouseEvent) {
+function onMouseMove(event: MouseEvent): void {
     client.chosenInputMethod = "mouse";
     hardware.mouse.isMoving = true;
     if (movingTimeOut !== undefined && movingTimeOut !== null) {
@@ -1339,7 +1348,7 @@ function onMouseMove(event: MouseEvent) {
     hardware.mouse.moveX = event.clientX * client.devicePixelRatio;
     hardware.mouse.moveY = event.clientY * client.devicePixelRatio;
 }
-function onMouseDown(event) {
+function onMouseDown(event: MouseEvent): void {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     hardware.lastInputMouse = hardware.mouse.downTime = Date.now();
@@ -1349,7 +1358,7 @@ function onMouseDown(event) {
     hardware.mouse.moveX = hardware.mouse.downX = event.clientX * client.devicePixelRatio;
     hardware.mouse.moveY = hardware.mouse.downY = event.clientY * client.devicePixelRatio;
 }
-function onMouseUp(event: MouseEvent) {
+function onMouseUp(event: MouseEvent): void {
     event.preventDefault();
     resetGestures();
     client.chosenInputMethod = "mouse";
@@ -1358,18 +1367,18 @@ function onMouseUp(event: MouseEvent) {
     hardware.mouse.upTime = Date.now();
     controlCenter.mouse.clickEvent = event.button == 0 && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
 }
-function onMouseEnter(_event: MouseEvent) {
+function onMouseEnter(_event: MouseEvent): void {
     client.chosenInputMethod = "mouse";
     hardware.mouse.out = false;
 }
-function onMouseOut(event: MouseEvent) {
+function onMouseOut(event: MouseEvent): void {
     event.preventDefault();
     resetGestures();
     client.chosenInputMethod = null;
     hardware.mouse.out = true;
     hardware.keyboard.keysHold = [];
 }
-function onMouseWheel(event: WheelEvent) {
+function onMouseWheel(event: WheelEvent): void {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     if (event.ctrlKey && event.deltaY != 0) {
@@ -1402,7 +1411,7 @@ function onMouseWheel(event: WheelEvent) {
         hardware.mouse.wheelScrollZ = event.deltaZ;
     }
 }
-function onMouseRight(event: PointerEvent) {
+function onMouseRight(event: PointerEvent): void {
     event.preventDefault();
     client.chosenInputMethod = "mouse";
     if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
@@ -1420,7 +1429,7 @@ function onMouseRight(event: PointerEvent) {
         drawMenu("items-change");
     }
 }
-function preventEvent(event: Event) {
+function preventEvent(event: Event): void {
     event.preventDefault();
 }
 
@@ -1437,7 +1446,7 @@ function getAngleDifference(from: number, to: number): number {
     // within ±π, as atan2 jumps from π to -π
     return Math.atan2(Math.sin(to - from), Math.cos(to - from));
 }
-function getTouchMove(event: TouchEvent) {
+function getTouchMove(event: TouchEvent): void {
     event.preventDefault();
     client.chosenInputMethod = "touch";
     if (event.touches.length == 1 && client.zoomAndTilt.twoFingerGesture == undefined) {
@@ -1523,7 +1532,7 @@ function getTouchMove(event: TouchEvent) {
         }
     }
 }
-function getTouchStart(event: TouchEvent) {
+function getTouchStart(event: TouchEvent): void {
     event.preventDefault();
     client.chosenInputMethod = "touch";
     var xTS = event.changedTouches[0].clientX * client.devicePixelRatio;
@@ -1561,7 +1570,7 @@ function getTouchStart(event: TouchEvent) {
         controlCenter.mouse.hold = event.touches.length == 1 && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop;
     }
 }
-function getTouchEnd(event: TouchEvent) {
+function getTouchEnd(event: TouchEvent): void {
     event.preventDefault();
     resetGestures();
     client.chosenInputMethod = "touch";
@@ -1593,13 +1602,13 @@ function getTouchEnd(event: TouchEvent) {
         }
     }
 }
-function getTouchCancel(_event: TouchEvent) {
+function getTouchCancel(_event: TouchEvent): void {
     resetGestures();
     client.chosenInputMethod = "touch";
     hardware.keyboard.keysHold = [];
 }
 
-function onKeyDown(event: KeyboardEvent) {
+function onKeyDown(event: KeyboardEvent): void {
     if (!client.hidden && !hardware.mouse.out) {
         if (!hardware.keyboard.keysHold[event.key]) {
             hardware.keyboard.keysHold[event.key] = {};
@@ -1691,7 +1700,7 @@ function onKeyDown(event: KeyboardEvent) {
         }
     }
 }
-function onKeyUp(event: KeyboardEvent) {
+function onKeyUp(event: KeyboardEvent): void {
     if (event.key == "Control") {
         getGesture({type: "pinchend"});
         getGesture({type: "pinchreset"});
@@ -1703,7 +1712,7 @@ function onKeyUp(event: KeyboardEvent) {
     hardware.keyboard.keysHold[event.key].ctrlKey = false;
     hardware.keyboard.keysHold[event.key].shiftKey = false;
 }
-function preventKeyZoomDuringLoad(event: KeyboardEvent) {
+function preventKeyZoomDuringLoad(event: KeyboardEvent): void {
     if (event.key == "Escape" || (event.ctrlKey && (event.key == "+" || event.key == "-" || event.key == "0"))) {
         event.preventDefault();
     }
@@ -1713,11 +1722,11 @@ function preventKeyZoomDuringLoad(event: KeyboardEvent) {
  *               Classic UI                *
  ******************************************/
 
-function calcClassicUIElements() {
-    function realWidth(angle, width, height) {
+function calcClassicUIElements(): void {
+    function realWidth(angle: number, width: number, height: number): number {
         return Math.abs(Math.sin(angle)) * height + Math.abs(Math.cos(angle)) * width;
     }
-    function realHeight(angle, width, height) {
+    function realHeight(angle: number, width: number, height: number): number {
         return Math.abs(Math.sin(angle)) * width + Math.abs(Math.cos(angle)) * height;
     }
     var fac = menus.small ? 0.042 : 0.059;
@@ -1806,7 +1815,7 @@ function calcClassicUIElements() {
  *             Control Center              *
  ******************************************/
 
-function calcControlCenter() {
+function calcControlCenter(): void {
     controlCenter.translateOffset = background.width / 100;
     controlCenter.maxTextWidth = (background.width - 2 * controlCenter.translateOffset) / 2;
     controlCenter.maxTextHeight = background.height - 2 * controlCenter.translateOffset;
@@ -1889,7 +1898,7 @@ function calcControlCenter() {
  *                  Resize                 *
  ******************************************/
 
-function resizeCars(oldBg) {
+function resizeCars(oldBg: Background): void {
     cars.forEach(function (car) {
         car.speed *= background.width / oldBg.width;
         car.width *= background.width / oldBg.width;
@@ -1899,8 +1908,8 @@ function resizeCars(oldBg) {
     });
 }
 
-function requestResize() {
-    function resize() {
+function requestResize(): void {
+    function resize(): void {
         if (modeSwitching) {
             return;
         }
@@ -2006,7 +2015,7 @@ function requestResize() {
  *             Draw  functions             *
  ******************************************/
 
-function carCollisionCourse(input1, sendNotification, fixFac: number | undefined = undefined) {
+function carCollisionCourse(input1: number, sendNotification: boolean, fixFac: number | undefined = undefined): boolean {
     context.save();
     context.setTransform(1, 0, 0, 1, 0, 0);
     var collision = false;
@@ -2058,8 +2067,8 @@ function carCollisionCourse(input1, sendNotification, fixFac: number | undefined
     return collision;
 }
 
-function drawObjects() {
-    function setMaterialTransparent(mesh, opacity) {
+function drawObjects(): void {
+    function setMaterialTransparent(mesh, opacity: number): void {
         if (mesh.material && opacity && opacity >= 0 && opacity <= 1) {
             if (!mesh.material.opacityOriginal) {
                 mesh.material.opacityOriginal = mesh.material.opacity;
@@ -2076,8 +2085,8 @@ function drawObjects() {
         }
     }
 
-    function drawTrains(input1) {
-        function drawTrain(i) {
+    function drawTrains(input1: number): void {
+        function drawTrain(i: number): void {
             const currentObject = i < 0 ? trains[input1] : trains[input1].cars[i];
             const currentContext = currentObject.front.z > 0 && currentObject.back.z > 0 ? context2 : context;
 
@@ -2295,7 +2304,7 @@ function drawObjects() {
         }
     }
 
-    function trainInTrackElement(state, isOnPart = (_bogie) => true) {
+    function trainInTrackElement(state: number, isOnPart: (bogie: TrainBogie) => boolean = (_bogie) => true): boolean {
         // A track element (or the part of it isOnPart accepts) is shown while a train on it is partly hidden
         for (let i = 0; i < trains.length; i++) {
             const objects: (Train | Train["cars"][number])[] = [trains[i], ...trains[i].cars];
@@ -2306,7 +2315,7 @@ function drawObjects() {
         return false;
     }
 
-    function drawContinueTrackElement(group, points) {
+    function drawContinueTrackElement(group, points): void {
         // Two rails along the track's points (background px, height z), each offset by half the track width perpendicular to the track:
         // a narrow strip, and a 1 px line along its middle that keeps the rail continuous where the strip is narrower than a pixel (far away or tilted)
         const color = three.night ? 0x541e03 : 0x963c0e;
@@ -2320,7 +2329,7 @@ function drawObjects() {
             const length = Math.hypot(after.x - before.x, after.y - before.y);
             return {x: -(after.y - before.y) / length, y: (after.x - before.x) / length};
         });
-        function toScene(point, k, offset) {
+        function toScene(point, k: number, offset: number) {
             const x = point.x + offset * normals[k].x;
             const y = point.y + offset * normals[k].y;
             return new THREE.Vector3(three.calcScale() * ((x - background.width / 2) / background.width), three.calcScale() * (-(y - background.height / 2) / background.width) + three.calcPositionY(), (three.calcScale() * point.z) / background.width - background.width / 1000000);
@@ -2328,7 +2337,7 @@ function drawObjects() {
         for (const side of [-1, 1]) {
             const stripVertices = [];
             const lineVertices = [];
-            points.forEach(function (point, k) {
+            points.forEach(function (point, k: number) {
                 stripVertices.push(toScene(point, k, side * halfTrackWidth - halfRailWidth), toScene(point, k, side * halfTrackWidth + halfRailWidth));
                 lineVertices.push(toScene(point, k, side * halfTrackWidth));
             });
@@ -2342,17 +2351,17 @@ function drawObjects() {
             group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(lineVertices), lineMaterial));
         }
     }
-    function drawContinueTrackLine(group, line) {
+    function drawContinueTrackLine(group, line): void {
         drawContinueTrackElement(group, [new THREE.Vector3(line.x[0], line.y[0], line.z ? line.z[0] : 0), new THREE.Vector3(line.x[1], line.y[1], line.z ? line.z[1] : 0)]);
     }
-    function drawContinueTrackCurve(group, curve) {
+    function drawContinueTrackCurve(group, curve): void {
         const bezier = new THREE.CubicBezierCurve3(new THREE.Vector3(curve.x[0], curve.y[0], curve.z ? curve.z[0] : 0), new THREE.Vector3(curve.x[1], curve.y[1], curve.z ? curve.z[1] : 0), new THREE.Vector3(curve.x[2], curve.y[2], curve.z ? curve.z[2] : 0), new THREE.Vector3(curve.x[3], curve.y[3], curve.z ? curve.z[3] : 0));
         drawContinueTrackElement(group, bezier.getPoints(20));
     }
 
-    function calcCars() {
-        function calcCarsAutoMode() {
-            function carAutoModeIsFutureCollision(i, k, stop = -1, j = 0) {
+    function calcCars(): void {
+        function calcCarsAutoMode(): void {
+            function carAutoModeIsFutureCollision(i: number, k: number, stop: number = -1, j: number = 0): number {
                 context.save();
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 var coll = false;
@@ -2515,7 +2524,7 @@ function drawObjects() {
                 }
             }
             var collStopQuantity = 0;
-            cars.forEach(function (car) {
+            cars.forEach(function (car: Car) {
                 if (car.collStop && car.cType == "normal") {
                     collStopQuantity++;
                 }
@@ -2532,7 +2541,7 @@ function drawObjects() {
                 carParams.autoModeRuns = false;
             }
         }
-        function calcCar(input1) {
+        function calcCar(input1: number): void {
             var currentObject = cars[input1];
             carCollisionCourse(input1, true);
 
@@ -2607,7 +2616,7 @@ function drawObjects() {
         }
     }
 
-    function drawCar(input1) {
+    function drawCar(input1: number): void {
         var currentObject = cars[input1];
         context.save();
         context.translate(background.x, background.y);
@@ -2757,7 +2766,7 @@ function drawObjects() {
         }
     }
 
-    function switchesLocate(angle, radius, style) {
+    function switchesLocate(angle: number, radius: number, style: string): void {
         contextForeground.save();
         contextForeground.rotate(angle);
         contextForeground.beginPath();
@@ -2769,8 +2778,8 @@ function drawObjects() {
         contextForeground.restore();
     }
 
-    function drawAquarium3D() {
-        function avoidFishCollision() {
+    function drawAquarium3D(): boolean {
+        function avoidFishCollision(): void {
             var collision = true;
             while (collision) {
                 collision = false;
@@ -2822,7 +2831,7 @@ function drawObjects() {
         return true;
     }
 
-    function drawBurningBuilding3D() {
+    function drawBurningBuilding3D(): boolean {
         var update = false;
         contextBurningBuilding.clearRect(0, 0, canvasBurningBuilding.width, canvasBurningBuilding.height);
         contextBurningBuilding.save();
@@ -2841,10 +2850,10 @@ function drawObjects() {
         return update;
     }
 
-    function adjustScaleX(x) {
+    function adjustScaleX(x: number): number {
         return ((canvasGesture.width * client.zoomAndTilt.realScale) / 2 - canvasGesture.width / 2) / client.zoomAndTilt.realScale + x / client.zoomAndTilt.realScale - client.zoomAndTilt.offsetX / client.zoomAndTilt.realScale;
     }
-    function adjustScaleY(y) {
+    function adjustScaleY(y: number): number {
         return ((canvasGesture.height * client.zoomAndTilt.realScale) / 2 - canvasGesture.height / 2) / client.zoomAndTilt.realScale + y / client.zoomAndTilt.realScale - client.zoomAndTilt.offsetY / client.zoomAndTilt.realScale;
     }
 
@@ -2977,7 +2986,7 @@ function drawObjects() {
     if (gui.three) {
         /////THREE.JS/////
         var raycasterActive = true;
-        trains.forEach(function (train, i) {
+        trains.forEach(function (train: Train, i: number): void {
             const flickerDuration = 3;
             if (trains3D[i] && trains3D[i].mesh) {
                 const trainFrontHeight = (three.calcScale() * train.front.z) / background.width;
@@ -3036,7 +3045,7 @@ function drawObjects() {
                     trains3D[i].meshBack.right.rotation.z = -train.back.angle;
                 }
             }
-            train.cars.forEach(function (car, j) {
+            train.cars.forEach(function (car: TrainCar, j: number): void {
                 if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
                     const carFrontHeight = (three.calcScale() * car.front.z) / background.width;
                     const carBackHeight = (three.calcScale() * car.back.z) / background.width;
@@ -3095,7 +3104,7 @@ function drawObjects() {
                 }
             });
         });
-        cars.forEach(function (car, i) {
+        cars.forEach(function (car: Car, i: number): void {
             if (cars3D[i] && cars3D[i].mesh) {
                 cars3D[i].mesh.position.set(three.calcScale() * ((car.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.height / 2) / background.width) + three.calcPositionY(), cars3D[i].positionZ);
                 cars3D[i].mesh.rotation.z = -car.displayAngle;
@@ -3327,16 +3336,16 @@ function drawObjects() {
             three.scene.rotation.y += three.demoRotationFacY * rotation;
         }
         if (currentMode != Modes.DEMO) {
-            Object.keys(switches).forEach(function (key) {
-                Object.keys(switches[key]).forEach(function (currentKey) {
-                    function getFadeColor(fadeProgress, maxColor = 255) {
+            Object.keys(switches).forEach(function (key): void {
+                Object.keys(switches[key]).forEach(function (currentKey): void {
+                    function getFadeColor(fadeProgress: number, maxColor: number = 255): string {
                         var hex = Math.round(fadeProgress * maxColor).toString(16);
                         if (hex.length == 1) {
                             return "0" + hex;
                         }
                         return hex;
                     }
-                    function getAngle(fadeProgress, newAngle, oldAngle) {
+                    function getAngle(fadeProgress: number, newAngle: number, oldAngle: number): number {
                         return fadeProgress * newAngle + (1 - fadeProgress) * oldAngle;
                     }
                     var hex = switches[key][currentKey].turned ? "0x00ff00" : "0xff0000";
@@ -3528,7 +3537,7 @@ function drawObjects() {
                 animals[animal] = getString(["appScreenKonamiAnimals", animal]);
                 animal++;
             }
-            animals.forEach(function (animal, i) {
+            animals.forEach(function (animal, i: number): void {
                 context.save();
                 context.translate(animalPos[i].x, animalPos[i].y);
                 context.font = measureFontSize(animal, "sans-serif", 100, background.width * 0.001, 5, background.width * 0.012);
@@ -3893,7 +3902,7 @@ function drawObjects() {
                                 trainActions.start(trainParams.selected, 50);
                             }
                         }
-                    } else if ((hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY > y) && adjustScaleX(hardware.mouse.wheelX < x))) || !(adjustScaleY(hardware.mouse.moveY) > y && adjustScaleX(hardware.mouse.moveX) < x)) {
+                    } else if ((hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY) > y && adjustScaleX(hardware.mouse.wheelX) < x)) || !(adjustScaleY(hardware.mouse.moveY) > y && adjustScaleX(hardware.mouse.moveX) < x)) {
                         var angle;
                         if (hardware.mouse.wheelScrollY !== 0 && hardware.mouse.wheelScrolls && !(adjustScaleY(hardware.mouse.wheelY) > y && adjustScaleX(hardware.mouse.wheelX) < x)) {
                             angle = classicUI.transformer.wheelInput.angle * (hardware.mouse.wheelScrollY < 0 ? 1.1 : 0.9);
@@ -3965,8 +3974,8 @@ function drawObjects() {
 
         /////SWITCHES/////
         var wasPointer = hardware.mouse.cursor != "default" || gui.controlCenter;
-        Object.keys(switches).forEach(function (key) {
-            Object.keys(switches[key]).forEach(function (side) {
+        Object.keys(switches).forEach(function (key): void {
+            Object.keys(switches[key]).forEach(function (side): void {
                 contextForeground.save();
                 contextForeground.beginPath();
                 contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, switchParams.radius, 0, 2 * Math.PI);
@@ -3976,8 +3985,8 @@ function drawObjects() {
                 contextForeground.restore();
             });
         });
-        Object.keys(switches).forEach(function (key) {
-            Object.keys(switches[key]).forEach(function (side) {
+        Object.keys(switches).forEach(function (key): void {
+            Object.keys(switches[key]).forEach(function (side): void {
                 contextForeground.save();
                 contextForeground.beginPath();
                 contextForeground.arc(background.x + switches[key][side].x, background.y + switches[key][side].y, switchParams.radius, 0, 2 * Math.PI);
@@ -3987,7 +3996,7 @@ function drawObjects() {
                         clickTimeOut = null;
                     }
                     clickTimeOut = setTimeout(
-                        function () {
+                        function (): void {
                             clickTimeOut = null;
                             hardware.mouse.isHold = false;
                             switchActions.turn(key, side);
@@ -4070,7 +4079,7 @@ function drawObjects() {
         if (APP_DATA.debug && debug.paint && debug.trainReady) {
             context.save();
             context.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvas.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvas.height) / 2 + client.zoomAndTilt.offsetY);
-            debug.drawPoints.forEach(function (point) {
+            debug.drawPoints.forEach(function (point): void {
                 var c = Math.max(Math.round(100 * (100 - 100 * point.weight)) / 100, 0);
                 context.fillStyle = "rgb(" + c + "," + c + "," + c + ")";
                 context.fillRect(point.x - 3, point.y - 3, 6, 6);
@@ -4472,7 +4481,7 @@ function drawObjects() {
                 context.fill();
                 context.restore();
             }
-            debug.drawPointsCrash.forEach(function (point) {
+            debug.drawPointsCrash.forEach(function (point): void {
                 context.fillStyle = "rgb(" + Math.round(100 + Math.random() * 155) + "," + Math.round(100 + Math.random() * 155) + "," + Math.round(100 + Math.random() * 155) + ")";
                 context.fillRect(point.x - 4, point.y - 4, 8, 8);
             });
@@ -4919,14 +4928,14 @@ function drawObjects() {
         if (restTime <= 0) {
             requestAnimationFrame(drawObjects);
         } else {
-            drawTimeout = setTimeout(function () {
+            drawTimeout = setTimeout(function (): void {
                 requestAnimationFrame(drawObjects);
             }, restTime);
         }
     }
 }
 
-function actionSync(objectName: string, index: any[] | number | undefined = undefined, params: any[] | undefined = undefined, notification: any[] | undefined = undefined, notificationOnlyForOthers = false) {
+function actionSync(objectName: string, index: any[] | number | undefined = undefined, params: any[] | undefined = undefined, notification: any[] | undefined = undefined, notificationOnlyForOthers: boolean = false): void {
     if (currentMode == Modes.MULTIPLAYER) {
         if (!onlineConnection.stop) {
             onlineConnection.send(
@@ -4946,7 +4955,7 @@ function actionSync(objectName: string, index: any[] | number | undefined = unde
                 animateWorker.postMessage({k: "train", i: index, params: params});
                 if (notification && !notificationOnlyForOthers) {
                     var notifyArr: string[] = [];
-                    notification.forEach(function (elem) {
+                    notification.forEach(function (elem): void {
                         notifyArr.push(getString.apply(null, elem.getString));
                     });
                     var notifyStr = formatJSString(notifyArr[0], ...notifyArr.slice(1));
@@ -5001,7 +5010,7 @@ const loadingAnimation: LoadingAnimation = {
                     if (this.interval) {
                         clearInterval(this.interval);
                     }
-                    this.interval = setInterval(function () {
+                    this.interval = setInterval(function (): void {
                         element.style.filter = formatJSString(filter, Math.random() * 260 + 100);
                     }, 10);
                 }
@@ -5030,7 +5039,7 @@ const loadingAnimation: LoadingAnimation = {
         this.elementProgress?.classList.add("hidden");
         //Show progress bar if app loads slowly
         const element = this.elementProgress;
-        const elementProgressHide = function () {
+        const elementProgressHide = function (): void {
             element?.classList.remove("hidden");
         };
         this.showProgressTimeout = setTimeout(elementProgressHide, 2500);
@@ -5053,7 +5062,7 @@ const loadingAnimation: LoadingAnimation = {
         if (this.element) {
             this.element.style.transition = "opacity " + fadeOutTime + "s ease-in";
             this.element.style.opacity = "0";
-            setTimeout(function () {
+            setTimeout(function (): void {
                 loadingAnimation.hide();
                 fadeOutFunction();
             }, fadeOutTime * 900);
@@ -5336,7 +5345,7 @@ const demoMode: DemoMode = {
         if (demoMode.leaveTimeout != undefined && demoMode.leaveTimeout != null) {
             clearTimeout(demoMode.leaveTimeout);
         }
-        demoMode.leaveTimeout = setTimeout(function () {
+        demoMode.leaveTimeout = setTimeout(function (): void {
             switchMode(Modes.SINGLEPLAYER);
         }, demoMode.leaveTimeMin);
     },
@@ -5354,7 +5363,7 @@ const demoMode: DemoMode = {
 const audio: any = {};
 const audioControl: any = {
     init() {
-        function createAudio(destinationName, destinationIndex, buffer, volume) {
+        function createAudio(destinationName, destinationIndex, buffer, volume: number): void {
             var gainNode = audio.context.createGain();
             gainNode.gain.value = volume;
             gainNode.connect(audio.context.destination);
@@ -5366,7 +5375,7 @@ const audioControl: any = {
                 audio.buffer[destinationName] = buffer;
             }
         }
-        function createTrainAudio(cTrainNumber) {
+        function createTrainAudio(cTrainNumber: number): void {
             try {
                 fetch("./assets/audio_asset_" + cTrainNumber + "." + soundFileExtension)
                     .then((response) => {
@@ -5415,7 +5424,7 @@ const audioControl: any = {
                         }
                     })
                     .then((response) => {
-                        audio.context.decodeAudioData(response, function (buffer) {
+                        audio.context.decodeAudioData(response, function (buffer): void {
                             createAudio("trainCrash", null, buffer, 1);
                         });
                     });
@@ -5435,7 +5444,7 @@ const audioControl: any = {
                         }
                     })
                     .then((response) => {
-                        audio.context.decodeAudioData(response, function (buffer) {
+                        audio.context.decodeAudioData(response, function (buffer): void {
                             createAudio("switch", null, buffer, 1);
                         });
                     });
@@ -5582,7 +5591,7 @@ function getTrainSoundFactor3D(i: number): number {
     if (!followCar && three.cameraMode != ThreeCameraModes.FOLLOW_TRAIN) {
         // Bird's-eye: full while visible without zoom; outside it falls off with the distance to
         // the screen edge like real sound (1/d), halved at a tenth of the screen width
-        const factors = positions.map(function (position) {
+        const factors = positions.map(function (position): number {
             const projected = position.project(three.soundCamera);
             const beyondX = (Math.max(0, Math.abs(projected.x) - 1) * client.width) / 2;
             const beyondY = (Math.max(0, Math.abs(projected.y) - 1) * client.height) / 2;
@@ -6181,8 +6190,8 @@ var clickTimeOut;
  *            Event Listeners              *
  ******************************************/
 
-function prepareInit(selectedMode?: Modes) {
-    function setMode() {
+function prepareInit(selectedMode?: Modes): void {
+    function setMode(): void {
         if (selectedMode == undefined) {
             //Default mode
             currentMode = Modes.SINGLEPLAYER;
@@ -6221,9 +6230,9 @@ function prepareInit(selectedMode?: Modes) {
     loadingAnimation.init();
     loadingAnimation.show(currentMode != Modes.SINGLEPLAYER);
 }
-function init(state: "load" | "reload" = "reload") {
-    function defineCarWays() {
-        function defineCarWay(cType, isFirst, i, j = 0, obj: any[] = [], currentObjectInput: Object | undefined = undefined, stateNullAgain = false) {
+function init(state: "load" | "reload" = "reload"): void {
+    function defineCarWays(): boolean {
+        function defineCarWay(cType, isFirst, i: number, j: number = 0, obj: any[] = [], currentObjectInput: Object | undefined = undefined, stateNullAgain: boolean = false) {
             function curve_right(p) {
                 if (p.x[0] != p.x[1]) {
                     p.x[1] = p.x[0];
@@ -6292,7 +6301,7 @@ function init(state: "load" | "reload" = "reload") {
                 currentObject.displayAngle = -currentObject.angle;
             }
 
-            function testShortcutToParking() {
+            function testShortcutToParking(): void {
                 if (carPaths[i][cType][currentObject.state].x[1] == carPaths[i]["start"][carPaths[i]["start"].length - 1].x[1] && carPaths[i][cType][currentObject.state].y[1] == carPaths[i]["start"][carPaths[i]["start"].length - 1].y[1]) {
                     currentObject.shortcutToParking = true;
                 }
@@ -6571,7 +6580,7 @@ function init(state: "load" | "reload" = "reload") {
                 ]
             }
         ];
-        cars.forEach(function (car) {
+        cars.forEach(function (car): void {
             car.collStop = true;
             car.collStopNo = [];
         });
@@ -6579,7 +6588,7 @@ function init(state: "load" | "reload" = "reload") {
             var types = Object.keys(carPaths[i]);
             for (var cTypeNo = 0; cTypeNo < types.length; cTypeNo++) {
                 var cType = types[cTypeNo];
-                carPaths[i][cType].forEach(function (cPoint) {
+                carPaths[i][cType].forEach(function (cPoint): void {
                     for (var k = 0; k < cPoint.x.length && k < cPoint.y.length; k++) {
                         cPoint.x[k] *= background.width;
                         cPoint.y[k] *= background.height;
@@ -7011,7 +7020,7 @@ function init(state: "load" | "reload" = "reload") {
             carParams = JSON.parse(savedGameCarParamsSession);
             resizeCars(JSON.parse(savedGameBgSession));
         } else {
-            cars.forEach(function (car, i) {
+            cars.forEach(function (car: Car, i: number): void {
                 car.speed = car.speedFac * background.width;
                 car.width = car.fac * background.width;
                 car.height = car.fac * (pics[car.src].height * (background.width / pics[car.src].width));
@@ -7078,7 +7087,7 @@ function init(state: "load" | "reload" = "reload") {
     textControl.elements.root = document.querySelector("#text-control");
     textControl.elements.input = textControl.elements.root.querySelector("#text-control-input input");
     textControl.elements.output = textControl.elements.root.querySelector("#text-control-output");
-    textControl.elements.input.onkeydown = function (event) {
+    textControl.elements.input.onkeydown = function (event: KeyboardEvent): void {
         if (event.key == "Enter") {
             var commandsInput = textControl.elements.input.value.replace(/\s+/g, " ").replace(/\s+$/, "").replace(/^\s+/, "");
             var commands = commandsInput.split(" ");
@@ -7179,7 +7188,7 @@ function init(state: "load" | "reload" = "reload") {
         });
         const geometry = new THREE.PlaneGeometry(1, background.height / background.width);
         background3D.flat.mesh = new THREE.Mesh(geometry, material);
-        background3D.flat.resize = function () {
+        background3D.flat.resize = function (): void {
             const scale = three.calcScale();
             background3D.flat.mesh.scale.x = scale;
             background3D.flat.mesh.scale.y = scale;
