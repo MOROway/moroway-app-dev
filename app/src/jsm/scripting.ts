@@ -307,7 +307,7 @@ function measureViewSpace(): void {
     canvasBurningBuilding.height = 300;
 }
 
-function drawImage(pic: CanvasImageSource, x: number, y: number, width: number, height: number, cxt: CanvasRenderingContext2D = context, sx: number | undefined = undefined, sy: number | undefined = undefined, sWidth: number | undefined = undefined, sHeight: number | undefined = undefined) {
+function drawImage(pic: CanvasImageSource, x: number, y: number, width: number, height: number, cxt: CanvasRenderingContext2D = context, sx: number | undefined = undefined, sy: number | undefined = undefined, sWidth: number | undefined = undefined, sHeight: number | undefined = undefined): void {
     function floorIfBigEnough(num: number): number {
         if (client.isTiny) {
             return num;
@@ -1152,7 +1152,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     }
 }
 
-export function optionsMenuEditorAdd(id, title, icon, onClickFunction): void {
+export function optionsMenuEditorAdd(id: string, title: string, icon: string, onClickFunction: () => void): void {
     const itemToAdd = document.createElement("button");
     const itemToAddChild = document.createElement("i");
     itemToAdd.classList.add("canvas-options-button");
@@ -1170,7 +1170,7 @@ export function optionsMenuEditorAdd(id, title, icon, onClickFunction): void {
     calcMenusAndBackground("items-change");
 }
 
-export function optionsMenuEditorHide(id): void {
+export function optionsMenuEditorHide(id: string): void {
     for (var i = 0; i < menus.options.items.length; i++) {
         if (menus.options.items[i].id == id) {
             menus.options.items[i].classList.add("hidden");
@@ -5363,7 +5363,7 @@ const demoMode: DemoMode = {
 const audio: any = {};
 const audioControl: any = {
     init() {
-        function createAudio(destinationName, destinationIndex, buffer, volume: number): void {
+        function createAudio(destinationName: string, destinationIndex: number | null, buffer: AudioBuffer, volume: number): void {
             var gainNode = audio.context.createGain();
             gainNode.gain.value = volume;
             gainNode.connect(audio.context.destination);
@@ -5385,7 +5385,7 @@ const audioControl: any = {
                         throw new Error("response not ok");
                     })
                     .then((response) => {
-                        audio.context.decodeAudioData(response, function (buffer) {
+                        audio.context.decodeAudioData(response, function (buffer: AudioBuffer): void {
                             createAudio("train", cTrainNumber, buffer, 0);
                         });
                     })
@@ -5424,7 +5424,7 @@ const audioControl: any = {
                         }
                     })
                     .then((response) => {
-                        audio.context.decodeAudioData(response, function (buffer): void {
+                        audio.context.decodeAudioData(response, function (buffer: AudioBuffer): void {
                             createAudio("trainCrash", null, buffer, 1);
                         });
                     });
@@ -5444,7 +5444,7 @@ const audioControl: any = {
                         }
                     })
                     .then((response) => {
-                        audio.context.decodeAudioData(response, function (buffer): void {
+                        audio.context.decodeAudioData(response, function (buffer: AudioBuffer): void {
                             createAudio("switch", null, buffer, 1);
                         });
                     });
@@ -5480,7 +5480,7 @@ const audioControl: any = {
     mayPlay() {
         return audio.active && !client.hidden && !onlineConnection.paused;
     },
-    existsObject(destinationName, destinationIndex: number | undefined = undefined) {
+    existsObject(destinationName: string, destinationIndex: number | undefined = undefined) {
         if (typeof audio.context == "object") {
             if (typeof destinationIndex == "number") {
                 if (typeof audio.source[destinationName][destinationIndex] == "object") {
@@ -5494,7 +5494,7 @@ const audioControl: any = {
         }
         return false;
     },
-    startObject(destinationName, destinationIndex, loop) {
+    startObject(destinationName: string, destinationIndex: number | null, loop: boolean) {
         if (audioControl.existsObject(destinationName, destinationIndex)) {
             return false;
         }
@@ -5523,7 +5523,7 @@ const audioControl: any = {
         }
         return false;
     },
-    setObjectVolume(destinationName, destinationIndex, volume) {
+    setObjectVolume(destinationName: string, destinationIndex: number, volume: number) {
         if (typeof audio.context == "object") {
             var gainNode;
             if (typeof destinationIndex == "number") {
@@ -5538,7 +5538,7 @@ const audioControl: any = {
         }
         return false;
     },
-    stopObject(destinationName, destinationIndex: number | undefined = undefined) {
+    stopObject(destinationName: string, destinationIndex: number | undefined = undefined) {
         if (!audioControl.existsObject(destinationName, destinationIndex)) {
             return false;
         }
@@ -5756,16 +5756,16 @@ const client: any = {devicePixelRatio: 1, zoomAndTilt: {maxScale: 6, minScale: 1
 
 //Action definitions
 const trainActions = {
-    checkRange(i) {
+    checkRange(i: number): boolean {
         return i >= 0 && i < trains.length;
     },
     checkReady() {
         return currentMode != Modes.DEMO && !onlineConnection.stop;
     },
-    checkAll(i) {
+    checkAll(i: number): boolean {
         return this.checkRange(i) && this.checkReady();
     },
-    start(i, speed, notificationOnlyForOthers = false) {
+    start(i: number, speed: number, notificationOnlyForOthers: boolean = false): boolean {
         if (!this.checkAll(i) || trains[i].crash || trains[i].accelerationSpeed > 0 || speed <= 0 || speed > 100) {
             return false;
         }
@@ -5776,14 +5776,14 @@ const trainActions = {
         }
         return true;
     },
-    stop(i, notificationOnlyForOthers = false) {
+    stop(i: number, notificationOnlyForOthers: boolean = false): boolean {
         if (!this.checkAll(i) || trains[i].accelerationSpeed <= 0) {
             return false;
         }
         actionSync("trains", i, [{accelerationSpeed: (trains[i].accelerationSpeed *= -1)}], [{getString: ["appScreenObjectStops", "."]}, {getString: [["appScreenTrainNames", i]]}], notificationOnlyForOthers);
         return true;
     },
-    changeDirection(i, highlight = false, notificationOnlyForOthers = false) {
+    changeDirection(i: number, highlight: boolean = false, notificationOnlyForOthers: boolean = false): boolean {
         if (!this.checkAll(i) || trains[i].accelerationSpeed > 0 || Math.abs(trains[i].accelerationSpeed) >= 0.2) {
             return false;
         }
@@ -5794,7 +5794,7 @@ const trainActions = {
         }
         return true;
     },
-    setSpeed(i, speed, notificationOnlyForOthers = false) {
+    setSpeed(i: number, speed: number, notificationOnlyForOthers: boolean = false): boolean {
         if (!this.checkAll(i) || speed < 0 || speed > 100) {
             return false;
         }
@@ -5812,10 +5812,10 @@ const trainActions = {
     }
 };
 const switchActions = {
-    checkExistence(key, side) {
+    checkExistence(key: string, side: string): boolean {
         return Object.hasOwn(switches, key) && Object.hasOwn(switches[key], side);
     },
-    turn(key, side) {
+    turn(key: string, side: string) {
         if (!this.checkExistence(key, side)) {
             return false;
         }
@@ -5880,16 +5880,16 @@ const carActions = {
         }
     },
     manual: {
-        checkRange(car) {
+        checkRange(car: number): boolean {
             return car >= 0 && car < cars.length;
         },
         checkReady() {
             return currentMode != Modes.DEMO && !onlineConnection.stop;
         },
-        checkAll(car) {
+        checkAll(car: number): boolean {
             return this.checkRange(car) && this.checkReady();
         },
-        start(car) {
+        start(car: number) {
             if (!this.checkAll(car) || carCollisionCourse(car, false) || (!carParams.init && !carParams.autoModeOff) || cars[car].move) {
                 return false;
             }
@@ -5902,7 +5902,7 @@ const carActions = {
             notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
-        stop(car) {
+        stop(car: number) {
             if (!this.checkAll(car) || !carParams.autoModeOff || !cars[car].move) {
                 return false;
             }
@@ -5915,7 +5915,7 @@ const carActions = {
             notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y + menus.outerContainer.height);
             return true;
         },
-        backwards(car) {
+        backwards(car: number) {
             if (!this.checkAll(car) || !carParams.autoModeOff || cars[car].move || cars[car].backwardsState !== 0 || cars[car].parking) {
                 return false;
             }
@@ -5929,7 +5929,7 @@ const carActions = {
             notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 750, null, null, client.y + menus.outerContainer.height);
             return true;
         },
-        park(car) {
+        park(car: number) {
             if (!this.checkAll(car) || carCollisionCourse(car, false, -1) || !carParams.autoModeOff || cars[car].move || cars[car].parking) {
                 return false;
             }
@@ -6233,7 +6233,7 @@ function prepareInit(selectedMode?: Modes): void {
 function init(state: "load" | "reload" = "reload"): void {
     function defineCarWays(): boolean {
         function defineCarWay(cType, isFirst, i: number, j: number = 0, obj: any[] = [], currentObjectInput: Object | undefined = undefined, stateNullAgain: boolean = false) {
-            function curve_right(p) {
+            function curve_right(p): void {
                 if (p.x[0] != p.x[1]) {
                     p.x[1] = p.x[0];
                 }
@@ -6267,7 +6267,7 @@ function init(state: "load" | "reload" = "reload"): void {
                 currentObject.displayAngle = currentObject.angle;
             }
 
-            function curve_left(p) {
+            function curve_left(p): void {
                 if (p.x[0] != p.x[1]) {
                     p.x[1] = p.x[0];
                 }
@@ -6794,7 +6794,7 @@ function init(state: "load" | "reload" = "reload"): void {
         ready(displayOnly: boolean = false): boolean {
             return getSetting("classicUI") && !(gui.controlCenter || gui.konamiOverlay || gui.three || currentMode == Modes.DEMO || multiplayerMode.waitingClock.visible || canvasGesture == undefined || contextGesture == undefined) && (displayOnly || !onlineConnection.stop);
         },
-        pointInTransformerImage(x, y): boolean {
+        pointInTransformerImage(x: number, y: number): boolean {
             if (!classicUI.ready()) {
                 return false;
             }
@@ -6811,7 +6811,7 @@ function init(state: "load" | "reload" = "reload"): void {
             contextGesture.restore();
             return isInPath;
         },
-        pointInTransformerWheelInput(x, y): boolean {
+        pointInTransformerWheelInput(x: number, y: number): boolean {
             if (!classicUI.pointInTransformerImage(x, y)) {
                 return false;
             }
@@ -6830,7 +6830,7 @@ function init(state: "load" | "reload" = "reload"): void {
             contextGesture.restore();
             return isInPath;
         },
-        pointInTransformerDirectionInput(x, y): boolean {
+        pointInTransformerDirectionInput(x: number, y: number): boolean {
             if (!classicUI.pointInTransformerImage(x, y)) {
                 return false;
             }
@@ -6848,10 +6848,10 @@ function init(state: "load" | "reload" = "reload"): void {
             contextGesture.restore();
             return isInPath;
         },
-        pointInTransformerInput(x, y): boolean {
+        pointInTransformerInput(x: number, y: number): boolean {
             return classicUI.pointInTransformerWheelInput(x, y) || classicUI.pointInTransformerDirectionInput(x, y);
         },
-        pointInTrainSwitchInputImage(x, y): boolean {
+        pointInTrainSwitchInputImage(x: number, y: number): boolean {
             if (!classicUI.ready()) {
                 return false;
             }
@@ -6868,7 +6868,7 @@ function init(state: "load" | "reload" = "reload"): void {
             contextGesture.restore();
             return isInPath;
         },
-        pointInTrainSwitchInputText(x, y): boolean {
+        pointInTrainSwitchInputText(x: number, y: number): boolean {
             if (!classicUI.ready()) {
                 return false;
             }
@@ -6886,7 +6886,7 @@ function init(state: "load" | "reload" = "reload"): void {
             contextGesture.restore();
             return isInPath;
         },
-        pointInTrainSwitchInput(x, y): boolean {
+        pointInTrainSwitchInput(x: number, y: number): boolean {
             return classicUI.pointInTrainSwitchInputImage(x, y) || classicUI.pointInTrainSwitchInputText(x, y);
         }
     };
@@ -7379,7 +7379,7 @@ function init(state: "load" | "reload" = "reload"): void {
     }
 }
 window.addEventListener("load", function () {
-    function initAnimateWorker() {
+    function initAnimateWorker(): void {
         //Animation worker
         animateWorker = new Worker("./src/jsm/scripting_worker_animate.js", {type: "module"});
         animateWorker.onerror = function () {
@@ -7547,7 +7547,7 @@ window.addEventListener("load", function () {
                 };
                 if (currentMode == Modes.MULTIPLAYER) {
                     onlineConnection.connect = function (reconnect: number = 0) {
-                        function resetForElement(parent, elem, to = "") {
+                        function resetForElement(parent, elem: HTMLElement, to: string = ""): void {
                             var elements = parent.childNodes;
                             for (var i = 0; i < elements.length; i++) {
                                 if (!elements[i].nodeName.startsWith("#")) {
@@ -7555,12 +7555,12 @@ window.addEventListener("load", function () {
                                 }
                             }
                         }
-                        function endLoading() {
+                        function endLoading(): void {
                             loadingAnimation.hide();
                             chat.closeChat();
                             chatControlsNavClear.clearChat();
                         }
-                        function showStartGame(teamNum) {
+                        function showStartGame(teamNum): void {
                             endLoading();
                             var parent = document.querySelector("#content") as HTMLElement;
                             var elem = parent.querySelector("#game") as HTMLElement;
@@ -7574,7 +7574,7 @@ window.addEventListener("load", function () {
                                 onlineConnection.send("start");
                             };
                         }
-                        function showNewGameLink() {
+                        function showNewGameLink(): void {
                             onlineConnection.gameKey = "";
                             onlineConnection.socket?.close();
                             endLoading();
@@ -7594,7 +7594,7 @@ window.addEventListener("load", function () {
                                 switchMode(Modes.SINGLEPLAYER, {id: "", key: ""});
                             };
                         }
-                        function getPlayerNameFromInput() {
+                        function getPlayerNameFromInput(): string | false {
                             const elem = document.querySelector("#setup-init-name") as HTMLInputElement;
                             if (elem) {
                                 const name = elem.value;
@@ -7608,10 +7608,10 @@ window.addEventListener("load", function () {
                             }
                             return false;
                         }
-                        function sendPlayerName(name) {
+                        function sendPlayerName(name: string): void {
                             onlineConnection.send("init", name);
                         }
-                        function sendSyncRequest() {
+                        function sendSyncRequest(): void {
                             if (!onlineConnection.syncing) {
                                 if (onlineConnection.resized) {
                                     if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
@@ -7631,7 +7631,7 @@ window.addEventListener("load", function () {
                                 }
                             }
                         }
-                        function sendSyncData() {
+                        function sendSyncData(): void {
                             var task: any = {};
                             task.o = "s";
                             var obj = copyJSObject(switches);
@@ -7654,7 +7654,7 @@ window.addEventListener("load", function () {
                                 obj.back.z = obj.back.z / background.width;
                                 obj.width = obj.width / background.width;
                                 obj.height = obj.height / background.height;
-                                multiplayerMode.excludeFromSync[task.o].forEach(function (key) {
+                                multiplayerMode.excludeFromSync[task.o].forEach(function (key: string): void {
                                     delete obj[key];
                                 });
                                 if (obj.circleFamily != null) {
@@ -7694,7 +7694,7 @@ window.addEventListener("load", function () {
                                     obj.back.z = obj.back.z / background.width;
                                     obj.width = obj.width / background.width;
                                     obj.height = obj.height / background.height;
-                                    multiplayerMode.excludeFromSync[task.o].forEach(function (key) {
+                                    multiplayerMode.excludeFromSync[task.o].forEach(function (key: string): void {
                                         delete obj[key];
                                     });
                                     task.d = obj;
@@ -7737,7 +7737,7 @@ window.addEventListener("load", function () {
                                 }
                             }
                         };
-                        onlineConnection.socket.onmessage = function (message) {
+                        onlineConnection.socket.onmessage = function (message: MessageEvent): void {
                             const ERROR_LEVEL_OKAY = 0;
                             const ERROR_LEVEL_WARNING = 1;
                             const ERROR_LEVEL_ERROR = 2;
@@ -7956,7 +7956,7 @@ window.addEventListener("load", function () {
                                             case "trains":
                                                 if (onlineConnection.sessionId != json.sessionId) {
                                                     multiplayerMode.excludeFromSync["t"].forEach(function (key) {
-                                                        input.params.forEach(function (param, paramNo) {
+                                                        input.params.forEach(function (param, paramNo: number): void {
                                                             if (Object.keys(param)[0] == key) {
                                                                 delete input.params[paramNo];
                                                             }
@@ -8188,7 +8188,7 @@ window.addEventListener("load", function () {
                 trains = message.data.trains;
                 trains3D = [];
                 trains.forEach(function (train, i) {
-                    const trainCallback = function (downIntersects, upIntersects) {
+                    const trainCallback = function (downIntersects: boolean, upIntersects: boolean): void {
                         if (hardware.lastInputTouch < hardware.lastInputMouse) {
                             hardware.mouse.isHold = false;
                         }
@@ -8298,7 +8298,7 @@ window.addEventListener("load", function () {
                         trains3D[i].resize();
                     }
                     trains3D[i].cars = [];
-                    train.cars.forEach(function (car, j) {
+                    train.cars.forEach(function (car, j: number): void {
                         trains3D[i].cars[j] = {};
                         if (objects3D[car.src]) {
                             trains3D[i].cars[j].mesh = three.cloneNode(objects3D[car.src], true);
@@ -8369,7 +8369,7 @@ window.addEventListener("load", function () {
                     });
                 });
                 cars.forEach(function (car, i) {
-                    const carCallback = function (downIntersects, upIntersects) {
+                    const carCallback = function (downIntersects: boolean, upIntersects: boolean): void {
                         if (hardware.lastInputTouch < hardware.lastInputMouse) {
                             hardware.mouse.isHold = false;
                         }
@@ -8641,7 +8641,7 @@ window.addEventListener("load", function () {
                     switches = message.data.switches;
                 }
                 rotationPoints = message.data.rotationPoints;
-                message.data.trains.forEach(function (train, i) {
+                message.data.trains.forEach(function (train, i: number): void {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
                     trains[i].front.state = train.front.state;
@@ -8673,7 +8673,7 @@ window.addEventListener("load", function () {
                     trains[i].invisible = train.invisible;
                     trains[i].opacity = train.opacity;
                     trains[i].wheels = train.wheels;
-                    train.cars.forEach(function (car, j) {
+                    train.cars.forEach(function (car, j: number): void {
                         trains[i].cars[j].x = car.x;
                         trains[i].cars[j].y = car.y;
                         trains[i].cars[j].width = car.width;
@@ -8794,7 +8794,7 @@ window.addEventListener("load", function () {
         animateWorker.postMessage({k: "ready", state: "load", online: currentMode == Modes.MULTIPLAYER, onlineInterval: multiplayerMode.animateInterval, demo: currentMode == Modes.DEMO});
     }
 
-    function onVisibilityChange() {
+    function onVisibilityChange(): void {
         client.hidden = document.visibilityState == "hidden";
         resetGestures();
         hardware.keyboard.keysHold = [];
