@@ -7645,20 +7645,17 @@ window.addEventListener("load", function () {
                 };
                 if (currentMode == Modes.MULTIPLAYER) {
                     onlineConnection.connect = function (reconnect: number = 0) {
-                        function resetForElement(parent, elem: HTMLElement, to: string = ""): void {
-                            var elements = parent.childNodes;
-                            for (var i = 0; i < elements.length; i++) {
-                                if (!elements[i].nodeName.startsWith("#")) {
-                                    elements[i].style.display = elements[i] == elem ? to : "none";
-                                }
-                            }
+                        function resetForElement(parent: HTMLElement, elem: HTMLElement, to: string = ""): void {
+                            parent.querySelectorAll<HTMLElement>(":scope > *").forEach(function (child: HTMLElement): void {
+                                child.style.display = child == elem ? to : "none";
+                            });
                         }
                         function endLoading(): void {
                             loadingAnimation.hide();
                             chat.closeChat();
                             chatControlsNavClear.clearChat();
                         }
-                        function showStartGame(teamNum): void {
+                        function showStartGame(teamNum: string): void {
                             endLoading();
                             var parent = document.querySelector<HTMLElement>("#content");
                             var elem = parent.querySelector<HTMLElement>("#game");
