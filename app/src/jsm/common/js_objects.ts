@@ -2,7 +2,7 @@
 import { APP_DATA } from "./app_data.js";
 
 //HANDLE OBJECTS
-export function copyJSObject(object: any) {
+export function copyJSObject<T>(object: T): T {
     try {
         return structuredClone(object);
     } catch (error) {

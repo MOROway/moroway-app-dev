@@ -105,9 +105,20 @@ interface Car3D extends Object3D {
     meshParkingLot?: any;
     resizeParkingLot?(): void;
 }
+interface CarPathSection {
+    type: "linear" | "linear_vertical" | "curve_right" | "curve_left" | "curve_hright" | "curve_hright2" | "curve_hleft" | "curve_hleft2" | "curve_l2r" | "curve_r2l";
+    x: number[];
+    y: number[];
+}
+interface CarWayPoint {
+    x: number;
+    y: number;
+    angle: number;
+    shortcutToParking?: boolean;
+}
 interface CarWays {
-    start?: any;
-    normal?: any;
+    start?: CarWayPoint[];
+    normal?: CarWayPoint[];
 }
 interface CarParams {
     init: boolean;
@@ -1945,7 +1956,7 @@ function requestResize(): void {
 
         carWays.forEach(function (way) {
             Object.keys(way).forEach(function (cType) {
-                way[cType].forEach(function (point) {
+                way[cType].forEach(function (point: CarWayPoint) {
                     point.x *= background.width / oldBackground.width;
                     point.y *= background.height / oldBackground.height;
                 });
@@ -6260,8 +6271,8 @@ function prepareInit(selectedMode?: Modes): void {
 }
 function init(state: "load" | "reload" = "reload"): void {
     function defineCarWays(): boolean {
-        function defineCarWay(cType, isFirst, i: number, j: number = 0, obj: any[] = [], currentObjectInput: Object | undefined = undefined, stateNullAgain: boolean = false) {
-            function curve_right(p): void {
+        function defineCarWay(cType: keyof CarWays, isFirst: boolean, i: number, j: number = 0, obj: CarWayPoint[] = [], currentObjectInput: Object | undefined = undefined, stateNullAgain: boolean = false) {
+            function curve_right(p: CarPathSection): void {
                 if (p.x[0] != p.x[1]) {
                     p.x[1] = p.x[0];
                 }
@@ -6295,7 +6306,7 @@ function init(state: "load" | "reload" = "reload"): void {
                 currentObject.displayAngle = currentObject.angle;
             }
 
-            function curve_left(p): void {
+            function curve_left(p: CarPathSection): void {
                 if (p.x[0] != p.x[1]) {
                     p.x[1] = p.x[0];
                 }
@@ -6345,13 +6356,6 @@ function init(state: "load" | "reload" = "reload"): void {
             } else {
                 currentObject = currentObjectInput;
             }
-            obj[j] = {};
-            obj[j].x = currentObject.x;
-            obj[j].y = currentObject.y;
-            if (currentObject.shortcutToParking) {
-                obj[j].shortcutToParking = true;
-                currentObject.shortcutToParking = false;
-            }
             while (currentObject.displayAngle < 0) {
                 currentObject.displayAngle += Math.PI * 2;
             }
@@ -6359,7 +6363,11 @@ function init(state: "load" | "reload" = "reload"): void {
             while (currentObject.displayAngle >= Math.PI * 2) {
                 currentObject.displayAngle -= Math.PI * 2;
             }
-            obj[j].angle = currentObject.displayAngle;
+            obj[j] = {x: currentObject.x, y: currentObject.y, angle: currentObject.displayAngle};
+            if (currentObject.shortcutToParking) {
+                obj[j].shortcutToParking = true;
+                currentObject.shortcutToParking = false;
+            }
             switch (carPaths[i][cType][currentObject.state].type) {
                 case "linear":
                     currentObject.angle = currentObject.angle < Math.PI / 2 ? 0 : Math.PI;
@@ -6544,7 +6552,7 @@ function init(state: "load" | "reload" = "reload"): void {
             return (currentObject.state === 0 || currentObject.state == -1) && stateNullAgain ? obj : defineCarWay(cType, isFirst, i, ++j, obj, currentObject, stateNullAgain);
         }
 
-        const carPaths = [
+        const carPaths: {start?: CarPathSection[]; normal: CarPathSection[]}[] = [
             {
                 start: [{type: "curve_right", x: [0.29, 0.29], y: [0.38, 0.227]}],
                 normal: [
@@ -6613,10 +6621,11 @@ function init(state: "load" | "reload" = "reload"): void {
             car.collStopNo = [];
         });
         for (var i = 0; i < cars.length; i++) {
-            var types = Object.keys(carPaths[i]);
-            for (var cTypeNo = 0; cTypeNo < types.length; cTypeNo++) {
-                var cType = types[cTypeNo];
-                carPaths[i][cType].forEach(function (cPoint): void {
+            for (const cType of ["start", "normal"] as const) {
+                if (carPaths[i][cType] == undefined) {
+                    continue;
+                }
+                carPaths[i][cType].forEach(function (cPoint: CarPathSection): void {
                     for (var k = 0; k < cPoint.x.length && k < cPoint.y.length; k++) {
                         cPoint.x[k] *= background.width;
                         cPoint.y[k] *= background.height;
@@ -7662,8 +7671,8 @@ window.addEventListener("load", function () {
                         function sendSyncData(): void {
                             var task: any = {};
                             task.o = "s";
-                            var obj = copyJSObject(switches);
-                            task.d = obj;
+                            const switchesCopy = copyJSObject(switches);
+                            task.d = switchesCopy;
                             if (!onlineConnection.resized) {
                                 onlineConnection.send("sync-task", JSON.stringify(task));
                             }
@@ -7671,39 +7680,24 @@ window.addEventListener("load", function () {
                                 task = {};
                                 task.o = "t";
                                 task.i = i;
-                                obj = copyJSObject(trains[i]);
-                                obj.front.x = (obj.front.x - background.x) / background.width;
-                                obj.back.x = (obj.back.x - background.x) / background.width;
-                                obj.x = (obj.x - background.x) / background.width;
-                                obj.front.y = (obj.front.y - background.y) / background.height;
-                                obj.back.y = (obj.back.y - background.y) / background.height;
-                                obj.y = (obj.y - background.y) / background.height;
-                                obj.front.z = obj.front.z / background.width;
-                                obj.back.z = obj.back.z / background.width;
-                                obj.width = obj.width / background.width;
-                                obj.height = obj.height / background.height;
+                                const trainCopy = copyJSObject(trains[i]);
+                                trainCopy.front.x = (trainCopy.front.x - background.x) / background.width;
+                                trainCopy.back.x = (trainCopy.back.x - background.x) / background.width;
+                                trainCopy.x = (trainCopy.x - background.x) / background.width;
+                                trainCopy.front.y = (trainCopy.front.y - background.y) / background.height;
+                                trainCopy.back.y = (trainCopy.back.y - background.y) / background.height;
+                                trainCopy.y = (trainCopy.y - background.y) / background.height;
+                                trainCopy.front.z = trainCopy.front.z / background.width;
+                                trainCopy.back.z = trainCopy.back.z / background.width;
+                                trainCopy.width = trainCopy.width / background.width;
+                                trainCopy.height = trainCopy.height / background.height;
                                 multiplayerMode.excludeFromSync[task.o].forEach(function (key: string): void {
-                                    delete obj[key];
+                                    delete trainCopy[key];
                                 });
-                                if (obj.circleFamily != null) {
-                                    Object.keys(rotationPoints).forEach(function (key) {
-                                        if (trains[i].circleFamily == rotationPoints[key]) {
-                                            obj.circleFamily = key;
-                                        }
-                                    });
-                                    if (typeof obj.circleFamily == "string") {
-                                        Object.keys(rotationPoints[obj.circleFamily]).forEach(function (key) {
-                                            if (trains[i].circle == rotationPoints[obj.circleFamily][key]) {
-                                                obj.circle = key;
-                                            }
-                                        });
-                                    } else {
-                                        delete obj.circle;
-                                    }
-                                } else {
-                                    delete obj.circle;
-                                }
-                                task.d = obj;
+                                // The circle family and the circle are sent as their keys in rotationPoints
+                                const familyKey = trains[i].circleFamily == null ? null : Object.keys(rotationPoints).find((key) => rotationPoints[key] == trains[i].circleFamily);
+                                const circleKey = familyKey == null ? undefined : Object.keys(rotationPoints[familyKey]).find((key) => rotationPoints[familyKey][key] == trains[i].circle);
+                                task.d = {...trainCopy, circleFamily: familyKey, circle: circleKey};
                                 if (!onlineConnection.resized) {
                                     onlineConnection.send("sync-task", JSON.stringify(task));
                                 }
@@ -7711,21 +7705,21 @@ window.addEventListener("load", function () {
                                     task = {};
                                     task.o = "tc";
                                     task.i = [i, j];
-                                    obj = copyJSObject(trains[i].cars[j]);
-                                    obj.front.x = (obj.front.x - background.x) / background.width;
-                                    obj.back.x = (obj.back.x - background.x) / background.width;
-                                    obj.x = (obj.x - background.x) / background.width;
-                                    obj.front.y = (obj.front.y - background.y) / background.height;
-                                    obj.back.y = (obj.back.y - background.y) / background.height;
-                                    obj.y = (obj.y - background.y) / background.height;
-                                    obj.front.z = obj.front.z / background.width;
-                                    obj.back.z = obj.back.z / background.width;
-                                    obj.width = obj.width / background.width;
-                                    obj.height = obj.height / background.height;
+                                    const carCopy = copyJSObject(trains[i].cars[j]);
+                                    carCopy.front.x = (carCopy.front.x - background.x) / background.width;
+                                    carCopy.back.x = (carCopy.back.x - background.x) / background.width;
+                                    carCopy.x = (carCopy.x - background.x) / background.width;
+                                    carCopy.front.y = (carCopy.front.y - background.y) / background.height;
+                                    carCopy.back.y = (carCopy.back.y - background.y) / background.height;
+                                    carCopy.y = (carCopy.y - background.y) / background.height;
+                                    carCopy.front.z = carCopy.front.z / background.width;
+                                    carCopy.back.z = carCopy.back.z / background.width;
+                                    carCopy.width = carCopy.width / background.width;
+                                    carCopy.height = carCopy.height / background.height;
                                     multiplayerMode.excludeFromSync[task.o].forEach(function (key: string): void {
-                                        delete obj[key];
+                                        delete carCopy[key];
                                     });
-                                    task.d = obj;
+                                    task.d = carCopy;
                                     if (!onlineConnection.resized) {
                                         onlineConnection.send("sync-task", JSON.stringify(task));
                                     }
