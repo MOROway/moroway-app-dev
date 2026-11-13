@@ -259,6 +259,28 @@ interface HTMLElementChatToBottom extends HTMLElement {
     toggleDisplay(): void;
 }
 
+interface MenuIcons {
+    container: {elementInner: HTMLElement};
+    items: ArrayLike<HTMLElement>;
+}
+interface Menus {
+    small: boolean;
+    floating: boolean;
+    itemDefaultSize: number;
+    innerWidth: number;
+    innerWidthRelativeToItemLength: boolean;
+    outerContainer: {element: HTMLElement; height: number; width: number};
+    options: MenuIcons & {elements: Record<string, HTMLElement>};
+    infoOverlay: MenuIcons & {
+        overlayText: HTMLElement;
+        focus?: number;
+        scaleFac: number;
+        scaleFacGrow: boolean;
+        textTimeout?: ReturnType<typeof setTimeout>;
+        scaleInterval?: ReturnType<typeof setInterval>;
+    };
+}
+
 interface Gesture {
     type: "doubletap" | "pinch" | "pinchend" | "pinchinit" | "pinchoffset" | "pinchreset" | "rotate" | "swipe" | "tilt";
     angle?: number;
@@ -665,7 +687,7 @@ function drawBackground(): void {
     }
 }
 function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible" | "menu-switch"): void {
-    function drawMenuIcons(menu, state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible"): void {
+    function drawMenuIcons(menu: MenuIcons, state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible"): void {
         var menusInnerWidth = menus.innerWidth;
         if (menus.innerWidthRelativeToItemLength) {
             menusInnerWidth *= menu.items.length;
@@ -698,7 +720,7 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
         }
         for (var i = 0; i < menu.items.length; i++) {
             menu.items[i].style.display = "";
-            const textItem = menu.items[i].querySelector("i") ? menu.items[i].querySelector("i") : menu.items[i];
+            const textItem = menu.items[i].querySelector<HTMLElement>("i") ? menu.items[i].querySelector<HTMLElement>("i") : menu.items[i];
             menu.items[i].style.width = menu.items[i].style.height = textItem.style.fontSize = textItem.style.lineHeight = itemSize + "px";
             if (gui.three) {
                 menu.items[i].style.textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
@@ -718,35 +740,35 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
         }
         menus.infoOverlay.scaleFac = 1;
         menus.infoOverlay.scaleFacGrow = true;
-        menus.infoOverlay.items = [1, 2];
+        const infoNumbers = [1, 2];
         if (getSetting("burnTheTaxOffice")) {
-            menus.infoOverlay.items[menus.infoOverlay.items.length] = 3;
+            infoNumbers[infoNumbers.length] = 3;
         }
         if (getSetting("classicUI") && !gui.controlCenter) {
-            menus.infoOverlay.items[menus.infoOverlay.items.length] = 4;
+            infoNumbers[infoNumbers.length] = 4;
             if (classicUI.trainSwitch.selectedTrainDisplay.visible) {
-                menus.infoOverlay.items[menus.infoOverlay.items.length] = 5;
+                infoNumbers[infoNumbers.length] = 5;
             }
-            menus.infoOverlay.items[menus.infoOverlay.items.length] = 6;
+            infoNumbers[infoNumbers.length] = 6;
             if (classicUI.transformer.directionInput.visible) {
-                menus.infoOverlay.items[menus.infoOverlay.items.length] = 7;
+                infoNumbers[infoNumbers.length] = 7;
             }
         }
-        menus.infoOverlay.items[menus.infoOverlay.items.length] = 8;
+        infoNumbers[infoNumbers.length] = 8;
         if (gui.controlCenter && !controlCenter.showCarCenter) {
-            menus.infoOverlay.items[menus.infoOverlay.items.length] = 9;
-            menus.infoOverlay.items[menus.infoOverlay.items.length] = 10;
-            menus.infoOverlay.items[menus.infoOverlay.items.length] = 11;
+            infoNumbers[infoNumbers.length] = 9;
+            infoNumbers[infoNumbers.length] = 10;
+            infoNumbers[infoNumbers.length] = 11;
         }
         var infoExit = document.querySelector("#canvas-info-exit");
         if (menus.infoOverlay.container.elementInner != null) {
             menus.infoOverlay.container.elementInner.innerHTML = "";
         }
-        for (var i = 0; i < menus.infoOverlay.items.length; i++) {
+        for (var i = 0; i < infoNumbers.length; i++) {
             var element = document.createElement("button");
             element.className = "canvas-info-button";
-            element.textContent = menus.infoOverlay.items[i];
-            element.dataset.tooltip = getString(["appScreenGraphicalInfoList", menus.infoOverlay.items[i] - 1]);
+            element.textContent = String(infoNumbers[i]);
+            element.dataset.tooltip = getString(["appScreenGraphicalInfoList", infoNumbers[i] - 1]);
             initTooltip(element);
             element.onclick = function (event) {
                 const target = event.target as HTMLElement;
@@ -759,10 +781,10 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
                 menus.infoOverlay.scaleFac = 1;
                 menus.infoOverlay.scaleFacGrow = true;
                 menus.infoOverlay.overlayText.style.display = menus.infoOverlay.overlayText.style.fontSize = menus.infoOverlay.overlayText.style.height = "";
-                if (menus.infoOverlay.focus == target.textContent) {
+                if (menus.infoOverlay.focus == Number(target.textContent)) {
                     delete menus.infoOverlay.focus;
                 } else {
-                    menus.infoOverlay.focus = target.textContent;
+                    menus.infoOverlay.focus = Number(target.textContent);
                     menus.infoOverlay.overlayText.textContent = getString(["appScreenGraphicalInfoList", parseInt(target.textContent!, 10) - 1]);
                     menus.infoOverlay.overlayText.style.display = "flex";
                     while (menus.infoOverlay.overlayText.offsetWidth < menus.infoOverlay.overlayText.scrollWidth) {
@@ -798,13 +820,13 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
             menus.infoOverlay.container.elementInner.appendChild(element);
         }
         menus.infoOverlay.container.elementInner.appendChild(infoExit);
-        menus.infoOverlay.items = menus.infoOverlay.container.elementInner.querySelectorAll("*:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
+        menus.infoOverlay.items = menus.infoOverlay.container.elementInner.querySelectorAll<HTMLElement>("*:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
         if (menus.options.items.length > 0 && menus.infoOverlay.items.length > 0) {
             drawMenuIcons(menus.infoOverlay, state);
         }
     }
     function drawOptionsMenu(state: "load" | "reload" | "resize" | "items-change" | "settings-change" | "show" | "hide" | "hide-outer" | "visible" | "invisible"): void {
-        menus.options.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
+        menus.options.items = document.querySelectorAll<HTMLElement>("#canvas-options-inner > *:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
         if (menus.options.items.length > 0) {
             drawMenuIcons(menus.options, state);
         }
@@ -891,26 +913,6 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             menus.options.elements.view3DCameraSwitcherForwards.classList.add("gui-hidden");
         }
     }
-    if (!Object.hasOwn(menus, "options")) {
-        menus.options = {};
-    }
-    if (!Object.hasOwn(menus.options, "elements")) {
-        menus.options.elements = {};
-        menus.options.elements.modeSingleplayer = document.querySelector("#canvas-single") as HTMLElement;
-        menus.options.elements.modeMultiplayer = document.querySelector("#canvas-team") as HTMLElement;
-        menus.options.elements.modeDemo = document.querySelector("#canvas-demo-mode") as HTMLElement;
-        menus.options.elements.help = document.querySelector("#canvas-help") as HTMLElement;
-        menus.options.elements.settings = document.querySelector("#canvas-settings") as HTMLElement;
-        menus.options.elements.controlCenterTrains = document.querySelector("#canvas-control-center") as HTMLElement;
-        menus.options.elements.controlCenterCars = document.querySelector("#canvas-car-control-center") as HTMLElement;
-        menus.options.elements.infoToggle = document.querySelector("#canvas-info-toggle") as HTMLElement;
-        menus.options.elements.soundToggle = document.querySelector("#canvas-sound-toggle") as HTMLElement;
-        menus.options.elements.view3DToggle = document.querySelector("#canvas-3d-view-toggle") as HTMLElement;
-        menus.options.elements.view3DNightToggle = document.querySelector("#canvas-3d-view-day-night") as HTMLElement;
-        menus.options.elements.view3DCameraSwitcherBackwards = document.querySelector("#canvas-3d-view-camera-switcher-backwards") as HTMLElement;
-        menus.options.elements.view3DCameraSwitcherForwards = document.querySelector("#canvas-3d-view-camera-switcher-forwards") as HTMLElement;
-        menus.options.elements.multiplayerChat = document.querySelector("#canvas-chat-open") as HTMLElement;
-    }
     if (getSetting("reduceOptMenuHideGraphicalInfoToggle")) {
         menus.options.elements.infoToggle.classList.add("settings-hidden");
         if (gui.infoOverlay) {
@@ -962,17 +964,9 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         menus.options.elements.view3DCameraSwitcherForwards.classList.remove("settings-hidden");
     }
     if (state == "load") {
-        menus.outerContainer = {};
-        menus.outerContainer.element = document.querySelector("#canvas-menus");
         menus.outerContainer.element.onwheel = function (event: WheelEvent) {
             event.preventDefault();
         };
-        menus.options.container = {};
-        menus.options.container.elementInner = document.querySelector("#canvas-options-inner");
-        menus.infoOverlay = {};
-        menus.infoOverlay.container = {};
-        menus.infoOverlay.container.elementInner = document.querySelector("#canvas-info-inner");
-        menus.infoOverlay.overlayText = document.querySelector("#info-overlay-text");
         menus.options.elements.modeDemo.onclick = function () {
             beforeOptionsMenuChange();
             showConfirmDialogEnterDemoMode();
@@ -988,14 +982,14 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         };
         menus.options.elements.multiplayerChat.onclick = function () {
             beforeOptionsMenuChange();
-            (document.querySelector("#chat") as HTMLElementChat).openChat();
+            document.querySelector<HTMLElementChat>("#chat").openChat();
         };
         menus.options.elements.modeMultiplayer.onclick = function () {
             beforeOptionsMenuChange();
             switchMode(Modes.MULTIPLAYER);
         };
-        const settingsElem = document.querySelector("#settings") as HTMLElement;
-        const settingsElemApply = settingsElem.querySelector("#settings-apply") as HTMLElement;
+        const settingsElem = document.querySelector<HTMLElement>("#settings");
+        const settingsElemApply = settingsElem.querySelector<HTMLElement>("#settings-apply");
         menus.options.elements.settings.onclick = function () {
             beforeOptionsMenuChange();
             gui.settings = gui.sidebarRight = true;
@@ -1021,7 +1015,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             gui.infoOverlay = true;
             drawMenu("menu-switch");
         };
-        const infoExit = document.querySelector("#canvas-info-exit") as HTMLElement;
+        const infoExit = document.querySelector<HTMLElement>("#canvas-info-exit");
         infoExit.onclick = function () {
             gui.infoOverlay = false;
             drawMenu("menu-switch");
@@ -1084,7 +1078,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         }
     }
     menus.floating = false;
-    menus.options.items = document.querySelectorAll("#canvas-options-inner > *:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
+    menus.options.items = document.querySelectorAll<HTMLElement>("#canvas-options-inner > *:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
     if (currentMode != Modes.DEMO && menus.options.items.length > 0) {
         menus.small = !client.isSmall;
         menus.outerContainer.height = menus.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
@@ -6016,7 +6010,41 @@ var classicUI;
 
 //GUI configuration
 var gui: Gui;
-var menus: any = {};
+const menus: Menus = {
+    small: false,
+    floating: false,
+    itemDefaultSize: 0,
+    innerWidth: 0,
+    innerWidthRelativeToItemLength: false,
+    outerContainer: {element: document.querySelector<HTMLElement>("#canvas-menus"), height: 0, width: 0},
+    options: {
+        container: {elementInner: document.querySelector<HTMLElement>("#canvas-options-inner")},
+        items: [],
+        elements: {
+            modeSingleplayer: document.querySelector<HTMLElement>("#canvas-single"),
+            modeMultiplayer: document.querySelector<HTMLElement>("#canvas-team"),
+            modeDemo: document.querySelector<HTMLElement>("#canvas-demo-mode"),
+            help: document.querySelector<HTMLElement>("#canvas-help"),
+            settings: document.querySelector<HTMLElement>("#canvas-settings"),
+            controlCenterTrains: document.querySelector<HTMLElement>("#canvas-control-center"),
+            controlCenterCars: document.querySelector<HTMLElement>("#canvas-car-control-center"),
+            infoToggle: document.querySelector<HTMLElement>("#canvas-info-toggle"),
+            soundToggle: document.querySelector<HTMLElement>("#canvas-sound-toggle"),
+            view3DToggle: document.querySelector<HTMLElement>("#canvas-3d-view-toggle"),
+            view3DNightToggle: document.querySelector<HTMLElement>("#canvas-3d-view-day-night"),
+            view3DCameraSwitcherBackwards: document.querySelector<HTMLElement>("#canvas-3d-view-camera-switcher-backwards"),
+            view3DCameraSwitcherForwards: document.querySelector<HTMLElement>("#canvas-3d-view-camera-switcher-forwards"),
+            multiplayerChat: document.querySelector<HTMLElement>("#canvas-chat-open")
+        }
+    },
+    infoOverlay: {
+        container: {elementInner: document.querySelector<HTMLElement>("#canvas-info-inner")},
+        items: [],
+        overlayText: document.querySelector<HTMLElement>("#info-overlay-text"),
+        scaleFac: 1,
+        scaleFacGrow: true
+    }
+};
 var konamiState = 0;
 var konamiTimeOut: number;
 
@@ -7130,7 +7158,7 @@ function init(state: "load" | "reload" = "reload"): void {
     THREE.ColorManagement.enabled = false;
     three.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     three.renderer.setClearColor(0xffffff, 0);
-    (document.querySelector("#game-gameplay") as HTMLElement).insertBefore(three.renderer.domElement, document.querySelector("#canvas-menus"));
+    document.querySelector<HTMLElement>("#game-gameplay").insertBefore(three.renderer.domElement, document.querySelector("#canvas-menus"));
     three.renderer.domElement.id = "game-gameplay-three";
 
     three.ambientLightNight = 0.25 * Math.PI;
@@ -7393,7 +7421,7 @@ window.addEventListener("load", function () {
                 trainParams = message.data.trainParams;
                 trains = message.data.trains;
                 if (currentMode == Modes.MULTIPLAYER) {
-                    const chatControlsReactionsTrain = document.querySelector("#chat #chat-msg-trains-inner") as HTMLElement;
+                    const chatControlsReactionsTrain = document.querySelector<HTMLElement>("#chat #chat-msg-trains-inner");
                     chatControlsReactionsTrain.innerHTML = "";
                     for (var stickerTrain = 0; stickerTrain < trains.length; stickerTrain++) {
                         var elem = document.createElement("img");
@@ -7424,22 +7452,22 @@ window.addEventListener("load", function () {
             } else if (message.data.k == "set") {
                 init(message.data.state);
             } else if (message.data.k == "go") {
-                const chatNotify = document.querySelector("#tp-chat-notifier") as HTMLElementNotify;
-                const chat = document.querySelector("#chat") as HTMLElementChat;
-                const chatInner = chat.querySelector("#chat-inner") as HTMLElement;
-                const chatInnerNone = chatInner.querySelector("#chat-no-messages") as HTMLElement;
-                const chatInnerMessages = chatInner.querySelector("#chat-inner-messages") as HTMLElement;
-                const chatInnerScrollToBottom = chatInner.querySelector("#chat-scroll-to-bottom") as HTMLElementChatToBottom;
-                const chatControls = chat.querySelector("#chat-controls") as HTMLElement;
+                const chatNotify = document.querySelector<HTMLElementNotify>("#tp-chat-notifier");
+                const chat = document.querySelector<HTMLElementChat>("#chat");
+                const chatInner = chat.querySelector<HTMLElement>("#chat-inner");
+                const chatInnerNone = chatInner.querySelector<HTMLElement>("#chat-no-messages");
+                const chatInnerMessages = chatInner.querySelector<HTMLElement>("#chat-inner-messages");
+                const chatInnerScrollToBottom = chatInner.querySelector<HTMLElementChatToBottom>("#chat-scroll-to-bottom");
+                const chatControls = chat.querySelector<HTMLElement>("#chat-controls");
                 const chatControlsInner = chatControls.querySelectorAll<HTMLElement>("#chat-send > *");
-                const chatControlsReactions = chatControls.querySelector("#chat-msg-reactions") as HTMLElement;
-                const chatControlsReactionsSmiley = chatControlsReactions.querySelector("#chat-msg-smileys-inner") as HTMLElement;
+                const chatControlsReactions = chatControls.querySelector<HTMLElement>("#chat-msg-reactions");
+                const chatControlsReactionsSmiley = chatControlsReactions.querySelector<HTMLElement>("#chat-msg-smileys-inner");
                 const chatControlsReactionsSmileyButtons = chatControlsReactionsSmiley.querySelectorAll<HTMLElement>("button");
-                const chatControlsReactionsSticker = chatControlsReactions.querySelector("#chat-msg-stickers-inner") as HTMLElement;
-                const chatControlsSendMsg = chatControls.querySelector("#chat-msg-send-text") as HTMLInputElement;
-                const chatControlsSendButton = chatControls.querySelector("#chat-msg-send-button") as HTMLElement;
-                const chatControlsNavClose = chat.querySelector("#chat-close") as HTMLElement;
-                const chatControlsNavClear = chat.querySelector("#chat-clear") as HTMLElementChatClear;
+                const chatControlsReactionsSticker = chatControlsReactions.querySelector<HTMLElement>("#chat-msg-stickers-inner");
+                const chatControlsSendMsg = chatControls.querySelector<HTMLInputElement>("#chat-msg-send-text");
+                const chatControlsSendButton = chatControls.querySelector<HTMLElement>("#chat-msg-send-button");
+                const chatControlsNavClose = chat.querySelector<HTMLElement>("#chat-close");
+                const chatControlsNavClear = chat.querySelector<HTMLElementChatClear>("#chat-clear");
                 chatInnerScrollToBottom.toggleDisplay = function () {
                     if (chatInnerMessages.lastChild != null) {
                         chatInnerScrollToBottom.style.display = chatInner.scrollHeight > chatInner.offsetHeight && chatInner.scrollHeight - chatInner.scrollTop > chatInner.offsetHeight + (chatInnerMessages.lastChild as HTMLElement).offsetHeight ? "flex" : "";
@@ -7490,12 +7518,12 @@ window.addEventListener("load", function () {
                     }
                 };
                 for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
-                    (chatControlsInner[cSI].querySelector(".chat-send-toggle") as HTMLElement).onclick = function (event) {
+                    chatControlsInner[cSI].querySelector<HTMLElement>(".chat-send-toggle").onclick = function (event) {
                         const target = event.target as HTMLElement;
-                        var elem = target!.parentNode!.querySelector(".chat-send-inner") as HTMLElement;
+                        var elem = target!.parentNode!.querySelector<HTMLElement>(".chat-send-inner");
                         var display = getComputedStyle(elem).getPropertyValue("display");
                         for (var cSI = 0; cSI < chatControlsInner.length; cSI++) {
-                            (chatControlsInner[cSI].querySelector(".chat-send-inner") as HTMLElement).style.display = "none";
+                            chatControlsInner[cSI].querySelector<HTMLElement>(".chat-send-inner").style.display = "none";
                         }
                         elem.style.display = display == "none" ? "block" : "none";
                         chat.resizeChat();
@@ -7542,7 +7570,7 @@ window.addEventListener("load", function () {
                         chatInnerScrollToBottom.toggleDisplay();
                     }
                 };
-                (document.querySelector("#setup #setup-exit") as HTMLElement).onclick = function () {
+                document.querySelector<HTMLElement>("#setup #setup-exit").onclick = function () {
                     switchMode(Modes.SINGLEPLAYER, {id: "", key: ""});
                 };
                 if (currentMode == Modes.MULTIPLAYER) {
@@ -7562,14 +7590,14 @@ window.addEventListener("load", function () {
                         }
                         function showStartGame(teamNum): void {
                             endLoading();
-                            var parent = document.querySelector("#content") as HTMLElement;
-                            var elem = parent.querySelector("#game") as HTMLElement;
+                            var parent = document.querySelector<HTMLElement>("#content");
+                            var elem = parent.querySelector<HTMLElement>("#game");
                             resetForElement(parent, elem, "block");
-                            var parent = document.querySelector("#game") as HTMLElement;
-                            var elem = parent.querySelector("#game-start") as HTMLElement;
-                            (elem.querySelector("#game-start-text") as HTMLElement).textContent = formatJSString(getString("appScreenTeamplayGameStart"), teamNum);
+                            var parent = document.querySelector<HTMLElement>("#game");
+                            var elem = parent.querySelector<HTMLElement>("#game-start");
+                            elem.querySelector<HTMLElement>("#game-start-text").textContent = formatJSString(getString("appScreenTeamplayGameStart"), teamNum);
                             resetForElement(parent, elem);
-                            (elem.querySelector("#game-start-button") as HTMLElement).onclick = function () {
+                            elem.querySelector<HTMLElement>("#game-start-button").onclick = function () {
                                 onlineConnection.autoJoin = false;
                                 onlineConnection.send("start");
                             };
@@ -7579,23 +7607,23 @@ window.addEventListener("load", function () {
                             onlineConnection.socket?.close();
                             endLoading();
                             audioControl.playAndPauseAll();
-                            var parent = document.querySelector("#content") as HTMLElement;
-                            var elem = parent.querySelector("#setup") as HTMLElement;
+                            var parent = document.querySelector<HTMLElement>("#content");
+                            var elem = parent.querySelector<HTMLElement>("#setup");
                             resetForElement(parent, elem, "block");
-                            var parent = document.querySelector("#setup-inner-content") as HTMLElement;
-                            var elem = parent.querySelector("#setup-create") as HTMLElement;
+                            var parent = document.querySelector<HTMLElement>("#setup-inner-content");
+                            var elem = parent.querySelector<HTMLElement>("#setup-create");
                             resetForElement(parent, elem);
-                            var elem = document.querySelector("#setup #setup-create #setup-create-link") as HTMLElement;
+                            var elem = document.querySelector<HTMLElement>("#setup #setup-create #setup-create-link");
                             elem.onclick = function () {
                                 switchMode(Modes.MULTIPLAYER, {id: "", key: ""});
                             };
-                            var elem = document.querySelector("#setup #setup-create #setup-create-escape") as HTMLElement;
+                            var elem = document.querySelector<HTMLElement>("#setup #setup-create #setup-create-escape");
                             elem.onclick = function () {
                                 switchMode(Modes.SINGLEPLAYER, {id: "", key: ""});
                             };
                         }
                         function getPlayerNameFromInput(): string | false {
-                            const elem = document.querySelector("#setup-init-name") as HTMLInputElement;
+                            const elem = document.querySelector<HTMLInputElement>("#setup-init-name");
                             if (elem) {
                                 const name = elem.value;
                                 const nameCheck = onlineConnection.escapePlayername(name);
@@ -7755,7 +7783,7 @@ window.addEventListener("load", function () {
                                 switch (json.mode) {
                                     case "hello":
                                         if (json.errorLevel === ERROR_LEVEL_ERROR) {
-                                            (document.querySelector("#content") as HTMLElement).style.display = "none";
+                                            document.querySelector<HTMLElement>("#content").style.display = "none";
                                             setTimeout(function () {
                                                 followLink("error#tp-update", "_self", LinkStates.InternalHtml);
                                             }, 1000);
@@ -7764,23 +7792,23 @@ window.addEventListener("load", function () {
                                             if (json.errorLevel === ERROR_LEVEL_WARNING) {
                                                 notify("#canvas-notifier", getString("appScreenTeamplayUpdateNote", "!"), NotificationPriority.Default, 900, null, null, client.height);
                                             }
-                                            var parent = document.querySelector("#content") as HTMLElement;
-                                            var elem = parent.querySelector("#setup") as HTMLElement;
+                                            var parent = document.querySelector<HTMLElement>("#content");
+                                            var elem = parent.querySelector<HTMLElement>("#setup");
                                             resetForElement(parent, elem, "block");
                                             if (sessionStorage.getItem("playername") != null) {
                                                 sendPlayerName(sessionStorage.getItem("playername"));
                                             } else {
                                                 endLoading();
-                                                parent = document.querySelector("#setup-inner-content") as HTMLElement;
-                                                elem = parent.querySelector("#setup-init") as HTMLElement;
+                                                parent = document.querySelector<HTMLElement>("#setup-inner-content");
+                                                elem = parent.querySelector<HTMLElement>("#setup-init");
                                                 resetForElement(parent, elem);
-                                                (elem.querySelector("#setup-init-button") as HTMLElement).onclick = function (_event) {
+                                                elem.querySelector<HTMLElement>("#setup-init-button").onclick = function (_event) {
                                                     var name = getPlayerNameFromInput();
                                                     if (name !== false) {
                                                         sendPlayerName(name);
                                                     }
                                                 };
-                                                (elem.querySelector("#setup-init-name") as HTMLElement).onkeyup = function (event) {
+                                                elem.querySelector<HTMLElement>("#setup-init-name").onkeyup = function (event) {
                                                     if (event.key === "Enter") {
                                                         var name = getPlayerNameFromInput();
                                                         if (name !== false) {
@@ -7788,7 +7816,7 @@ window.addEventListener("load", function () {
                                                         }
                                                     }
                                                 };
-                                                (elem.querySelector("#setup-init-name") as HTMLElement).focus();
+                                                elem.querySelector<HTMLElement>("#setup-init-name").focus();
                                             }
                                         }
                                         break;
@@ -7822,11 +7850,11 @@ window.addEventListener("load", function () {
                                             onlineConnection.gameId = connectData.id;
                                             onlineConnection.gameKey = connectData.key;
                                             endLoading();
-                                            var parent = document.querySelector("#setup-inner-content") as HTMLElement;
-                                            var elem = parent.querySelector("#setup-start") as HTMLElement;
+                                            var parent = document.querySelector<HTMLElement>("#setup-inner-content");
+                                            var elem = parent.querySelector<HTMLElement>("#setup-start");
                                             resetForElement(parent, elem);
-                                            (elem.querySelector("#setup-start-gamelink") as HTMLElement).textContent = getShareLink(onlineConnection.gameId, onlineConnection.gameKey);
-                                            (elem.querySelector("#setup-start-button") as HTMLElement).onclick = function () {
+                                            elem.querySelector<HTMLElement>("#setup-start-gamelink").textContent = getShareLink(onlineConnection.gameId, onlineConnection.gameKey);
+                                            elem.querySelector<HTMLElement>("#setup-start-button").onclick = function () {
                                                 copy("#setup #setup-start #setup-start-gamelink", null, function () {
                                                     notify("#canvas-notifier", getString("appScreenTeamplaySetupStartButtonError", "!"), NotificationPriority.High, 6000, null, null, client.height);
                                                 });
@@ -7902,8 +7930,8 @@ window.addEventListener("load", function () {
                                             switch (json.data) {
                                                 case "wait":
                                                     if (json.sessionId == onlineConnection.sessionId) {
-                                                        var parent = document.querySelector("#game") as HTMLElement;
-                                                        var elem = parent.querySelector("#game-wait") as HTMLElement;
+                                                        var parent = document.querySelector<HTMLElement>("#game");
+                                                        var elem = parent.querySelector<HTMLElement>("#game-wait");
                                                         resetForElement(parent, elem);
                                                     } else {
                                                         if (onlineConnection.autoJoin) {
@@ -7925,8 +7953,8 @@ window.addEventListener("load", function () {
                                                     if (onlineConnection.locomotive) {
                                                         multiplayerMode.syncRequestTimeout = setTimeout(sendSyncRequest, multiplayerMode.syncInterval);
                                                     }
-                                                    var parent = document.querySelector("#game") as HTMLElement;
-                                                    var elem = parent.querySelector("#game-gameplay") as HTMLElement;
+                                                    var parent = document.querySelector<HTMLElement>("#game");
+                                                    var elem = parent.querySelector<HTMLElement>("#game-gameplay");
                                                     resetForElement(parent, elem);
                                                     calcMenusAndBackground("resize");
                                                     break;
