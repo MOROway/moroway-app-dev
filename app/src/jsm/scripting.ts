@@ -1458,6 +1458,10 @@ function getTouchMove(event: TouchEvent) {
         const twisted = gui.three && Math.abs(fingersTurn) > Math.PI / 18;
         const centre = getFingersCentre(event.touches);
         const centreShift = Math.hypot(centre.x - client.zoomAndTilt.fingersCentreDown.x, centre.y - client.zoomAndTilt.fingersCentreDown.y);
+        // Two-finger gestures: "tilt" tilts the view and excludes the others until the fingers are
+        // lifted; "pinch" zooms and is also started by a twist, because zoom and rotation work
+        // together like in map apps: the rotation (twoFingerRotation) joins the pinch once the
+        // fingers turn far enough, even if it started as a plain pinch
         if (client.zoomAndTilt.twoFingerGesture == undefined) {
             // The first of the gestures to pass its own threshold decides: a twist, a pinch (finger
             // distance) or a two-finger move (tilt), which hardly turns the fingers, unlike a twist
