@@ -2124,7 +2124,7 @@ function setTaxOfficeParticles(i: number): void {
 }
 
 function drawObjects(): void {
-    function setMaterialTransparent(mesh, opacity: number): void {
+    function setMaterialTransparent(mesh: any, opacity: number): void {
         if (mesh.material && opacity && opacity >= 0 && opacity <= 1) {
             if (!mesh.material.opacityOriginal) {
                 mesh.material.opacityOriginal = mesh.material.opacity;
@@ -2135,7 +2135,7 @@ function drawObjects(): void {
             mesh.material.needsUpdate = mesh.material.transparent != transparentOriginal;
         }
         if (mesh.children) {
-            mesh.children.forEach(function (child) {
+            mesh.children.forEach(function (child: any): void {
                 setMaterialTransparent(child, opacity);
             });
         }
@@ -5667,7 +5667,7 @@ const three: Three = {
     cloneNode(src, cloneMaterial = false) {
         const target = src.clone();
         if (cloneMaterial) {
-            target.traverse((node) => {
+            target.traverse((node: any): void => {
                 if (node.isMesh) {
                     node.material = node.material.clone();
                 }
@@ -8970,7 +8970,7 @@ window.addEventListener("load", function () {
             const loaderGLTF: any = new GLTFLoader();
             loaderGLTF.setPath(object3D.path).load(
                 object3D.object,
-                function (gltf) {
+                function (gltf: any): void {
                     objects3D[object3D.id] = gltf.scene;
                     currentLoadNo++;
                     const progressPercent = Math.round(100 * (currentLoadNo / finalLoadNo));
@@ -8996,7 +8996,7 @@ window.addEventListener("load", function () {
             const loaderTexture = new THREE.TextureLoader();
             loaderTexture.setPath(object3D.path).load(
                 object3D.object,
-                function (texture) {
+                function (texture: any): void {
                     objects3D[object3D.id] = texture;
                     currentLoadNo++;
                     const progressPercent = Math.round(100 * (currentLoadNo / finalLoadNo));
