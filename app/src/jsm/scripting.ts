@@ -169,6 +169,19 @@ interface TaxOffice {
     smoke: TaxOfficeParticle[];
 }
 
+interface AquariumFish {
+    src: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    speed: number;
+}
+interface Aquarium3D {
+    backSrc: number;
+    fish: AquariumFish[];
+}
+
 interface Point3D {
     x: number;
     y: number;
@@ -2852,12 +2865,10 @@ function drawObjects(): void {
                             if (tFish.x > oFish.x) {
                                 newMove = oFish.width + (Math.random() * tFish.width) / 200;
                                 tFish.x += newMove;
-                                tFish.moveX += newMove;
                                 tFish.speed += (newMove - tFish.speed) / 16;
                             } else {
                                 newMove = tFish.width + (Math.random() * oFish.width) / 200;
                                 oFish.x += newMove;
-                                oFish.moveX += newMove;
                                 oFish.speed += (newMove - oFish.speed) / 16;
                             }
                         }
@@ -2873,14 +2884,14 @@ function drawObjects(): void {
             drawImage(pics[aquarium3D.backSrc], (canvasAquarium.width - canvasAquarium.height * (pics[aquarium3D.backSrc].width / pics[aquarium3D.backSrc].height)) / 2, 0, canvasAquarium.height * (pics[aquarium3D.backSrc].width / pics[aquarium3D.backSrc].height), canvasAquarium.height, contextAquarium);
         }
         for (var i = 0; i < aquarium3D.fish.length; i++) {
-            if (!aquarium3D.fish[i].width) {
+            if (aquarium3D.fish[i].width == 0) {
                 aquarium3D.fish[i].speed = canvasAquarium.width / 400 + (canvasAquarium.width * Math.random()) / 200;
                 aquarium3D.fish[i].width = canvasAquarium.width * 0.06 + canvasAquarium.width * 0.02 * Math.random();
                 aquarium3D.fish[i].height = aquarium3D.fish[i].width * (pics[aquarium3D.fish[i].src].height / pics[aquarium3D.fish[i].src].width);
                 aquarium3D.fish[i].x = -aquarium3D.fish[i].width;
                 aquarium3D.fish[i].y = (canvasAquarium.height - aquarium3D.fish[i].height) * Math.random();
             } else if (aquarium3D.fish[i].x >= canvasAquarium.width) {
-                delete aquarium3D.fish[i].width;
+                aquarium3D.fish[i].width = 0;
             } else {
                 aquarium3D.fish[i].x += aquarium3D.fish[i].speed + (canvasAquarium.width * Math.random()) / 400;
             }
@@ -5034,7 +5045,7 @@ const doubleClickWaitTime = doubleClickTime + 50;
 //Background
 const background: Background = {src: 9, secondLayer: 10};
 const background3D: Background3D = {flat: {src: "background-flat"}, flatBehind: {src: "background-flat-behind"}, three: {src: "background-3d"}, aquarium: {}, burningBuilding: {}};
-const aquarium3D: any = {backSrc: 40, fish: [{src: 41}, {src: 41}, {src: 41}, {src: 42}, {src: 42}, {src: 43}]};
+const aquarium3D: Aquarium3D = {backSrc: 40, fish: [41, 41, 41, 42, 42, 43].map((src) => ({src: src, x: 0, y: 0, width: 0, height: 0, speed: 0}))};
 const burningBuilding3D: any = {};
 
 //Loading animation
