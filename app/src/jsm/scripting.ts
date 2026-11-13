@@ -133,6 +133,7 @@ interface CanvasObject3D extends Object3D {
 }
 interface Background3D {
     flat: BackgroundObject3D;
+    flatBehind: BackgroundObject3D;
     three: BackgroundObject3D;
     aquarium: CanvasObject3D;
     burningBuilding: CanvasObject3D;
@@ -1258,21 +1259,24 @@ function getGesture(gesture) {
     if (client.zoomAndTilt.pinchY < yMinPinch) {
         client.zoomAndTilt.pinchY = yMinPinch;
     }
-    var xMinTilt = -client.width / 2;
-    var xMaxTilt = client.width * 1.5;
-    var yMinTilt = -client.height / 2;
-    var yMaxTilt = client.height * 1.5;
-    if (client.zoomAndTilt.tiltX > xMaxTilt) {
-        client.zoomAndTilt.tiltX = xMaxTilt;
-    }
-    if (client.zoomAndTilt.tiltX < xMinTilt) {
-        client.zoomAndTilt.tiltX = xMinTilt;
-    }
-    if (client.zoomAndTilt.tiltY > yMaxTilt) {
-        client.zoomAndTilt.tiltY = yMaxTilt;
-    }
-    if (client.zoomAndTilt.tiltY < yMinTilt) {
-        client.zoomAndTilt.tiltY = yMinTilt;
+    // The konami mode lets the board tilt over without limits
+    if (konamiState >= 0) {
+        var xMinTilt = -client.width / 2;
+        var xMaxTilt = client.width * 1.5;
+        var yMinTilt = -client.height / 2;
+        var yMaxTilt = client.height * 1.5;
+        if (client.zoomAndTilt.tiltX > xMaxTilt) {
+            client.zoomAndTilt.tiltX = xMaxTilt;
+        }
+        if (client.zoomAndTilt.tiltX < xMinTilt) {
+            client.zoomAndTilt.tiltX = xMinTilt;
+        }
+        if (client.zoomAndTilt.tiltY > yMaxTilt) {
+            client.zoomAndTilt.tiltY = yMaxTilt;
+        }
+        if (client.zoomAndTilt.tiltY < yMinTilt) {
+            client.zoomAndTilt.tiltY = yMinTilt;
+        }
     }
 
     const scale = three.calcScale();
@@ -1672,6 +1676,7 @@ function onKeyDown(event: KeyboardEvent) {
             if (konamiState == 0) {
                 drawBackground();
                 background3D.animateBehind(true);
+                resetTilt();
             }
         } else if (konamiState > 0) {
             if (konamiTimeOut !== undefined && konamiTimeOut !== null) {
@@ -1968,6 +1973,7 @@ function requestResize() {
         three.followCamControls.recalc();
 
         if (background3D.flat?.resize) background3D.flat.resize();
+        if (background3D.flatBehind?.resize) background3D.flatBehind.resize();
         if (background3D.three?.resize) background3D.three.resize();
         if (background3D.aquarium?.resize) background3D.aquarium.resize();
         if (background3D.burningBuilding?.resize) background3D.burningBuilding.resize();
@@ -4963,7 +4969,7 @@ const doubleClickWaitTime = doubleClickTime + 50;
 
 //Background
 const background: Background = {src: 9, secondLayer: 10};
-const background3D: Background3D = {flat: {src: "background-flat"}, three: {src: "background-3d"}, aquarium: {}, burningBuilding: {}};
+const background3D: Background3D = {flat: {src: "background-flat"}, flatBehind: {src: "background-flat-behind"}, three: {src: "background-3d"}, aquarium: {}, burningBuilding: {}};
 const aquarium3D: any = {backSrc: 40, fish: [{src: 41}, {src: 41}, {src: 41}, {src: 42}, {src: 42}, {src: 43}]};
 const burningBuilding3D: any = {};
 
@@ -7178,6 +7184,23 @@ function init(state: "load" | "reload" = "reload") {
         background3D.flat.resize();
         three.mainGroup.add(background3D.flat.mesh);
     }
+    // Underside of the board, visible when it tilts over (konami)
+    if (objects3D[background3D.flatBehind.src]) {
+        const material: any = new THREE.MeshLambertMaterial({
+            map: objects3D[background3D.flatBehind.src].clone(),
+            side: THREE.BackSide
+        });
+        const geometry = new THREE.PlaneGeometry(1, background.height / background.width);
+        background3D.flatBehind.mesh = new THREE.Mesh(geometry, material);
+        background3D.flatBehind.resize = function () {
+            const scale = three.calcScale();
+            background3D.flatBehind.mesh.scale.x = -scale;
+            background3D.flatBehind.mesh.scale.y = -scale;
+            background3D.flatBehind.mesh.position.set(0, three.calcPositionY(), -scale * 0.001);
+        };
+        background3D.flatBehind.resize();
+        three.mainGroup.add(background3D.flatBehind.mesh);
+    }
 
     if (background3D.three.src) {
         background3D.three.mesh = three.cloneNode(objects3D[background3D.three.src]);
@@ -8820,6 +8843,7 @@ window.addEventListener("load", function () {
     //Load 3d objects
     const defaultObjects3D = [
         {object: "background-flat.jpg", path: "assets/3d/", id: "background-flat", type: "texture"},
+        {object: "background-flat-behind.jpg", path: "assets/3d/", id: "background-flat-behind", type: "texture"},
         {object: "background-3d.gltf", path: "assets/3d/background-3d/", id: "background-3d", type: "mesh"},
         {object: "asset0.glb", path: "assets/3d/", id: "0", type: "mesh"},
         {object: "asset1.glb", path: "assets/3d/", id: "1", type: "mesh"},
