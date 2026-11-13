@@ -1237,10 +1237,8 @@ function getGesture(gesture) {
     // In 3D the rotated board is scaled to fit the area the background is fitted into; the zoom
     // centre stays within the board, so its limits change by the board's size difference to the
     // background
-    const rotation = client.zoomAndTilt.rotation;
-    const [cos, sin] = [Math.abs(Math.cos(rotation)), Math.abs(Math.sin(rotation))];
-    const menuHeight = menus.outerContainer.height * client.devicePixelRatio;
-    const availableHeight = canvasBackground.height - menuHeight;
+    const [cos, sin] = [Math.abs(Math.cos(client.zoomAndTilt.rotation)), Math.abs(Math.sin(client.zoomAndTilt.rotation))];
+    const availableHeight = canvasBackground.height - menus.outerContainer.height * client.devicePixelRatio;
     const rotatedWidth = background.width * cos + background.height * sin;
     const rotatedHeight = background.width * sin + background.height * cos;
     const fit = Math.min(1, canvasBackground.width / rotatedWidth, availableHeight / rotatedHeight);
@@ -1288,10 +1286,9 @@ function getGesture(gesture) {
     three.scene.rotation.y = (client.zoomAndTilt.tiltX - client.width / 2) / client.width;
     three.scene.rotation.z = client.zoomAndTilt.rotation;
     // The board is scaled to fit and turned around its own centre instead of the window centre
-    const centreY = three.calcPositionY();
-    const shift = fit * centreY;
-    const pivotX = shift * Math.sin(rotation);
-    const pivotY = centreY - shift * Math.cos(rotation);
+    const shift = fit * three.calcPositionY();
+    const pivotX = shift * Math.sin(client.zoomAndTilt.rotation);
+    const pivotY = three.calcPositionY() - shift * Math.cos(client.zoomAndTilt.rotation);
     const pivot = new THREE.Vector3(pivotX, pivotY, 0);
     const tilt = new THREE.Euler(three.scene.rotation.x, three.scene.rotation.y, 0);
     three.scene.scale.setScalar(fit);
@@ -1419,16 +1416,13 @@ function preventEvent(event: Event) {
 }
 
 function getFingersDistance(touches: TouchList): number {
-    const [first, second] = [touches[0], touches[1]];
-    return Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+    return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
 }
 function getFingersAngle(touches: TouchList): number {
-    const [first, second] = [touches[0], touches[1]];
-    return Math.atan2(second.clientY - first.clientY, second.clientX - first.clientX);
+    return Math.atan2(touches[1].clientY - touches[0].clientY, touches[1].clientX - touches[0].clientX);
 }
 function getFingersCentre(touches: TouchList): {x: number; y: number} {
-    const [first, second] = [touches[0], touches[1]];
-    return {x: (first.clientX + second.clientX) / 2, y: (first.clientY + second.clientY) / 2};
+    return {x: (touches[0].clientX + touches[1].clientX) / 2, y: (touches[0].clientY + touches[1].clientY) / 2};
 }
 function getAngleDifference(from: number, to: number): number {
     // within ±π, as atan2 jumps from π to -π
@@ -1463,30 +1457,25 @@ function getTouchMove(event: TouchEvent) {
         // In 3D, turning the fingers by more than 10° rotates the board (along with pinching)
         const twisted = gui.three && Math.abs(fingersTurn) > Math.PI / 18;
         const centre = getFingersCentre(event.touches);
-        const centreDown = client.zoomAndTilt.fingersCentreDown;
-        const centreShift = Math.hypot(centre.x - centreDown.x, centre.y - centreDown.y);
+        const centreShift = Math.hypot(centre.x - client.zoomAndTilt.fingersCentreDown.x, centre.y - client.zoomAndTilt.fingersCentreDown.y);
         if (client.zoomAndTilt.twoFingerGesture == undefined) {
             // The first of the gestures to pass its own threshold decides: a twist, a pinch (finger
             // distance) or a two-finger move (tilt), which hardly turns the fingers, unlike a twist
             // around one finger that moves their centre as far as it turns them
-            const dpr = client.devicePixelRatio;
-            const distanceChange = Math.abs(hypot - client.zoomAndTilt.fingersDistanceDown) * dpr;
-            const pinched = distanceChange > background.width / 30;
+            const pinched = Math.abs(hypot - client.zoomAndTilt.fingersDistanceDown) * client.devicePixelRatio > background.width / 30;
             const turning = gui.three && hypot * Math.abs(fingersTurn) > centreShift;
-            const moved = centreShift * dpr > background.width / 20 && !turning;
+            const moved = centreShift * client.devicePixelRatio > background.width / 20 && !turning;
             if (twisted || pinched) {
-                const x = centre.x * dpr;
-                const y = centre.y * dpr;
                 if (client.zoomAndTilt.realScale == 1) {
-                    getGesture({type: "pinchinit", deltaX: x, deltaY: y, pinchOHypot: hypot});
+                    getGesture({type: "pinchinit", deltaX: centre.x * client.devicePixelRatio, deltaY: centre.y * client.devicePixelRatio, pinchOHypot: hypot});
                 } else {
-                    getGesture({type: "pinchoffset", deltaX: x, deltaY: y, pinchOHypot: hypot});
+                    getGesture({type: "pinchoffset", deltaX: centre.x * client.devicePixelRatio, deltaY: centre.y * client.devicePixelRatio, pinchOHypot: hypot});
                 }
                 hardware.mouse.isDrag = false;
                 client.zoomAndTilt.twoFingerGesture = "pinch";
             } else if (moved) {
-                client.zoomAndTilt.tiltXOld = centre.x * dpr;
-                client.zoomAndTilt.tiltYOld = centre.y * dpr;
+                client.zoomAndTilt.tiltXOld = centre.x * client.devicePixelRatio;
+                client.zoomAndTilt.tiltYOld = centre.y * client.devicePixelRatio;
                 client.zoomAndTilt.twoFingerGesture = "tilt";
                 hardware.mouse.isDrag = true;
             }
@@ -8691,8 +8680,7 @@ window.addEventListener("load", function () {
                         if (train.currentSpeedInPercent == undefined) {
                             train.currentSpeedInPercent = 0;
                         }
-                        const volume = train.volume * volumeFactor;
-                        audioControl.setObjectVolume("train", trains[i].audioSrc, volume);
+                        audioControl.setObjectVolume("train", trains[i].audioSrc, train.volume * volumeFactor);
                     } else {
                         audioControl.stopObject("train", trains[i].audioSrc);
                     }
