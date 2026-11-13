@@ -17,7 +17,7 @@ import { formatJSString, getString, setHTMLStrings } from "./common/string_tools
 import { SYSTEM_TOOLS } from "./common/system_tools.js";
 import { initTooltip, initTooltips } from "./common/tooltip.js";
 import { followLink, getQueryStringValue, getServerLink, getShareLink, LinkStates, Protocols } from "./common/web_tools.js";
-import { Background, RotationPoints, Switches, Train, TrainBogie, TrainCar, TrainPoint } from "./scripting_worker_animate.js";
+import { Background, RotationPoint, RotationPoints, Switches, Train, TrainBogie, TrainCar, TrainPoint } from "./scripting_worker_animate.js";
 
 /*******************************************
  *          TypeScript Interfaces          *
@@ -169,6 +169,11 @@ interface TaxOffice {
     smoke: TaxOfficeParticle[];
 }
 
+interface Point3D {
+    x: number;
+    y: number;
+    z: number;
+}
 interface BackgroundObject3D extends Object3D {
     src: string;
 }
@@ -2371,7 +2376,7 @@ function drawObjects(): void {
         return false;
     }
 
-    function drawContinueTrackElement(group, points): void {
+    function drawContinueTrackElement(group: any, points: Point3D[]): void {
         // Two rails along the track's points (background px, height z), each offset by half the track width perpendicular to the track:
         // a narrow strip, and a 1 px line along its middle that keeps the rail continuous where the strip is narrower than a pixel (far away or tilted)
         const color = three.night ? 0x541e03 : 0x963c0e;
@@ -2385,7 +2390,7 @@ function drawObjects(): void {
             const length = Math.hypot(after.x - before.x, after.y - before.y);
             return {x: -(after.y - before.y) / length, y: (after.x - before.x) / length};
         });
-        function toScene(point, k: number, offset: number) {
+        function toScene(point: Point3D, k: number, offset: number): any {
             const x = point.x + offset * normals[k].x;
             const y = point.y + offset * normals[k].y;
             return new THREE.Vector3(three.calcScale() * ((x - background.width / 2) / background.width), three.calcScale() * (-(y - background.height / 2) / background.width) + three.calcPositionY(), (three.calcScale() * point.z) / background.width - background.width / 1000000);
@@ -2407,10 +2412,10 @@ function drawObjects(): void {
             group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(lineVertices), lineMaterial));
         }
     }
-    function drawContinueTrackLine(group, line): void {
+    function drawContinueTrackLine(group: any, line: RotationPoint): void {
         drawContinueTrackElement(group, [new THREE.Vector3(line.x[0], line.y[0], line.z ? line.z[0] : 0), new THREE.Vector3(line.x[1], line.y[1], line.z ? line.z[1] : 0)]);
     }
-    function drawContinueTrackCurve(group, curve): void {
+    function drawContinueTrackCurve(group: any, curve: RotationPoint): void {
         const bezier = new THREE.CubicBezierCurve3(new THREE.Vector3(curve.x[0], curve.y[0], curve.z ? curve.z[0] : 0), new THREE.Vector3(curve.x[1], curve.y[1], curve.z ? curve.z[1] : 0), new THREE.Vector3(curve.x[2], curve.y[2], curve.z ? curve.z[2] : 0), new THREE.Vector3(curve.x[3], curve.y[3], curve.z ? curve.z[3] : 0));
         drawContinueTrackElement(group, bezier.getPoints(20));
     }

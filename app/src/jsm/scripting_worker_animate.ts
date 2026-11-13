@@ -121,7 +121,7 @@ export interface Background {
     width?: number;
     height?: number;
 }
-interface RotationPoint {
+export interface RotationPoint {
     x: number[];
     y: number[];
     z?: number[];
