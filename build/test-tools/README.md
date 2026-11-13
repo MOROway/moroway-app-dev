@@ -55,6 +55,10 @@ Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `tra
 - The animation worker is attached too: its exceptions appear in the output like the page's,
   and `DBG` lines logged in `scripting_worker_animate.ts` count as well.
 - `sheet.py` combines screenshots into a contact sheet for a quick look.
+- `curve-tuner.html` tunes a cubic Bézier curve of the animation against the 2D background by
+  eye: open it in a browser, drag the control points (or set them in the panel), copy the values.
+  Defaults to the outer circle's right curve; others via
+  `?points=x0,y0;x1,y1;x2,y2;x3,y3` (fractions of the board).
 - Saved games across two builds (e.g. a migration): run both with one persistent browser profile
   (a `CHROMIUM` wrapper passing `--user-data-dir`). The service worker then serves the first build
   again; clear it before testing the second one:

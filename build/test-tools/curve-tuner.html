@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Curve tuner</title>
+<!--
+Tune a cubic Bézier curve of the animation against the 2D background, by eye.
+Open this file in a browser (file:// works). Optional query:
+  ?points=0.77,0.017;0.98,0.001;0.985,0.908;0.795,0.893   (P0;P1;P2;P3 as fractions of the board)
+  &image=../../app/assets/asset9.jpg                         (background, relative to this file)
+Wheel: zoom at the pointer. Drag the background: pan. Drag a handle: move that point.
+-->
+<style>
+    body {
+        margin: 0;
+        font: 13px sans-serif;
+        background: #222;
+        color: #eee;
+        display: flex;
+        height: 100vh;
+    }
+    #view {
+        flex: 1;
+        min-width: 0;
+        height: 100vh;
+        display: block;
+        cursor: grab;
+    }
+    #panel {
+        flex: 0 0 320px;
+        padding: 10px;
+        overflow-y: auto;
+        background: #333;
+    }
+    fieldset {
+        margin: 0 0 8px;
+        border: 1px solid #555;
+    }
+    label {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin: 3px 0;
+    }
+    input[type="number"] {
+        width: 80px;
+    }
+    input[type="range"] {
+        flex: 1;
+    }
+    textarea {
+        width: 100%;
+        height: 90px;
+        font: 12px monospace;
+    }
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="panel">
+    <div id="points"></div>
+    <label><input type="checkbox" id="moveEnds"> also move the end points P0 / P3</label>
+    <label><input type="checkbox" id="original" checked> show the original curve</label>
+    <label>step <input type="number" id="step" value="0.001" step="0.0005" min="0.0001"></label>
+    <p>Points as fractions of the board (x of its width, y of its height):</p>
+    <textarea id="out" readonly></textarea>
+</div>
+<script>
+    const query = new URLSearchParams(location.search);
+    const defaultPoints = "0.77,0.017;0.98,0.001;0.985,0.908;0.795,0.893";
+    const parse = (text) => text.split(";").map((p) => p.split(",").map(Number));
+    const original = parse(query.get("points") || defaultPoints);
+    const points = original.map((p) => [...p]);
+    const image = new Image();
+    image.src = query.get("image") || "../../app/assets/asset9.jpg";
+
+    const canvas = document.getElementById("view");
+    const context = canvas.getContext("2d");
+    // board pixel shown at the canvas origin, and canvas pixels per board pixel
+    const view = {x: 0, y: 0, scale: 1};
+
+    function bezier(p, t) {
+        const w = [(1 - t) ** 3, 3 * t * (1 - t) ** 2, 3 * t * t * (1 - t), t ** 3];
+        return [0, 1].map((i) => w.reduce((sum, wk, k) => sum + wk * p[k][i], 0));
+    }
+    const toCanvas = ([fx, fy]) => [
+        (fx * image.width - view.x) * view.scale,
+        (fy * image.height - view.y) * view.scale
+    ];
+    const toBoard = (cx, cy) => [
+        (cx / view.scale + view.x) / image.width,
+        (cy / view.scale + view.y) / image.height
+    ];
+
+    function drawCurve(p, colour) {
+        context.strokeStyle = colour;
+        context.lineWidth = 1;
+        context.beginPath();
+        for (let k = 0; k <= 1000; k++) {
+            const [x, y] = toCanvas(bezier(p, k / 1000));
+            k == 0 ? context.moveTo(x, y) : context.lineTo(x, y);
+        }
+        context.stroke();
+    }
+    function draw() {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        context.imageSmoothingEnabled = view.scale < 2;
+        const [x0, y0] = [-view.x * view.scale, -view.y * view.scale];
+        context.drawImage(image, x0, y0, image.width * view.scale, image.height * view.scale);
+        if (document.getElementById("original").checked) {
+            drawCurve(original, "rgba(0, 255, 255, 0.8)");
+        }
+        // the handles' lines show the end tangents
+        context.strokeStyle = "rgba(255, 255, 0, 0.6)";
+        context.beginPath();
+        context.moveTo(...toCanvas(points[0]));
+        context.lineTo(...toCanvas(points[1]));
+        context.moveTo(...toCanvas(points[3]));
+        context.lineTo(...toCanvas(points[2]));
+        context.stroke();
+        drawCurve(points, "#f0f");
+        points.forEach((p, k) => {
+            const [x, y] = toCanvas(p);
+            context.fillStyle = k == 0 || k == 3 ? "#0f0" : "#ff0";
+            context.fillRect(x - 4, y - 4, 8, 8);
+            context.fillText("P" + k, x + 6, y - 6);
+        });
+        const lines = points.map((p, k) => `P${k}: x ${p[0].toFixed(4)}, y ${p[1].toFixed(4)}`);
+        const query = points.map((p) => p.map((v) => +v.toFixed(4)).join(",")).join(";");
+        lines.push("", "points=" + query);
+        document.getElementById("out").value = lines.join("\n");
+    }
+
+    function buildPanel() {
+        const container = document.getElementById("points");
+        container.innerHTML = "";
+        const moveEnds = document.getElementById("moveEnds").checked;
+        points.forEach((p, k) => {
+            if ((k == 0 || k == 3) && !moveEnds) {
+                return;
+            }
+            const set = document.createElement("fieldset");
+            set.innerHTML = `<legend>P${k}</legend>`;
+            ["x", "y"].forEach((axis, i) => {
+                const label = document.createElement("label");
+                const number = document.createElement("input");
+                const range = document.createElement("input");
+                number.type = "number";
+                range.type = "range";
+                range.min = original[k][i] - 0.05;
+                range.max = original[k][i] + 0.05;
+                for (const input of [number, range]) {
+                    input.step = document.getElementById("step").value;
+                    input.value = p[i];
+                    input.addEventListener("input", () => {
+                        p[i] = Number(input.value);
+                        (input == number ? range : number).value = p[i];
+                        draw();
+                    });
+                }
+                label.append(axis, number, range);
+                set.append(label);
+            });
+            container.append(set);
+        });
+    }
+
+    let drag = null;
+    canvas.addEventListener("mousedown", (event) => {
+        const moveEnds = document.getElementById("moveEnds").checked;
+        const hit = points.findIndex((p, k) => {
+            const [x, y] = toCanvas(p);
+            const movable = moveEnds || (k != 0 && k != 3);
+            return movable && Math.hypot(x - event.offsetX, y - event.offsetY) < 8;
+        });
+        drag = {point: hit, x: event.offsetX, y: event.offsetY};
+    });
+    canvas.addEventListener("mousemove", (event) => {
+        if (!drag) {
+            return;
+        }
+        if (drag.point >= 0) {
+            points[drag.point] = toBoard(event.offsetX, event.offsetY);
+            buildPanel();
+        } else {
+            view.x -= (event.offsetX - drag.x) / view.scale;
+            view.y -= (event.offsetY - drag.y) / view.scale;
+            drag.x = event.offsetX;
+            drag.y = event.offsetY;
+        }
+        draw();
+    });
+    window.addEventListener("mouseup", () => (drag = null));
+    canvas.addEventListener("wheel", (event) => {
+        event.preventDefault();
+        const bx = event.offsetX / view.scale + view.x;
+        const by = event.offsetY / view.scale + view.y;
+        view.scale *= event.deltaY < 0 ? 1.25 : 0.8;
+        view.x = bx - event.offsetX / view.scale;
+        view.y = by - event.offsetY / view.scale;
+        draw();
+    });
+    for (const id of ["moveEnds", "original", "step"]) {
+        document.getElementById(id).addEventListener("change", () => {
+            buildPanel();
+            draw();
+        });
+    }
+    window.addEventListener("resize", draw);
+    image.onload = () => {
+        // start with the curve and its control points in view
+        const xs = points.map((p) => p[0] * image.width);
+        const ys = points.map((p) => p[1] * image.height);
+        const margin = 0.05 * image.width;
+        const [left, top] = [Math.min(...xs) - margin, Math.min(...ys) - margin];
+        const [width, height] = [Math.max(...xs) + margin - left, Math.max(...ys) + margin - top];
+        view.scale = Math.min(canvas.clientWidth / width, canvas.clientHeight / height);
+        view.x = left - (canvas.clientWidth / view.scale - width) / 2;
+        view.y = top - (canvas.clientHeight / view.scale - height) / 2;
+        buildPanel();
+        draw();
+    };
+</script>
+</body>
+</html>
