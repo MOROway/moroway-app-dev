@@ -136,6 +136,39 @@ interface CarPoint {
     angle: number[][];
 }
 
+interface RgbaColor {
+    red: number;
+    green: number;
+    blue: number;
+    alpha: number;
+}
+interface TaxOfficeParticle {
+    color: string;
+    x: number;
+    y: number;
+    size: number;
+}
+interface TaxOffice {
+    params: {
+        number: number;
+        frameNo: number;
+        frameProbability: number;
+        fire: {
+            x: number;
+            y: number;
+            size: number;
+            color: {red: RgbaColor; yellow: RgbaColor; probability: number};
+        };
+        smoke: {x: number; y: number; size: number; color: RgbaColor};
+        blueLights: {
+            frameNo: number;
+            cars: {frameNo: number; x: number[]; y: number[]; size: number}[];
+        };
+    };
+    fire: TaxOfficeParticle[];
+    smoke: TaxOfficeParticle[];
+}
+
 interface BackgroundObject3D extends Object3D {
     src: string;
 }
@@ -2072,6 +2105,24 @@ function carCollisionCourse(input1: number, sendNotification: boolean, fixFac: n
     return collision;
 }
 
+function setTaxOfficeParticles(i: number): void {
+    function randomAlphaColor(color: RgbaColor): string {
+        return "rgba(" + color.red + "," + color.green + "," + color.blue + "," + color.alpha * Math.random() + ")";
+    }
+    taxOffice.fire[i] = {
+        color: randomAlphaColor(Math.random() >= taxOffice.params.fire.color.probability ? taxOffice.params.fire.color.yellow : taxOffice.params.fire.color.red),
+        x: Math.random() * taxOffice.params.fire.x,
+        y: Math.random() * taxOffice.params.fire.y,
+        size: Math.random() * taxOffice.params.fire.size
+    };
+    taxOffice.smoke[i] = {
+        color: randomAlphaColor(taxOffice.params.smoke.color),
+        x: Math.random() * taxOffice.params.smoke.x,
+        y: Math.random() * taxOffice.params.smoke.y,
+        size: Math.random() * taxOffice.params.smoke.size
+    };
+}
+
 function drawObjects(): void {
     function setMaterialTransparent(mesh, opacity: number): void {
         if (mesh.material && opacity && opacity >= 0 && opacity <= 1) {
@@ -3584,18 +3635,7 @@ function drawObjects(): void {
             for (var i = 0; i < taxOffice.params.number; i++) {
                 if (frameNo % taxOffice.params.frameNo === 0) {
                     if (Math.random() > taxOffice.params.frameProbability) {
-                        if (Math.random() >= taxOffice.params.fire.color.probability) {
-                            taxOffice.fire[i].color = "rgba(" + taxOffice.params.fire.color.yellow.red + "," + taxOffice.params.fire.color.yellow.green + "," + taxOffice.params.fire.color.yellow.blue + "," + taxOffice.params.fire.color.yellow.alpha * Math.random() + ")";
-                        } else {
-                            taxOffice.fire[i].color = "rgba(" + taxOffice.params.fire.color.red.red + "," + taxOffice.params.fire.color.red.green + "," + taxOffice.params.fire.color.red.blue + "," + taxOffice.params.fire.color.red.alpha * Math.random() + ")";
-                        }
-                        taxOffice.fire[i].x = Math.random() * taxOffice.params.fire.x;
-                        taxOffice.fire[i].y = Math.random() * taxOffice.params.fire.y;
-                        taxOffice.fire[i].size = Math.random() * taxOffice.params.fire.size;
-                        taxOffice.smoke[i].color = "rgba(" + taxOffice.params.smoke.color.red + "," + taxOffice.params.smoke.color.green + "," + taxOffice.params.smoke.color.blue + "," + taxOffice.params.smoke.color.alpha * Math.random() + ")";
-                        taxOffice.smoke[i].x = Math.random() * taxOffice.params.smoke.x;
-                        taxOffice.smoke[i].y = Math.random() * taxOffice.params.smoke.y;
-                        taxOffice.smoke[i].size = Math.random() * taxOffice.params.smoke.size;
+                        setTaxOfficeParticles(i);
                     }
                 }
                 contextForeground.fillStyle = taxOffice.fire[i].color;
@@ -6014,7 +6054,7 @@ var carWays: CarWays[];
 var carParams: CarParams;
 
 //Tax office
-var taxOffice;
+var taxOffice: TaxOffice;
 
 //Classic UI
 var classicUI;
@@ -6930,7 +6970,7 @@ function init(state: "load" | "reload" = "reload"): void {
     classicUI = classicUIDefault;
 
     //Default animations
-    const taxOfficeDefault: any = {
+    const taxOfficeDefault: TaxOffice = {
         params: {
             number: 45,
             frameNo: 6,
@@ -6945,7 +6985,9 @@ function init(state: "load" | "reload" = "reload"): void {
                     {frameNo: 5, x: [0.0568, 0.0008], y: [0.177, 0.0148], size: 0.001}
                 ]
             }
-        }
+        },
+        fire: [],
+        smoke: []
     };
     taxOffice = taxOfficeDefault;
 
@@ -7088,8 +7130,6 @@ function init(state: "load" | "reload" = "reload"): void {
     }
 
     //TAX OFFICE
-    taxOffice.fire = [];
-    taxOffice.smoke = [];
     taxOffice.params.fire.x *= background.width;
     taxOffice.params.fire.y *= background.height;
     taxOffice.params.fire.size *= background.width;
@@ -7097,20 +7137,7 @@ function init(state: "load" | "reload" = "reload"): void {
     taxOffice.params.smoke.y *= background.height;
     taxOffice.params.smoke.size *= background.width;
     for (var i = 0; i < taxOffice.params.number; i++) {
-        taxOffice.fire[i] = {};
-        taxOffice.smoke[i] = {};
-        if (Math.random() >= taxOffice.params.fire.color.probability) {
-            taxOffice.fire[i].color = "rgba(" + taxOffice.params.fire.color.yellow.red + "," + taxOffice.params.fire.color.yellow.green + "," + taxOffice.params.fire.color.yellow.blue + "," + taxOffice.params.fire.color.yellow.alpha * Math.random() + ")";
-        } else {
-            taxOffice.fire[i].color = "rgba(" + taxOffice.params.fire.color.red.red + "," + taxOffice.params.fire.color.red.green + "," + taxOffice.params.fire.color.red.blue + "," + taxOffice.params.fire.color.red.alpha * Math.random() + ")";
-        }
-        taxOffice.fire[i].x = Math.random() * taxOffice.params.fire.x;
-        taxOffice.fire[i].y = Math.random() * taxOffice.params.fire.y;
-        taxOffice.fire[i].size = Math.random() * taxOffice.params.fire.size;
-        taxOffice.smoke[i].color = "rgba(" + taxOffice.params.smoke.color.red + "," + taxOffice.params.smoke.color.green + "," + taxOffice.params.smoke.color.blue + "," + taxOffice.params.smoke.color.alpha * Math.random() + ")";
-        taxOffice.smoke[i].x = Math.random() * taxOffice.params.smoke.x;
-        taxOffice.smoke[i].y = Math.random() * taxOffice.params.smoke.y;
-        taxOffice.smoke[i].size = Math.random() * taxOffice.params.smoke.size;
+        setTaxOfficeParticles(i);
     }
     for (var i = 0; i < taxOffice.params.blueLights.cars.length; i++) {
         taxOffice.params.blueLights.cars[i].x[0] *= background.width;
