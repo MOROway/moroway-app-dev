@@ -307,6 +307,7 @@ function resetAll() {
     resetGestures();
     resetScale();
     resetTilt();
+    resetRotation();
 }
 
 function resetGestures() {
@@ -327,9 +328,12 @@ function resetScale() {
 function resetTilt() {
     client.zoomAndTilt.tiltX = client.width / 2;
     client.zoomAndTilt.tiltY = client.height / 2;
-    client.zoomAndTilt.rotation = 0;
     three.scene.rotation.x = 0;
     three.scene.rotation.y = 0;
+}
+
+function resetRotation() {
+    client.zoomAndTilt.rotation = 0;
     three.scene.rotation.z = 0;
     three.scene.scale.setScalar(1);
     three.scene.position.set(0, 0, 0);
@@ -1024,8 +1028,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             beforeOptionsMenuChange();
             gui.three = !gui.three;
             setGuiState("3d", gui.three);
-            resetScale();
-            resetTilt();
+            resetAll();
             set3DItems();
             calcMenusAndBackground("items-change");
             if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.three) {
@@ -1906,8 +1909,7 @@ function requestResize() {
             }
             onlineConnection.resized = true;
         }
-        resetScale();
-        resetTilt();
+        resetAll();
         oldBackground = copyJSObject(background);
         measureViewSpace();
         calcMenusAndBackground("resize");
@@ -3411,6 +3413,7 @@ function drawObjects() {
                         hardware.mouse.lastClickDoubleClick = true;
                     }
                     resetTilt();
+                    resetRotation();
                 }
             }
         }
@@ -5681,8 +5684,7 @@ const three: Three = {
         }
         setGuiState("3d-cam-mode", three.cameraMode);
         setGuiState("3d-follow-object", three.followObject);
-        resetScale();
-        resetTilt();
+        resetAll();
         calcMenusAndBackground("resize");
     },
     zoom: 3,
