@@ -182,6 +182,24 @@ interface Aquarium3D {
     fish: AquariumFish[];
 }
 
+interface TextControlSubcommand {
+    args: {min: number; max: number; patterns?: RegExp[]};
+    execute(args: string[]): string;
+    usage: string;
+}
+interface TextControlCommand {
+    subcommands?: Record<string, TextControlSubcommand>;
+    nameIdentifier?: string;
+    action(args?: string[]): string;
+}
+interface TextControl {
+    elements: {input?: HTMLInputElement; output?: HTMLElement; root?: HTMLElement};
+    validateSubcommand(command: string, args: string[]): boolean;
+    getSubcommandNames(command: string): string[];
+    execute(command?: string, args?: string[]): string;
+    commands: Record<string, TextControlCommand>;
+}
+
 interface Point3D {
     x: number;
     y: number;
@@ -5132,8 +5150,8 @@ const loadingAnimation: LoadingAnimation = {
 };
 
 //Text control
-const textControl = {
-    elements: {} as {input?: HTMLInputElement; output?: HTMLElement; root?: HTMLElement},
+const textControl: TextControl = {
+    elements: {},
     validateSubcommand(command: string, args: string[]) {
         if (args.length - 1 < this.commands[command].subcommands[args[0]].args.min || args.length - 1 > this.commands[command].subcommands[args[0]].args.max) {
             return false;
@@ -5219,11 +5237,11 @@ const textControl = {
                     usage: "{number}"
                 },
                 stop: {
-                    args: {min: 1, max: 1, patterns: [/^[0-9]+|all$/]},
+                    args: {min: 1, max: 1, patterns: [/^([0-9]+|all)$/]},
                     execute(args) {
                         if (args[1] == "all") {
                             for (var i = 0; i < trains.length; i++) {
-                                this.execute([args[0], i]);
+                                this.execute([args[0], String(i)]);
                             }
                             return getString("appScreenTextCommandsGeneralSuccess", "!", "upper");
                         }
@@ -5254,20 +5272,20 @@ const textControl = {
                             return getString("appScreenTextCommandsGeneralFailure", "!", "upper");
                         }
                         if (args.length == 3) {
-                            var speed = args[2];
-                            if (speed.match(/^[+][0-9]+$/)) {
+                            var speed: number;
+                            if (args[2].match(/^[+][0-9]+$/)) {
                                 if (trains[train].accelerationSpeed <= 0) {
-                                    speed = parseInt(speed, 10);
+                                    speed = parseInt(args[2], 10);
                                 } else {
-                                    speed = trains[train].speedInPercent + parseInt(speed.replace(/[^0-9]/g, ""), 10);
+                                    speed = trains[train].speedInPercent + parseInt(args[2].replace(/[^0-9]/g, ""), 10);
                                 }
-                            } else if (speed.match(/^[-][0-9]+$/)) {
+                            } else if (args[2].match(/^[-][0-9]+$/)) {
                                 if (trains[train].accelerationSpeed <= 0) {
                                     return getString("appScreenTextCommandsGeneralFailure", "!", "upper");
                                 }
-                                speed = trains[train].speedInPercent - parseInt(speed.replace(/[^0-9]/g, ""), 10);
-                            } else if (speed.match(/^[0-9]+$/)) {
-                                speed = parseInt(speed, 10);
+                                speed = trains[train].speedInPercent - parseInt(args[2].replace(/[^0-9]/g, ""), 10);
+                            } else if (args[2].match(/^[0-9]+$/)) {
+                                speed = parseInt(args[2], 10);
                             } else {
                                 return getString("appScreenTextCommandsGeneralFailure", "!", "upper");
                             }
@@ -5313,7 +5331,7 @@ const textControl = {
                     usage: ""
                 },
                 auto: {
-                    args: {min: 1, max: 1, patterns: [/^start|end|pause|resume$/]},
+                    args: {min: 1, max: 1, patterns: [/^(start|end|pause|resume)$/]},
                     execute(args) {
                         if (args[1] == "start" && carActions.auto.start()) {
                             return getString("appScreenTextCommandsGeneralSuccess", "!", "upper");
@@ -5329,7 +5347,7 @@ const textControl = {
                     usage: "start|end|pause|resume"
                 },
                 manual: {
-                    args: {min: 2, max: 2, patterns: [/^start|stop|back|park$/, /^[0-9]+$/]},
+                    args: {min: 2, max: 2, patterns: [/^(start|stop|back|park)$/, /^[0-9]+$/]},
                     execute(args) {
                         var car = parseInt(args[2], 10);
                         if (args[1] == "start" && carActions.manual.start(car)) {
