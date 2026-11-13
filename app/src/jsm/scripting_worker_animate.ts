@@ -1706,16 +1706,16 @@ function defineTrainParams(): void {
     rotationPoints.outer.narrow.x[2] = 0.795 * background.width;
     rotationPoints.outer.narrow.x[4] = 0.971 * background.width;
     rotationPoints.outer.narrow.x[5] = 0.994 * background.width;
-    rotationPoints.outer.narrow.x[6] = -0.05 * background.width;
-    rotationPoints.outer.narrow.x[7] = -0.04 * background.width;
+    rotationPoints.outer.narrow.x[6] = -0.052 * background.width;
+    rotationPoints.outer.narrow.x[7] = -0.038 * background.width;
     rotationPoints.outer.narrow.y[0] = 0.013 * background.height;
     rotationPoints.outer.narrow.y[1] = 0.017 * background.height;
     rotationPoints.outer.narrow.y[2] = 0.893 * background.height;
     rotationPoints.outer.narrow.y[3] = 0.882 * background.height;
     rotationPoints.outer.narrow.y[4] = -0.001 * background.height;
     rotationPoints.outer.narrow.y[5] = 0.88 * background.height;
-    rotationPoints.outer.narrow.y[6] = 0.9 * background.height;
-    rotationPoints.outer.narrow.y[7] = 0.03 * background.height;
+    rotationPoints.outer.narrow.y[6] = 0.905 * background.height;
+    rotationPoints.outer.narrow.y[7] = 0.008 * background.height;
     circles[2] = rotationPoints.outer.narrow;
 
     for (var i = 0; i < circles.length; i++) {
