@@ -155,6 +155,15 @@ interface Gui {
 }
 
 interface LoadingAnimation {
+    element?: HTMLElement | null;
+    elementBranding?: HTMLElement | null;
+    elementBrandingImageAnimation?: HTMLElement | null;
+    elementProgress?: HTMLElement | null;
+    elementProgressText?: HTMLElement | null;
+    elementProgressBar?: HTMLElement | null;
+    elementSnake?: HTMLElement | null;
+    brandingImageAnimation?: {start(): void; stop(): void; interval?: ReturnType<typeof setInterval>};
+    showProgressTimeout?: ReturnType<typeof setTimeout>;
     updateProgress(progress: number): void;
     init(): void;
     show(animate: boolean): void;
@@ -4979,9 +4988,9 @@ const loadingAnimation: LoadingAnimation = {
         }
     },
     init() {
-        this.element = document.querySelector("#loading-anim");
-        this.elementBranding = document.querySelector("#branding");
-        this.elementBrandingImageAnimation = document.querySelector("#branding img");
+        this.element = document.querySelector<HTMLElement>("#loading-anim");
+        this.elementBranding = document.querySelector<HTMLElement>("#branding");
+        this.elementBrandingImageAnimation = document.querySelector<HTMLElement>("#branding img");
         const element = this.elementBrandingImageAnimation;
         this.brandingImageAnimation = {
             start() {
@@ -5006,10 +5015,10 @@ const loadingAnimation: LoadingAnimation = {
                 }
             }
         };
-        this.elementProgress = document.querySelector("#percent");
-        this.elementProgressText = document.querySelector("#percent #percent-text");
-        this.elementProgressBar = document.querySelector("#percent #percent-progress");
-        this.elementSnake = document.querySelector("#snake");
+        this.elementProgress = document.querySelector<HTMLElement>("#percent");
+        this.elementProgressText = document.querySelector<HTMLElement>("#percent #percent-text");
+        this.elementProgressBar = document.querySelector<HTMLElement>("#percent #percent-progress");
+        this.elementSnake = document.querySelector<HTMLElement>("#snake");
     },
     show(animate) {
         if (this.element) {

@@ -4,6 +4,7 @@
         "module": "ES2022",
         "strict": false,
         "alwaysStrict": true,
+        "noImplicitThis": true,
         "strictBindCallApply": true,
         "strictFunctionTypes": true,
         "useUnknownInCatchVariables": true
