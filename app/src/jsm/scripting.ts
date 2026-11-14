@@ -8341,7 +8341,11 @@ window.addEventListener("load", function () {
                                     trains3D[i].meshBack.right.scale.x *= -1;
                                 }
                             }
+                            // Measured level, as the pitch on a ramp would make the box higher
+                            const pitch = trains3D[i].mesh.rotation.y;
+                            trains3D[i].mesh.rotation.y = 0;
                             trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
+                            trains3D[i].mesh.rotation.y = pitch;
                         };
                         trains3D[i].resize();
                         trains3D[i].mesh.callback = trainCallback;
@@ -8408,7 +8412,11 @@ window.addEventListener("load", function () {
                                         trains3D[i].cars[j].meshBack.right.scale.x *= -1;
                                     }
                                 }
+                                // Measured level, as the pitch on a ramp would make the box higher
+                                const pitch = trains3D[i].cars[j].mesh.rotation.y;
+                                trains3D[i].cars[j].mesh.rotation.y = 0;
                                 trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
+                                trains3D[i].cars[j].mesh.rotation.y = pitch;
                             };
                             trains3D[i].cars[j].resize();
                             trains3D[i].cars[j].mesh.callback = trainCallback;
