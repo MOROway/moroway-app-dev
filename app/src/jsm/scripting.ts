@@ -8830,26 +8830,31 @@ window.addEventListener("load", function () {
                 onlineConnection.send("sync-ready");
             } else if (message.data.k == "save-game") {
                 if (getSetting("saveGame") && currentMode == Modes.SINGLEPLAYER) {
-                    try {
-                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
-                        var saveSwitches = {};
-                        Object.keys(switches).forEach(function (key) {
-                            saveSwitches[key] = {};
-                            Object.keys(switches[key]).forEach(function (side) {
-                                saveSwitches[key][side] = switches[key][side].turned;
+                    // The trains are in the worker's coordinates: skip them while a resize is on
+                    // its way to the worker, as they do not fit the current background; it saves
+                    // after it
+                    if (["x", "y", "width", "height"].every((key) => message.data.background[key] == background[key])) {
+                        try {
+                            localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
+                            var saveSwitches = {};
+                            Object.keys(switches).forEach(function (key) {
+                                saveSwitches[key] = {};
+                                Object.keys(switches[key]).forEach(function (side) {
+                                    saveSwitches[key][side] = switches[key][side].turned;
+                                });
                             });
-                        });
-                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
-                        if (cars.length == carWays.length && cars.length > 0) {
-                            localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
-                            localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
+                            localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Switches", JSON.stringify(saveSwitches));
+                            if (cars.length == carWays.length && cars.length > 0) {
+                                localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Cars", JSON.stringify(cars));
+                                localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_CarParams", JSON.stringify(carParams));
+                            }
+                            localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
+                        } catch (e) {
+                            if (APP_DATA.debug) {
+                                console.error(e);
+                            }
+                            notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y + menus.outerContainer.height);
                         }
-                        localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Bg", JSON.stringify(background));
-                    } catch (e) {
-                        if (APP_DATA.debug) {
-                            console.error(e);
-                        }
-                        notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y + menus.outerContainer.height);
                     }
                     animateWorker.postMessage({k: "game-saved"});
                 }

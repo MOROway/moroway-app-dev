@@ -223,7 +223,7 @@ function saveTheGameSend() {
     for (var t = 0; t < saveTrains.length; t++) {
         saveTrains[t] = saveTrainCirclePrepare(saveTrains[t], trains[t]);
     }
-    safePostMessage({k: "save-game", saveTrains: saveTrains});
+    safePostMessage({k: "save-game", saveTrains: saveTrains, background: background});
 }
 function getRealStandardDirection(cO: TrainBogie, input1: number, reverse: boolean = false): boolean {
     var realStandardDirection = (trains[input1].standardDirection && !reverse) || (!trains[input1].standardDirection && reverse);
