@@ -2671,7 +2671,7 @@ const trainsDefault: TrainCalc[] = [
     },
     {
         src: 44,
-        fac: 0.047,
+        fac: 0.0475,
         speedFac: 1 / 500,
         accelerationSpeedStartFac: 0.026,
         accelerationSpeedFac: 1.009,
@@ -2680,6 +2680,7 @@ const trainsDefault: TrainCalc[] = [
         standardDirectionStartValue: true,
         bogieDistance: 0.31,
         state: 314,
+        flickerFacFront: 2.1,
         trainSwitchSrc: 45,
         audioSrc: 7,
         wheels: {front: {use3d: true}, back: {use3d: true}},
