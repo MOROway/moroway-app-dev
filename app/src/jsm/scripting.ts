@@ -8341,7 +8341,6 @@ window.addEventListener("load", function () {
                                     trains3D[i].meshBack.right.scale.x *= -1;
                                 }
                             }
-                            trains3D[i].mesh.position.set(0, 0, 0);
                             trains3D[i].positionZ = new THREE.Box3().setFromObject(trains3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
                         };
                         trains3D[i].resize();
@@ -8375,7 +8374,6 @@ window.addEventListener("load", function () {
                             }
                             const scale = three.calcScale();
                             trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
-                            trains3D[i].mesh.position.set(0, 0, 0);
                             trains3D[i].positionZ = (scale * height3D) / 2;
                             trains3D[i].mesh.callback = trainCallback;
                             trains3D[i].mesh.name = "train_" + i;
@@ -8410,7 +8408,6 @@ window.addEventListener("load", function () {
                                         trains3D[i].cars[j].meshBack.right.scale.x *= -1;
                                     }
                                 }
-                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
                                 trains3D[i].cars[j].positionZ = new THREE.Box3().setFromObject(trains3D[i].cars[j].mesh).getSize(new THREE.Vector3()).z / 2;
                             };
                             trains3D[i].cars[j].resize();
@@ -8444,7 +8441,6 @@ window.addEventListener("load", function () {
                                 }
                                 const scale = three.calcScale();
                                 trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
-                                trains3D[i].cars[j].mesh.position.set(0, 0, 0);
                                 trains3D[i].cars[j].positionZ = (scale * height3D) / 2;
                                 trains3D[i].cars[j].mesh.callback = trainCallback;
                                 trains3D[i].cars[j].mesh.name = "train_" + i + "_car_" + j;
@@ -8527,7 +8523,6 @@ window.addEventListener("load", function () {
                         cars3D[i].resize = function () {
                             const scale = three.calcScale();
                             cars3D[i].mesh.scale.set(scale * (cars[i].width / background.width), scale * (cars[i].width / background.width), scale * (cars[i].width / background.width));
-                            cars3D[i].mesh.position.set(0, 0, 0);
                             cars3D[i].positionZ = new THREE.Box3().setFromObject(cars3D[i].mesh).getSize(new THREE.Vector3()).z / 2;
                             cars3D[i].resizeParkingLot();
                         };
@@ -8542,7 +8537,6 @@ window.addEventListener("load", function () {
                             }
                             const scale = three.calcScale();
                             cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
-                            cars3D[i].mesh.position.set(0, 0, 0);
                             cars3D[i].positionZ = (scale * height3D) / 2;
                             cars3D[i].mesh.callback = carCallback;
                             cars3D[i].mesh.name = "car_" + i;
