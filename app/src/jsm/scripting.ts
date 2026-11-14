@@ -57,6 +57,12 @@ interface MultiplayerMode {
     };
 }
 
+interface ActionNotification {
+    getString: Parameters<typeof getString>;
+}
+type ActionParam = Record<string, boolean | number>;
+type ActionSync = {notification?: ActionNotification[]; notificationOnlyForOthers: boolean} & ({objectName: "trains"; index: number; params: ActionParam[]} | {objectName: "switches"; index: [string, string]; params: ActionParam[]} | {objectName: "train-crash"});
+
 interface Object3D {
     mesh?: any;
     resize?(): void;
@@ -5014,7 +5020,7 @@ function drawObjects(): void {
     }
 }
 
-function actionSync(objectName: string, index: any[] | number | undefined = undefined, params: any[] | undefined = undefined, notification: any[] | undefined = undefined, notificationOnlyForOthers: boolean = false): void {
+function actionSync(objectName: ActionSync["objectName"], index: number | [string, string] | undefined = undefined, params: ActionParam[] | undefined = undefined, notification: ActionNotification[] | undefined = undefined, notificationOnlyForOthers: boolean = false): void {
     if (currentMode == Modes.MULTIPLAYER) {
         if (!onlineConnection.stop) {
             onlineConnection.send(
@@ -5034,8 +5040,8 @@ function actionSync(objectName: string, index: any[] | number | undefined = unde
                 animateWorker.postMessage({k: "train", i: index, params: params});
                 if (notification && !notificationOnlyForOthers) {
                     var notifyArr: string[] = [];
-                    notification.forEach(function (elem): void {
-                        notifyArr.push(getString.apply(null, elem.getString));
+                    notification.forEach(function (elem: ActionNotification): void {
+                        notifyArr.push(getString(...elem.getString));
                     });
                     var notifyStr = formatJSString(notifyArr[0], ...notifyArr.slice(1));
                     notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y + menus.outerContainer.height);
@@ -8014,12 +8020,12 @@ window.addEventListener("load", function () {
                                         }
                                         break;
                                     case "action":
-                                        const input = JSON.parse(json.data);
+                                        const input: ActionSync = JSON.parse(json.data);
                                         var notifyArr: string[] = [];
                                         if (typeof input.notification == "object" && Array.isArray(input.notification)) {
-                                            input.notification.forEach(function (elem) {
+                                            input.notification.forEach(function (elem: ActionNotification | string): void {
                                                 if (typeof elem == "object" && Array.isArray(elem.getString)) {
-                                                    notifyArr.push(getString.apply(null, elem.getString));
+                                                    notifyArr.push(getString(...elem.getString));
                                                 } else if (typeof elem == "string") {
                                                     notifyArr.push(elem);
                                                 }
@@ -8035,8 +8041,8 @@ window.addEventListener("load", function () {
                                         switch (input.objectName) {
                                             case "trains":
                                                 if (onlineConnection.sessionId != json.sessionId) {
-                                                    multiplayerMode.excludeFromSync["t"].forEach(function (key) {
-                                                        input.params.forEach(function (param, paramNo: number): void {
+                                                    multiplayerMode.excludeFromSync["t"].forEach(function (key: string): void {
+                                                        input.params.forEach(function (param: ActionParam, paramNo: number): void {
                                                             if (Object.keys(param)[0] == key) {
                                                                 delete input.params[paramNo];
                                                             }
@@ -8056,7 +8062,7 @@ window.addEventListener("load", function () {
                                             case "switches":
                                                 if (Object.hasOwn(switches, input.index[0]) && Object.hasOwn(switches[input.index[0]], input.index[1])) {
                                                     const obj = switches[input.index[0]][input.index[1]];
-                                                    input.params.forEach(function (param) {
+                                                    input.params.forEach(function (param: ActionParam): void {
                                                         const key = Object.keys(param)[0];
                                                         if (Object.hasOwn(obj, key)) {
                                                             obj[key] = Object.values(param)[0];
