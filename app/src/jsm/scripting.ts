@@ -2198,10 +2198,10 @@ function drawObjects(): void {
                 currentContext.lineWidth = client.isTiny ? 1 : 3;
                 if (i == -1 && trains[input1].standardDirection) {
                     if (trains[input1].flickerFacFront == undefined) {
-                        trains[input1].flickerFacFront = 2;
+                        trains[input1].flickerFacFront = trainParams.flickerFac;
                     }
                     if (trains[input1].flickerFacFrontOffset == undefined) {
-                        trains[input1].flickerFacFrontOffset = 3.5;
+                        trains[input1].flickerFacFrontOffset = trainParams.flickerFacOffset;
                     }
                     currentContext.beginPath();
                     currentContext.moveTo(currentObject.width / trains[input1].flickerFacFront + background.width / 500, -currentObject.height / trains[input1].flickerFacFrontOffset);
@@ -2213,10 +2213,10 @@ function drawObjects(): void {
                 }
                 if (i == trains[input1].cars.length - 1 && !trains[input1].standardDirection) {
                     if (trains[input1].flickerFacBack == undefined) {
-                        trains[input1].flickerFacBack = 2;
+                        trains[input1].flickerFacBack = trainParams.flickerFac;
                     }
                     if (trains[input1].flickerFacBackOffset == undefined) {
-                        trains[input1].flickerFacBackOffset = 3.5;
+                        trains[input1].flickerFacBackOffset = trainParams.flickerFacOffset;
                     }
                     currentContext.beginPath();
                     currentContext.moveTo(-currentObject.width / trains[input1].flickerFacBack - background.width / 500, -currentObject.height / trains[input1].flickerFacBackOffset);

@@ -2692,7 +2692,7 @@ var trainPics;
 // heightClearance (fraction of the background width): objects whose heights differ by at least this much pass over each other
 // instead of colliding; it is the height of the tallest train object in 3D (measured 0.0196 w), so a train on the elevated
 // track (0.025 w) clears a train below, while on the low start of the S-curve collisions with the outer circle still count
-const trainParams = {margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10, heightClearance: 0.02};
+const trainParams = {margin: 25, innerCollisionFac: 0.5, minOpacity: 0.3, trackWidth: 0.0066, minSpeed: 10, heightClearance: 0.02, flickerFac: 2, flickerFacOffset: 3.5};
 
 var switches: Switches;
 var switchesBeforeAddSidings: number[];
