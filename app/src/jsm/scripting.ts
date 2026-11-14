@@ -8727,7 +8727,7 @@ window.addEventListener("load", function () {
                     switches = message.data.switches;
                 }
                 rotationPoints = message.data.rotationPoints;
-                message.data.trains.forEach(function (train, i: number): void {
+                message.data.trains.forEach(function (train: Train, i: number): void {
                     trains[i].x = train.x;
                     trains[i].y = train.y;
                     trains[i].front.state = train.front.state;
@@ -8785,9 +8785,6 @@ window.addEventListener("load", function () {
                     const volumeFactor = gui.three ? getTrainSoundFactor3D(i) : train.volumeCustom;
                     if (train.move && volumeFactor > 0 && audioControl.mayPlay()) {
                         audioControl.startObject("train", trains[i].audioSrc, true);
-                        if (train.currentSpeedInPercent == undefined) {
-                            train.currentSpeedInPercent = 0;
-                        }
                         audioControl.setObjectVolume("train", trains[i].audioSrc, train.volume * volumeFactor);
                     } else {
                         audioControl.stopObject("train", trains[i].audioSrc);

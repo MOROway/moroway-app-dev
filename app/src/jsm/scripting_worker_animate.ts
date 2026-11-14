@@ -66,6 +66,7 @@ export interface Train extends Object {
     standardDirection?: boolean;
     crash?: boolean;
     volume?: number;
+    volumeCustom?: number;
     invisible?: boolean;
     opacity?: number;
     src: number;
@@ -102,7 +103,6 @@ interface TrainCalc extends Train {
     trainTurned?: boolean | undefined;
     switchCircles?: boolean;
     standardDirectionStartValue: boolean;
-    volumeCustom?: number;
     demoModeEquals?: number;
     demoModeMove?: boolean;
     cars: TrainCalcCar[];
