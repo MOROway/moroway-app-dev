@@ -292,8 +292,8 @@
 		"In the 3D-view the “control”-key + an arrow key tilts the view and the “shift”-key + the “left”/“right”-arrow-key rotates it.",
 		"In the 3D-view zooming, moving, tilting and rotating by keys are only available in the bird's-eye camera mode.",
 		"The “space”-key switches between 2D- and 3D-view.",
-		"In the 3D-view “c” switches to the next camera and the “shift”-key + “c” to the previous one.",
-		"“-” opens and closes the Train Control Center, “_” (“shift”-key + “-”) the Car Control Center.",
+		"In the 3D-view “c” switches to the next camera and “C” (“shift”-key + “c”) to the previous one.",
+		"“-” opens and closes the train control center, “_” (“shift”-key + “-”) the car control center.",
 		"“/” opens the text commands.",
 		"The “escape”-key leaves the demo mode and closes the chat in the multiplayer mode."
 	],
