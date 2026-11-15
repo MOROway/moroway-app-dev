@@ -352,7 +352,7 @@
 	"optInfo_morowayApp_alwaysShowSelectedTrain": "Funktioniert nicht auf kleinen Bildschirmen. Erfordert aktivierte „Klassische Steuerelemente“.",
 	"optInfo_morowayApp_classicUI": "Erfordert 2D-Ansicht.",
 	"optInfo_morowayApp_cursorascircle": "Funktioniert nicht auf Touchscreens. Erfordert 2D-Ansicht.",
-	"optInfo_morowayApp_saveGame": "Wird im Mehrspieler-Modus ignoriert.",
+	"optInfo_morowayApp_saveGame": "Wird im Mehrspielermodus ignoriert.",
 	"optInfo_morowayApp_showNotifications": "Einige Benachrichtigungen werden trotz Deaktivierung dieser Einstellung angezeigt. Funktioniert nicht auf einigen Bildschirm-Seitenverhältnissen.",
 	"optInfo_morowayApp_startDemoMode": "Sie können den Demo-Modus verlassen durch Touchen/Klicken und Halten oder mit Hilfe der „Escape“-Taste.",
 	"optLangSelectChange": "Sprachwahl gespeichert - Neuladen, um anzuwenden",
