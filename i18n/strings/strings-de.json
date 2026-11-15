@@ -234,13 +234,25 @@
 	],
 	"helpScreenGeneralGestures": "Gesten {{0}}",
 	"helpScreenGeneralGesturesPs": [
-		"Um zu zoomen können Sie folgende Optionen wählen: „Steuerungstaste“ + „+“/„-“, „Steuerungstaste“ + Mausrad und die Pinch-Touch-Geste (Finger auseinander bzw. zusammen ziehen).",
-		"Um den gezoomten Bildausschnitt zu ändern, können Sie die Pfeiltasten nutzen oder auf den Hintergrund der Anlage klicken / touchen, halten und bewegen.",
-		"Um den Zoom-Faktor zurückzusetzen können Sie die „Steuerungstaste“ + „0“ oder einen Doppel-Touch auf den Hintergrund der Anlage nutzen.",
-		"In der 3D-Ansicht können Sie die Anlage auch neigen mit „Steuerungstaste“ + einer Pfeiltaste, Mausrad klicken und halten + Maus bewegen oder der parallelen Bewegung zweier Finger (nur Touch).",
-		"In der 3D-Ansicht können Sie die Anlage zudem drehen mit „Umschalttaste“ + linker/rechter Pfeiltaste, „Umschalttaste“ + Mausrad klicken und halten + Maus nach links/rechts bewegen oder dem Drehen zweier Finger (nur Touch).",
+		"Um zu zoomen können Sie „Steuerungstaste“ + Mausrad oder die Pinch-Touch-Geste (Finger auseinander bzw. zusammen ziehen) nutzen.",
+		"Um den gezoomten Bildausschnitt zu ändern, können Sie auf den Hintergrund der Anlage klicken / touchen, halten und bewegen.",
+		"Um den Zoom-Faktor zurückzusetzen, können Sie einen Doppel-Touch auf den Hintergrund der Anlage nutzen.",
+		"In der 3D-Ansicht können Sie die Anlage auch neigen mit Mausrad klicken und halten + Maus bewegen oder der parallelen Bewegung zweier Finger (nur Touch).",
+		"In der 3D-Ansicht können Sie die Anlage zudem drehen mit „Umschalttaste“ + Mausrad klicken und halten + Maus nach links/rechts bewegen oder dem Drehen zweier Finger (nur Touch).",
 		"In der 3D-Ansicht können Sie Neigung und Drehung zurücksetzen mit einem Doppelklick oder langem Touch auf den schwarzen Bereich neben der Anlage.",
 		"In der 3D-Ansicht sind alle Gesten nur in der Vogelperspektive verfügbar."
+	],
+	"helpScreenGeneralKeyboard": "Tastatur {{0}}",
+	"helpScreenGeneralKeyboardPs": [
+		"Zum Zoomen nutzen Sie „Steuerungstaste“ + „+“/„-“, zum Zurücksetzen des Zoom-Faktors „Steuerungstaste“ + „0“.",
+		"Die Pfeiltasten ändern den gezoomten Bildausschnitt.",
+		"In der 3D-Ansicht neigt „Steuerungstaste“ + Pfeiltaste die Anlage und „Umschalttaste“ + linke/rechte Pfeiltaste dreht sie.",
+		"In der 3D-Ansicht sind Zoomen, Verschieben, Neigen und Drehen per Tastatur nur in der Vogelperspektive verfügbar.",
+		"Die „Leertaste“ wechselt zwischen 2D- und 3D-Ansicht.",
+		"In der 3D-Ansicht wechselt „c“ zur nächsten Kamera und „Umschalttaste“ + „c“ zur vorherigen.",
+		"„-“ öffnet und schließt das Zugkontrollzentrum, „_“ („Umschalttaste“ + „-“) das Autokontrollzentrum.",
+		"„/“ öffnet die Textkommandos.",
+		"Die „Escape-Taste“ beendet den Demo-Modus und schließt den Chat im Mehrspielermodus."
 	],
 	"helpScreenGeneralTeamplay": "Mehrspielermodus {{0}}",
 	"helpScreenGeneralTeamplayPs": [
@@ -256,7 +268,7 @@
 		"Um mittels der klassischen Steuerelemente (nur 2D-Ansicht) zu steuern, wählen Sie zunächst einen Zug aus, indem Sie den Schalter unten links im App-Bildschirm betätigen, bis der Name des gewünschten Zuges eingeblendet wird. Durch Anklicken des Transformators unten rechts im App-Bildschirm wird der jeweils ausgewählte Zug gestartet und gestoppt. Ob ein Zug fahrbereit ist, lässt sich an der roten Leuchte am Transformator ablesen.",
 		"Wenn Sie einen größeren Bildschirm verwenden, so können Sie die Geschwindigkeit des Zuges beeinflussen, indem Sie den Regler des Transformators an die gewünschte Position ziehen, ihn an unterschiedlichen Stellen anklicken oder über ihm am Mausrad drehen. Auf kleinen Bildschirmen wird unabhängig hiervon eine mittlere Geschwindigkeit eingestellt. Sie können diese Beschränkung durch Heranzoomen des Transformators umgehen.",
 		"Um die Richtung des jeweils ausgewählten Zuges am Transformator zu ändern, klicken Sie auf das Symbol mit den gespiegelten Pfeilen unten rechts im Transformator an. Die ausgewählte Richtung wird relativ zu den unteren Gleisen hervorgehoben. Wenn der Zug nicht komplett angehalten ist, kann die Richtung nicht gewechselt werden und das Pfeilsymbol ist ausgeblichen. Auf kleineren Bildschirmen kann die Richtung hier nicht verändert werden.",
-		"Bei über eine der Wendeschleifen gewendeten Zügen ist die Richtungsanzeige an allen Stellen umgekehrt zu interpretieren.",
+		"Bei über eine der beiden Wendeschleifen gewendeten Zügen ist die Richtungsanzeige an allen Stellen umgekehrt zu interpretieren.",
 		"Auch können Sie einige Weichen stellen. Das Stellen einer Weiche erfolgt durch Klick auf das farbige Symbol der jeweiligen Weiche. Die Position der Symbole kann durch langen Klick bzw. Touch auf den Hintergrund der Anlage ermittelt werden. Der Zug befährt immer den rot oder grün eingefärbten Weg.",
 		"Sie können durch Drei-Finger-Touch / Rechtsklick auf den Hintergrund ein Zugkontrollzentrum aufrufen. Alternativ können Sie auch das Symbol im Optionsmenü unter der Anlage verwenden.",
 		"Im „Zug folgen“ Kameramodus der 3D-Ansicht können Sie den aktuellen Zug mit den Schaltflächen in der Ecke oben rechts steuern."
