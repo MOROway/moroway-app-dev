@@ -5663,39 +5663,6 @@ const audioControl: any = {
     }
 };
 
-// Volume factor of a train's sound in 3D, from the camera instead of the hidden tracks as in 2D;
-// the locomotive and each car count, the loudest of them decides
-function getTrainSoundFactor3D(i: number): number {
-    const train3D = trains3D?.[i];
-    if (train3D?.mesh == undefined) {
-        return 1;
-    }
-    const parts = [train3D, ...(train3D.cars ?? [])].filter((part) => part.mesh != undefined);
-    const positions = parts.map((part) => part.mesh.getWorldPosition(new THREE.Vector3()));
-    const followCar = three.cameraMode == ThreeCameraModes.FOLLOW_CAR;
-    if (!followCar && three.cameraMode != ThreeCameraModes.FOLLOW_TRAIN) {
-        // Bird's-eye: full while visible without zoom; outside it falls off with the distance to
-        // the screen edge like real sound (1/d), halved at a tenth of the screen width
-        const factors = positions.map(function (position): number {
-            const projected = position.project(three.soundCamera);
-            const beyondX = (Math.max(0, Math.abs(projected.x) - 1) * client.width) / 2;
-            const beyondY = (Math.max(0, Math.abs(projected.y) - 1) * client.height) / 2;
-            return 1 / (1 + Math.hypot(beyondX, beyondY) / (client.width / 10));
-        });
-        return Math.max(...factors);
-    }
-    // Follow cameras: full up to the distance of the followed object, beyond it falls off like real
-    // sound (1/d), halved a tenth of the board width further
-    const followed = (followCar ? cars3D : trains3D)[three.followObject];
-    if (followed?.mesh == undefined) {
-        return 1;
-    }
-    const camera = three.followCamera.getWorldPosition(new THREE.Vector3());
-    const reference = camera.distanceTo(followed.mesh.getWorldPosition(new THREE.Vector3()));
-    const nearest = Math.min(...positions.map((position) => camera.distanceTo(position)));
-    return 1 / (1 + Math.max(0, nearest - reference) / (three.calcScale() / 10));
-}
-
 //3D view
 const three: Three = {
     calcScale() {
@@ -7484,6 +7451,40 @@ function init(state: "load" | "reload" = "reload"): void {
 }
 window.addEventListener("load", function () {
     function initAnimateWorker(): void {
+
+        // Volume factor of a train's sound in 3D, from the camera instead of the hidden tracks as in 2D;
+        // the locomotive and each car count, the loudest of them decides
+        function getTrainSoundFactor3D(i: number): number {
+            const train3D = trains3D?.[i];
+            if (train3D?.mesh == undefined) {
+                return 1;
+            }
+            const parts = [train3D, ...(train3D.cars ?? [])].filter((part) => part.mesh != undefined);
+            const positions = parts.map((part) => part.mesh.getWorldPosition(new THREE.Vector3()));
+            const followCar = three.cameraMode == ThreeCameraModes.FOLLOW_CAR;
+            if (!followCar && three.cameraMode != ThreeCameraModes.FOLLOW_TRAIN) {
+                // Bird's-eye: full while visible without zoom; outside it falls off with the distance to
+                // the screen edge like real sound (1/d), halved at a tenth of the screen width
+                const factors = positions.map(function (position): number {
+                    const projected = position.project(three.soundCamera);
+                    const beyondX = (Math.max(0, Math.abs(projected.x) - 1) * client.width) / 2;
+                    const beyondY = (Math.max(0, Math.abs(projected.y) - 1) * client.height) / 2;
+                    return 1 / (1 + Math.hypot(beyondX, beyondY) / (client.width / 10));
+                });
+                return Math.max(...factors);
+            }
+            // Follow cameras: full up to the distance of the followed object, beyond it falls off like real
+            // sound (1/d), halved a tenth of the board width further
+            const followed = (followCar ? cars3D : trains3D)[three.followObject];
+            if (followed?.mesh == undefined) {
+                return 1;
+            }
+            const camera = three.followCamera.getWorldPosition(new THREE.Vector3());
+            const reference = camera.distanceTo(followed.mesh.getWorldPosition(new THREE.Vector3()));
+            const nearest = Math.min(...positions.map((position) => camera.distanceTo(position)));
+            return 1 / (1 + Math.max(0, nearest - reference) / (three.calcScale() / 10));
+        }
+
         //Animation worker
         animateWorker = new Worker("./src/jsm/scripting_worker_animate.js", {type: "module"});
         animateWorker.onerror = function () {
