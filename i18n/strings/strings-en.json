@@ -290,7 +290,7 @@
 		"To zoom in and out use the “control”-key + “+”/“-”, to reset the zoom factor the “control”-key + “0”.",
 		"The arrow keys change the zoom display detail.",
 		"In the 3D-view the “control”-key + an arrow key tilts the view and the “shift”-key + the “left”/“right”-arrow-key rotates it.",
-		"In the 3D-view zooming, moving, tilting and rotating by keys are only available in the bird's-eye camera mode.",
+		"In the 3D-view zooming, moving, tilting and rotating are only available in the bird's-eye camera mode.",
 		"The “space”-key switches between 2D- and 3D-view.",
 		"In the 3D-view “c” switches to the next camera and “C” (“shift”-key + “c”) to the previous one.",
 		"“-” opens and closes the train control center, “_” (“shift”-key + “-”) the car control center.",
