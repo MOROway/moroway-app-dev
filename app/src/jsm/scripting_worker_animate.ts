@@ -2238,8 +2238,13 @@ function defineTrainParams(): void {
 function animateObjects(): void {
     function collisionMatrix(): number[][] {
         function collisionWeight(input1: number): number[] {
+            // The collision test reads only these values of the train and its cars; facs and points
+            // are added to this object instead of the train
+            function collisionObject(object: Train | TrainCar): any {
+                return {x: object.x, y: object.y, displayAngle: object.displayAngle, width: object.width, height: object.height, front: {z: object.front.z}, back: {z: object.back.z}};
+            }
             var currentObjects: any = [];
-            currentObjects[0] = copyJSObject(trains[input1]);
+            currentObjects[0] = collisionObject(trains[input1]);
             if (trains[input1].cars.length == 0 && trains[input1].standardDirection) {
                 currentObjects[0].facs = [
                     {x: -0.5, weight: trainParams.innerCollisionFac / 4},
@@ -2271,7 +2276,7 @@ function animateObjects(): void {
                 ];
             }
             for (var i = 0; i < trains[input1].cars.length; i++) {
-                currentObjects[i + 1] = copyJSObject(trains[input1].cars[i]);
+                currentObjects[i + 1] = collisionObject(trains[input1].cars[i]);
                 if (i == trains[input1].cars.length - 1 && !trains[input1].standardDirection) {
                     currentObjects[i + 1].facs = [
                         {x: -1, weight: 1},
