@@ -229,6 +229,19 @@ interface Background3D {
     animateBehindFac?: number;
     animateBehindStars?: any[];
 }
+interface ContinueTrackElement {
+    state: number;
+    line?: RotationPoint;
+    curve?: RotationPoint;
+    isOnPart?: (bogie: TrainBogie) => boolean;
+}
+interface ContinueTrack3D {
+    elements: ContinueTrackElement[];
+    group?: any;
+    stripMaterial: any;
+    lineMaterial: any;
+    resize(): void;
+}
 
 interface Gui {
     three?: boolean;
@@ -2416,9 +2429,6 @@ function drawObjects(): void {
     function drawContinueTrackElement(group: any, points: Point3D[]): void {
         // Two rails along the track's points (background px, height z), each offset by half the track width perpendicular to the track:
         // a narrow strip, and a 1 px line along its middle that keeps the rail continuous where the strip is narrower than a pixel (far away or tilted)
-        const color = three.night ? 0x541e03 : 0x963c0e;
-        const stripMaterial = new THREE.MeshBasicMaterial({color: color, side: THREE.DoubleSide});
-        const lineMaterial = new THREE.LineBasicMaterial({color: color});
         const halfTrackWidth = (trainParams.trackWidth / 2) * background.width;
         const halfRailWidth = (0.0009 * background.width) / 2;
         const normals = points.map(function (_point, k) {
@@ -2445,8 +2455,8 @@ function drawObjects(): void {
             }
             const stripGeometry = new THREE.BufferGeometry().setFromPoints(stripVertices);
             stripGeometry.setIndex(indices);
-            group.add(new THREE.Mesh(stripGeometry, stripMaterial));
-            group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(lineVertices), lineMaterial));
+            group.add(new THREE.Mesh(stripGeometry, continueTrack3D.stripMaterial));
+            group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(lineVertices), continueTrack3D.lineMaterial));
         }
     }
     function drawContinueTrackLine(group: any, line: RotationPoint): void {
@@ -3525,61 +3535,46 @@ function drawObjects(): void {
             }
         }
 
-        const continueTrackGroupName = "continue_track_group";
-        const continueTrackOldObject = three.scene.getObjectByName(continueTrackGroupName);
-        if (continueTrackOldObject) {
-            three.scene.remove(continueTrackOldObject);
+        // The hidden tracks' rails, each shown while a train on it is partly hidden; built once per
+        // scene and again after a resize
+        if (continueTrack3D.group?.parent != three.scene) {
+            const passing = rotationPoints.outer.rightSidingPassing;
+            continueTrack3D.elements = [
+                // rightSiding's left leg and bottom straight are shown whole while a train is on them
+                // beyond the passing track's junction
+                {state: 212, line: rotationPoints.outer.rightSiding.end, isOnPart: (bogie) => bogie.y - background.y < passing.diverge.y[0]},
+                {state: 213, curve: rotationPoints.outer.rightSiding.continueCurve0},
+                {state: 214, line: rotationPoints.outer.rightSiding.continueLine0},
+                {state: 215, curve: rotationPoints.outer.rightSiding.continueCurve1},
+                {state: 216, line: rotationPoints.outer.rightSiding.continueLine1},
+                {state: 217, curve: rotationPoints.outer.rightSiding.continueCurve2},
+                {state: 218, line: rotationPoints.outer.rightSiding.rejoin, isOnPart: (bogie) => bogie.x - background.x > passing.merge.x[3]},
+                {state: 220, curve: passing.diverge},
+                {state: 221, curve: passing.curve0},
+                {state: 222, line: passing.line0},
+                {state: 223, curve: passing.curve1},
+                {state: 224, line: passing.line1},
+                {state: 225, curve: passing.curve2},
+                {state: 226, line: passing.line2},
+                {state: 227, curve: passing.merge}
+            ];
+            continueTrack3D.group = new THREE.Group();
+            continueTrack3D.elements.forEach(function (element: ContinueTrackElement): void {
+                const elementGroup = new THREE.Group();
+                if (element.line) {
+                    drawContinueTrackLine(elementGroup, element.line);
+                } else {
+                    drawContinueTrackCurve(elementGroup, element.curve);
+                }
+                continueTrack3D.group.add(elementGroup);
+            });
+            three.scene.add(continueTrack3D.group);
         }
-        const continueTrackNewObject = new THREE.Group();
-        continueTrackNewObject.name = continueTrackGroupName;
-        // rightSiding's left leg and bottom straight are shown whole while a train is on them beyond the passing track's junction
-        const passing = rotationPoints.outer.rightSidingPassing;
-        if (trainInTrackElement(212, (bogie) => bogie.y - background.y < passing.diverge.y[0])) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.end);
-        }
-        if (trainInTrackElement(213)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve0);
-        }
-        if (trainInTrackElement(214)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine0);
-        }
-        if (trainInTrackElement(215)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve1);
-        }
-        if (trainInTrackElement(216)) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.continueLine1);
-        }
-        if (trainInTrackElement(217)) {
-            drawContinueTrackCurve(continueTrackNewObject, rotationPoints.outer.rightSiding.continueCurve2);
-        }
-        if (trainInTrackElement(218, (bogie) => bogie.x - background.x > passing.merge.x[3])) {
-            drawContinueTrackLine(continueTrackNewObject, rotationPoints.outer.rightSiding.rejoin);
-        }
-        if (trainInTrackElement(220)) {
-            drawContinueTrackCurve(continueTrackNewObject, passing.diverge);
-        }
-        if (trainInTrackElement(221)) {
-            drawContinueTrackCurve(continueTrackNewObject, passing.curve0);
-        }
-        if (trainInTrackElement(222)) {
-            drawContinueTrackLine(continueTrackNewObject, passing.line0);
-        }
-        if (trainInTrackElement(223)) {
-            drawContinueTrackCurve(continueTrackNewObject, passing.curve1);
-        }
-        if (trainInTrackElement(224)) {
-            drawContinueTrackLine(continueTrackNewObject, passing.line1);
-        }
-        if (trainInTrackElement(225)) {
-            drawContinueTrackCurve(continueTrackNewObject, passing.curve2);
-        }
-        if (trainInTrackElement(226)) {
-            drawContinueTrackLine(continueTrackNewObject, passing.line2);
-        }
-        if (trainInTrackElement(227)) {
-            drawContinueTrackCurve(continueTrackNewObject, passing.merge);
-        }
-        three.scene.add(continueTrackNewObject);
+        continueTrack3D.elements.forEach(function (element: ContinueTrackElement, k: number): void {
+            continueTrack3D.group.children[k].visible = trainInTrackElement(element.state, element.isOnPart);
+        });
+        continueTrack3D.stripMaterial.color.setHex(three.night ? 0x541e03 : 0x963c0e);
+        continueTrack3D.lineMaterial.color.copy(continueTrack3D.stripMaterial.color);
 
         three.animateLights();
         three.renderer.render(three.scene, three.activeCamera);
@@ -5069,6 +5064,19 @@ const doubleClickWaitTime = doubleClickTime + 50;
 //Background
 const background: Background = {src: 9, secondLayer: 10};
 const background3D: Background3D = {flat: {src: "background-flat"}, flatBehind: {src: "background-flat-behind"}, three: {src: "background-3d"}, aquarium: {}, burningBuilding: {}};
+const continueTrack3D: ContinueTrack3D = {
+    elements: [],
+    stripMaterial: new THREE.MeshBasicMaterial({side: THREE.DoubleSide}),
+    lineMaterial: new THREE.LineBasicMaterial(),
+    resize() {
+        // The rails are built again in the next frame, from the new rotation points and background
+        if (continueTrack3D.group) {
+            continueTrack3D.group.traverse((node: any): void => node.geometry?.dispose());
+            continueTrack3D.group.removeFromParent();
+            delete continueTrack3D.group;
+        }
+    }
+};
 const aquarium3D: Aquarium3D = {backSrc: 40, fish: [41, 41, 41, 42, 42, 43].map((src) => ({src: src, x: 0, y: 0, width: 0, height: 0, speed: 0}))};
 const burningBuilding3D: any = {};
 
@@ -8794,6 +8802,7 @@ window.addEventListener("load", function () {
                     }
                 });
                 if (message.data.resized) {
+                    continueTrack3D.resize();
                     trains3D.forEach(function (train) {
                         if (train.resize) {
                             train.resize();
