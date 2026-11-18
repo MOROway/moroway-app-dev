@@ -5,6 +5,7 @@
 #   query: URL query string, default "mode=singleplayer"
 # The browser binary can be set with CHROMIUM (default: chromium), e.g. CHROMIUM=google-chrome.
 # GPU=1 renders with the GPU (Vulkan): about 60 instead of a few frames per second in 3D.
+# SERVE=<folder> serves an already built app instead of building, e.g. an older version.
 CHROMIUM=${CHROMIUM:-chromium}
 GPU_FLAGS=()
 if [ -n "$GPU" ]; then
@@ -16,8 +17,12 @@ OUT=$REPO/build/.cache/test-tools
 PORT_HTTP=8765
 PORT_DEVTOOLS=9333
 mkdir -p "$(dirname "$OUT/$1")"
-(cd "$REPO/build" && bash build.sh -p web -d 1 2>&1 | tail -1)
-cd "$REPO/out/web/latest" || exit 1
+if [ -n "$SERVE" ]; then
+    cd "$SERVE" || exit 1
+else
+    (cd "$REPO/build" && bash build.sh -p web -d 1 2>&1 | tail -1)
+    cd "$REPO/out/web/latest" || exit 1
+fi
 python3 -m http.server $PORT_HTTP --bind 127.0.0.1 >"$OUT/http.log" 2>&1 &
 SERVER=$!
 ("$CHROMIUM" --headless=new "${GPU_FLAGS[@]}" --remote-debugging-port=$PORT_DEVTOOLS \

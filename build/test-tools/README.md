@@ -17,7 +17,8 @@ build/test-tools/run_test.sh loop/run '[["wait",9000],["click",800,684],["wait",
 This builds `web` in debug mode, serves `out/web/latest` on port 8765, starts Chromium with
 DevTools on port 9333 (1600 × 800 px) and runs the steps. Screenshots and logs go to
 `build/.cache/test-tools/` (ignored by git). A third argument sets the URL query, e.g.
-`"mode=singleplayer&gui-3d=1"`.
+`"mode=singleplayer&gui-3d=1"`. `SERVE=<folder>` serves an already built app instead of building,
+e.g. an older version built from a tag for comparisons.
 
 ## Steps
 
@@ -36,6 +37,8 @@ DevTools on port 9333 (1600 × 800 px) and runs the steps. Screenshots and logs 
 | `["reload"]` | reload the page (saved game is restored) |
 | `["size", w, h]` | change the window size (default 1600 × 800), e.g. before a `reload` |
 | `["eval", expression]` | evaluate JavaScript in the page and log the result (awaits promises) |
+| `["metrics", label]` | log `METRICS <label> {…}`: main thread metrics (DevTools `Performance`), CPU ticks and memory of the browser's processes per type |
+| `["profile", "start"]` / `["profile", "stop"]` | CPU profiles of the main thread and the worker, written as `<name>-main.cpuprofile` / `<name>-worker.cpuprofile` |
 | `["shot", name]` | screenshot |
 
 Useful text commands: `trains list`, `trains start <n>`, `trains stop <n>`, `trains turn <n>`,

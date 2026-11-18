@@ -1,9 +1,9 @@
 // Drive the app in headless Chromium via the DevTools protocol with a list of steps.
 // usage: node drive.mjs <devtools-port> <url> <shot-prefix> '<steps-json>'
 // Steps (see README.md): wait, click, hold, holdshot, middrag, twofinger, key, cmd, until, nav,
-// reload, size, eval, shot.
+// reload, size, eval, metrics, profile, shot.
 // Screenshots are written to <shot-prefix>-<name>.png. Closes the browser at the end.
-import {writeFileSync} from "node:fs";
+import {readdirSync, readFileSync, writeFileSync} from "node:fs";
 
 const [port, url, prefix, stepsJson] = process.argv.slice(2);
 const steps = JSON.parse(stepsJson);
@@ -13,6 +13,8 @@ await new Promise((r) => ws.addEventListener("open", r));
 let id = 0;
 const pending = new Map();
 const logs = [];
+// session of the animation worker (the latest one, a reload starts a new worker)
+let workerSession;
 const lastDbg = [];
 ws.addEventListener("message", (e) => {
     const m = JSON.parse(e.data);
@@ -22,6 +24,7 @@ ws.addEventListener("message", (e) => {
     } else if (m.method === "Target.attachedToTarget") {
         // the animation worker: its exceptions and logs then arrive here like the page's
         const {sessionId} = m.params;
+        workerSession = sessionId;
         ws.send(JSON.stringify({id: ++id, method: "Runtime.enable", sessionId}));
     } else if (m.method === "Runtime.exceptionThrown") {
         logs.push("EXC " + JSON.stringify(m.params.exceptionDetails).slice(0, 600));
@@ -34,10 +37,10 @@ ws.addEventListener("message", (e) => {
         logs.push(m.params.type + " " + m.params.args.map((a) => a.value ?? a.description).join(" ").slice(0, 600));
     }
 });
-const send = (method, params = {}) =>
+const send = (method, params = {}, sessionId = undefined) =>
     new Promise((r) => {
         pending.set(++id, r);
-        ws.send(JSON.stringify({id, method, params}));
+        ws.send(JSON.stringify({id, method, params, sessionId}));
     });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const screenshot = async (name) => {
@@ -57,8 +60,51 @@ const key = (k, code, keyCode) =>
         send("Input.dispatchKeyEvent", {type: "keyUp", key: k, code, windowsVirtualKeyCode: keyCode})
     ]);
 
+// CPU time (clock ticks) and resident memory (kB) of the browser's processes, summed per process
+// type (browser, renderer, gpu-process, utility, …), found as descendants of the browser process;
+// the command line is matched as one string, as a snap joins its arguments with spaces
+const processStats = () => {
+    const procs = readdirSync("/proc").filter((d) => /^\d+$/.test(d)).flatMap((pid) => {
+        try {
+            const cmd = readFileSync(`/proc/${pid}/cmdline`, "utf8").replaceAll("\0", " ");
+            const stat = readFileSync(`/proc/${pid}/stat`, "utf8").replace(/^.*\) /, "").split(" ");
+            const status = readFileSync(`/proc/${pid}/status`, "utf8");
+            const rss = Number(/VmRSS:\s+(\d+)/.exec(status)?.[1] ?? 0);
+            return [{pid, ppid: stat[1], cmd, ticks: Number(stat[11]) + Number(stat[12]), rss}];
+        } catch {
+            return [];
+        }
+    });
+    const isBrowser = (p) => /chrom/.test(p.cmd.split(" ")[0]) && !p.cmd.includes("--type=");
+    const flag = `--remote-debugging-port=${port} `;
+    const root = procs.find((p) => isBrowser(p) && p.cmd.includes(flag));
+    const ours = new Set(root ? [root.pid] : []);
+    for (let grown = true; grown; ) {
+        grown = false;
+        for (const p of procs) {
+            if (!ours.has(p.pid) && ours.has(p.ppid)) {
+                ours.add(p.pid);
+                grown = true;
+            }
+        }
+    }
+    const byType = {};
+    for (const p of procs.filter((p) => ours.has(p.pid))) {
+        const type = /--type=(\S+)/.exec(p.cmd)?.[1] ?? "browser";
+        byType[type] ??= {ticks: 0, rss: 0};
+        byType[type].ticks += p.ticks;
+        byType[type].rss += p.rss;
+    }
+    return byType;
+};
+const performanceMetrics = async () => {
+    const out = await send("Performance.getMetrics");
+    return Object.fromEntries(out.result.metrics.map((m) => [m.name, m.value]));
+};
+
 await send("Runtime.enable");
 await send("Page.enable");
+await send("Performance.enable");
 const autoAttach = {autoAttach: true, waitForDebuggerOnStart: false, flatten: true};
 await send("Target.setAutoAttach", autoAttach);
 await send("Emulation.setDeviceMetricsOverride", {width: 1600, height: 800, deviceScaleFactor: 1, mobile: false});
@@ -159,6 +205,25 @@ for (const [op, ...a] of steps) {
         const options = {expression: a[0], awaitPromise: true, returnByValue: true};
         const out = await send("Runtime.evaluate", options);
         logs.push(`eval -> ${JSON.stringify(out.result.result.value)}`);
+    } else if (op === "metrics") {
+        // snapshot for resource comparisons: the page's main thread metrics and the browser
+        // processes (the animation worker runs in the renderer process)
+        const page = await performanceMetrics();
+        const snapshot = {time: performance.now(), page, processes: processStats()};
+        logs.push(`METRICS ${a[0]} ${JSON.stringify(snapshot)}`);
+    } else if (op === "profile") {
+        // CPU profiles of the main thread and the worker: "start", then "stop" writes
+        // <shot-prefix>-main.cpuprofile and <shot-prefix>-worker.cpuprofile
+        const sessions = {main: undefined, worker: workerSession};
+        for (const [name, session] of Object.entries(sessions)) {
+            if (a[0] === "start") {
+                await send("Profiler.enable", {}, session);
+                await send("Profiler.start", {}, session);
+            } else {
+                const out = await send("Profiler.stop", {}, session);
+                writeFileSync(`${prefix}-${name}.cpuprofile`, JSON.stringify(out.result.profile));
+            }
+        }
     } else if (op === "shot") {
         await screenshot(a[0]);
     }
