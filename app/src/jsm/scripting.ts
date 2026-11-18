@@ -8792,11 +8792,16 @@ window.addEventListener("load", function () {
                         trains[i].cars[j].back.angle = car.back.angle;
                         trains[i].cars[j].wheels = car.wheels;
                     });
-                    // 2D fades and silences trains on hidden track, 3D follows the camera instead
-                    const volumeFactor = gui.three ? getTrainSoundFactor3D(i) : train.volumeCustom;
-                    if (train.move && volumeFactor > 0 && audioControl.mayPlay()) {
-                        audioControl.startObject("train", trains[i].audioSrc, true);
-                        audioControl.setObjectVolume("train", trains[i].audioSrc, train.volume * volumeFactor);
+                    if (train.move && audioControl.mayPlay()) {
+                        // 2D fades and silences trains on hidden track, 3D follows the camera
+                        // instead
+                        const volumeFactor = gui.three ? getTrainSoundFactor3D(i) : train.volumeCustom;
+                        if (volumeFactor > 0) {
+                            audioControl.startObject("train", trains[i].audioSrc, true);
+                            audioControl.setObjectVolume("train", trains[i].audioSrc, train.volume * volumeFactor);
+                        } else {
+                            audioControl.stopObject("train", trains[i].audioSrc);
+                        }
                     } else {
                         audioControl.stopObject("train", trains[i].audioSrc);
                     }
