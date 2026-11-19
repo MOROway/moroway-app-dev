@@ -8390,6 +8390,8 @@ window.addEventListener("load", function () {
                         trains3D[i].resize = function () {
                             if (three.mainGroup.getObjectByName("train_" + i)) {
                                 three.mainGroup.remove(trains3D[i].mesh);
+                                trains3D[i].mesh.geometry.dispose();
+                                trains3D[i].mesh.material.dispose();
                             }
                             const scale = three.calcScale();
                             trains3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].width / background.width), scale * (trains[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0x00aa00, transparent: true, opacity: 0.5}));
@@ -8461,6 +8463,8 @@ window.addEventListener("load", function () {
                             trains3D[i].cars[j].resize = function () {
                                 if (three.mainGroup.getObjectByName("train_" + i + "_car_" + j)) {
                                     three.mainGroup.remove(trains3D[i].cars[j].mesh);
+                                    trains3D[i].cars[j].mesh.geometry.dispose();
+                                    trains3D[i].cars[j].mesh.material.dispose();
                                 }
                                 const scale = three.calcScale();
                                 trains3D[i].cars[j].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (trains[i].cars[j].width / background.width), scale * (trains[i].cars[j].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaa0000, transparent: true, opacity: 0.5}));
@@ -8557,6 +8561,8 @@ window.addEventListener("load", function () {
                         cars3D[i].resize = function () {
                             if (three.mainGroup.getObjectByName("car_" + i)) {
                                 three.mainGroup.remove(cars3D[i].mesh);
+                                cars3D[i].mesh.geometry.dispose();
+                                cars3D[i].mesh.material.dispose();
                             }
                             const scale = three.calcScale();
                             cars3D[i].mesh = new THREE.Mesh(new THREE.BoxGeometry(scale * (cars[i].width / background.width), scale * (cars[i].height / background.height / 2), scale * height3D), new THREE.MeshBasicMaterial({color: 0xaaaa00, transparent: true, opacity: 0.5}));
