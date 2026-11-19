@@ -7205,6 +7205,12 @@ function init(state: "load" | "reload" = "reload"): void {
     three.mainGroup = new THREE.Group();
     three.mainGroup.name = "main_group";
     three.scene.add(three.mainGroup);
+    // A mode switch builds a new renderer: release the old one's GPU context and canvas first
+    if (three.renderer) {
+        three.renderer.dispose();
+        three.renderer.forceContextLoss();
+        three.renderer.domElement.remove();
+    }
     three.renderer = new THREE.WebGLRenderer({alpha: true});
     THREE.ColorManagement.enabled = false;
     three.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
