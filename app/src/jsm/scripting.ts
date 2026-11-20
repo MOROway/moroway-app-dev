@@ -5571,7 +5571,7 @@ const audioControl: any = {
         return false;
     },
     mayPlay() {
-        return audio.active && !client.hidden && !onlineConnection.paused;
+        return audio.active && !client.hidden && !(client.unfocused && SYSTEM_TOOLS.muteWhenUnfocused()) && !onlineConnection.paused;
     },
     existsObject(destinationName: string, destinationIndex: number | undefined = undefined) {
         if (typeof audio.context == "object") {
@@ -8911,6 +8911,11 @@ window.addEventListener("load", function () {
         animateWorker.postMessage({k: "ready", state: "load", online: currentMode == Modes.MULTIPLAYER, onlineInterval: multiplayerMode.animateInterval, demo: currentMode == Modes.DEMO});
     }
 
+    function onWindowFocusChange(event: FocusEvent): void {
+        client.unfocused = event.type == "blur";
+        audioControl.playAndPauseAll();
+    }
+
     function onVisibilityChange(): void {
         client.hidden = document.visibilityState == "hidden";
         resetGestures();
@@ -8945,6 +8950,11 @@ window.addEventListener("load", function () {
     //Visibility handling
     document.addEventListener("visibilitychange", onVisibilityChange);
     onVisibilityChange();
+
+    //Focus handling
+    window.addEventListener("blur", onWindowFocusChange);
+    window.addEventListener("focus", onWindowFocusChange);
+    client.unfocused = !document.hasFocus();
 
     //Initialize canvases and contexts
     canvas = document.querySelector("canvas#game-gameplay-main");

@@ -30,6 +30,16 @@ abstract class WebActivity : MOROwayActivity() {
         binding.webAnimation.destroy()
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        // The web app tracks the window focus by blur and focus events, which the web view does
+        // not fire when another app takes the focus in split-screen
+        val type = if (hasFocus) "focus" else "blur"
+        binding.webAnimation.evaluateJavascript(
+            "window.dispatchEvent(new FocusEvent(\"$type\"))", null
+        )
+    }
+
     private fun initWeb(webView: WebView) {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true

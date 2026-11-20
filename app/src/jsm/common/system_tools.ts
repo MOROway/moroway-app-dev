@@ -8,5 +8,6 @@ export interface SYSTEM_TOOLS_INTERFACE {
     exitApp: () => void;
     forceModeSwitchHandling: (newMode: boolean) => "navigate" | "historyReplace" | false;
     keepAlive: (acquire: boolean) => void;
+    muteWhenUnfocused: () => boolean;
     navigateBack: () => void;
 }

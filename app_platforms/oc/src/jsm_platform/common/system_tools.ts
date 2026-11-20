@@ -23,6 +23,7 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
             }
         }
     },
+    muteWhenUnfocused: () => true,
     navigateBack() {
         if (document.referrer.startsWith(document.baseURI) && document.referrer !== document.baseURI && window.history.length > 1) {
             window.history.back();

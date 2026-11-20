@@ -24,6 +24,7 @@ export const SYSTEM_TOOLS: SYSTEM_TOOLS_INTERFACE = {
             }
         }
     },
+    muteWhenUnfocused: () => true,
     navigateBack() {
         // Android wrapper contains WebJSInterface
         // @ts-ignore
