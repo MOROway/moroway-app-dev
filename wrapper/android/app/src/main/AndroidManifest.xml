@@ -41,12 +41,12 @@
         </activity>
         <activity
             android:name=".WebSettingsActivity"
-            android:configChanges="keyboardHidden|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/generalTitleSettingsScreen"
             android:screenOrientation="locked" />
         <activity
             android:name=".WebHelpActivity"
-            android:configChanges="keyboardHidden|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/generalTitleHelpScreen"
             android:screenOrientation="locked" />
         <activity
