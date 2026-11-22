@@ -61,6 +61,8 @@ jobs:
                   python-version: "3.x"
             - name: Install fonttools
               run: pip install fonttools
+            - name: Install TypeScript
+              run: npm install -g typescript@7
             - uses: actions/cache/restore@v6
               with:
                   path: build/.cache/

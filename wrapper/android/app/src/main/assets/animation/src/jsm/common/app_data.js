@@ -12,7 +12,7 @@ const APP_DATA = {
         // @ts-ignore
         minor: 0,
         // @ts-ignore
-        patch: 0,
+        patch: 2,
         // @ts-ignore
         beta: 0,
         date: {
