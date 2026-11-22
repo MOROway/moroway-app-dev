@@ -1229,7 +1229,9 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         menus.outerContainer.element.style.display = "none";
     }
     calcBackground();
-    menus.outerContainer.width = background.width / client.devicePixelRatio;
+    // The menu follows the board, but as a control keeps clear of all hidden side edges
+    const menuLeft = Math.max(client.x, client.unsafeArea.left);
+    menus.outerContainer.width = Math.min(client.x + background.width / client.devicePixelRatio, client.width - client.unsafeArea.right) - menuLeft;
     menus.innerWidthRelativeToItemLength = false;
     menus.innerWidth = ((getSetting("classicUI") && !gui.three) || menus.floating ? 0.5 : 1) * menus.outerContainer.width;
     var availableHeight = menus.floating ? client.y - client.boardUnsafeArea.top : menus.outerContainer.height;
@@ -1256,7 +1258,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     if (!gui.three || three.cameraMode == ThreeCameraModes.BIRDS_EYE) {
         menus.outerContainer.element.style.top = client.y + background.height / client.devicePixelRatio + "px";
         menus.outerContainer.element.style.bottom = "unset";
-        menus.outerContainer.element.style.left = client.x + "px";
+        menus.outerContainer.element.style.left = menuLeft + "px";
         menus.outerContainer.element.style.right = "unset";
     } else {
         menus.outerContainer.element.style.top = "unset";
