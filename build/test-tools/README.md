@@ -35,7 +35,7 @@ e.g. an older version built from a tag for comparisons.
 | `["until", regex, timeoutMs]` | wait until a `DBG` log line matches |
 | `["nav", url]` | navigate (e.g. to the same game with `gui-3d=1`; the saved game keeps switches) |
 | `["reload"]` | reload the page (saved game is restored) |
-| `["size", w, h]` | change the window size (default 1600 × 800), e.g. before a `reload` |
+| `["size", w, h, dpr]` | change the window size (default 1600 × 800), e.g. before a `reload`; optional device pixel ratio (default 1), e.g. 2 for sharp screenshots |
 | `["eval", expression]` | evaluate JavaScript in the page and log the result (awaits promises) |
 | `["metrics", label]` | log `METRICS <label> {…}`: main thread metrics (DevTools `Performance`), CPU ticks and memory of the browser's processes per type |
 | `["profile", "start"]` / `["profile", "stop"]` | CPU profiles of the main thread and the worker, written as `<name>-main.cpuprofile` / `<name>-worker.cpuprofile` |

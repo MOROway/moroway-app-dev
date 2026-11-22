@@ -157,8 +157,9 @@ for (const [op, ...a] of steps) {
         logs.push("--- reload ---");
         await send("Page.reload", {ignoreCache: false});
     } else if (op === "size") {
-        // window size for the following steps; a reload makes the app start at that size
-        const metrics = {width: a[0], height: a[1], deviceScaleFactor: 1, mobile: false};
+        // window size (and optionally the device pixel ratio) for the following steps; a reload
+        // makes the app start at that size
+        const metrics = {width: a[0], height: a[1], deviceScaleFactor: a[2] ?? 1, mobile: false};
         await send("Emulation.setDeviceMetricsOverride", metrics);
     } else if (op === "middrag") {
         // drag with the middle button held (tilts the 3D view, with "shift" rotates it): from x, y
