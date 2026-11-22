@@ -8,8 +8,8 @@ android {
         applicationId = "appinventor.ai_Jonathan_Herrmann_Engel.MOROway"
         minSdk = 28
         targetSdk = 37
-        versionCode = 1100021
-        versionName = "11.0.2"
+        versionCode = 1100032
+        versionName = "11.0.3"
     }
     buildTypes {
         getByName("release") {
@@ -44,7 +44,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("androidx.activity:activity-ktx:1.13.0")
-    implementation("androidx.webkit:webkit:1.17.1")
+    implementation("androidx.webkit:webkit:1.18.0")
     implementation("io.coil-kt.coil3:coil:3.6.3")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.6.3")
 }

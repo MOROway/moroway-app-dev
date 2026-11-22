@@ -201,8 +201,8 @@ h2 {
     z-index: 200;
     position: fixed;
     background: rgb(48, 48, 48);
-    left: 0;
-    bottom: 0;
+    left: var(--client-unsafe-area-left, 0px);
+    bottom: var(--client-unsafe-area-bottom, 0px);
     visibility: hidden;
     font-size: 90%;
 }

@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?><resources><string name="d_update_changelog">Fehlerkorrekturen.</string></resources>
+<?xml version="1.0" encoding="utf-8"?><resources><string name="d_update_changelog">Spielfeld und Bedienelemente bleiben frei von Kameraaussparungen und Systemleisten.\nDas Spiel nutzt wieder den ganzen Bildschirm, Bedienelemente bleiben frei von den Systemleisten.</string></resources>
