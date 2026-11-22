@@ -179,7 +179,7 @@ canvas {
     background: rgb(48, 48, 48);
     transform: translateX(-50%);
     left: 50%;
-    bottom: 2vh;
+    bottom: calc(2vh + var(--client-unsafe-area-bottom, 0px));
     max-width: 50vw;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -197,13 +197,12 @@ canvas {
 #settings,
 #chat {
     z-index: 30;
-    top: 0;
-    right: 0;
+    top: var(--client-unsafe-area-top, 0px);
+    right: var(--client-unsafe-area-right, 0px);
+    bottom: var(--client-unsafe-area-bottom, 0px);
     width: 450px;
-    max-width: calc(100vw - 5px);
-    max-width: calc(100svw - 5px);
-    height: 100vh;
-    height: 100svh;
+    max-width: calc(100vw - 5px - var(--client-unsafe-area-left, 0px) - var(--client-unsafe-area-right, 0px));
+    max-width: calc(100svw - 5px - var(--client-unsafe-area-left, 0px) - var(--client-unsafe-area-right, 0px));
     border-left: 5px solid black;
     overflow-y: auto;
     display: none;
@@ -475,19 +474,19 @@ canvas {
     font-size: 1.5em;
     color: rgba(150, 50, 50);
     z-index: 5;
-    right: 1.5vw;
-    top: 1.5vw;
+    right: calc(1.5vw + var(--client-unsafe-area-right, 0px));
+    top: calc(1.5vw + var(--client-unsafe-area-top, 0px));
 }
 
 #setup #setup-inner-content {
     z-index: 1;
     position: fixed;
-    width: 96vw;
-    width: 96svw;
-    height: calc(100vh - 4vw);
-    height: calc(100svh - 4svw);
-    top: 1vw;
-    left: 1vw;
+    width: calc(96vw - var(--client-unsafe-area-left, 0px) - var(--client-unsafe-area-right, 0px));
+    width: calc(96svw - var(--client-unsafe-area-left, 0px) - var(--client-unsafe-area-right, 0px));
+    height: calc(100vh - 4vw - var(--client-unsafe-area-top, 0px) - var(--client-unsafe-area-bottom, 0px));
+    height: calc(100svh - 4svw - var(--client-unsafe-area-top, 0px) - var(--client-unsafe-area-bottom, 0px));
+    top: calc(1vw + var(--client-unsafe-area-top, 0px));
+    left: calc(1vw + var(--client-unsafe-area-left, 0px));
     padding: 1vw;
     font-size: 150%;
     overflow: auto;
@@ -640,10 +639,10 @@ canvas {
 #text-control {
     display: none;
     position: fixed;
-    left: 0;
-    bottom: 0;
+    left: var(--client-unsafe-area-left, 0px);
+    right: var(--client-unsafe-area-right, 0px);
+    bottom: var(--client-unsafe-area-bottom, 0px);
     z-index: 10;
-    width: 100%;
     padding-bottom: 10px;
     background-color: rgba(0, 0, 0, 0.5);
     font-family: monospace;
