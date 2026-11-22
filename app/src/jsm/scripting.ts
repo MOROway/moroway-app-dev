@@ -6803,6 +6803,10 @@ function init(state: "load" | "reload" = "reload"): void {
         document.removeEventListener("keydown", preventKeyZoomDuringLoad);
         document.removeEventListener("keyup", preventKeyZoomDuringLoad);
         window.removeEventListener("resize", requestResize);
+        if ("windowControlsOverlay" in navigator) {
+            //TODO: Remove cast once TS is ready
+            (navigator.windowControlsOverlay as any).removeEventListener("geometrychange", requestResize);
+        }
         //Normal mode
         document.removeEventListener("keydown", onKeyDown);
         document.removeEventListener("keyup", onKeyUp);
@@ -8671,6 +8675,12 @@ window.addEventListener("load", function () {
 
                 //Trigger resize
                 window.addEventListener("resize", requestResize);
+                // Showing or hiding the title bar of an installed desktop app (Window Controls
+                // Overlay) changes the unsafe area without a resize
+                if ("windowControlsOverlay" in navigator) {
+                    //TODO: Remove cast once TS is ready
+                    (navigator.windowControlsOverlay as any).addEventListener("geometrychange", requestResize);
+                }
                 requestResize();
 
                 //Initialize canvas
