@@ -19,6 +19,7 @@ class WebGameActivity : WebActivity() {
     private var onlineGame = false
     private var demoGame = false
     private var unsafeArea = Insets.NONE
+    private var boardUnsafeArea = Insets.NONE
     private val gameLocation =
         "https://" + Globals.WEBVIEW_DOMAIN + Globals.WEBVIEW_PATH + "animation/index.html"
 
@@ -32,6 +33,7 @@ class WebGameActivity : WebActivity() {
             unsafeArea = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
+            boardUnsafeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             injectUnsafeArea()
             WindowInsetsCompat.CONSUMED
         }
@@ -59,19 +61,23 @@ class WebGameActivity : WebActivity() {
     }
 
     // The web view reports no safe area for the system bars: pass the hidden edges in CSS pixels
-    // to the game, which reads them like its safe-area insets
+    // to the game, which reads them like its safe-area insets; the board ignores the camera cutout
     private fun injectUnsafeArea() {
         val density = resources.displayMetrics.density
-        val sides = mapOf(
-            "top" to unsafeArea.top,
-            "right" to unsafeArea.right,
-            "bottom" to unsafeArea.bottom,
-            "left" to unsafeArea.left
+        val properties = mapOf("unsafe-area" to unsafeArea, "board-unsafe-area" to boardUnsafeArea)
+        binding.webAnimation.evaluateJavascript(
+            properties.entries.joinToString("") { (name, area) ->
+                mapOf(
+                    "top" to area.top,
+                    "right" to area.right,
+                    "bottom" to area.bottom,
+                    "left" to area.left
+                ).entries.joinToString("") { (side, px) ->
+                    "document.documentElement.style" +
+                        ".setProperty(\"--$name-$side\", \"${px / density}px\");"
+                }
+            } + "window.dispatchEvent(new Event(\"resize\"));", null
         )
-        binding.webAnimation.evaluateJavascript(sides.entries.joinToString("") { (side, px) ->
-            "document.documentElement.style" +
-                ".setProperty(\"--unsafe-area-$side\", \"${px / density}px\");"
-        } + "window.dispatchEvent(new Event(\"resize\"));", null)
     }
 
     override fun onNewUri(uri: Uri) {

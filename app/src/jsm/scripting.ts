@@ -319,6 +319,7 @@ interface ThreeFollowCamControls {
 }
 interface Three {
     calcScale(): number;
+    calcPositionX(): number;
     calcPositionY(): number;
     cloneNode(src: any, cloneMaterial?: boolean): any;
     switchCamera(forwards: boolean): void;
@@ -428,14 +429,22 @@ function measureViewSpace(): void {
             client.unsafeArea.top = Math.max(client.unsafeArea.top, windowControlsOverlayRect.height);
         }
     }
-    // Opposite edges leaving no room between them are ignored: the board would get no size (the
-    // board keeps clear of the larger side edge on both sides)
-    if (client.unsafeArea.top + client.unsafeArea.bottom >= client.height) {
-        client.unsafeArea.top = client.unsafeArea.bottom = 0;
-    }
-    if (2 * Math.max(client.unsafeArea.left, client.unsafeArea.right) >= client.width) {
-        client.unsafeArea.left = client.unsafeArea.right = 0;
-    }
+    // The board keeps clear of the edges the Android app passes for it (its system bars, but not
+    // the camera cutout, as a small hole over the board does no harm), elsewhere of all hidden edges
+    client.boardUnsafeArea = {};
+    ["top", "right", "bottom", "left"].forEach(function (side) {
+        const boardUnsafeArea = getComputedStyle(document.documentElement).getPropertyValue("--board-unsafe-area-" + side);
+        client.boardUnsafeArea[side] = boardUnsafeArea === "" ? client.unsafeArea[side] : parseFloat(boardUnsafeArea) || 0;
+    });
+    // Opposite edges leaving no room between them are ignored: the board would get no size
+    [client.unsafeArea, client.boardUnsafeArea].forEach(function (unsafeArea) {
+        if (unsafeArea.top + unsafeArea.bottom >= client.height) {
+            unsafeArea.top = unsafeArea.bottom = 0;
+        }
+        if (unsafeArea.left + unsafeArea.right >= client.width) {
+            unsafeArea.left = unsafeArea.right = 0;
+        }
+    });
     // The same edges for the stylesheets
     ["top", "right", "bottom", "left"].forEach(function (side) {
         document.documentElement.style.setProperty("--client-unsafe-area-" + side, client.unsafeArea[side] + "px");
@@ -980,23 +989,21 @@ function beforeOptionsMenuChange(): void {
 function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-change" | "settings-change"): void {
     function calcBackground(simulate = false): void {
         // The board fits into the canvas without its hidden edges and without the menu below the
-        // board; horizontally both sides keep clear of the larger edge, as the 3D view expects the
-        // board centred
-        const side = Math.max(client.unsafeArea.left, client.unsafeArea.right) * client.devicePixelRatio;
-        const availableWidth = canvasBackground.width - 2 * side;
-        const availableHeight = canvasBackground.height - (client.unsafeArea.top + client.unsafeArea.bottom) * client.devicePixelRatio - (simulate ? 0 : menus.outerContainer.height * client.devicePixelRatio);
+        // board
+        const availableWidth = canvasBackground.width - (client.boardUnsafeArea.left + client.boardUnsafeArea.right) * client.devicePixelRatio;
+        const availableHeight = canvasBackground.height - (client.boardUnsafeArea.top + client.boardUnsafeArea.bottom) * client.devicePixelRatio - (simulate ? 0 : menus.outerContainer.height * client.devicePixelRatio);
         if (availableWidth / availableHeight < pics[background.src].width / pics[background.src].height) {
             client.normalRatio = true;
             background.width = availableWidth;
             background.height = pics[background.src].height * (availableWidth / pics[background.src].width);
-            background.x = side;
-            background.y = client.unsafeArea.top * client.devicePixelRatio + (availableHeight - background.height) / 2;
+            background.x = client.boardUnsafeArea.left * client.devicePixelRatio;
+            background.y = client.boardUnsafeArea.top * client.devicePixelRatio + (availableHeight - background.height) / 2;
         } else {
             client.normalRatio = false;
             background.width = pics[background.src].width * (availableHeight / pics[background.src].height);
             background.height = availableHeight;
-            background.x = side + (availableWidth - background.width) / 2;
-            background.y = client.unsafeArea.top * client.devicePixelRatio;
+            background.x = client.boardUnsafeArea.left * client.devicePixelRatio + (availableWidth - background.width) / 2;
+            background.y = client.boardUnsafeArea.top * client.devicePixelRatio;
         }
         if (APP_DATA.debug && debug.showHidden) {
             background.x = 0;
@@ -1168,7 +1175,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
             set3DItems();
             calcMenusAndBackground("items-change");
             if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.three) {
-                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected])), NotificationPriority.High, 1250, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected])), NotificationPriority.High, 1250, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             }
         };
         menus.options.elements.view3DNightToggle.onclick = function () {
@@ -1208,10 +1215,10 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         menus.outerContainer.height = menus.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
         menus.outerContainer.element.style.display = "";
         calcBackground(true);
-        if (menus.small && client.y - client.unsafeArea.top >= menus.outerContainer.height) {
+        if (menus.small && client.y - client.boardUnsafeArea.top >= menus.outerContainer.height) {
             menus.floating = true;
             menus.outerContainer.height = 0;
-        } else if (menus.outerContainer.height >= (client.height - client.unsafeArea.top - client.unsafeArea.bottom) / 2) {
+        } else if (menus.outerContainer.height >= (client.height - client.boardUnsafeArea.top - client.boardUnsafeArea.bottom) / 2) {
             menus.small = true;
             menus.outerContainer.height = 0;
             menus.outerContainer.element.style.display = "none";
@@ -1225,7 +1232,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     menus.outerContainer.width = background.width / client.devicePixelRatio;
     menus.innerWidthRelativeToItemLength = false;
     menus.innerWidth = ((getSetting("classicUI") && !gui.three) || menus.floating ? 0.5 : 1) * menus.outerContainer.width;
-    var availableHeight = menus.floating ? client.y - client.unsafeArea.top : menus.outerContainer.height;
+    var availableHeight = menus.floating ? client.y - client.boardUnsafeArea.top : menus.outerContainer.height;
     menus.itemDefaultSize = availableHeight * 0.5;
     if (menus.small && (!menus.floating || client.width * 0.75 >= client.height)) {
         menus.innerWidthRelativeToItemLength = true;
@@ -1418,9 +1425,10 @@ function getGesture(gesture: Gesture): void {
     three.scene.rotation.y = (client.zoomAndTilt.tiltX - client.width / 2) / client.width;
     three.scene.rotation.z = client.zoomAndTilt.rotation;
     // The board is scaled to fit and turned around its own centre instead of the window centre
-    const shift = fit * three.calcPositionY();
-    const pivotX = shift * Math.sin(client.zoomAndTilt.rotation);
-    const pivotY = three.calcPositionY() - shift * Math.cos(client.zoomAndTilt.rotation);
+    const positionX = three.calcPositionX();
+    const positionY = three.calcPositionY();
+    const pivotX = positionX - fit * (positionX * Math.cos(client.zoomAndTilt.rotation) - positionY * Math.sin(client.zoomAndTilt.rotation));
+    const pivotY = positionY - fit * (positionX * Math.sin(client.zoomAndTilt.rotation) + positionY * Math.cos(client.zoomAndTilt.rotation));
     const pivot = new THREE.Vector3(pivotX, pivotY, 0);
     const tilt = new THREE.Euler(three.scene.rotation.x, three.scene.rotation.y, 0);
     three.scene.scale.setScalar(fit);
@@ -1530,11 +1538,11 @@ function onMouseRight(event: PointerEvent): void {
     client.chosenInputMethod = "mouse";
     if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
         controlCenter.showCarCenter = true;
-        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+        notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
     } else {
         gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
         if (gui.controlCenter) {
-            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
         }
         controlCenter.mouse.clickEvent = false;
         controlCenter.mouse.wheelScrolls = false;
@@ -1702,12 +1710,12 @@ function getTouchEnd(event: TouchEvent): void {
     if (controlCenter.mouse.prepare && event.touches.length == 0) {
         if (!controlCenter.showCarCenter && gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three)) {
             controlCenter.showCarCenter = true;
-            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", getString("appScreenCarControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         } else {
             gui.controlCenter = !gui.controlCenter && !gui.konamiOverlay && !onlineConnection.stop && (client.zoomAndTilt.realScale == 1 || gui.three);
             if (gui.controlCenter) {
-                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                notify("#canvas-notifier", getString("appScreenControlCenterTitle"), NotificationPriority.Low, 1000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             }
             controlCenter.mouse.clickEvent = controlCenter.mouse.hold = controlCenter.mouse.prepare = false;
         }
@@ -2168,7 +2176,7 @@ function carCollisionCourse(input1: number, sendNotification: boolean, fixFac: n
             context.rect(-currentObject.width / 2, -currentObject.height / 2, currentObject.width, currentObject.height);
             if (context.isPointInPath(x1, y1) || context.isPointInPath(x2, y2) || context.isPointInPath(x3, y3)) {
                 if (sendNotification && cars[input1].move) {
-                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames", input1]), getString(["appScreenCarNames", i])), NotificationPriority.Default, 2000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                    notify("#canvas-notifier", formatJSString(getString("appScreenObjectHasCrashed", "."), getString(["appScreenCarNames", input1]), getString(["appScreenCarNames", i])), NotificationPriority.Default, 2000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                 }
                 collision = true;
                 cars[input1].move = cars[input1].backToInit = false;
@@ -2461,7 +2469,7 @@ function drawObjects(): void {
         function toScene(point: Point3D, k: number, offset: number): any {
             const x = point.x + offset * normals[k].x;
             const y = point.y + offset * normals[k].y;
-            return new THREE.Vector3(three.calcScale() * ((x - background.width / 2) / background.width), three.calcScale() * (-(y - background.height / 2) / background.width) + three.calcPositionY(), (three.calcScale() * point.z) / background.width - background.width / 1000000);
+            return new THREE.Vector3(three.calcScale() * ((x - background.width / 2) / background.width) + three.calcPositionX(), three.calcScale() * (-(y - background.height / 2) / background.width) + three.calcPositionY(), (three.calcScale() * point.z) / background.width - background.width / 1000000);
         }
         for (const side of [-1, 1]) {
             const stripVertices = [];
@@ -2994,7 +3002,7 @@ function drawObjects(): void {
     var wasHold = hardware.mouse.isHold;
     frameNo++;
     if (frameNo % 1000000 === 0) {
-        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NotificationPriority.Default, 10000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+        notify("#canvas-notifier", formatJSString(getString("appScreenAMillionFrames", "."), frameNo / 1000000), NotificationPriority.Default, 10000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
     }
     if (client.zoomAndTilt.realScale != client.zoomAndTilt.realScaleOld || client.zoomAndTilt.offsetX != client.zoomAndTilt.offsetXOld || client.zoomAndTilt.offsetY != client.zoomAndTilt.offsetYOld) {
         client.zoomAndTilt.realScaleOld = client.zoomAndTilt.realScale;
@@ -3118,14 +3126,14 @@ function drawObjects(): void {
             if (trains3D[i] && trains3D[i].mesh) {
                 const trainFrontHeight = (three.calcScale() * train.front.z) / background.width;
                 const trainBackHeight = (three.calcScale() * train.back.z) / background.width;
-                trains3D[i].mesh.position.set((three.calcScale() * (train.x - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + (trainFrontHeight + trainBackHeight) / 2);
+                trains3D[i].mesh.position.set((three.calcScale() * (train.x - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(train.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + (trainFrontHeight + trainBackHeight) / 2);
                 if (trains3D[i].meshFront) {
-                    trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainFrontHeight);
-                    trains3D[i].meshFront.right.position.set((three.calcScale() * (train.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainFrontHeight);
+                    trains3D[i].meshFront.left.position.set((three.calcScale() * (train.wheels.front.leftX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(train.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainFrontHeight);
+                    trains3D[i].meshFront.right.position.set((three.calcScale() * (train.wheels.front.rightX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(train.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainFrontHeight);
                 }
                 if (trains3D[i].meshBack) {
-                    trains3D[i].meshBack.left.position.set((three.calcScale() * (train.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainBackHeight);
-                    trains3D[i].meshBack.right.position.set((three.calcScale() * (train.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(train.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainBackHeight);
+                    trains3D[i].meshBack.left.position.set((three.calcScale() * (train.wheels.back.leftX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(train.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainBackHeight);
+                    trains3D[i].meshBack.right.position.set((three.calcScale() * (train.wheels.back.rightX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(train.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].positionZ + trainBackHeight);
                 }
                 if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
                     const flickerRandom = (trains3D[i].positionZ / 5) * Math.random();
@@ -3176,14 +3184,14 @@ function drawObjects(): void {
                 if (trains3D[i].cars[j] && trains3D[i].cars[j].mesh) {
                     const carFrontHeight = (three.calcScale() * car.front.z) / background.width;
                     const carBackHeight = (three.calcScale() * car.back.z) / background.width;
-                    trains3D[i].cars[j].mesh.position.set(three.calcScale() * ((car.x - background.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + (carFrontHeight + carBackHeight) / 2);
+                    trains3D[i].cars[j].mesh.position.set(three.calcScale() * ((car.x - background.x - background.width / 2) / background.width) + three.calcPositionX(), three.calcScale() * (-(car.y - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + (carFrontHeight + carBackHeight) / 2);
                     if (trains3D[i].cars[j].meshFront) {
-                        trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheels.front.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carFrontHeight);
-                        trains3D[i].cars[j].meshFront.right.position.set((three.calcScale() * (car.wheels.front.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carFrontHeight);
+                        trains3D[i].cars[j].meshFront.left.position.set((three.calcScale() * (car.wheels.front.leftX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(car.wheels.front.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carFrontHeight);
+                        trains3D[i].cars[j].meshFront.right.position.set((three.calcScale() * (car.wheels.front.rightX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(car.wheels.front.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carFrontHeight);
                     }
                     if (trains3D[i].cars[j].meshBack) {
-                        trains3D[i].cars[j].meshBack.left.position.set((three.calcScale() * (car.wheels.back.leftX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carBackHeight);
-                        trains3D[i].cars[j].meshBack.right.position.set((three.calcScale() * (car.wheels.back.rightX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(car.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carBackHeight);
+                        trains3D[i].cars[j].meshBack.left.position.set((three.calcScale() * (car.wheels.back.leftX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(car.wheels.back.leftY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carBackHeight);
+                        trains3D[i].cars[j].meshBack.right.position.set((three.calcScale() * (car.wheels.back.rightX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(car.wheels.back.rightY - background.y - background.height / 2) / background.width) + three.calcPositionY(), trains3D[i].cars[j].positionZ + carBackHeight);
                     }
                     if (frameNo <= train.lastDirectionChange + flickerDuration * 3) {
                         const flickerRandom = (trains3D[i].cars[j].positionZ / 5) * Math.random();
@@ -3233,7 +3241,7 @@ function drawObjects(): void {
         });
         cars.forEach(function (car: Car, i: number): void {
             if (cars3D[i] && cars3D[i].mesh) {
-                cars3D[i].mesh.position.set(three.calcScale() * ((car.x - background.width / 2) / background.width), three.calcScale() * (-(car.y - background.height / 2) / background.width) + three.calcPositionY(), cars3D[i].positionZ);
+                cars3D[i].mesh.position.set(three.calcScale() * ((car.x - background.width / 2) / background.width) + three.calcPositionX(), three.calcScale() * (-(car.y - background.height / 2) / background.width) + three.calcPositionY(), cars3D[i].positionZ);
                 cars3D[i].mesh.rotation.z = -car.displayAngle;
             }
             if (currentMode != Modes.DEMO && cars3D[i] && cars3D[i].meshParkingLot) {
@@ -3251,7 +3259,7 @@ function drawObjects(): void {
             } else {
                 background3D.animateBehind(false, cars[three.followObject].displayAngle / (2 * Math.PI));
             }
-            three.followCamera.position.set(three.calcScale() * ((cars[three.followObject].outerX - background.width / 2) / background.width), three.calcScale() * (-(cars[three.followObject].outerY - background.height / 2) / background.width) + three.calcPositionY(), cars3D[three.followObject].positionZ == undefined ? 0 : cars3D[three.followObject].positionZ);
+            three.followCamera.position.set(three.calcScale() * ((cars[three.followObject].outerX - background.width / 2) / background.width) + three.calcPositionX(), three.calcScale() * (-(cars[three.followObject].outerY - background.height / 2) / background.width) + three.calcPositionY(), cars3D[three.followObject].positionZ == undefined ? 0 : cars3D[three.followObject].positionZ);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -cars[three.followObject].displayAngle;
             if ((!carParams.autoModeOff && carParams.isBackToRoot) || (carParams.autoModeOff && (cars[three.followObject].backToInit || cars[three.followObject].backwardsState > 0))) {
@@ -3356,7 +3364,7 @@ function drawObjects(): void {
             const gradientSign = trains[three.followObject].standardDirection ? 1 : -1;
             const gradient = (object.front.z - object.back.z) / Math.hypot(object.front.x - object.back.x, object.front.y - object.back.y);
             const cameraZ = (object.front.z + object.back.z) / 2 + gradientSign * gradient * Math.hypot(trains[three.followObject].outerX - object.x, trains[three.followObject].outerY - object.y);
-            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width, three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), (object3D.positionZ == undefined ? 0 : object3D.positionZ) + (three.calcScale() * cameraZ) / background.width);
+            three.followCamera.position.set((three.calcScale() * (trains[three.followObject].outerX - background.x - background.width / 2)) / background.width + three.calcPositionX(), three.calcScale() * (-(trains[three.followObject].outerY - background.y - background.height / 2) / background.width) + three.calcPositionY(), (object3D.positionZ == undefined ? 0 : object3D.positionZ) + (three.calcScale() * cameraZ) / background.width);
             three.followCamera.rotation.set(0, 0, 0);
             three.followCamera.rotation.z = -object.displayAngle;
             if (!trains[three.followObject].standardDirection) {
@@ -3502,13 +3510,13 @@ function drawObjects(): void {
                     const scale = three.calcScale();
                     switches3D[key][currentKey].squareMeshHighlight.material.color.setHex(hexSquare);
                     switches3D[key][currentKey].squareMeshHighlight.rotation.y = -angle - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshHighlight.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshHighlight.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshHighlight.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.depth / 2));
+                    switches3D[key][currentKey].squareMeshHighlight.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshHighlight.rotation.y)) + three.calcPositionX(), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshHighlight.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshHighlight.geometry.parameters.depth / 2));
 
                     switches3D[key][currentKey].squareMeshNormal.rotation.y = -switches[key][currentKey].angles.normal - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshNormal.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshNormal.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshNormal.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.depth / 2));
+                    switches3D[key][currentKey].squareMeshNormal.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshNormal.rotation.y)) + three.calcPositionX(), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshNormal.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshNormal.geometry.parameters.depth / 2));
 
                     switches3D[key][currentKey].squareMeshTurned.rotation.y = -switches[key][currentKey].angles.turned - Math.PI / 4;
-                    switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.depth / 2));
+                    switches3D[key][currentKey].squareMeshTurned.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.cos(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionX(), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width + (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.width / 2) * Math.sin(switches3D[key][currentKey].squareMeshTurned.rotation.y)) + three.calcPositionY(), scale * (switches3D[key][currentKey].squareMeshTurned.geometry.parameters.depth / 2));
                 });
             });
             if (!gui.controlCenter && raycasterActive) {
@@ -5060,7 +5068,7 @@ function actionSync(objectName: ActionSync["objectName"], index: number | [strin
                         notifyArr.push(getString(...elem.getString));
                     });
                     var notifyStr = formatJSString(notifyArr[0], ...notifyArr.slice(1));
-                    notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                    notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                 }
                 break;
         }
@@ -5697,6 +5705,9 @@ const three: Three = {
     calcScale() {
         return background.height / client.devicePixelRatio / client.height;
     },
+    calcPositionX() {
+        return (((background.x * 2 + background.width) / client.devicePixelRatio - client.width) / client.height) * (background.height / background.width / 2);
+    },
     calcPositionY() {
         return ((client.height - (background.y * 2 + background.height) / client.devicePixelRatio) / client.height) * (background.height / background.width / 2);
     },
@@ -5770,9 +5781,9 @@ const three: Three = {
             }
         }
         if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NotificationPriority.Default, 2500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height, NotificationChannel.Camera3D);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenCarNames", three.followObject])), NotificationPriority.Default, 2500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height, NotificationChannel.Camera3D);
         } else if (three.cameraMode == ThreeCameraModes.FOLLOW_TRAIN) {
-            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NotificationPriority.Default, 2500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height, NotificationChannel.Camera3D);
+            notify("#canvas-notifier", formatJSString(getString("appScreen3DViewCameraNotify", "."), getString(["appScreenTrainNames", three.followObject])), NotificationPriority.Default, 2500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height, NotificationChannel.Camera3D);
         }
         setGuiState("3d-cam-mode", three.cameraMode);
         setGuiState("3d-follow-object", three.followObject);
@@ -5900,7 +5911,7 @@ const switchActions = {
             switches[key][side].turned = !switches[key][side].turned;
             switches[key][side].lastStateChange = frameNo;
             animateWorker.postMessage({k: "switches", switches: switches});
-            notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NotificationPriority.Default, 500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height, NotificationChannel.TrainSwitches);
+            notify("#canvas-notifier", getString("appScreenSwitchTurns", "."), NotificationPriority.Default, 500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height, NotificationChannel.TrainSwitches);
         }
         if (audioControl.existsObject("switch")) {
             audioControl.stopObject("switch");
@@ -5922,7 +5933,7 @@ const carActions = {
                 carParams.autoModeOff = false;
                 carParams.autoModeRuns = true;
                 carParams.autoModeInit = true;
-                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NotificationPriority.Default, 500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NotificationPriority.Default, 500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                 return true;
             }
             return false;
@@ -5931,7 +5942,7 @@ const carActions = {
             if (this.checkReady() && !carParams.autoModeOff && !carParams.isBackToRoot) {
                 carParams.autoModeRuns = true;
                 carParams.isBackToRoot = true;
-                notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NotificationPriority.Default, 750, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                notify("#canvas-notifier", getString("appScreenCarAutoModeParking", "."), NotificationPriority.Default, 750, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                 return true;
             }
             return false;
@@ -5941,7 +5952,7 @@ const carActions = {
                 return false;
             }
             carParams.autoModeRuns = false;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NotificationPriority.Default, 500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModePause")), NotificationPriority.Default, 500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             return true;
         },
         resume() {
@@ -5950,7 +5961,7 @@ const carActions = {
             }
             carParams.autoModeRuns = true;
             carParams.autoModeInit = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NotificationPriority.Default, 500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarAutoModeChange", "."), getString("appScreenCarAutoModeInit")), NotificationPriority.Default, 500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             return true;
         }
     },
@@ -5974,7 +5985,7 @@ const carActions = {
             cars[car].backToInit = false;
             carParams.init = false;
             carParams.autoModeOff = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStarts", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             return true;
         },
         stop(car: number) {
@@ -5987,7 +5998,7 @@ const carActions = {
             cars[car].backToInit = false;
             carParams.init = false;
             carParams.autoModeOff = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenObjectStops", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             return true;
         },
         backwards(car: number) {
@@ -6001,7 +6012,7 @@ const carActions = {
                 return false;
             }
             cars[car].move = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 750, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarStepsBack", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 750, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             return true;
         },
         park(car: number) {
@@ -6010,7 +6021,7 @@ const carActions = {
             }
             cars[car].move = true;
             cars[car].backToInit = true;
-            notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+            notify("#canvas-notifier", formatJSString(getString("appScreenCarParking", "."), getString(["appScreenCarNames", car])), NotificationPriority.Default, 500, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
             return true;
         }
     }
@@ -6321,7 +6332,7 @@ function prepareInit(selectedMode?: Modes): void {
         document.body.style.cursor = "";
         if (currentMode == Modes.MULTIPLAYER) {
             if (!("WebSocket" in window)) {
-                notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NotificationPriority.High, 6000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                notify("#canvas-notifier", getString("appScreenTeamplayNoWebsocket", "!", "upper"), NotificationPriority.High, 6000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                 currentMode = Modes.SINGLEPLAYER;
             }
         } else if (currentMode == Modes.DEMO) {
@@ -7296,7 +7307,7 @@ function init(state: "load" | "reload" = "reload"): void {
             const scale = three.calcScale();
             background3D.flat.mesh.scale.x = scale;
             background3D.flat.mesh.scale.y = scale;
-            background3D.flat.mesh.position.set(0, three.calcPositionY(), 0);
+            background3D.flat.mesh.position.set(three.calcPositionX(), three.calcPositionY(), 0);
         };
         background3D.flat.resize();
         three.mainGroup.add(background3D.flat.mesh);
@@ -7313,7 +7324,7 @@ function init(state: "load" | "reload" = "reload"): void {
             const scale = three.calcScale();
             background3D.flatBehind.mesh.scale.x = -scale;
             background3D.flatBehind.mesh.scale.y = -scale;
-            background3D.flatBehind.mesh.position.set(0, three.calcPositionY(), -scale * 0.001);
+            background3D.flatBehind.mesh.position.set(three.calcPositionX(), three.calcPositionY(), -scale * 0.001);
         };
         background3D.flatBehind.resize();
         three.mainGroup.add(background3D.flatBehind.mesh);
@@ -7326,7 +7337,7 @@ function init(state: "load" | "reload" = "reload"): void {
             background3D.three.mesh.scale.x = scale;
             background3D.three.mesh.scale.y = scale;
             background3D.three.mesh.scale.z = scale;
-            background3D.three.mesh.position.set(0, three.calcPositionY(), 0);
+            background3D.three.mesh.position.set(three.calcPositionX(), three.calcPositionY(), 0);
         };
         background3D.three.resize();
         three.mainGroup.add(background3D.three.mesh);
@@ -7339,7 +7350,7 @@ function init(state: "load" | "reload" = "reload"): void {
         background3D.aquarium.mesh.scale.y = scale / 40;
         background3D.aquarium.mesh.scale.z = scale / 40;
         background3D.aquarium.mesh.rotation.x = Math.PI / 2;
-        background3D.aquarium.mesh.position.set(-scale * 0.067, three.calcPositionY() + scale * 0.093, new THREE.Box3().setFromObject(background3D.aquarium.mesh).getSize(new THREE.Vector3()).z / 2);
+        background3D.aquarium.mesh.position.set(-scale * 0.067 + three.calcPositionX(), three.calcPositionY() + scale * 0.093, new THREE.Box3().setFromObject(background3D.aquarium.mesh).getSize(new THREE.Vector3()).z / 2);
     };
     background3D.aquarium.resize();
     three.mainGroup.add(background3D.aquarium.mesh);
@@ -7351,7 +7362,7 @@ function init(state: "load" | "reload" = "reload"): void {
         background3D.burningBuilding.mesh.scale.y = scale / 18;
         background3D.burningBuilding.mesh.scale.z = scale / 18;
         background3D.burningBuilding.mesh.rotation.x = Math.PI / 2;
-        background3D.burningBuilding.mesh.position.set(-scale * 0.383, three.calcPositionY() + scale * 0.07, new THREE.Box3().setFromObject(background3D.burningBuilding.mesh).getSize(new THREE.Vector3()).z / 2);
+        background3D.burningBuilding.mesh.position.set(-scale * 0.383 + three.calcPositionX(), three.calcPositionY() + scale * 0.07, new THREE.Box3().setFromObject(background3D.burningBuilding.mesh).getSize(new THREE.Vector3()).z / 2);
     };
     background3D.burningBuilding.resize();
     three.mainGroup.add(background3D.burningBuilding.mesh);
@@ -7645,7 +7656,7 @@ window.addEventListener("load", function () {
                             }
                         }
                         if (!smileySupport) {
-                            notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NotificationPriority.High, 6000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                            notify("#canvas-notifier", getString("appScreenTeamplayChatNoEmojis"), NotificationPriority.High, 6000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                         }
                     };
                 }
@@ -8069,7 +8080,7 @@ window.addEventListener("load", function () {
                                                 notifyStr = json.sessionName + ": " + notifyStr;
                                             }
                                             if (onlineConnection.sessionId != json.sessionId || !input.notificationOnlyForOthers) {
-                                                notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                                                notify("#canvas-notifier", notifyStr, NotificationPriority.Default, 1000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                                             }
                                         }
                                         switch (input.objectName) {
@@ -8155,7 +8166,7 @@ window.addEventListener("load", function () {
                                             multiplayerMode.waitingClock.visible = false;
                                         }
                                         if (json.errorLevel !== ERROR_LEVEL_OKAY) {
-                                            notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NotificationPriority.High, 900, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                                            notify("#canvas-notifier", getString("appScreenTeamplaySyncError", "."), NotificationPriority.High, 900, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                                         }
                                         if (!onlineConnection.paused) {
                                             if (multiplayerMode.syncRequestTimeout !== undefined && multiplayerMode.syncRequestTimeout !== null) {
@@ -8178,7 +8189,7 @@ window.addEventListener("load", function () {
                                         onlineConnection.paused = true;
                                         audioControl.playAndPauseAll();
                                         animateWorker.postMessage({k: "pause"});
-                                        notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NotificationPriority.High, 900, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayGamePaused", "."), NotificationPriority.High, 900, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                                         break;
                                     case "resume":
                                         if (onlineConnection.paused) {
@@ -8194,12 +8205,12 @@ window.addEventListener("load", function () {
                                                 multiplayerMode.waitingClock.visible = false;
                                             }
                                             audioControl.playAndPauseAll();
-                                            notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NotificationPriority.High, 900, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                                            notify("#canvas-notifier", getString("appScreenTeamplayGameResumed", "."), NotificationPriority.High, 900, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                                             animateWorker.postMessage({k: "resume"});
                                         }
                                         break;
                                     case "leave":
-                                        notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NotificationPriority.High, 900, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                                        notify("#canvas-notifier", json.sessionName + ": " + getString("appScreenTeamplayTeammateLeft", "."), NotificationPriority.High, 900, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                                         break;
                                     case "chat-msg":
                                         chatInnerNone.style.display = "none";
@@ -8246,14 +8257,14 @@ window.addEventListener("load", function () {
                                         }
                                         break;
                                     case "unknown":
-                                        notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                                        notify("#canvas-notifier", getString("appScreenTeamplayUnknownRequest", "."), NotificationPriority.High, 2000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                                         break;
                                 }
                             } catch (error) {
                                 if (APP_DATA.debug) {
                                     console.error(error);
                                 }
-                                notify("#canvas-notifier", getString("appScreenTeamplayMsgError", "."), NotificationPriority.High, 900, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                                notify("#canvas-notifier", getString("appScreenTeamplayMsgError", "."), NotificationPriority.High, 900, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                             }
                         };
                         onlineConnection.socket.onerror = function () {
@@ -8553,7 +8564,7 @@ window.addEventListener("load", function () {
                     cars3D[i].resizeParkingLot = function () {
                         const scale = three.calcScale();
                         cars3D[i].meshParkingLot.scale.set(scale, scale, scale);
-                        cars3D[i].meshParkingLot.position.set(scale * ((carWays[i].start[cars[i].startFrame].x - background.width / 2) / background.width), scale * (-(carWays[i].start[cars[i].startFrame].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
+                        cars3D[i].meshParkingLot.position.set(scale * ((carWays[i].start[cars[i].startFrame].x - background.width / 2) / background.width) + three.calcPositionX(), scale * (-(carWays[i].start[cars[i].startFrame].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
                     };
                     cars3D[i].meshParkingLot.callback = function () {
                         if (carParams.autoModeOff) {
@@ -8642,8 +8653,8 @@ window.addEventListener("load", function () {
                                 switches3D[key][currentKey].squareMeshHighlight.scale.set(scale, scale, scale);
                                 switches3D[key][currentKey].squareMeshNormal.scale.set(scale, scale, scale);
                                 switches3D[key][currentKey].squareMeshTurned.scale.set(scale, scale, scale);
-                                switches3D[key][currentKey].circleMesh.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
-                                switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
+                                switches3D[key][currentKey].circleMesh.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width) + three.calcPositionX(), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (height3D / 2));
+                                switches3D[key][currentKey].circleMeshSmall.position.set(scale * ((switches[key][currentKey].x - background.width / 2) / background.width) + three.calcPositionX(), scale * (-(switches[key][currentKey].y - background.height / 2) / background.width) + three.calcPositionY(), scale * (radius / 8));
                             };
                             switches3D[key][currentKey].resize();
                             three.mainGroup.add(switches3D[key][currentKey].circleMesh);
@@ -8759,12 +8770,12 @@ window.addEventListener("load", function () {
                     loadingAnimation.fade(function () {
                         var localAppData = getLocalAppDataCopy();
                         if (getSetting("classicUI") && !classicUI.trainSwitch.selectedTrainDisplay.visible && !gui.three) {
-                            notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NotificationPriority.High, 3000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                            notify("#canvas-notifier", formatJSString(getString("appScreenTrainSelected", "."), getString(["appScreenTrainNames", trainParams.selected]), getString("appScreenTrainSelectedAuto", " ")), NotificationPriority.High, 3000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                         } else if (state == "load" && localAppData != null && (localAppData.version.major < APP_DATA.version.major || (localAppData.version.major == APP_DATA.version.major && localAppData.version.minor < APP_DATA.version.minor))) {
-                            const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y - client.unsafeArea.top + menus.outerContainer.height}});
+                            const event = new CustomEvent("moroway-app-update-notification", {detail: {notifyMinHeight: client.y - client.boardUnsafeArea.top + menus.outerContainer.height}});
                             document.dispatchEvent(event);
                         } else if (state == "load") {
-                            const event = new CustomEvent("moroway-app-ready-notification", {detail: {notifyMinHeight: client.y - client.unsafeArea.top + menus.outerContainer.height}});
+                            const event = new CustomEvent("moroway-app-ready-notification", {detail: {notifyMinHeight: client.y - client.boardUnsafeArea.top + menus.outerContainer.height}});
                             document.dispatchEvent(event);
                         }
                         setLocalAppDataCopy();
@@ -8914,7 +8925,7 @@ window.addEventListener("load", function () {
                             if (APP_DATA.debug) {
                                 console.error(e);
                             }
-                            notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y - client.unsafeArea.top + menus.outerContainer.height);
+                            notify("#canvas-notifier", getString("appScreenSaveGameError", "."), NotificationPriority.High, 1000, null, null, client.y - client.boardUnsafeArea.top + menus.outerContainer.height);
                         }
                     }
                     animateWorker.postMessage({k: "game-saved"});
