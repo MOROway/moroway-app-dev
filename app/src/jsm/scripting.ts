@@ -428,6 +428,14 @@ function measureViewSpace(): void {
             client.unsafeArea.top = Math.max(client.unsafeArea.top, windowControlsOverlayRect.height);
         }
     }
+    // Opposite edges leaving no room between them are ignored: the board would get no size (the
+    // board keeps clear of the larger side edge on both sides)
+    if (client.unsafeArea.top + client.unsafeArea.bottom >= client.height) {
+        client.unsafeArea.top = client.unsafeArea.bottom = 0;
+    }
+    if (2 * Math.max(client.unsafeArea.left, client.unsafeArea.right) >= client.width) {
+        client.unsafeArea.left = client.unsafeArea.right = 0;
+    }
     canvasMargins.style.width = canvasForeground.style.width = canvasSemiForeground.style.width = canvasBackground.style.width = canvasGesture.style.width = canvas2.style.width = canvas.style.width = client.width + "px";
     canvasMargins.style.height = canvasForeground.style.height = canvasSemiForeground.style.height = canvasBackground.style.height = canvasGesture.style.height = canvas2.style.height = canvas.style.height = client.height + "px";
     canvasMargins.width = canvasForeground.width = canvasSemiForeground.width = canvasBackground.width = canvasGesture.width = canvas2.width = canvas.width = client.width * client.devicePixelRatio;
@@ -967,25 +975,24 @@ function beforeOptionsMenuChange(): void {
 
 function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-change" | "settings-change"): void {
     function calcBackground(simulate = false): void {
-        var additionalHeight;
-        if (simulate) {
-            additionalHeight = 0;
-        } else {
-            additionalHeight = menus.outerContainer.height * client.devicePixelRatio;
-        }
-
-        if (canvasBackground.width / canvasBackground.height / ((canvasBackground.height - additionalHeight) / canvasBackground.height) < pics[background.src].width / pics[background.src].height) {
+        // The board fits into the canvas without its hidden edges and without the menu below the
+        // board; horizontally both sides keep clear of the larger edge, as the 3D view expects the
+        // board centred
+        const side = Math.max(client.unsafeArea.left, client.unsafeArea.right) * client.devicePixelRatio;
+        const availableWidth = canvasBackground.width - 2 * side;
+        const availableHeight = canvasBackground.height - (client.unsafeArea.top + client.unsafeArea.bottom) * client.devicePixelRatio - (simulate ? 0 : menus.outerContainer.height * client.devicePixelRatio);
+        if (availableWidth / availableHeight < pics[background.src].width / pics[background.src].height) {
             client.normalRatio = true;
-            background.width = canvasBackground.width;
-            background.height = pics[background.src].height * (canvasBackground.width / pics[background.src].width);
-            background.x = 0;
-            background.y = canvasBackground.height / 2 - background.height / 2 - additionalHeight / 2;
+            background.width = availableWidth;
+            background.height = pics[background.src].height * (availableWidth / pics[background.src].width);
+            background.x = side;
+            background.y = client.unsafeArea.top * client.devicePixelRatio + (availableHeight - background.height) / 2;
         } else {
             client.normalRatio = false;
-            background.width = pics[background.src].width * (canvasBackground.height / pics[background.src].height) * ((canvasBackground.height - additionalHeight) / canvasBackground.height);
-            background.height = canvasBackground.height - additionalHeight;
-            background.x = canvasBackground.width / 2 - background.width / 2;
-            background.y = 0;
+            background.width = pics[background.src].width * (availableHeight / pics[background.src].height);
+            background.height = availableHeight;
+            background.x = side + (availableWidth - background.width) / 2;
+            background.y = client.unsafeArea.top * client.devicePixelRatio;
         }
         if (APP_DATA.debug && debug.showHidden) {
             background.x = 0;
@@ -1197,10 +1204,10 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         menus.outerContainer.height = menus.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
         menus.outerContainer.element.style.display = "";
         calcBackground(true);
-        if (menus.small && client.y >= menus.outerContainer.height) {
+        if (menus.small && client.y - client.unsafeArea.top >= menus.outerContainer.height) {
             menus.floating = true;
             menus.outerContainer.height = 0;
-        } else if (menus.outerContainer.height >= client.height / 2) {
+        } else if (menus.outerContainer.height >= (client.height - client.unsafeArea.top - client.unsafeArea.bottom) / 2) {
             menus.small = true;
             menus.outerContainer.height = 0;
             menus.outerContainer.element.style.display = "none";
@@ -1212,12 +1219,9 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     }
     calcBackground();
     menus.outerContainer.width = background.width / client.devicePixelRatio;
-    if (window.innerWidth > window.innerHeight) {
-        menus.outerContainer.width -= Math.min(background.width / client.devicePixelRatio / 20, client.unsafeArea.bottom);
-    }
     menus.innerWidthRelativeToItemLength = false;
     menus.innerWidth = ((getSetting("classicUI") && !gui.three) || menus.floating ? 0.5 : 1) * menus.outerContainer.width;
-    var availableHeight = menus.floating ? client.y : menus.outerContainer.height;
+    var availableHeight = menus.floating ? client.y - client.unsafeArea.top : menus.outerContainer.height;
     menus.itemDefaultSize = availableHeight * 0.5;
     if (menus.small && (!menus.floating || client.width * 0.75 >= client.height)) {
         menus.innerWidthRelativeToItemLength = true;
@@ -1245,9 +1249,9 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
         menus.outerContainer.element.style.right = "unset";
     } else {
         menus.outerContainer.element.style.top = "unset";
-        menus.outerContainer.element.style.bottom = "0px";
+        menus.outerContainer.element.style.bottom = client.unsafeArea.bottom + "px";
         menus.outerContainer.element.style.left = "unset";
-        menus.outerContainer.element.style.right = "0px";
+        menus.outerContainer.element.style.right = client.unsafeArea.right + "px";
     }
 
     if (state == "load") {
