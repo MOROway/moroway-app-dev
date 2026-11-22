@@ -4,7 +4,9 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.RoundedCorner
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -14,6 +16,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogBackConfirmBinding
+import kotlin.math.max
 
 class WebGameActivity : WebActivity() {
     private var onlineGame = false
@@ -30,8 +33,11 @@ class WebGameActivity : WebActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(android.R.id.content)
         ) { _, insets ->
-            unsafeArea = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            unsafeArea = Insets.max(
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                ),
+                getRoundedCornerUnsafeArea(insets)
             )
             boardUnsafeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             injectUnsafeArea()
@@ -58,6 +64,27 @@ class WebGameActivity : WebActivity() {
 
     override fun onPageReady() {
         injectUnsafeArea()
+    }
+
+    // Rounded screen corners hide the outer corner of a control along an edge and make it hard to
+    // reach: keep it clear by half the radius, on each side the larger radius of its two corners
+    private fun getRoundedCornerUnsafeArea(insets: WindowInsetsCompat): Insets {
+        val windowInsets = insets.toWindowInsets()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || windowInsets == null) {
+            return Insets.NONE
+        }
+        val radii = listOf(
+            RoundedCorner.POSITION_TOP_LEFT,
+            RoundedCorner.POSITION_TOP_RIGHT,
+            RoundedCorner.POSITION_BOTTOM_RIGHT,
+            RoundedCorner.POSITION_BOTTOM_LEFT
+        ).map { (windowInsets.getRoundedCorner(it)?.radius ?: 0) * 0.5 }
+        return Insets.of(
+            max(radii[0], radii[3]).toInt(),
+            max(radii[0], radii[1]).toInt(),
+            max(radii[1], radii[2]).toInt(),
+            max(radii[2], radii[3]).toInt()
+        )
     }
 
     // The web view reports no safe area for the system bars: pass the hidden edges in CSS pixels
