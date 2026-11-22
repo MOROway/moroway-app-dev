@@ -8867,8 +8867,9 @@ window.addEventListener("load", function () {
                 if (getSetting("saveGame") && currentMode == Modes.SINGLEPLAYER) {
                     // The trains are in the worker's coordinates: skip them while a resize is on
                     // its way to the worker, as they do not fit the current background; it saves
-                    // after it
-                    if (["x", "y", "width", "height"].every((key) => message.data.background[key] == background[key])) {
+                    // after it. A worker from an older version (still cached after an update)
+                    // sends no background: skip its trains too
+                    if (message.data.background !== undefined && ["x", "y", "width", "height"].every((key) => message.data.background[key] == background[key])) {
                         try {
                             localStorage.setItem("morowayAppSavedGame_v-" + getVersionCode() + "_Trains", JSON.stringify(message.data.saveTrains));
                             var saveSwitches = {};

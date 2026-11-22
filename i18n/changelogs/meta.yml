@@ -288,3 +288,7 @@
   general:
     dependencies: true
     fixes: true
+11.0.1:
+  year: 2026
+  general:
+    fixes: true
