@@ -323,6 +323,11 @@ versions:
             Mute sound while another app has the focus (split screen).
         oc: |
             Mute sound while another app has the focus (split screen).
+    11.0.3:
+        general: |
+            Keep the board and controls clear of screen cutouts and system bars.
+        android: |
+            The game uses the whole screen again, controls stay clear of the system bars.
 hints:
     1.0.0:
         general: |

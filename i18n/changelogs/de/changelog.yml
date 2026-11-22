@@ -262,6 +262,11 @@ versions:
             Stummschaltung, solange eine andere App den Fokus hat (geteilter Bildschirm).
         oc: |
             Stummschaltung, solange eine andere App den Fokus hat (geteilter Bildschirm).
+    11.0.3:
+        general: |
+            Spielfeld und Bedienelemente bleiben frei von Kameraaussparungen und Systemleisten.
+        android: |
+            Das Spiel nutzt wieder den ganzen Bildschirm, Bedienelemente bleiben frei von den Systemleisten.
     7.3.1:
         snap: |
             Kleinere Verbesserungen der Nutzererfahrung
