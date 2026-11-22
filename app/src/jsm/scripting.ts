@@ -5779,10 +5779,10 @@ const three: Three = {
             three.followCamControls.padding = three.followCamControls.width / 3;
             three.followCamControls.font = measureFontSize("speed", "Material Icons", 20, three.followCamControls.width, 5, 1.2);
             three.followCamControls.textSize = parseFloat(three.followCamControls.font.replace(/^([0-9.]+)px.*$/, "$1"));
-            three.followCamControls.x = client.width * client.devicePixelRatio - three.followCamControls.width - three.followCamControls.padding;
+            three.followCamControls.x = (client.width - client.unsafeArea.right) * client.devicePixelRatio - three.followCamControls.width - three.followCamControls.padding;
             three.followCamControls.y = Math.min(three.followCamControls.padding, (client.height * client.devicePixelRatio) / 5);
+            three.followCamControls.maxHeight = (client.height - menus.outerContainer.height - client.unsafeArea.top - client.unsafeArea.bottom) * client.devicePixelRatio - three.followCamControls.y * 2;
             three.followCamControls.y += client.unsafeArea.top * client.devicePixelRatio;
-            three.followCamControls.maxHeight = (client.height - menus.outerContainer.height) * client.devicePixelRatio - three.followCamControls.y * 2;
             if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
                 const maxSymbolsInUse = 3;
                 three.followCamControls.height = three.followCamControls.padding * (maxSymbolsInUse - 1) + three.followCamControls.textSize * maxSymbolsInUse;
