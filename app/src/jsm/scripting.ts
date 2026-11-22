@@ -414,6 +414,20 @@ function measureViewSpace(): void {
     client.devicePixelRatio = window.devicePixelRatio;
     client.width = window.innerWidth;
     client.height = window.innerHeight;
+    // Edges hidden by the device (cutouts, system bars) in CSS pixels, from the safe-area insets
+    // general.css copies into custom properties; at the top also the title bar of an installed
+    // desktop app drawing into it (Window Controls Overlay): the larger of both counts
+    client.unsafeArea = {};
+    ["top", "right", "bottom", "left"].forEach(function (side) {
+        client.unsafeArea[side] = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--unsafe-area-" + side)) || 0;
+    });
+    if ("windowControlsOverlay" in navigator) {
+        const windowControlsOverlayRect = (navigator.windowControlsOverlay as any).getTitlebarAreaRect();
+        //TODO: Remove cast once TS is ready
+        if (windowControlsOverlayRect.top === 0) {
+            client.unsafeArea.top = Math.max(client.unsafeArea.top, windowControlsOverlayRect.height);
+        }
+    }
     canvasMargins.style.width = canvasForeground.style.width = canvasSemiForeground.style.width = canvasBackground.style.width = canvasGesture.style.width = canvas2.style.width = canvas.style.width = client.width + "px";
     canvasMargins.style.height = canvasForeground.style.height = canvasSemiForeground.style.height = canvasBackground.style.height = canvasGesture.style.height = canvas2.style.height = canvas.style.height = client.height + "px";
     canvasMargins.width = canvasForeground.width = canvasSemiForeground.width = canvasBackground.width = canvasGesture.width = canvas2.width = canvas.width = client.width * client.devicePixelRatio;
@@ -1199,8 +1213,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     calcBackground();
     menus.outerContainer.width = background.width / client.devicePixelRatio;
     if (window.innerWidth > window.innerHeight) {
-        const unsafeArea = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--unsafe-area-bottom"));
-        menus.outerContainer.width -= Math.min(background.width / client.devicePixelRatio / 20, unsafeArea);
+        menus.outerContainer.width -= Math.min(background.width / client.devicePixelRatio / 20, client.unsafeArea.bottom);
     }
     menus.innerWidthRelativeToItemLength = false;
     menus.innerWidth = ((getSetting("classicUI") && !gui.three) || menus.floating ? 0.5 : 1) * menus.outerContainer.width;
@@ -5768,13 +5781,7 @@ const three: Three = {
             three.followCamControls.textSize = parseFloat(three.followCamControls.font.replace(/^([0-9.]+)px.*$/, "$1"));
             three.followCamControls.x = client.width * client.devicePixelRatio - three.followCamControls.width - three.followCamControls.padding;
             three.followCamControls.y = Math.min(three.followCamControls.padding, (client.height * client.devicePixelRatio) / 5);
-            if ("windowControlsOverlay" in navigator) {
-                const windowControlsOverlayRect = (navigator.windowControlsOverlay as any).getTitlebarAreaRect();
-                //TODO: Remove cast once TS is ready
-                if (windowControlsOverlayRect.top === 0) {
-                    three.followCamControls.y += windowControlsOverlayRect.height * client.devicePixelRatio;
-                }
-            }
+            three.followCamControls.y += client.unsafeArea.top * client.devicePixelRatio;
             three.followCamControls.maxHeight = (client.height - menus.outerContainer.height) * client.devicePixelRatio - three.followCamControls.y * 2;
             if (three.cameraMode == ThreeCameraModes.FOLLOW_CAR) {
                 const maxSymbolsInUse = 3;
