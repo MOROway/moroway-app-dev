@@ -57,7 +57,7 @@
         <activity
             android:name=".Gimmick1Activity"
             android:configChanges="keyboardHidden|screenSize"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="locked" />
         <activity
             android:name=".Gimmick2Activity"
             android:configChanges="keyboardHidden|orientation|screenSize"
