@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityJserrorBinding
 import java.util.Locale
 
@@ -15,6 +17,16 @@ class JSErrorActivity : MOROwayActivity() {
             layoutInflater
         )
         setContentView(binding.root)
+        // Android draws the app edge-to-edge: keep the content clear of the system bars and cutouts
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(android.R.id.content)
+        ) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
         val bundle = intent.extras
         binding.jsErrorEmoji.text = String(Character.toChars(0x1F622))
         binding.jsErrorButtonWebView.setOnClickListener {

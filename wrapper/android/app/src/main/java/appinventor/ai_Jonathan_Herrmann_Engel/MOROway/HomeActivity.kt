@@ -19,7 +19,10 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.content.edit
+import androidx.core.graphics.Insets
 import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMorowayAppBinding
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogPopupBinding
 import coil3.load
@@ -31,6 +34,7 @@ class HomeActivity : MOROwayActivity() {
     private lateinit var binding: ActivityMorowayAppBinding
     private var width = 0
     private var dimen = 0
+    private var unsafeArea = Insets.NONE
     private var portraitPictureSettingsEditor: SharedPreferences.Editor? = null
     private var portraitPictureCurrent = 0
     private var portraitPictureBig = false
@@ -47,6 +51,15 @@ class HomeActivity : MOROwayActivity() {
             layoutInflater
         )
         setContentView(binding.root)
+        // Android draws the app edge-to-edge: buttons keep clear of the system bars and cutouts,
+        // the background image draws under them
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            unsafeArea = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            applyUnsafeArea()
+            WindowInsetsCompat.CONSUMED
+        }
         val settings = getSharedPreferences("MOROwaySettings", MODE_PRIVATE)
         val settingsEditor = settings.edit()
 
@@ -289,6 +302,17 @@ class HomeActivity : MOROwayActivity() {
         portraitPictureSettingsEditor!!.apply()
     }
 
+    private fun applyUnsafeArea() {
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            resetImage()
+        } else {
+            binding.homescreenbuttons!!.setPadding(
+                unsafeArea.left, unsafeArea.top, unsafeArea.right, unsafeArea.bottom
+            )
+            binding.appName!!.translationY = -unsafeArea.bottom.toFloat()
+        }
+    }
+
     private fun resetImage() {
         portraitPictureBigAndZoomed = false
         portraitPictureZoomOffsetX = 0f
@@ -302,13 +326,25 @@ class HomeActivity : MOROwayActivity() {
             binding.bigStylePictures!!.layoutParams = portraitPictureLayoutParams
             binding.bigStylePictures!!.scaleType = ImageView.ScaleType.CENTER_CROP
             binding.bigStylePictures!!.setPadding(0, 0, 0, 0)
+            // The picture fills the screen under the system bars, the buttons on it keep clear
             binding.root.setPadding(0, 0, 0, 0)
+            binding.animationButton.translationY = unsafeArea.top.toFloat()
+            binding.ImageHandler!!.translationY = unsafeArea.top.toFloat()
+            binding.ImageHandler!!.setPadding(unsafeArea.left, 0, unsafeArea.right, 0)
         } else {
             portraitPictureLayoutParams!!.addRule(RelativeLayout.BELOW, R.id.ImageHandler)
             binding.bigStylePictures!!.layoutParams = portraitPictureLayoutParams
             binding.bigStylePictures!!.scaleType = ImageView.ScaleType.FIT_CENTER
             binding.bigStylePictures!!.setPadding(0, 0, 0, 10)
-            binding.root.setPadding(dimen, dimen, dimen, dimen)
+            binding.root.setPadding(
+                dimen + unsafeArea.left,
+                dimen + unsafeArea.top,
+                dimen + unsafeArea.right,
+                dimen + unsafeArea.bottom
+            )
+            binding.animationButton.translationY = 0f
+            binding.ImageHandler!!.translationY = 0f
+            binding.ImageHandler!!.setPadding(0, 0, 0, 0)
         }
     }
 

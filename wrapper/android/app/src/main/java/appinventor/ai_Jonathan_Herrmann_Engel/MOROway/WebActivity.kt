@@ -106,6 +106,8 @@ abstract class WebActivity : MOROwayActivity() {
                     binding.webAnimation.clearCache(true)
                     binding.webAnimation.clearHistory()
                     binding.webAnimation.loadUrl(location)
+                } else {
+                    onPageReady()
                 }
                 initWeb(binding.webAnimation)
                 binding.webAnimation.visibility = View.VISIBLE
@@ -126,6 +128,9 @@ abstract class WebActivity : MOROwayActivity() {
     }
 
     abstract fun onNewUri(uri: Uri)
+
+    // Called when the page (not the blank page in between) has finished loading
+    protected open fun onPageReady() {}
 
     abstract fun goBack()
 

@@ -9,6 +9,8 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityMenuBinding
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.DialogDemoModeBinding
 
@@ -21,6 +23,15 @@ class MenuActivity : MOROwayActivity() {
             layoutInflater
         )
         setContentView(binding.root)
+        // Android draws the app edge-to-edge: buttons keep clear of the system bars and cutouts,
+        // the background image draws under them
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
         binding.homeButton.setOnClickListener { backToHome() }
         binding.homeButton.setOnLongClickListener {
             startActivity(Intent(this, Gimmick2Activity::class.java))

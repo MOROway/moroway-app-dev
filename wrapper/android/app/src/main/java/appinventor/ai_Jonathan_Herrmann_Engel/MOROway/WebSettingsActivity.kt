@@ -6,10 +6,22 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 class WebSettingsActivity : WebActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Android draws the app edge-to-edge: keep the content clear of the system bars and cutouts
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(android.R.id.content)
+        ) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
         binding.root.background = ContextCompat.getColor(this, R.color.white_light).toDrawable()
         setWeb(
             "https://" + Globals.WEBVIEW_DOMAIN + Globals.WEBVIEW_PATH + "animation/settings/index.html"
