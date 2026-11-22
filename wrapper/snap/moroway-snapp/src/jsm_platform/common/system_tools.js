@@ -25,6 +25,7 @@ export const SYSTEM_TOOLS = {
             }
         }
     },
+    muteWhenUnfocused: () => false,
     navigateBack() {
         (async () => {
             // Electron wrapper contains this function

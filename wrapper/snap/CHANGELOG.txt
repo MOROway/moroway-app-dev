@@ -476,3 +476,17 @@ Bugfixes.
 
 ---
 
+
+
+11.0.0
+
+Elevated turning loop on the outer circle.
+New train: a shunting locomotive.
+Rotation gesture for 3D bird's-eye view.
+Change 3D view train volume calculation.
+Improved help section.
+Update dependencies.
+Bugfixes.
+
+---
+

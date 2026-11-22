@@ -8,8 +8,8 @@ android {
         applicationId = "appinventor.ai_Jonathan_Herrmann_Engel.MOROway"
         minSdk = 28
         targetSdk = 37
-        versionCode = 1003141
-        versionName = "10.3.14"
+        versionCode = 1100000
+        versionName = "11.0.0"
     }
     buildTypes {
         getByName("release") {
