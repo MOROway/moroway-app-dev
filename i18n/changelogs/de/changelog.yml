@@ -257,6 +257,11 @@ versions:
             {{0}} Neuer Zug: eine Rangierlok.
             Rotationsgeste für 3D-Vogelperspektive.
             Änderung der Berechnung der Zug-Lautstärke in der 3D-Ansicht.
+            Optimierte Hilfeseiten.
+        android: |
+            Stummschaltung, solange eine andere App den Fokus hat (geteilter Bildschirm).
+        oc: |
+            Stummschaltung, solange eine andere App den Fokus hat (geteilter Bildschirm).
     7.3.1:
         snap: |
             Kleinere Verbesserungen der Nutzererfahrung

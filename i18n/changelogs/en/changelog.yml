@@ -318,6 +318,11 @@ versions:
             {{0}} New train: a shunting locomotive.
             Rotation gesture for 3D bird's-eye view.
             Change 3D view train volume calculation.
+            Improved help section.
+        android: |
+            Mute sound while another app has the focus (split screen).
+        oc: |
+            Mute sound while another app has the focus (split screen).
 hints:
     1.0.0:
         general: |
