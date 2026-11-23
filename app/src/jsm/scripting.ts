@@ -7594,7 +7594,7 @@ window.addEventListener("load", function () {
                 chatInnerScrollToBottom.toggleDisplay = function () {
                     if (chatInnerMessages.lastChild != null) {
                         chatInnerScrollToBottom.style.display = chatInner.scrollHeight > chatInner.offsetHeight && chatInner.scrollHeight - chatInner.scrollTop > chatInner.offsetHeight + (chatInnerMessages.lastChild as HTMLElement).offsetHeight ? "flex" : "";
-                        chatInnerScrollToBottom.style.top = Math.max(0, chatInner.offsetHeight - chatInnerScrollToBottom.offsetHeight - 50) + "px";
+                        chatInnerScrollToBottom.style.top = chatInner.getBoundingClientRect().top + Math.max(0, chatInner.offsetHeight - chatInnerScrollToBottom.offsetHeight - 50) + "px";
                     } else {
                         chatInnerScrollToBottom.style.display = "";
                     }
