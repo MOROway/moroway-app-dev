@@ -327,7 +327,7 @@ versions:
         general: |
             Keep the board and controls clear of screen cutouts and system bars.
         android: |
-            The game uses the whole screen again, controls stay clear of the system bars.
+            The game uses the whole screen again.
 hints:
     1.0.0:
         general: |
