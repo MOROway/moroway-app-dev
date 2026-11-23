@@ -6,6 +6,9 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import java.util.Locale
 import kotlin.system.exitProcess
 
@@ -40,6 +43,15 @@ open class MOROwayActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applyOrientation()
+        hideSystemBars()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        // Dialogs, the notification shade or another app can bring the system bars back
+        if (hasFocus) {
+            hideSystemBars()
+        }
     }
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
@@ -56,6 +68,14 @@ open class MOROwayActivity : AppCompatActivity() {
             ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         } else {
             ActivityInfo.SCREEN_ORIENTATION_USER
+        }
+    }
+
+    // A proper fullscreen: the system bars show only briefly after a swipe from the edge
+    private fun hideSystemBars() {
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
