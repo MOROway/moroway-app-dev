@@ -845,7 +845,7 @@ function drawMenu(state: "load" | "reload" | "resize" | "items-change" | "settin
         }
         var itemSize = Math.min(menus.itemDefaultSize, (menus.itemDefaultSize * menusInnerWidth) / (menus.itemDefaultSize * menu.items.length));
         if (menus.floating) {
-            itemSize = Math.min(itemSize, Math.max(itemSize / 2, 30));
+            itemSize = Math.min(itemSize, 55);
         }
         for (var i = 0; i < menu.items.length; i++) {
             menu.items[i].style.display = "";
@@ -1207,7 +1207,7 @@ function calcMenusAndBackground(state: "load" | "reload" | "resize" | "items-cha
     menus.options.items = document.querySelectorAll<HTMLElement>("#canvas-options-inner > *:not(.hidden):not(.settings-hidden):not(.gui-hidden)");
     if (currentMode != Modes.DEMO && menus.options.items.length > 0) {
         menus.small = !client.isSmall;
-        menus.outerContainer.height = menus.small ? Math.max(25, Math.ceil(client.height / 25)) : Math.max(50, Math.ceil(client.height / 15));
+        menus.outerContainer.height = menus.small ? Math.max(40, Math.ceil(client.height / 25)) : Math.max(70, Math.ceil(client.height / 15));
         menus.outerContainer.element.style.display = "";
         calcBackground(true);
         if (menus.small && client.y - client.boardUnsafeArea.top >= menus.outerContainer.height) {
@@ -7492,7 +7492,6 @@ function init(state: "load" | "reload" = "reload"): void {
 }
 window.addEventListener("load", function () {
     function initAnimateWorker(): void {
-
         // Volume factor of a train's sound in 3D, from the camera instead of the hidden tracks as in 2D;
         // the locomotive and each car count, the loudest of them decides
         function getTrainSoundFactor3D(i: number): number {
