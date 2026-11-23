@@ -1,20 +1,29 @@
 package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.view.RoundedCorner
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
 import appinventor.ai_Jonathan_Herrmann_Engel.MOROway.databinding.ActivityWebBinding
+import kotlin.math.max
 
 abstract class WebActivity : MOROwayActivity() {
     protected lateinit var binding: ActivityWebBinding
+    private var unsafeArea = Insets.NONE
+    private var boardUnsafeArea = Insets.NONE
     private var location = ""
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +31,21 @@ abstract class WebActivity : MOROwayActivity() {
             layoutInflater
         )
         setContentView(binding.root)
+        // Android draws the app edge-to-edge: the pages draw under the system bars and cutouts and
+        // keep their content clear of them
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(android.R.id.content)
+        ) { _, insets ->
+            unsafeArea = Insets.max(
+                insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                ),
+                getRoundedCornerUnsafeArea(insets)
+            )
+            boardUnsafeArea = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            injectUnsafeArea()
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     override fun onDestroy() {
@@ -107,7 +131,7 @@ abstract class WebActivity : MOROwayActivity() {
                     binding.webAnimation.clearHistory()
                     binding.webAnimation.loadUrl(location)
                 } else {
-                    onPageReady()
+                    injectUnsafeArea()
                 }
                 initWeb(binding.webAnimation)
                 binding.webAnimation.visibility = View.VISIBLE
@@ -115,6 +139,54 @@ abstract class WebActivity : MOROwayActivity() {
         }
         location = url
         binding.webAnimation.loadUrl(url)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        injectUnsafeArea()
+    }
+
+    // Rounded screen corners hide the outer corner of a control along an edge and make it hard to
+    // reach: keep it clear sideways by half the larger radius of the side's two corners (at the top
+    // and bottom that would only lift it off the edge)
+    private fun getRoundedCornerUnsafeArea(insets: WindowInsetsCompat): Insets {
+        val windowInsets = insets.toWindowInsets()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || windowInsets == null) {
+            return Insets.NONE
+        }
+        val radii = listOf(
+            RoundedCorner.POSITION_TOP_LEFT,
+            RoundedCorner.POSITION_TOP_RIGHT,
+            RoundedCorner.POSITION_BOTTOM_RIGHT,
+            RoundedCorner.POSITION_BOTTOM_LEFT
+        ).map { (windowInsets.getRoundedCorner(it)?.radius ?: 0) * 0.5 }
+        return Insets.of(
+            max(radii[0], radii[3]).toInt(),
+            0,
+            max(radii[1], radii[2]).toInt(),
+            0
+        )
+    }
+
+    // The web view reports no safe area for the system bars: pass the hidden edges in CSS pixels
+    // to the page, which reads them like its safe-area insets; the game board ignores the camera
+    // cutout
+    private fun injectUnsafeArea() {
+        val density = resources.displayMetrics.density
+        val properties = mapOf("unsafe-area" to unsafeArea, "board-unsafe-area" to boardUnsafeArea)
+        binding.webAnimation.evaluateJavascript(
+            properties.entries.joinToString("") { (name, area) ->
+                mapOf(
+                    "top" to area.top,
+                    "right" to area.right,
+                    "bottom" to area.bottom,
+                    "left" to area.left
+                ).entries.joinToString("") { (side, px) ->
+                    "document.documentElement.style" +
+                            ".setProperty(\"--$name-$side\", \"${px / density}px\");"
+                }
+            } + "window.dispatchEvent(new Event(\"resize\"));", null
+        )
     }
 
     protected fun loadNewUri(url: String) {
@@ -128,9 +200,6 @@ abstract class WebActivity : MOROwayActivity() {
     }
 
     abstract fun onNewUri(uri: Uri)
-
-    // Called when the page (not the blank page in between) has finished loading
-    protected open fun onPageReady() {}
 
     abstract fun goBack()
 
