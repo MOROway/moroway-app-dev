@@ -69,6 +69,6 @@ class JSErrorActivity : MOROwayActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        finishAffinity()
+        exitApp()
     }
 }

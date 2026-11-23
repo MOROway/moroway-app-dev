@@ -2,10 +2,8 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.content.Context
 import android.content.Intent
-import android.os.Process
 import android.webkit.JavascriptInterface
 import androidx.core.content.edit
-import kotlin.system.exitProcess
 
 internal class WebJSInterface(private val c: Context) {
     @JavascriptInterface
@@ -48,12 +46,10 @@ internal class WebJSInterface(private val c: Context) {
     @JavascriptInterface
     fun exitApp() {
         try {
-            (c as WebActivity).finishAffinity()
+            (c as WebActivity).exitApp()
         } catch (exception: Exception) {
             exception.printStackTrace()
         }
-        Process.killProcess(Process.myPid())
-        exitProcess(0)
     }
 
     @JavascriptInterface

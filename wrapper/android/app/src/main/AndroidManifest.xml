@@ -51,22 +51,21 @@
             android:screenOrientation="locked" />
         <activity
             android:name=".MenuActivity"
-            android:configChanges="keyboardHidden|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_menu"
             android:screenOrientation="locked" />
         <activity
             android:name=".Gimmick1Activity"
-            android:configChanges="keyboardHidden|screenSize"
             android:screenOrientation="locked" />
         <activity
             android:name=".Gimmick2Activity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="sensor" />
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:screenOrientation="locked" />
         <activity
             android:name=".JSErrorActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/title_activity_jserror"
-            android:screenOrientation="sensor" />
+            android:screenOrientation="locked" />
     </application>
 
 </manifest>

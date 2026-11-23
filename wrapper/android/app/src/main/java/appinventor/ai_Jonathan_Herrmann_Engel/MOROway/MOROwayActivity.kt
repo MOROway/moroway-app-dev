@@ -3,8 +3,10 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
+import kotlin.system.exitProcess
 
 open class MOROwayActivity : AppCompatActivity() {
     override fun attachBaseContext(base: Context) {
@@ -43,5 +45,11 @@ open class MOROwayActivity : AppCompatActivity() {
         } else {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR
         }
+    }
+
+    fun exitApp(){
+        finishAffinity()
+        Process.killProcess(Process.myPid())
+        exitProcess(0)
     }
 }
