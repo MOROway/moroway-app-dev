@@ -751,36 +751,25 @@ function drawBackground(): void {
     /////BACKGROUND/Margins////
     contextMargins.clearRect(0, 0, canvasMargins.width, canvasMargins.height);
     contextMargins.setTransform(client.zoomAndTilt.realScale, 0, 0, client.zoomAndTilt.realScale, (-(client.zoomAndTilt.realScale - 1) * canvasMargins.width) / 2 + client.zoomAndTilt.offsetX, (-(client.zoomAndTilt.realScale - 1) * canvasMargins.height) / 2 + client.zoomAndTilt.offsetY);
+    // The margins around the board and its menu, as whole pixels so the parts tile without overlap
+    const marginTop = Math.round(background.y);
+    const marginBottom = Math.round(background.y + background.height + menus.outerContainer.height * client.devicePixelRatio);
+    const marginLeft = Math.round(background.x);
+    const marginRight = Math.round(background.x + background.width);
     contextMargins.save();
     if (konamiState < 0) {
         contextMargins.fillStyle = getKonamiGradient();
     } else if (client.zoomAndTilt.realScale == 1) {
         var width = pic.height / pic.width - canvasMargins.height / canvasMargins.width < 0 ? canvasMargins.height * (pic.width / pic.height) : canvasMargins.width;
         var height = pic.height / pic.width - canvasMargins.height / canvasMargins.width < 0 ? canvasMargins.height : canvasMargins.width * (pic.height / pic.width);
-        var posX = 0;
-        var posY = 0;
-        var picPosX = (((width - canvasMargins.width) / 2) * pic.width) / width;
-        var picPosY = (((height - canvasMargins.height) / 2) * pic.height) / height;
-        var fillWidth = canvasMargins.width;
-        var fillHeight = background.y;
-        var picWidth = (fillWidth * pic.width) / width;
-        var picHeight = (fillHeight * pic.height) / height;
-        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
-        posY += background.y + background.height + menus.outerContainer.height * client.devicePixelRatio;
-        picPosY += ((background.y + background.height + menus.outerContainer.height * client.devicePixelRatio) * pic.height) / height;
-        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
-        posX = 0;
-        posY = 0;
-        picPosX = (((width - canvasMargins.width) / 2) * pic.width) / width;
-        picPosY = (((height - canvasMargins.height) / 2) * pic.height) / height;
-        fillWidth = background.x;
-        fillHeight = canvasMargins.height;
-        picWidth = (fillWidth * pic.width) / width;
-        picHeight = (fillHeight * pic.height) / height;
-        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
-        posX += background.x + background.width;
-        picPosX += ((background.x + background.width) * pic.width) / width;
-        drawImage(pic, posX, posY, fillWidth, fillHeight, contextMargins, picPosX, picPosY, picWidth, picHeight);
+        // Draws the part of the picture, scaled to cover the canvas, that lies in the given margin
+        function drawMargin(x: number, y: number, marginWidth: number, marginHeight: number): void {
+            drawImage(pic, x, y, marginWidth, marginHeight, contextMargins, (((width - canvasMargins.width) / 2 + x) * pic.width) / width, (((height - canvasMargins.height) / 2 + y) * pic.height) / height, (marginWidth * pic.width) / width, (marginHeight * pic.height) / height);
+        }
+        drawMargin(0, 0, canvasMargins.width, marginTop);
+        drawMargin(0, marginBottom, canvasMargins.width, canvasMargins.height - marginBottom);
+        drawMargin(0, marginTop, marginLeft, marginBottom - marginTop);
+        drawMargin(marginRight, marginTop, canvasMargins.width - marginRight, marginBottom - marginTop);
         var bgGradient = contextMargins.createLinearGradient(0, 0, canvasMargins.width, canvasMargins.height / 2);
         bgGradient.addColorStop(0, "rgba(0,0,0,1)");
         bgGradient.addColorStop(0.2, "rgba(0,0,0,0.95)");
@@ -792,10 +781,10 @@ function drawBackground(): void {
     } else {
         contextMargins.fillStyle = "black";
     }
-    contextMargins.fillRect(0, 0, background.x, canvasMargins.height);
-    contextMargins.fillRect(0, 0, canvasMargins.width, background.y);
-    contextMargins.fillRect(background.x + background.width, 0, background.x, canvasMargins.height);
-    contextMargins.fillRect(0, background.y + background.height + menus.outerContainer.height * client.devicePixelRatio, canvasMargins.width, background.y);
+    contextMargins.fillRect(0, 0, canvasMargins.width, marginTop);
+    contextMargins.fillRect(0, marginBottom, canvasMargins.width, canvasMargins.height - marginBottom);
+    contextMargins.fillRect(0, marginTop, marginLeft, marginBottom - marginTop);
+    contextMargins.fillRect(marginRight, marginTop, canvasMargins.width - marginRight, marginBottom - marginTop);
     contextMargins.restore();
 
     /////DRAW/BACKGROUND/Konami/////
