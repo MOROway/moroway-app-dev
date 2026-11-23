@@ -2,6 +2,7 @@ package appinventor.ai_Jonathan_Herrmann_Engel.MOROway
 
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
@@ -38,12 +39,23 @@ open class MOROwayActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        applyOrientation()
+    }
+
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+        applyOrientation()
+    }
+
+    // The landscape lock does not apply in split-screen: there the user sets the window's shape,
+    // and a fixed orientation would only letterbox the app
+    private fun applyOrientation() {
         val settings = getSharedPreferences("MOROwayAnimSettings", MODE_PRIVATE)
         val lockOrientationLandscape = settings.getBoolean("lockOrientationLandscape", false)
-        requestedOrientation = if (lockOrientationLandscape) {
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        requestedOrientation = if (lockOrientationLandscape && !isInMultiWindowMode) {
+            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         } else {
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            ActivityInfo.SCREEN_ORIENTATION_USER
         }
     }
 
