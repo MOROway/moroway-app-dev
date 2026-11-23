@@ -328,6 +328,8 @@ versions:
             Keep the board and controls clear of screen cutouts and system bars.
         android: |
             The game uses the whole screen again.
+        oc: |
+            The app turns with the device; landscape can be locked in the settings.
 hints:
     1.0.0:
         general: |

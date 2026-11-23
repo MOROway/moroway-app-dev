@@ -267,6 +267,8 @@ versions:
             Spielfeld und Bedienelemente bleiben frei von Kameraaussparungen und Systemleisten.
         android: |
             Das Spiel nutzt wieder den ganzen Bildschirm.
+        oc: |
+            Die App dreht sich mit dem Gerät; das Querformat lässt sich in den Einstellungen fixieren.
     7.3.1:
         snap: |
             Kleinere Verbesserungen der Nutzererfahrung
